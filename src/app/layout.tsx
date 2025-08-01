@@ -4,6 +4,7 @@ import "./globals.css";
 import "../styles/variables.css";
 import Header from "../components/header/Header";
 import Footer from "../components/footer/Footer";
+import { AuthProvider } from "./auth/authProvider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -20,14 +21,18 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const isLogin = null;
+
   return (
     <html lang="ko">
       <body className={`${inter.variable}`}>
-        <Header />
-        <main style={{ minHeight: '100vh' }}>
-          {children}
-        </main>
-        <Footer />
+        <AuthProvider>
+          <Header />
+          <main style={{ minHeight: '100vh' }}>
+            {children}
+          </main>
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   );

@@ -1,0 +1,375 @@
+.container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 배경 애니메이션 요소들 */
+.container::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 2px, transparent 2px);
+  background-size: 50px 50px;
+  animation: float 20s ease-in-out infinite;
+}
+
+.floatingShape {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  animation: floatShape 15s ease-in-out infinite;
+}
+
+.floatingShape:nth-child(1) {
+  width: 80px;
+  height: 80px;
+  top: 20%;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.floatingShape:nth-child(2) {
+  width: 120px;
+  height: 120px;
+  top: 60%;
+  right: 15%;
+  animation-delay: 5s;
+}
+
+.floatingShape:nth-child(3) {
+  width: 60px;
+  height: 60px;
+  bottom: 20%;
+  left: 20%;
+  animation-delay: 10s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  33% { transform: translate(30px, -30px) rotate(120deg); }
+  66% { transform: translate(-20px, 20px) rotate(240deg); }
+}
+
+@keyframes floatShape {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(180deg); }
+}
+
+.signupCard {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 500px;
+  position: relative;
+  z-index: 1;
+  animation: slideUp 0.8s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  color: #666;
+  font-size: 1.1rem;
+  margin-bottom: 30px;
+}
+
+.signupForm {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-weight: 600;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.required {
+  color: #ff6b6b;
+  margin-left: 4px;
+}
+
+.input {
+  padding: 15px;
+  border: 2px solid #e1e5e9;
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: #fff;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  transform: translateY(-1px);
+}
+
+.input::placeholder {
+  color: #aaa;
+}
+
+.select {
+  padding: 15px;
+  border: 2px solid #e1e5e9;
+  border-radius: 12px;
+  font-size: 1rem;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.select:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.genderGroup {
+  display: flex;
+  gap: 15px;
+  margin-top: 8px;
+}
+
+.radioItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 10px 15px;
+  border: 2px solid #e1e5e9;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  flex: 1;
+  justify-content: center;
+}
+
+.radioItem:hover {
+  border-color: #667eea;
+  background: rgba(102, 126, 234, 0.05);
+}
+
+.radioItem input[type="radio"] {
+  margin: 0;
+}
+
+.radioItem input[type="radio"]:checked + span {
+  color: #667eea;
+  font-weight: 600;
+}
+
+.radioItem:has(input[type="radio"]:checked) {
+  border-color: #667eea;
+  background: rgba(102, 126, 234, 0.1);
+}
+
+.agreementSection {
+  margin-top: 10px;
+}
+
+.agreementGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 1px solid #e1e5e9;
+}
+
+.checkboxItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.checkboxItem input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.checkboxLabel {
+  font-size: 0.95rem;
+  color: #333;
+  cursor: pointer;
+}
+
+.checkboxLabel.required {
+  font-weight: 600;
+}
+
+.linkButton {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 500;
+  margin-left: auto;
+  font-size: 0.9rem;
+}
+
+.linkButton:hover {
+  text-decoration: underline;
+}
+
+.submitButton {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 18px;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.submitButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.submitButton:hover::before {
+  left: 100%;
+}
+
+.submitButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+}
+
+.submitButton:active {
+  transform: translateY(0);
+}
+
+.loginSection {
+  text-align: center;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #e1e5e9;
+}
+
+.loginText {
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.loginLink {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+.loginLink:hover {
+  text-decoration: underline;
+}
+
+.errorMessage {
+  color: #ff6b6b;
+  font-size: 0.9rem;
+  margin-top: 5px;
+  padding-left: 5px;
+}
+
+.successMessage {
+  color: #51cf66;
+  font-size: 0.9rem;
+  margin-top: 5px;
+  padding-left: 5px;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .container {
+    padding: 15px;
+  }
+  
+  .signupCard {
+    padding: 30px 25px;
+    border-radius: 15px;
+  }
+  
+  .title {
+    font-size: 2rem;
+  }
+  
+  .genderGroup {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .radioItem {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .signupCard {
+    padding: 25px 20px;
+  }
+  
+  .title {
+    font-size: 1.8rem;
+  }
+  
+  .input, .select {
+    padding: 12px;
+  }
+  
+  .submitButton {
+    padding: 15px;
+  }
+}

@@ -1,0 +1,486 @@
+.container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  position: relative;
+}
+
+/* 배경 패턴 */
+.container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 40% 80%, rgba(120, 219, 226, 0.03) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.adminHeader {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.headerContainer {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.headerContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 70px;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.adminTitle {
+  font-size: 1.8rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.adminNav {
+  display: flex;
+  gap: 25px;
+}
+
+.navLink {
+  color: #666;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.navLink:hover {
+  color: #667eea;
+  background: rgba(102, 126, 234, 0.1);
+}
+
+.navLink.active {
+  color: #667eea;
+  font-weight: 600;
+  background: rgba(102, 126, 234, 0.15);
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  background: rgba(102, 126, 234, 0.1);
+  border-radius: 25px;
+  color: #667eea;
+  font-weight: 500;
+}
+
+.logoutButton {
+  padding: 8px 16px;
+  background: #ff6b6b;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.logoutButton:hover {
+  background: #ff5252;
+  transform: translateY(-1px);
+}
+
+.content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 30px 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.pageTitle {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.pageSubtitle {
+  color: #666;
+  font-size: 1.1rem;
+  margin-bottom: 40px;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px;
+  margin-bottom: 40px;
+}
+
+.statCard {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.statCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--card-color);
+}
+
+.statCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+.statCard.blue {
+  --card-color: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.statCard.green {
+  --card-color: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+}
+
+.statCard.purple {
+  --card-color: linear-gradient(135deg, #9f7aea 0%, #805ad5 100%);
+}
+
+.statCard.red {
+  --card-color: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+}
+
+.statCard.orange {
+  --card-color: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+}
+
+.statCard.cyan {
+  --card-color: linear-gradient(135deg, #4fd1c7 0%, #38b2ac 100%);
+}
+
+.statHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.statIcon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  background: var(--card-color);
+  color: white;
+}
+
+.statChange {
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: rgba(72, 187, 120, 0.1);
+  color: #38a169;
+}
+
+.statChange.negative {
+  background: rgba(245, 101, 101, 0.1);
+  color: #e53e3e;
+}
+
+.statTitle {
+  color: #666;
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.statValue {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.dashboardGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.dashboardCard {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.cardTitle {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ordersTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ordersTable th {
+  background: #f8f9fa;
+  padding: 15px;
+  text-align: left;
+  font-weight: 600;
+  color: #555;
+  border-bottom: 2px solid #e9ecef;
+  font-size: 0.9rem;
+}
+
+.ordersTable td {
+  padding: 15px;
+  border-bottom: 1px solid #e9ecef;
+  color: #666;
+}
+
+.ordersTable tr:hover {
+  background: rgba(102, 126, 234, 0.02);
+}
+
+.orderStatus {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.orderStatus.shipping {
+  background: rgba(255, 193, 7, 0.1);
+  color: #ff8f00;
+}
+
+.orderStatus.completed {
+  background: rgba(72, 187, 120, 0.1);
+  color: #38a169;
+}
+
+.orderStatus.pending {
+  background: rgba(102, 126, 234, 0.1);
+  color: #667eea;
+}
+
+.quickActions {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.actionButton {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  text-decoration: none;
+  border-radius: 12px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.actionButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+.actionButton.secondary {
+  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+}
+
+.actionButton.secondary:hover {
+  box-shadow: 0 8px 20px rgba(72, 187, 120, 0.3);
+}
+
+.actionButton.tertiary {
+  background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+}
+
+.actionButton.tertiary:hover {
+  box-shadow: 0 8px 20px rgba(237, 137, 54, 0.3);
+}
+
+.recentActivity {
+  margin-top: 30px;
+}
+
+.activityList {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.activityItem {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  background: rgba(248, 249, 250, 0.8);
+  border-radius: 12px;
+  border-left: 4px solid #667eea;
+}
+
+.activityIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+
+.activityContent {
+  flex: 1;
+}
+
+.activityText {
+  color: #333;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.activityTime {
+  color: #666;
+  font-size: 0.85rem;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 1200px) {
+  .dashboardGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .statsGrid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .headerContent {
+    flex-direction: column;
+    height: auto;
+    padding: 20px 0;
+    gap: 20px;
+  }
+  
+  .headerLeft {
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+  }
+  
+  .adminNav {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+  }
+  
+  .content {
+    padding: 20px 15px;
+  }
+  
+  .pageTitle {
+    font-size: 1.8rem;
+    text-align: center;
+  }
+  
+  .statsGrid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .statCard {
+    padding: 20px;
+  }
+  
+  .dashboardCard {
+    padding: 20px;
+  }
+  
+  .ordersTable {
+    font-size: 0.9rem;
+  }
+  
+  .ordersTable th,
+  .ordersTable td {
+    padding: 10px 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .adminTitle {
+    font-size: 1.5rem;
+  }
+  
+  .pageTitle {
+    font-size: 1.6rem;
+  }
+  
+  .statValue {
+    font-size: 1.8rem;
+  }
+  
+  .actionButton {
+    padding: 12px 16px;
+    font-size: 0.9rem;
+  }
+}

@@ -1,7 +1,12 @@
+'use client';
+
 import Link from 'next/link';
 import styles from './Header.module.css';
+import { useAuth } from '@/src/app/auth/authProvider';
 
 export default function Header() {
+  const { user } = useAuth();
+
   return (
     <header className={styles.header}>
       <div className={styles.container}>
@@ -39,9 +44,15 @@ export default function Header() {
             <Link href="/orders/cart" className={styles.userLink}>
               장바구니
             </Link>
-            <Link href="/mypage" className={styles.userLink}>
-              마이페이지
-            </Link>
+            {user?.role === "user" && (
+              <Link href="/logout" className={styles.userLink}>로그아웃</Link>
+            )}
+            {user?.role === "admin" && (
+              <Link href="/admin" className={styles.userLink}>관리자 페이지</Link>
+            )}
+            {!user && (
+              <Link href="/auth/login" className={styles.userLink}>로그인</Link>
+            )}
           </div>
         </div>
       </div>
