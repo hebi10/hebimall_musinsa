@@ -1,0 +1,312 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
+/* 배너 섹션 */
+.bannerSection {
+  margin-bottom: var(--spacing-xl);
+}
+
+.mainBanner {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 100%);
+}
+
+.bannerImage {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+  opacity: 0.8;
+}
+
+.bannerContent {
+  position: absolute;
+  top: 50%;
+  left: var(--spacing-xl);
+  transform: translateY(-50%);
+  color: white;
+  max-width: 500px;
+}
+
+.bannerTitle {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0 0 var(--spacing-md) 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.bannerDescription {
+  font-size: 1.25rem;
+  margin: 0 0 var(--spacing-lg) 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* 통계 */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+}
+
+.statItem {
+  text-align: center;
+  padding: var(--spacing-xl);
+  background: var(--color-bg-secondary);
+  border-radius: 8px;
+}
+
+.statNumber {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.statLabel {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+/* 필터 */
+.filters {
+  display: flex;
+  gap: var(--spacing-sm);
+  justify-content: center;
+  margin-bottom: var(--spacing-xl);
+  flex-wrap: wrap;
+}
+
+.filterButton {
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border: 1px solid var(--color-border);
+  background: white;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.filterButton:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.filterButton.active {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+}
+
+/* 이벤트 그리드 */
+.eventGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: var(--spacing-xl);
+  margin-bottom: var(--spacing-xl);
+}
+
+.eventCard {
+  display: block;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  text-decoration: none;
+  color: inherit;
+}
+
+.eventCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.eventImageContainer {
+  position: relative;
+  width: 100%;
+  height: 200px;
+}
+
+.eventImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.eventBadges {
+  position: absolute;
+  top: var(--spacing-sm);
+  left: var(--spacing-sm);
+  display: flex;
+  gap: var(--spacing-xs);
+}
+
+.typeBadge,
+.statusBadge {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: white;
+}
+
+.typeBadge.sale {
+  background: var(--color-accent);
+}
+
+.typeBadge.coupon {
+  background: var(--color-warning);
+}
+
+.typeBadge.special {
+  background: #9c88ff;
+}
+
+.typeBadge.new {
+  background: var(--color-success);
+}
+
+.statusBadge.active {
+  background: var(--color-success);
+}
+
+.statusBadge.ended {
+  background: var(--color-text-muted);
+}
+
+.eventInfo {
+  padding: var(--spacing-lg);
+}
+
+.eventTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 var(--spacing-sm) 0;
+  line-height: 1.3;
+}
+
+.eventDescription {
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--spacing-md) 0;
+  line-height: 1.5;
+}
+
+.eventMeta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-md);
+}
+
+.eventPeriod {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+
+.eventParticipants {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+
+.maxParticipants {
+  color: var(--color-text-muted);
+}
+
+.eventDiscount {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-accent);
+  background: rgba(255, 107, 107, 0.1);
+  padding: var(--spacing-sm);
+  border-radius: 6px;
+  text-align: center;
+}
+
+/* 페이지네이션 */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-xl);
+}
+
+.pageButton {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--color-border);
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.pageButton:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.pageButton.active {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+}
+
+.pageButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .eventGrid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-lg);
+  }
+  
+  .bannerContent {
+    position: static;
+    transform: none;
+    padding: var(--spacing-xl);
+    background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.7));
+  }
+  
+  .bannerTitle {
+    font-size: 2rem;
+  }
+  
+  .bannerDescription {
+    font-size: 1rem;
+  }
+  
+  .stats {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .statItem {
+    padding: var(--spacing-lg);
+  }
+  
+  .statNumber {
+    font-size: 2rem;
+  }
+  
+  .filters {
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: var(--spacing-sm);
+  }
+  
+  .filterButton {
+    white-space: nowrap;
+  }
+}

@@ -1,0 +1,336 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-lg);
+}
+
+/* 통계 정보 */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+.statItem {
+  text-align: center;
+  padding: var(--spacing-lg);
+  background: var(--color-bg-secondary);
+  border-radius: 8px;
+}
+
+.statNumber {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.statLabel {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+/* 검색 및 필터 */
+.controls {
+  display: flex;
+  gap: var(--spacing-lg);
+  align-items: center;
+  padding: var(--spacing-lg);
+  background: var(--color-bg-secondary);
+  border-radius: 8px;
+}
+
+.searchSection {
+  flex: 1;
+}
+
+.searchInput {
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.filters {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+.statusFilter,
+.typeFilter {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.actionSection {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+/* 일괄 작업 */
+.bulkActions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md);
+  background: var(--color-bg-secondary);
+  border-radius: 4px;
+}
+
+.selectAll {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.selectAll input {
+  margin: 0;
+}
+
+.actionButtons {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+/* 이벤트 목록 */
+.eventList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.eventItem {
+  padding: var(--spacing-lg);
+  border: 1px solid var(--color-border-light);
+  border-radius: 8px;
+  background: white;
+}
+
+.eventHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.eventSelect {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.eventSelect input {
+  margin: 0;
+}
+
+.eventImage {
+  flex-shrink: 0;
+}
+
+.thumbnail {
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.eventInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.eventTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.eventBadges {
+  display: flex;
+  gap: var(--spacing-xs);
+}
+
+.typeBadge,
+.statusBadge {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: white;
+}
+
+.typeBadge.sale {
+  background: var(--color-accent);
+}
+
+.typeBadge.coupon {
+  background: var(--color-warning);
+}
+
+.typeBadge.special {
+  background: #9c88ff;
+}
+
+.typeBadge.new {
+  background: var(--color-success);
+}
+
+.statusBadge.active {
+  background: var(--color-success);
+}
+
+.statusBadge.ended {
+  background: var(--color-text-muted);
+}
+
+.statusBadge.upcoming {
+  background: var(--color-primary);
+}
+
+.eventDescription {
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+.eventMeta {
+  display: flex;
+  gap: var(--spacing-lg);
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+
+.period {
+  font-weight: 500;
+}
+
+.participants {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.maxParticipants {
+  color: var(--color-text-muted);
+}
+
+.eventActions {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+}
+
+.eventDetails {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--color-border-light);
+}
+
+.eventBenefit {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--color-bg-secondary);
+  border-radius: 12px;
+}
+
+/* 빈 상태 */
+.emptyState {
+  text-align: center;
+  padding: var(--spacing-xl);
+  color: var(--color-text-secondary);
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-md);
+  }
+  
+  .statItem {
+    padding: var(--spacing-md);
+  }
+  
+  .statNumber {
+    font-size: 1.5rem;
+  }
+  
+  .controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-md);
+  }
+  
+  .filters {
+    justify-content: stretch;
+  }
+  
+  .statusFilter,
+  .typeFilter {
+    flex: 1;
+  }
+  
+  .actionSection {
+    justify-content: stretch;
+  }
+  
+  .bulkActions {
+    flex-direction: column;
+    gap: var(--spacing-md);
+    align-items: stretch;
+  }
+  
+  .eventItem {
+    padding: var(--spacing-md);
+  }
+  
+  .eventHeader {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-sm);
+  }
+  
+  .eventInfo {
+    order: -1;
+  }
+  
+  .eventTitle {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
+  
+  .eventMeta {
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+  
+  .eventActions {
+    justify-content: stretch;
+  }
+  
+  .eventDetails {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+}

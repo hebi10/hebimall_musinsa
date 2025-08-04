@@ -21,17 +21,20 @@ export default function Header() {
           {/* 네비게이션 */}
           <nav className={styles.nav}>
             <div className={styles.navList}>
-              <Link href="/main/recommend" className={styles.navLink}>
+              <Link href="/recommend" className={styles.navLink}>
                 추천
+              </Link>
+              <Link href="/events" className={styles.navLink}>
+                이벤트
+              </Link>
+              <Link href="/reviews" className={styles.navLink}>
+                리뷰
               </Link>
               <Link href="/main/ranking" className={styles.navLink}>
                 랭킹
               </Link>
               <Link href="/main/sale" className={styles.navLink}>
                 세일
-              </Link>
-              <Link href="/main/brand" className={styles.navLink}>
-                브랜드
               </Link>
             </div>
           </nav>
