@@ -1,26 +1,13 @@
 'use client';
 
-import Link from 'next/link';
-import { useAuth } from "@/src/app/(user)/auth/authProvider";
+import { useAuth } from "@/src/context/authProvider";
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import styles from './page.module.css';
-
-interface ProductData {
-  id: string;
-  name: string;
-  brand: string;
-  category: string;
-  price: number;
-  originalPrice?: number;
-  stock: number;
-  status: 'active' | 'inactive' | 'draft';
-  image?: string;
-  sku: string;
-  description: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import AdminNav from '../../components/adminNav';
+import { mockProducts as productsData } from '@/src/mocks/products';
+import { Product } from '@/src/types/product';
 
 interface ProductStats {
   total: number;
@@ -32,8 +19,8 @@ interface ProductStats {
 export default function AdminProductsPage() {
   const { user, loading, logout } = useAuth();
   const router = useRouter();
-  const [products, setProducts] = useState<ProductData[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<ProductData[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -48,139 +35,7 @@ export default function AdminProductsPage() {
 
   useEffect(() => {
     // 초기 상품 데이터 생성
-    const mockProducts: ProductData[] = [
-      {
-        id: '1',
-        name: 'iPhone 14 Pro',
-        brand: 'Apple',
-        category: '스마트폰',
-        price: 1490000,
-        originalPrice: 1590000,
-        stock: 25,
-        status: 'active',
-        sku: 'IPH14PRO001',
-        description: '최신 iPhone 14 Pro 모델',
-        createdAt: '2024-01-15',
-        updatedAt: '2024-01-20'
-      },
-      {
-        id: '2',
-        name: 'MacBook Air M2',
-        brand: 'Apple',
-        category: '노트북',
-        price: 1690000,
-        stock: 12,
-        status: 'active',
-        sku: 'MBA2022001',
-        description: 'M2 칩셋 탑재 MacBook Air',
-        createdAt: '2024-01-10',
-        updatedAt: '2024-01-18'
-      },
-      {
-        id: '3',
-        name: 'Galaxy S24 Ultra',
-        brand: 'Samsung',
-        category: '스마트폰',
-        price: 1598000,
-        stock: 3,
-        status: 'active',
-        sku: 'GS24U001',
-        description: '최신 Galaxy S24 Ultra',
-        createdAt: '2024-01-12',
-        updatedAt: '2024-01-19'
-      },
-      {
-        id: '4',
-        name: 'AirPods Pro 2세대',
-        brand: 'Apple',
-        category: '오디오',
-        price: 359000,
-        stock: 0,
-        status: 'active',
-        sku: 'APP2G001',
-        description: '노이즈 캔슬링 이어폰',
-        createdAt: '2024-01-08',
-        updatedAt: '2024-01-16'
-      },
-      {
-        id: '5',
-        name: 'iPad Pro 12.9',
-        brand: 'Apple',
-        category: '태블릿',
-        price: 1749000,
-        stock: 18,
-        status: 'active',
-        sku: 'IPP129001',
-        description: 'M2 칩셋 iPad Pro',
-        createdAt: '2024-01-05',
-        updatedAt: '2024-01-14'
-      },
-      {
-        id: '6',
-        name: 'Surface Laptop 5',
-        brand: 'Microsoft',
-        category: '노트북',
-        price: 1299000,
-        stock: 8,
-        status: 'inactive',
-        sku: 'SL5001',
-        description: 'Microsoft Surface Laptop',
-        createdAt: '2024-01-03',
-        updatedAt: '2024-01-12'
-      },
-      {
-        id: '7',
-        name: 'Nintendo Switch OLED',
-        brand: 'Nintendo',
-        category: '게임기',
-        price: 419000,
-        stock: 35,
-        status: 'active',
-        sku: 'NSW OLED001',
-        description: 'OLED 모델 닌텐도 스위치',
-        createdAt: '2023-12-28',
-        updatedAt: '2024-01-10'
-      },
-      {
-        id: '8',
-        name: 'Sony WH-1000XM5',
-        brand: 'Sony',
-        category: '오디오',
-        price: 449000,
-        stock: 2,
-        status: 'active',
-        sku: 'SYWH1000XM5',
-        description: '무선 노이즈 캔슬링 헤드폰',
-        createdAt: '2023-12-25',
-        updatedAt: '2024-01-08'
-      },
-      {
-        id: '9',
-        name: 'LG 그램 17인치',
-        brand: 'LG',
-        category: '노트북',
-        price: 2299000,
-        stock: 5,
-        status: 'draft',
-        sku: 'LGG17001',
-        description: '초경량 17인치 노트북',
-        createdAt: '2023-12-20',
-        updatedAt: '2024-01-05'
-      },
-      {
-        id: '10',
-        name: 'Apple Watch Series 9',
-        brand: 'Apple',
-        category: '웨어러블',
-        price: 599000,
-        stock: 22,
-        status: 'active',
-        sku: 'AWS9001',
-        description: '최신 Apple Watch',
-        createdAt: '2023-12-15',
-        updatedAt: '2024-01-02'
-      }
-    ];
+    const mockProducts: Product[] = productsData;
     setProducts(mockProducts);
     setFilteredProducts(mockProducts);
   }, []);
@@ -188,10 +43,12 @@ export default function AdminProductsPage() {
   useEffect(() => {
     let filtered = products.filter(product => {
       const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          product.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          product.sku.toLowerCase().includes(searchTerm.toLowerCase());
+                          product.brand.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesCategory = categoryFilter === 'all' || product.category === categoryFilter;
-      const matchesStatus = statusFilter === 'all' || product.status === statusFilter;
+      
+      // status가 없으면 'active'로 간주
+      const productStatus = product.status || 'active';
+      const matchesStatus = statusFilter === 'all' || productStatus === statusFilter;
       
       return matchesSearch && matchesCategory && matchesStatus;
     });
@@ -203,7 +60,7 @@ export default function AdminProductsPage() {
   const getProductStats = (): ProductStats => {
     return {
       total: products.length,
-      active: products.filter(p => p.status === 'active').length,
+      active: products.filter(p => (p.status || 'active') === 'active').length,
       lowStock: products.filter(p => p.stock > 0 && p.stock <= 5).length,
       outOfStock: products.filter(p => p.stock === 0).length
     };
@@ -222,7 +79,7 @@ export default function AdminProductsPage() {
   const handleStatusChange = (productId: string, newStatus: 'active' | 'inactive' | 'draft') => {
     setProducts(prev => prev.map(product => 
       product.id === productId 
-        ? { ...product, status: newStatus, updatedAt: new Date().toISOString().split('T')[0] }
+        ? { ...product, status: newStatus, updatedAt: new Date() }
         : product
     ));
   };
@@ -284,21 +141,8 @@ export default function AdminProductsPage() {
         <div className={styles.headerContainer}>
           <div className={styles.headerContent}>
             <div className={styles.headerLeft}>
-              <h1 className={styles.adminTitle}>HEBiMALL 관리자</h1>
-              <nav className={styles.adminNav}>
-                <Link href="/admin/dashboard" className={styles.navLink}>
-                  대시보드
-                </Link>
-                <Link href="/admin/users" className={styles.navLink}>
-                  사용자 관리
-                </Link>
-                <Link href="/admin/orders" className={styles.navLink}>
-                  주문 관리
-                </Link>
-                <Link href="/admin/products" className={`${styles.navLink} ${styles.active}`}>
-                  상품 관리
-                </Link>
-              </nav>
+              <h1 className={styles.adminTitle}>HEBIMALL Admin</h1>
+              <AdminNav />
             </div>
             <div className={styles.headerRight}>
               <div className={styles.userInfo}>
@@ -408,9 +252,11 @@ export default function AdminProductsPage() {
                         📱
                       </div>
                       <div>
-                        <div className={styles.productName}>{product.name}</div>
+                        <Link href={`/products/${product.id}`} className={styles.productName}>
+                          {product.name}
+                        </Link>
                         <div className={styles.productBrand}>
-                          {product.brand} • {product.sku}
+                          {product.brand} • {product.sku || 'N/A'}
                         </div>
                       </div>
                     </div>
@@ -436,12 +282,12 @@ export default function AdminProductsPage() {
                     </span>
                   </td>
                   <td>
-                    <span className={`${styles.productStatus} ${styles[product.status]}`}>
+                    <span className={`${styles.productStatus} ${styles[product.status || 'active']}`}>
                       {product.status === 'active' ? '판매중' : 
                        product.status === 'inactive' ? '판매중지' : '준비중'}
                     </span>
                   </td>
-                  <td>{product.createdAt}</td>
+                  <td>{product.createdAt.toLocaleDateString()}</td>
                   <td>
                     <button className={`${styles.actionButton} ${styles.primary}`}>
                       수정

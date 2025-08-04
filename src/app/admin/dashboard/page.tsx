@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/src/app/(user)/auth/authProvider";
+import { useAuth } from "@/src/context/authProvider";
 
 export default function AdminPage() {
   const router = useRouter();

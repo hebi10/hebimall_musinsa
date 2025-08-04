@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import styles from './Header.module.css';
-import { useAuth } from '@/src/app/auth/authProvider';
+import { useAuth } from '@/src/context/authProvider';
 
 export default function Header() {
   const { user } = useAuth();
@@ -21,6 +21,9 @@ export default function Header() {
           {/* 네비게이션 */}
           <nav className={styles.nav}>
             <div className={styles.navList}>
+              <Link href="/products" className={styles.navLink}>
+                전체상품
+              </Link>
               <Link href="/recommend" className={styles.navLink}>
                 추천
               </Link>
@@ -29,9 +32,6 @@ export default function Header() {
               </Link>
               <Link href="/reviews" className={styles.navLink}>
                 리뷰
-              </Link>
-              <Link href="/main/ranking" className={styles.navLink}>
-                랭킹
               </Link>
               <Link href="/main/sale" className={styles.navLink}>
                 세일

@@ -1,18 +1,23 @@
+"use client";
+
 import Link from "next/link";
 import Button from "../../../components/common/Button";
 import Input from "../../../components/common/Input";
 import styles from "./page.module.css";
+import useInput from "@/src/hooks/useInput";
 
 export default function LoginPage() {
+  const [values, onChange] = useInput({
+    id: '',
+    password: ''
+  });
+
+  console.log(values);
+
   return (
     <div className={styles.container}>
       <div className={styles.formWrapper}>
         <div>
-          <div className="text-center">
-            <Link href="/" className="text-3xl font-bold text-black">
-              HEBIMALL
-            </Link>
-          </div>
           <h2 className={styles.title}>
             로그인
           </h2>
@@ -22,15 +27,21 @@ export default function LoginPage() {
           <Input
             label="이메일"
             type="email"
+            name="id"
             placeholder="이메일을 입력하세요"
             required
+            value={values.id}
+            onChange={onChange}
           />
           
           <Input
             label="비밀번호"
             type="password"
+            name="password"
             placeholder="비밀번호를 입력하세요"
             required
+            value={values.password}
+            onChange={onChange}
           />
             
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -62,15 +73,15 @@ export default function LoginPage() {
         
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
           <button className={styles.socialButton}>
-            <span style={{ marginRight: '0.5rem' }}>🟡</span>
+            <span className={`${styles.socialBtn} ${styles.kakaoIcon}`}>K</span>
             카카오 로그인
           </button>
           <button className={styles.socialButton}>
-            <span style={{ marginRight: '0.5rem' }}>�</span>
+            <span className={`${styles.socialBtn} ${styles.naverIcon}`}>N</span>
             네이버 로그인
           </button>
           <button className={styles.socialButton}>
-            <span style={{ marginRight: '0.5rem' }}>�</span>
+            <span className={`${styles.socialBtn} ${styles.googleIcon}`}>G</span>
             구글 로그인
           </button>
         </div>

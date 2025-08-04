@@ -8,15 +8,7 @@ import ProductReviews from '@/src/components/product/ProductReviews';
 import styles from './ProductDetail.module.css';
 
 interface Props {
-  product: Product & {
-    details: {
-      material: string;
-      origin: string;
-      manufacturer: string;
-      precautions: string;
-      sizes: Record<string, { chest: number; length: number; shoulder: number }>;
-    };
-  };
+  product: Product;
 }
 
 export default function ProductDetailClient({ product }: Props) {
@@ -261,18 +253,24 @@ export default function ProductDetailClient({ product }: Props) {
                   <thead>
                     <tr>
                       <th>사이즈</th>
-                      <th>가슴둘레</th>
-                      <th>총장</th>
-                      <th>어깨너비</th>
+                      {Object.values(product.details.sizes)[0] && Object.keys(Object.values(product.details.sizes)[0]).map(key => (
+                        <th key={key}>
+                          {key === 'chest' ? '가슴둘레' :
+                           key === 'length' ? '총장' :
+                           key === 'shoulder' ? '어깨너비' :
+                           key === 'waist' ? '허리둘레' :
+                           key === 'thigh' ? '허벅지둘레' : key}
+                        </th>
+                      ))}
                     </tr>
                   </thead>
                   <tbody>
                     {Object.entries(product.details.sizes).map(([size, measurements]) => (
                       <tr key={size}>
                         <td>{size}</td>
-                        <td>{measurements.chest}cm</td>
-                        <td>{measurements.length}cm</td>
-                        <td>{measurements.shoulder}cm</td>
+                        {Object.entries(measurements).map(([key, value]) => (
+                          <td key={key}>{value ? `${value}cm` : '-'}</td>
+                        ))}
                       </tr>
                     ))}
                   </tbody>

@@ -18,6 +18,17 @@ export interface Product {
   tags: string[];
   createdAt: Date;
   updatedAt: Date;
+  status?: 'active' | 'inactive' | 'draft';
+  sku?: string;
+  details: {
+    material: string,
+    origin: string,
+    manufacturer: string,
+    precautions: string,
+    sizes: {
+      [key: string]: { waist?: number, thigh?: number, chest?: number, length?: number, shoulder?: number }
+    }
+  };
 }
 
 export interface ProductFilter {

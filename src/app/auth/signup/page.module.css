@@ -7,6 +7,7 @@
   padding: 20px;
   position: relative;
   overflow: hidden;
+  border-radius: 20px;
 }
 
 /* 배경 애니메이션 요소들 */
@@ -71,7 +72,7 @@
   padding: 40px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 500px;
+  max-width: 1000px;
   position: relative;
   z-index: 1;
   animation: slideUp 0.8s ease-out;

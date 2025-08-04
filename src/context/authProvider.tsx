@@ -21,7 +21,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     setLoading(true);
-    setUser({ role: "admin" }); // 예시: user 객체가 없으면 null로 설정
+
+    // 예시: user 객체가 없으면 null로 설정
+    // setUser({ role: "admin" }); 
+    setUser(null);
+
     setLoading(false);
   }, []);
 

@@ -1,20 +1,10 @@
 import PageHeader from "@/src/components/common/PageHeader";
 import ProductCard from "@/src/components/common/ProductCard";
 import styles from "./page.module.css";
+import { recommendedProducts as mockrecommendedProducts } from "@/src/mocks/products";
 
 export default function RecommendPage() {
-  // 임시 데이터
-  const recommendedProducts = Array.from({ length: 12 }, (_, i) => ({
-    id: `rec-${i + 1}`,
-    name: `추천 상품 ${i + 1}`,
-    brand: '브랜드명',
-    price: 29900 + (i * 10000),
-    originalPrice: i % 2 === 0 ? 39900 + (i * 10000) : undefined,
-    isNew: i < 3,
-    isSale: i % 2 === 0,
-    rating: 4.5,
-    reviewCount: 128 + i * 20,
-  }));
+  const recommendedProducts = mockrecommendedProducts;
 
   return (
     <div className={styles.container}>

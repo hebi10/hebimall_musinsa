@@ -1,0 +1,19 @@
+.adminNav {
+  display: flex;
+  gap: 25px;
+}
+
+aside .adminNav{
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0 var(--spacing-lg);
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .adminNav {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+  }
+}

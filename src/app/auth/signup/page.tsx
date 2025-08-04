@@ -4,25 +4,15 @@ import { useState, FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
-
-interface FormData {
-  email: string;
-  password: string;
-  confirmPassword: string;
-  name: string;
-  phone: string;
-  birthYear: string;
-  birthMonth: string;
-  birthDay: string;
-  gender: string;
-  termsAgree: boolean;
-  privacyAgree: boolean;
-  marketingAgree: boolean;
-}
+import useInputs from "@/src/hooks/useInput";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/src/libs/firebase/firebase";
+import { setDoc, doc } from "firebase/firestore";
+import { db } from "@/src/libs/firebase/firebase";
 
 export default function SignupPage() {
   const router = useRouter();
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, onChange] = useInputs({
     email: "",
     password: "",
     confirmPassword: "",
@@ -39,31 +29,6 @@ export default function SignupPage() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value, type } = e.target;
-    
-    if (type === "checkbox") {
-      const checked = (e.target as HTMLInputElement).checked;
-      setFormData(prev => ({
-        ...prev,
-        [name]: checked
-      }));
-    } else {
-      setFormData(prev => ({
-        ...prev,
-        [name]: value
-      }));
-    }
-
-    // 에러 메시지 제거
-    if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ""
-      }));
-    }
-  };
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
@@ -134,11 +99,27 @@ export default function SignupPage() {
     setIsSubmitting(true);
 
     try {
-      // 실제로는 API 호출
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
+      const user = userCredential.user;
+
+      await setDoc(doc(db, "users", user.uid), {
+        email: formData.email,
+        name: formData.name,
+        phone: formData.phone,
+        birth: {
+          year: formData.birthYear,
+          month: formData.birthMonth,
+          day: formData.birthDay
+        },
+        gender: formData.gender,
+        termsAgree: formData.termsAgree,
+        privacyAgree: formData.privacyAgree,
+        marketingAgree: formData.marketingAgree,
+        createdAt: new Date()
+      });
+
       alert("회원가입이 완료되었습니다!");
-      router.push("/auth/login");
+      router.push("/mypage");
     } catch (error) {
       alert("회원가입 중 오류가 발생했습니다. 다시 시도해주세요.");
     } finally {
@@ -175,7 +156,7 @@ export default function SignupPage() {
               type="email"
               name="email"
               value={formData.email}
-              onChange={handleChange}
+              onChange={onChange}
               placeholder="example@hebimall.com"
               className={styles.input}
             />
@@ -191,7 +172,7 @@ export default function SignupPage() {
               type="password"
               name="password"
               value={formData.password}
-              onChange={handleChange}
+              onChange={onChange}
               placeholder="8자 이상 입력해주세요"
               className={styles.input}
             />
@@ -207,7 +188,7 @@ export default function SignupPage() {
               type="password"
               name="confirmPassword"
               value={formData.confirmPassword}
-              onChange={handleChange}
+              onChange={onChange}
               placeholder="비밀번호를 다시 입력해주세요"
               className={styles.input}
             />
@@ -223,7 +204,7 @@ export default function SignupPage() {
               type="text"
               name="name"
               value={formData.name}
-              onChange={handleChange}
+              onChange={onChange}
               placeholder="실명을 입력해주세요"
               className={styles.input}
             />
@@ -239,7 +220,7 @@ export default function SignupPage() {
               type="tel"
               name="phone"
               value={formData.phone}
-              onChange={handleChange}
+              onChange={onChange}
               placeholder="010-1234-5678"
               className={styles.input}
             />
@@ -255,7 +236,7 @@ export default function SignupPage() {
               <select
                 name="birthYear"
                 value={formData.birthYear}
-                onChange={handleChange}
+                onChange={onChange}
                 className={styles.select}
                 style={{ flex: 1 }}
               >
@@ -267,7 +248,7 @@ export default function SignupPage() {
               <select
                 name="birthMonth"
                 value={formData.birthMonth}
-                onChange={handleChange}
+                onChange={onChange}
                 className={styles.select}
                 style={{ flex: 1 }}
               >
@@ -279,7 +260,7 @@ export default function SignupPage() {
               <select
                 name="birthDay"
                 value={formData.birthDay}
-                onChange={handleChange}
+                onChange={onChange}
                 className={styles.select}
                 style={{ flex: 1 }}
               >
@@ -304,7 +285,7 @@ export default function SignupPage() {
                   name="gender"
                   value="male"
                   checked={formData.gender === "male"}
-                  onChange={handleChange}
+                  onChange={onChange}
                 />
                 <span>남성</span>
               </label>
@@ -314,7 +295,7 @@ export default function SignupPage() {
                   name="gender"
                   value="female"
                   checked={formData.gender === "female"}
-                  onChange={handleChange}
+                  onChange={onChange}
                 />
                 <span>여성</span>
               </label>
@@ -331,7 +312,7 @@ export default function SignupPage() {
                   type="checkbox"
                   name="termsAgree"
                   checked={formData.termsAgree}
-                  onChange={handleChange}
+                  onChange={onChange}
                 />
                 <label className={`${styles.checkboxLabel} ${styles.required}`}>
                   이용약관에 동의합니다 (필수)
@@ -345,7 +326,7 @@ export default function SignupPage() {
                   type="checkbox"
                   name="privacyAgree"
                   checked={formData.privacyAgree}
-                  onChange={handleChange}
+                  onChange={onChange}
                 />
                 <label className={`${styles.checkboxLabel} ${styles.required}`}>
                   개인정보처리방침에 동의합니다 (필수)
@@ -359,7 +340,7 @@ export default function SignupPage() {
                   type="checkbox"
                   name="marketingAgree"
                   checked={formData.marketingAgree}
-                  onChange={handleChange}
+                  onChange={onChange}
                 />
                 <label className={styles.checkboxLabel}>
                   마케팅 정보 수신에 동의합니다 (선택)

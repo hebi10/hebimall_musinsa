@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import styles from './ProductCard.module.css';
 
 interface ProductCardProps {
@@ -34,7 +35,7 @@ export default function ProductCard({
     : 0;
 
   return (
-    <div className={styles.card}>
+    <Link href={`/products/${id}`} className={styles.card}>
       <div className={styles.imageContainer}>
         {image ? (
           <img
@@ -83,6 +84,6 @@ export default function ProductCard({
           </div>
         )}
       </div>
-    </div>
+    </Link>
   );
 }

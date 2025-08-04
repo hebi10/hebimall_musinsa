@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/src/app/(user)/auth/authProvider";
+import { useAuth } from "@/src/context/authProvider";
 import styles from "./page.module.css";
+import AdminNav from "../../components/adminNav";
 
 interface OrderData {
   id: string;
@@ -211,20 +212,7 @@ export default function AdminOrdersPage() {
           <div className={styles.headerContent}>
             <div className={styles.headerLeft}>
               <h1 className={styles.adminTitle}>HEBIMALL Admin</h1>
-              <nav className={styles.adminNav}>
-                <Link href="/admin/dashboard" className={styles.navLink}>
-                  📊 대시보드
-                </Link>
-                <Link href="/admin/users" className={styles.navLink}>
-                  👥 사용자 관리
-                </Link>
-                <Link href="/admin/products" className={styles.navLink}>
-                  📦 상품 관리
-                </Link>
-                <Link href="/admin/orders" className={`${styles.navLink} ${styles.active}`}>
-                  🛒 주문 관리
-                </Link>
-              </nav>
+              <AdminNav />
             </div>
             <div className={styles.headerRight}>
               <div className={styles.userInfo}>

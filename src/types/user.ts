@@ -10,6 +10,21 @@ export interface User {
   updatedAt: Date;
 }
 
+export interface SignUpFormData {
+  email: string;
+  password: string;
+  confirmPassword: string;
+  name: string;
+  phone: string;
+  birthYear: string;
+  birthMonth: string;
+  birthDay: string;
+  gender: string;
+  termsAgree: boolean;
+  privacyAgree: boolean;
+  marketingAgree: boolean;
+}
+
 export interface UserProfile extends User {
   addresses: Address[];
   preferences: UserPreferences;

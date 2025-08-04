@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/src/app/(user)/auth/authProvider";
+import { useAuth } from "@/src/context/authProvider";
 import styles from "./page.module.css";
+import AdminNav from "../../components/adminNav";
 
 interface StatData {
   title: string;
@@ -220,20 +221,7 @@ export default function AdminDashboardPage() {
           <div className={styles.headerContent}>
             <div className={styles.headerLeft}>
               <h1 className={styles.adminTitle}>HEBIMALL Admin</h1>
-              <nav className={styles.adminNav}>
-                <Link href="/admin/dashboard" className={`${styles.navLink} ${styles.active}`}>
-                  📊 대시보드
-                </Link>
-                <Link href="/admin/users" className={styles.navLink}>
-                  👥 사용자 관리
-                </Link>
-                <Link href="/admin/products" className={styles.navLink}>
-                  📦 상품 관리
-                </Link>
-                <Link href="/admin/orders" className={styles.navLink}>
-                  🛒 주문 관리
-                </Link>
-              </nav>
+              <AdminNav />
             </div>
             <div className={styles.headerRight}>
               <div className={styles.userInfo}>
@@ -315,13 +303,13 @@ export default function AdminDashboardPage() {
               ⚡ 빠른 작업
             </h3>
             <div className={styles.quickActions}>
-              <Link href="/admin/products" className={styles.actionButton}>
+              <Link href="/admin/dashboard/products" className={styles.actionButton}>
                 📦 새 상품 등록
               </Link>
-              <Link href="/admin/orders" className={`${styles.actionButton} ${styles.secondary}`}>
+              <Link href="/admin/dashboard/orders" className={`${styles.actionButton} ${styles.secondary}`}>
                 🛒 주문 관리
               </Link>
-              <Link href="/admin/users" className={`${styles.actionButton} ${styles.tertiary}`}>
+              <Link href="/admin/dashboard/users" className={`${styles.actionButton} ${styles.tertiary}`}>
                 👥 사용자 관리
               </Link>
               <button className={styles.actionButton}>

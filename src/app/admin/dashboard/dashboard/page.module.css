@@ -57,11 +57,6 @@
   background-clip: text;
 }
 
-.adminNav {
-  display: flex;
-  gap: 25px;
-}
-
 .navLink {
   color: #666;
   text-decoration: none;
@@ -426,12 +421,6 @@
     flex-direction: column;
     gap: 15px;
     align-items: center;
-  }
-  
-  .adminNav {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 15px;
   }
   
   .content {

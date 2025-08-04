@@ -3,6 +3,8 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import styles from './page.module.css';
+import { useUserData } from "@/src/hooks/useUserData";
+import { useAuthUser } from "@/src/hooks/useAuthUser";
 
 interface Order {
   id: string;
@@ -22,11 +24,18 @@ interface Order {
 }
 
 export default function OrderListPage() {
+  const user = useAuthUser();
+  const { data: userData, isLoading, error } = useUserData(user?.uid ?? null);
   const [selectedStatus, setSelectedStatus] = useState<string>('전체');
   const [selectedPeriod, setSelectedPeriod] = useState<string>('3개월');
 
   const statusOptions = ['전체', '배송완료', '배송중', '주문확인', '취소', '교환', '반품'];
   const periodOptions = ['1개월', '3개월', '6개월', '1년'];
+
+  if (isLoading) return <div>불러오는 중...</div>;
+  if (error) return <div>에러 발생: {error.message}</div>;
+
+  console.log(userData);
 
   const orders: Order[] = [
     {

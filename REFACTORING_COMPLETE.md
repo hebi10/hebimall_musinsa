@@ -25,7 +25,7 @@
    ```bash
    # 기존 그룹 폴더들 제거 (백업 후 진행)
    rm -rf src/app/(admin)
-   rm -rf src/app/(user)
+   rm -rf src/app
    rm -rf src/app/(shop)
    rm -rf src/app/(support)
    ```
@@ -44,7 +44,7 @@
 ```
 ❌ /shop/main/recommend  (깊이 4)
 ❌ /user/auth/login      (깊이 4)  
-❌ /admin/admin/dashboard (깊이 4)
+❌ /admin/admin (깊이 4)
 ❌ 의미 없는 레이아웃들
 ```
 
