@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import "../styles/variables.css";
-import Header from "../components/header/Header";
-import Footer from "../components/footer/Footer";
-import Providers from "../components/providers/Providers";
+import Header from "../shared/components/header/Header";
+import Footer from "../shared/components/footer/Footer";
+import RootProviders from "../shared/components/providers/RootProviders";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -24,13 +24,13 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className={`${inter.variable}`}>
-        <Providers>
+        <RootProviders>
           <Header />
           <main style={{ minHeight: '100vh' }}>
             {children}
           </main>
           <Footer />
-        </Providers>
+        </RootProviders>
       </body>
     </html>
   );

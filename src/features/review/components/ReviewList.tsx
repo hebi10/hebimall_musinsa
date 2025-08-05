@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Review } from '@/src/types/review';
-import Button from '@/src/components/common/Button';
+import { Review } from '@/shared/types/review';
+import Button from '@/shared/components/Button';
 import styles from './ReviewList.module.css';
 
 // Mock 데이터

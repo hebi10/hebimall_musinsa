@@ -3,12 +3,12 @@
 import { useState, useEffect, ReactNode } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/src/context/authProvider";
+import { useAuth } from "@/context/authProvider";
 import styles from "./page.module.css";
-import AdminNav from "../../components/adminNav";
-import { mockUsers } from "@/src/mocks/user";
-import { UserProfile } from "@/src/types/user";
-import AuthChecking from "@/src/app/admin/components/AuthChecking";
+import AdminNav from "../../_components/adminNav";
+import { mockUsers } from "@/mocks/user";
+import AuthChecking from "@/app/admin/_components/AuthChecking";
+import { UserProfile } from "@/shared/types/user";
 
 interface AdminUserData extends UserProfile {
   lastLogin: string;

@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import ProductDetailClient from './ProductDetailClient';
-import { mockProducts } from '@/src/mocks/products';
+import { mockProducts } from '@/mocks/products';
 
 interface Props {
   params: Promise<{

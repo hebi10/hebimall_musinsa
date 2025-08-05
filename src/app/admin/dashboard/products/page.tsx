@@ -1,13 +1,13 @@
 'use client';
 
-import { useAuth } from "@/src/context/authProvider";
+import { useAuth } from "@/context/authProvider";
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import styles from './page.module.css';
-import AdminNav from '../../components/adminNav';
-import { mockProducts as productsData } from '@/src/mocks/products';
-import { Product } from '@/src/types/product';
+import AdminNav from '../../_components/adminNav';
+import { mockProducts as productsData } from '@/mocks/products';
+import { Product } from '@/shared/types/product';
 
 interface ProductStats {
   total: number;

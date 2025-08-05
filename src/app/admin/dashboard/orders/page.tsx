@@ -3,10 +3,10 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/src/context/authProvider";
+import { useAuth } from "@/context/authProvider";
 import styles from "./page.module.css";
-import AdminNav from "../../components/adminNav";
-import { adminOrders, OrderData } from "@/src/mocks/order";
+import AdminNav from "../../_components/adminNav";
+import { adminOrders, OrderData } from "@/mocks/order";
 
 interface OrderStats {
   total: number;

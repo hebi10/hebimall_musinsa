@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Product } from '@/src/types/product';
-import { mockProducts } from '@/src/mocks/products';
-import ProductCard from '@/src/components/common/ProductCard';
+import { Product } from '@/shared/types/product';
+import { mockProducts } from '@/mocks/products';
+import ProductCard from '@/shared/components/ProductCard';
 import styles from './ProductList.module.css';
 
 export default function ProductList() {

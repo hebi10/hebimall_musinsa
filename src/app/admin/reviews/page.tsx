@@ -1,5 +1,5 @@
 
-import AdminReviewList from "@/src/components/admin/AdminReviewList";
+import AdminReviewList from "@/features/admin/components/AdminReviewList";
 import styles from "./page.module.css";
 
 export default function AdminReviewsPage() {

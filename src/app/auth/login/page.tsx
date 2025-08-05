@@ -1,13 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import Button from "../../../components/common/Button";
-import Input from "../../../components/common/Input";
+import Button from "../../../shared/components/Button";
+import Input from "../../../shared/components/Input";
 import styles from "./page.module.css";
-import useInput from "@/src/hooks/useInput";
+import useInput from "@/shared/hooks/useInput";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/src/context/authProvider";
+import { useAuth } from "@/context/authProvider";
 
 export default function LoginPage() {
   const router = useRouter();

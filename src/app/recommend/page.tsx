@@ -1,7 +1,7 @@
-import PageHeader from "@/src/components/common/PageHeader";
-import ProductCard from "@/src/components/common/ProductCard";
+import PageHeader from "@/shared/components/PageHeader";
+import ProductCard from "@/shared/components/ProductCard";
 import styles from "./page.module.css";
-import { recommendedProducts as mockrecommendedProducts } from "@/src/mocks/products";
+import { recommendedProducts as mockrecommendedProducts } from "@/mocks/products";
 
 export default function RecommendPage() {
   const recommendedProducts = mockrecommendedProducts;

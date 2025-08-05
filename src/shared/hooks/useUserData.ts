@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/src/libs/firebase/firebase";
+import { db } from "@/shared/libs/firebase/firebase";
 
 async function fetchUserData(uid: string | null) {
   if (!uid) throw new Error("uid is required");

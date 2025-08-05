@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { Event } from '@/src/types/event';
-import Button from '@/src/components/common/Button';
+import { Event } from '@/shared/types/event';
+import Button from '@/shared/components/Button';
 import styles from './EventDetail.module.css';
 
 interface Props {

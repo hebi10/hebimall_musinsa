@@ -1,5 +1,5 @@
-import PageHeader from "@/src/components/common/PageHeader";
-import EventList from "@/src/components/event/EventList";
+import PageHeader from "@/shared/components/PageHeader";
+import EventList from "@/features/event/components/EventList";
 import styles from "./page.module.css";
 
 export default function EventsPage() {

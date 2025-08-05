@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Review, ReviewSummary } from '@/src/types/review';
-import Button from '@/src/components/common/Button';
+import { Review, ReviewSummary } from '@/shared/types/review';
+import Button from '@/shared/components/Button';
 import styles from './ProductReviews.module.css';
 
 interface Props {

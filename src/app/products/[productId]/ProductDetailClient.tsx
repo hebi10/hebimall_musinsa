@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { Product } from '@/src/types/product';
-import Button from '@/src/components/common/Button';
-import ProductReviews from '@/src/components/product/ProductReviews';
+import { Product } from '@/shared/types/product';
+import Button from '@/shared/components/Button';
+import ProductReviews from '@/features/product/components/ProductReviews';
 import styles from './ProductDetail.module.css';
 
 interface Props {

@@ -1,14 +1,14 @@
 "use client";
 import { usePathname, useRouter } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
-import { useAuthUser } from "../hooks/useAuthUser";
+import { useAuthUser } from "../shared/hooks/useAuthUser";
 import { 
   logout as firebaseLogout, 
   signIn as firebaseSignIn, 
   signUp as firebaseSignUp  
-} from "../libs/firebase/auth";
-import { useUserData } from "../hooks/useUserData";
-import { getErrorMessage } from "../utils/authErrorMessages";
+} from "../shared/libs/firebase/auth";
+import { useUserData } from "../shared/hooks/useUserData";
+import { getErrorMessage } from "../shared/utils/authErrorMessages";
 
 interface AuthContextType {
   user: any;

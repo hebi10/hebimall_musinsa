@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import EventDetailClient from './EventDetailClient';
-import { mockEvent } from '@/src/mocks/event';
+import { mockEvent } from '@/mocks/event';
 
 interface Props {
   params: Promise<{

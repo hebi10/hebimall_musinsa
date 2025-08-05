@@ -4,12 +4,12 @@ import { useState, FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
-import useInputs from "@/src/hooks/useInput";
+import useInputs from "@/shared/hooks/useInput";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/src/libs/firebase/firebase";
+import { auth } from "@/shared/libs/firebase/firebase";
 import { setDoc, doc } from "firebase/firestore";
-import { db } from "@/src/libs/firebase/firebase";
-import { useAuth } from "@/src/context/authProvider";
+import { db } from "@/shared/libs/firebase/firebase";
+import { useAuth } from "@/context/authProvider";
 
 export default function SignupPage() {
   const router = useRouter();

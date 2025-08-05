@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import PageHeader from "../../components/common/PageHeader";
+import PageHeader from "../../shared/components/PageHeader";
 import styles from "./layout.module.css";
 import { useParams, usePathname } from "next/navigation";
-import { useAuth } from "@/src/context/authProvider";
+import { useAuth } from "@/context/authProvider";
 
 interface MyPageLayoutProps {
   children: React.ReactNode;

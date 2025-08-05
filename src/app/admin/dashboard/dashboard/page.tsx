@@ -3,9 +3,9 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/src/context/authProvider";
+import { useAuth } from "@/context/authProvider";
 import styles from "./page.module.css";
-import AdminNav from "../../components/adminNav";
+import AdminNav from "../../_components/adminNav";
 
 interface StatData {
   title: string;

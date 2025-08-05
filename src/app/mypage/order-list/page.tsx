@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import styles from './page.module.css';
-import { orders as mockOrders } from '@/src/mocks/order';
-import { useAuth } from '@/src/context/authProvider';
+import { orders as mockOrders } from '@/mocks/order';
+import { useAuth } from '@/context/authProvider';
 
 export default function OrderListPage() {
   const { user, userData, loading, isAdmin } = useAuth();

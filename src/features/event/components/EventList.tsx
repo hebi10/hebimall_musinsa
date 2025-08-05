@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Event } from '@/src/types/event';
-import Button from '@/src/components/common/Button';
+import { Event } from '@/shared/types/event';
+import Button from '@/shared/components/Button';
 import styles from './EventList.module.css';
 
 // Mock 데이터
