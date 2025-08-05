@@ -5,6 +5,7 @@ import Link from "next/link";
 import PageHeader from "../../components/common/PageHeader";
 import styles from "./layout.module.css";
 import { useParams, usePathname } from "next/navigation";
+import { useAuth } from "@/src/context/authProvider";
 
 interface MyPageLayoutProps {
   children: React.ReactNode;
@@ -13,6 +14,7 @@ interface MyPageLayoutProps {
 export default function MyPageLayout({ children }: MyPageLayoutProps) {
   const [activeTab, setActiveTab] = useState('orders');
   const pathname = usePathname();
+  const { logout } = useAuth();
 
   const userInfo = {
     name: "김철수",
@@ -164,6 +166,12 @@ export default function MyPageLayout({ children }: MyPageLayoutProps) {
                 >
                   재입고알림
                 </Link>
+                <button
+                  className={styles.menuItem}
+                  onClick={logout}
+                >
+                  로그아웃
+                </button>
               </nav>
             </div>
           </div>

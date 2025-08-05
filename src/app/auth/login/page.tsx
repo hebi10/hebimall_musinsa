@@ -5,14 +5,53 @@ import Button from "../../../components/common/Button";
 import Input from "../../../components/common/Input";
 import styles from "./page.module.css";
 import useInput from "@/src/hooks/useInput";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/src/context/authProvider";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [values, onChange] = useInput({
     id: '',
     password: ''
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  console.log(values);
+  const { login, error, clearError, user, loading } = useAuth();
+  
+  useEffect(() => {
+    if (!loading && user) {
+      router.replace("/mypage");
+    }
+  }, [user, loading, router]);
+
+  useEffect(() => {
+    clearError();
+
+    return () => {
+      clearError();
+    };
+  }, [values.id, values.password, clearError]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!values.id || !values.password) {
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    try {
+      await login(values.id, values.password);
+      router.replace("/mypage");
+    } catch (error) {
+      // 에러는 AuthProvider에서 처리됨
+      console.error("Login failed:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className={styles.container}>
@@ -23,7 +62,13 @@ export default function LoginPage() {
           </h2>
         </div>
         
-        <form className={styles.form}>
+        <form className={styles.form} onSubmit={handleSubmit}>
+          {error && (
+            <div className={styles.errorMessage}>
+              {error}
+            </div>
+          )}
+          
           <Input
             label="이메일"
             type="email"
@@ -62,8 +107,13 @@ export default function LoginPage() {
             </Link>
           </div>
           
-          <Button type="submit" size="lg" style={{ width: '100%' }}>
-            로그인
+          <Button 
+            type="submit" 
+            size="lg" 
+            style={{ width: '100%' }}
+            disabled={isSubmitting || !values.id || !values.password}
+          >
+            {isSubmitting ? "로그인 중..." : "로그인"}
           </Button>
         </form>
         

@@ -9,9 +9,11 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/src/libs/firebase/firebase";
 import { setDoc, doc } from "firebase/firestore";
 import { db } from "@/src/libs/firebase/firebase";
+import { useAuth } from "@/src/context/authProvider";
 
 export default function SignupPage() {
   const router = useRouter();
+  const { signUp, error, clearError } = useAuth();
   const [formData, onChange] = useInputs({
     email: "",
     password: "",
@@ -97,9 +99,11 @@ export default function SignupPage() {
     }
 
     setIsSubmitting(true);
+    clearError(); // 기존 에러 클리어
 
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
+      // AuthProvider의 signUp 사용
+      const userCredential = await signUp(formData.email, formData.password);
       const user = userCredential.user;
 
       await setDoc(doc(db, "users", user.uid), {
@@ -121,7 +125,8 @@ export default function SignupPage() {
       alert("회원가입이 완료되었습니다!");
       router.push("/mypage");
     } catch (error) {
-      alert("회원가입 중 오류가 발생했습니다. 다시 시도해주세요.");
+      // 에러는 AuthProvider에서 처리됨
+      console.error("Signup failed:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -147,6 +152,13 @@ export default function SignupPage() {
         </div>
 
         <form onSubmit={handleSubmit} className={styles.signupForm}>
+          {/* Firebase 에러 메시지 */}
+          {error && (
+            <div className={styles.firebaseError}>
+              {error}
+            </div>
+          )}
+          
           {/* 이메일 */}
           <div className={styles.formGroup}>
             <label className={styles.label}>

@@ -1,6 +1,8 @@
 import { auth } from "./firebase";
 import { 
+  browserSessionPersistence,
   createUserWithEmailAndPassword, 
+  setPersistence, 
   signInWithEmailAndPassword, 
   signOut 
 } from "firebase/auth";
@@ -12,10 +14,11 @@ export async function signUp(email: string, password: string) {
 
 // 로그인
 export async function signIn(email: string, password: string) {
+  await setPersistence(auth, browserSessionPersistence);
   return signInWithEmailAndPassword(auth, email, password);
 }
 
 // 로그아웃
-export async function logOut() {
+export async function logout() {
   return signOut(auth);
 }

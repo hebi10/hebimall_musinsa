@@ -12,9 +12,10 @@ async function fetchUserData(uid: string | null) {
 
 // 쿼리 훅도 동일하게 string | null 타입
 export function useUserData(uid: string | null) {
-  return useQuery({
+  const { data } = useQuery({
     queryKey: ["user", uid],
     queryFn: () => fetchUserData(uid),
     enabled: !!uid,
   });
+  return data;
 }
