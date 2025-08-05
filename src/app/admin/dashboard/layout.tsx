@@ -1,13 +1,20 @@
 import { ReactNode } from 'react';
 
-interface AdminLayoutProps {
+interface AdminDashboardLayoutProps {
   children: ReactNode;
+  products?: ReactNode; // Parallel route slot - optional로 변경
 }
 
-export default function AdminLayout({ children }: AdminLayoutProps) {
+export default function AdminDashboardLayout({ 
+  children, 
+  products 
+}: AdminDashboardLayoutProps) {
   return (
-    <div>
-      {children}
+    <div className="admin-dashboard-layout">
+      <div className="dashboard-main">
+        {children}
+      </div>
+      {products && products}
     </div>
   );
 }

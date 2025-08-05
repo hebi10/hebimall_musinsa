@@ -1,3 +1,4 @@
+// 사용자(기본 정보)
 export interface User {
   id: string;
   email: string;
@@ -10,6 +11,7 @@ export interface User {
   updatedAt: Date;
 }
 
+// 회원가입 폼 데이터 (폼에서만 사용)
 export interface SignUpFormData {
   email: string;
   password: string;
@@ -25,13 +27,7 @@ export interface SignUpFormData {
   marketingAgree: boolean;
 }
 
-export interface UserProfile extends User {
-  addresses: Address[];
-  preferences: UserPreferences;
-  point: number;
-  grade: 'bronze' | 'silver' | 'gold' | 'platinum';
-}
-
+// 주소 정보
 export interface Address {
   id: string;
   name: string;
@@ -43,6 +39,7 @@ export interface Address {
   isDefault: boolean;
 }
 
+// 유저 선호도
 export interface UserPreferences {
   favoriteCategories: string[];
   favoriteBrands: string[];
@@ -53,4 +50,17 @@ export interface UserPreferences {
   };
   newsletter: boolean;
   smsMarketing: boolean;
+}
+
+// 사용자 프로필 (서비스에서 활용하는 실제 유저 객체)
+export interface UserProfile extends User {
+  birthDate: Date;
+  gender: 'male' | 'female';
+  addresses: Address[];
+  preferences: UserPreferences;
+  point: number;
+  grade: 'bronze' | 'silver' | 'gold' | 'platinum';
+  status: 'active' | 'inactive' | 'banned';
+  role: 'user' | 'admin';
+  joinDate: string;
 }

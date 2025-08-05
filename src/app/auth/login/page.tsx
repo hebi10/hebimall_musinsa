@@ -25,14 +25,6 @@ export default function LoginPage() {
     }
   }, [user, loading, router]);
 
-  useEffect(() => {
-    clearError();
-
-    return () => {
-      clearError();
-    };
-  }, [values.id, values.password, clearError]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -41,12 +33,12 @@ export default function LoginPage() {
     }
 
     setIsSubmitting(true);
+    clearError();
     
     try {
       await login(values.id, values.password);
       router.replace("/mypage");
     } catch (error) {
-      // 에러는 AuthProvider에서 처리됨
       console.error("Login failed:", error);
     } finally {
       setIsSubmitting(false);
@@ -63,6 +55,7 @@ export default function LoginPage() {
         </div>
         
         <form className={styles.form} onSubmit={handleSubmit}>
+          
           {error && (
             <div className={styles.errorMessage}>
               {error}

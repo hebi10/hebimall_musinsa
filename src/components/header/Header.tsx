@@ -47,13 +47,14 @@ export default function Header() {
             <Link href="/orders/cart" className={styles.userLink}>
               장바구니
             </Link>
-            {user && ( isAdmin ? (
-              <Link href="/admin" className={styles.userLink}>관리자 페이지</Link>
-            ) : (
+            {user && (
               <Link href="/mypage" className={styles.userLink}>마이페이지</Link>
-            ))}
+            )}
             {!user && (
               <Link href="/auth/login" className={styles.userLink}>로그인</Link>
+            )}
+            {isAdmin && (
+              <Link href="/admin" className={styles.userLink}>Admin</Link>
             )}
           </div>
         </div>

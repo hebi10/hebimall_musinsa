@@ -1,11 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { Product } from '@/src/types/product';
 import { mockProducts } from '@/src/mocks/products';
 import ProductCard from '@/src/components/common/ProductCard';
-import Button from '@/src/components/common/Button';
 import styles from './ProductList.module.css';
 
 export default function ProductList() {
@@ -140,20 +138,19 @@ export default function ProductList() {
       {/* 상품 목록 */}
       <div className={styles.productGrid}>
         {displayedProducts.map(product => (
-          <Link key={product.id} href={`/products/${product.id}`} className={styles.productLink}>
-            <ProductCard
-              id={product.id}
-              name={product.name}
-              brand={product.brand}
-              price={product.price}
-              originalPrice={product.originalPrice}
-              isNew={product.isNew}
-              isSale={product.isSale}
-              rating={product.rating}
-              reviewCount={product.reviewCount}
-              image={product.images[0]}
-            />
-          </Link>
+          <ProductCard
+            key={product.id}
+            id={product.id}
+            name={product.name}
+            brand={product.brand}
+            price={product.price}
+            originalPrice={product.originalPrice}
+            isNew={product.isNew}
+            isSale={product.isSale}
+            rating={product.rating}
+            reviewCount={product.reviewCount}
+            image={product.images[0]}
+          />
         ))}
       </div>
 

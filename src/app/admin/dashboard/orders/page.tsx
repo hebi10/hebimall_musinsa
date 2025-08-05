@@ -6,19 +6,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/src/context/authProvider";
 import styles from "./page.module.css";
 import AdminNav from "../../components/adminNav";
-
-interface OrderData {
-  id: string;
-  orderNumber: string;
-  customer: string;
-  email: string;
-  amount: string;
-  status: string;
-  statusText: string;
-  date: string;
-  items: number;
-  paymentMethod: string;
-}
+import { adminOrders, OrderData } from "@/src/mocks/order";
 
 interface OrderStats {
   total: number;
@@ -29,104 +17,30 @@ interface OrderStats {
 
 export default function AdminOrdersPage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, isAdmin, loading, isUserDataLoading } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
-  const [orders, setOrders] = useState<OrderData[]>([]);
   const [filteredOrders, setFilteredOrders] = useState<OrderData[]>([]);
   const [stats, setStats] = useState<OrderStats>({ total: 0, pending: 0, shipping: 0, delivered: 0 });
 
   useEffect(() => {
-    // 관리자 권한 체크
-    if (!user || user.role !== "admin") {
-      router.replace("/");
-      return;
-    }
-
-    // 예시 주문 데이터
-    const mockOrders: OrderData[] = [
-      {
-        id: "1",
-        orderNumber: "#12345",
-        customer: "홍길동",
-        email: "hong@example.com",
-        amount: "159,900원",
-        status: "pending",
-        statusText: "결제 대기",
-        date: "2024-01-20",
-        items: 3,
-        paymentMethod: "신용카드"
-      },
-      {
-        id: "2",
-        orderNumber: "#12344",
-        customer: "김영희",
-        email: "kim@example.com",
-        amount: "89,000원",
-        status: "confirmed",
-        statusText: "주문 확인",
-        date: "2024-01-20",
-        items: 2,
-        paymentMethod: "계좌이체"
-      },
-      {
-        id: "3",
-        orderNumber: "#12343",
-        customer: "이철수",
-        email: "lee@example.com",
-        amount: "299,800원",
-        status: "shipping",
-        statusText: "배송 중",
-        date: "2024-01-19",
-        items: 5,
-        paymentMethod: "신용카드"
-      },
-      {
-        id: "4",
-        orderNumber: "#12342",
-        customer: "박민수",
-        email: "park@example.com",
-        amount: "129,000원",
-        status: "delivered",
-        statusText: "배송 완료",
-        date: "2024-01-18",
-        items: 2,
-        paymentMethod: "카카오페이"
-      },
-      {
-        id: "5",
-        orderNumber: "#12341",
-        customer: "정소영",
-        email: "jung@example.com",
-        amount: "79,900원",
-        status: "delivered",
-        statusText: "배송 완료",
-        date: "2024-01-17",
-        items: 1,
-        paymentMethod: "신용카드"
-      },
-      {
-        id: "6",
-        orderNumber: "#12340",
-        customer: "최준호",
-        email: "choi@example.com",
-        amount: "199,000원",
-        status: "cancelled",
-        statusText: "주문 취소",
-        date: "2024-01-16",
-        items: 3,
-        paymentMethod: "신용카드"
+    if (!isUserDataLoading && !loading) {
+      if (!user || !isAdmin) {
+        router.push('/auth/login');
       }
-    ];
+    }
+  }, [user, isUserDataLoading, isAdmin, router, loading]);
 
-    setOrders(mockOrders);
+  useEffect(() => {
+    // 예시 주문 데이터
+    const mockOrders: OrderData[] = adminOrders;
 
     // 통계 계산
     const newStats = {
       total: mockOrders.length,
       pending: mockOrders.filter(order => order.status === "pending").length,
-      shipping: mockOrders.filter(order => order.status === "shipping" || order.status === "confirmed").length,
+      shipping: mockOrders.filter(order => order.status === "shipped" || order.status === "confirmed").length,
       delivered: mockOrders.filter(order => order.status === "delivered").length
     };
     setStats(newStats);
@@ -134,11 +48,11 @@ export default function AdminOrdersPage() {
 
   // 필터링 로직
   useEffect(() => {
-    let filtered = orders;
+    let filtered = adminOrders;
 
     // 검색어 필터링
     if (searchTerm) {
-      filtered = filtered.filter(order =>
+      filtered = filtered.filter((order: OrderData) =>
         order.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
         order.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
         order.email.toLowerCase().includes(searchTerm.toLowerCase())
@@ -147,12 +61,12 @@ export default function AdminOrdersPage() {
 
     // 상태 필터링
     if (statusFilter !== "all") {
-      filtered = filtered.filter(order => order.status === statusFilter);
+      filtered = filtered.filter((order: OrderData) => order.status === statusFilter);
     }
 
     setFilteredOrders(filtered);
     setCurrentPage(1);
-  }, [orders, searchTerm, statusFilter]);
+  }, [searchTerm, statusFilter]);
 
   // 권한 체크 로딩
   if (!user || user.role !== "admin") {
@@ -175,7 +89,7 @@ export default function AdminOrdersPage() {
   }
 
   const handleStatusChange = (orderId: string, newStatus: string) => {
-    setOrders(prev => prev.map(order => 
+    setFilteredOrders(prev => prev.map(order => 
       order.id === orderId 
         ? { ...order, status: newStatus, statusText: getStatusText(newStatus) }
         : order
@@ -186,7 +100,7 @@ export default function AdminOrdersPage() {
     switch (status) {
       case "pending": return "결제 대기";
       case "confirmed": return "주문 확인";
-      case "shipping": return "배송 중";
+      case "shipped": return "배송 중";
       case "delivered": return "배송 완료";
       case "cancelled": return "주문 취소";
       default: return status;
@@ -277,7 +191,7 @@ export default function AdminOrdersPage() {
               <option value="all">전체 상태</option>
               <option value="pending">결제 대기</option>
               <option value="confirmed">주문 확인</option>
-              <option value="shipping">배송 중</option>
+              <option value="shipped">배송 중</option>
               <option value="delivered">배송 완료</option>
               <option value="cancelled">주문 취소</option>
             </select>
@@ -343,12 +257,12 @@ export default function AdminOrdersPage() {
                     {order.status === "confirmed" && (
                       <button 
                         className={styles.actionButton}
-                        onClick={() => handleStatusChange(order.id, "shipping")}
+                        onClick={() => handleStatusChange(order.id, "shipped")}
                       >
                         배송
                       </button>
                     )}
-                    {order.status === "shipping" && (
+                    {order.status === "shipped" && (
                       <button 
                         className={styles.actionButton}
                         onClick={() => handleStatusChange(order.id, "delivered")}

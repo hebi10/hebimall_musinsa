@@ -1,19 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, ReactNode } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/src/context/authProvider";
 import styles from "./page.module.css";
 import AdminNav from "../../components/adminNav";
+import { mockUsers } from "@/src/mocks/user";
+import { UserProfile } from "@/src/types/user";
+import AuthChecking from "@/src/app/admin/components/AuthChecking";
 
-interface UserData {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  status: string;
-  joinDate: string;
+interface AdminUserData extends UserProfile {
   lastLogin: string;
   orders: number;
   totalSpent: string;
@@ -28,111 +25,37 @@ interface UserStats {
 
 export default function AdminUsersPage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, isUserDataLoading, loading, isAdmin } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
-  const [users, setUsers] = useState<UserData[]>([]);
-  const [filteredUsers, setFilteredUsers] = useState<UserData[]>([]);
+  const [users, setUsers] = useState<AdminUserData[]>([]);
+  const [filteredUsers, setFilteredUsers] = useState<AdminUserData[]>([]);
   const [stats, setStats] = useState<UserStats>({ total: 0, active: 0, admin: 0, newUsers: 0 });
 
   useEffect(() => {
-    // 관리자 권한 체크
-    if (!user || user.role !== "admin") {
-      router.replace("/");
-      return;
-    }
-
-    // 예시 사용자 데이터
-    const mockUsers: UserData[] = [
-      {
-        id: "1",
-        name: "홍길동",
-        email: "hong@example.com",
-        role: "user",
-        status: "active",
-        joinDate: "2024-01-15",
-        lastLogin: "2024-01-20",
-        orders: 12,
-        totalSpent: "1,250,000원"
-      },
-      {
-        id: "2",
-        name: "김영희",
-        email: "kim@example.com",
-        role: "user",
-        status: "active",
-        joinDate: "2024-01-18",
-        lastLogin: "2024-01-19",
-        orders: 8,
-        totalSpent: "890,000원"
-      },
-      {
-        id: "3",
-        name: "이철수",
-        email: "lee@example.com",
-        role: "admin",
-        status: "active",
-        joinDate: "2023-12-01",
-        lastLogin: "2024-01-20",
-        orders: 0,
-        totalSpent: "0원"
-      },
-      {
-        id: "4",
-        name: "박민수",
-        email: "park@example.com",
-        role: "user",
-        status: "inactive",
-        joinDate: "2024-01-10",
-        lastLogin: "2024-01-12",
-        orders: 3,
-        totalSpent: "450,000원"
-      },
-      {
-        id: "5",
-        name: "정소영",
-        email: "jung@example.com",
-        role: "user",
-        status: "active",
-        joinDate: "2024-01-19",
-        lastLogin: "2024-01-20",
-        orders: 5,
-        totalSpent: "670,000원"
-      },
-      {
-        id: "6",
-        name: "최준호",
-        email: "choi@example.com",
-        role: "user",
-        status: "suspended",
-        joinDate: "2024-01-05",
-        lastLogin: "2024-01-08",
-        orders: 2,
-        totalSpent: "150,000원"
-      },
-      {
-        id: "7",
-        name: "윤지민",
-        email: "yoon@example.com",
-        role: "user",
-        status: "active",
-        joinDate: "2024-01-20",
-        lastLogin: "2024-01-20",
-        orders: 1,
-        totalSpent: "89,000원"
+    if (!isUserDataLoading && !loading) {
+      if (!user || !isAdmin) {
+        router.push('/auth/login');
       }
-    ];
+    }
+  }, [user, isUserDataLoading, isAdmin, router, loading]);
 
-    setUsers(mockUsers);
+  useEffect(() => {
+    setUsers(mockUsers.map(user => ({
+      ...user,
+      lastLogin: '2024-08-04 14:30',
+      orders: Math.floor(Math.random() * 50),
+      totalSpent: `${(Math.random() * 1000000).toLocaleString()}원`
+    })));
 
     // 통계 계산
     const newStats = {
-      total: mockUsers.length,
-      active: mockUsers.filter(user => user.status === "active").length,
-      admin: mockUsers.filter(user => user.role === "admin").length,
-      newUsers: mockUsers.filter(user => {
+      total: users.length,
+      active: users.filter(user => user.status === "active").length,
+      admin: users.filter(user => user.role === "admin").length,
+      newUsers: users.filter(user => {
         const joinDate = new Date(user.joinDate);
         const weekAgo = new Date();
         weekAgo.setDate(weekAgo.getDate() - 7);
@@ -169,32 +92,17 @@ export default function AdminUsersPage() {
   }, [users, searchTerm, roleFilter, statusFilter]);
 
   // 권한 체크 로딩
-  if (!user || user.role !== "admin") {
-    return (
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100vh',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        color: 'white',
-        fontSize: '1.2rem'
-      }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '3rem', marginBottom: '20px' }}>🔐</div>
-          <p>권한을 확인하는 중...</p>
-        </div>
-      </div>
-    );
+  if (!isAdmin && !isUserDataLoading) {
+    return <AuthChecking />;
   }
 
-  const handleStatusChange = (userId: string, newStatus: string) => {
+  const handleStatusChange = (userId: string, newStatus: 'active' | 'inactive' | 'banned') => {
     setUsers(prev => prev.map(user => 
       user.id === userId ? { ...user, status: newStatus } : user
     ));
   };
 
-  const handleRoleChange = (userId: string, newRole: string) => {
+  const handleRoleChange = (userId: string, newRole: 'user' | 'admin') => {
     setUsers(prev => prev.map(user => 
       user.id === userId ? { ...user, role: newRole } : user
     ));
@@ -204,7 +112,7 @@ export default function AdminUsersPage() {
     switch (status) {
       case "active": return "활성";
       case "inactive": return "비활성";
-      case "suspended": return "정지";
+      case "banned": return "정지";
       default: return status;
     }
   };
@@ -314,7 +222,7 @@ export default function AdminUsersPage() {
               <option value="all">전체 상태</option>
               <option value="active">활성</option>
               <option value="inactive">비활성</option>
-              <option value="suspended">정지</option>
+              <option value="banned">정지</option>
             </select>
 
             <button onClick={handleAddUser} className={styles.addButton}>
@@ -381,11 +289,11 @@ export default function AdminUsersPage() {
                     {userData.status === "active" ? (
                       <button 
                         className={`${styles.actionButton} ${styles.warning}`}
-                        onClick={() => handleStatusChange(userData.id, "suspended")}
+                        onClick={() => handleStatusChange(userData.id, "banned")}
                       >
                         정지
                       </button>
-                    ) : userData.status === "suspended" ? (
+                    ) : userData.status === "banned" ? (
                       <button 
                         className={styles.actionButton}
                         onClick={() => handleStatusChange(userData.id, "active")}

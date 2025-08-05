@@ -303,7 +303,7 @@ export default function AdminDashboardPage() {
               ⚡ 빠른 작업
             </h3>
             <div className={styles.quickActions}>
-              <Link href="/admin/dashboard/products" className={styles.actionButton}>
+              <Link href="/admin/dashboard/products/add" className={styles.actionButton}>
                 📦 새 상품 등록
               </Link>
               <Link href="/admin/dashboard/orders" className={`${styles.actionButton} ${styles.secondary}`}>

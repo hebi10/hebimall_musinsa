@@ -20,6 +20,7 @@ interface AuthContextType {
   isAdmin: boolean;
   error: string | null;
   clearError: () => void;
+  isUserDataLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -32,11 +33,13 @@ const AuthContext = createContext<AuthContextType>({
   isAdmin: false,
   error: null,
   clearError: () => {},
+  isUserDataLoading: false,
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuthUser();
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isUserDataLoading, setIsUserDataLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const pathname = usePathname();
@@ -67,15 +70,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const clearError = () => setError(null);
 
-  const userData = useUserData(user?.uid || "");
+  const { data: userData, isLoading: userDataLoading } = useUserData(user?.uid || "");
 
   useEffect(() => {
-    if (!loading && !user && pathname !== "/auth/login") {
+    // 일반 사용자 로그인 리다이렉트만 처리 (admin 페이지는 제외)
+    if (!loading && !user && pathname !== "/auth/login" && !pathname.startsWith("/admin")) {
       router.replace("/auth/login");
-    } else if (!loading && user && pathname === "/auth/login") {
+    } else if (!loading && user && !pathname.startsWith("/admin") && pathname === "/auth/login") {
       router.replace("/mypage");
     }
-  }, [user, loading, pathname]);
+  }, [user, loading, pathname, router]);
 
   useEffect(() => {
     if (userData?.role === 'admin') {
@@ -83,10 +87,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } else {
       setIsAdmin(false);
     }
-  }, [userData]);
+    // userDataLoading 상태를 사용하여 정확한 로딩 상태 관리
+    setIsUserDataLoading(userDataLoading || loading);
+  }, [userData, userDataLoading, loading]);
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, signUp, userData, loading, isAdmin, error, clearError }}>
+    <AuthContext.Provider value={{ user, login, logout, signUp, userData, loading, isUserDataLoading, isAdmin, error, clearError }}>
       {children}
     </AuthContext.Provider>
   );

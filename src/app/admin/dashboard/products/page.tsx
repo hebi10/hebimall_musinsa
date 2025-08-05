@@ -17,7 +17,7 @@ interface ProductStats {
 }
 
 export default function AdminProductsPage() {
-  const { user, loading, logout } = useAuth();
+  const { user, isUserDataLoading, logout, isAdmin, loading } = useAuth();
   const router = useRouter();
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
@@ -28,10 +28,12 @@ export default function AdminProductsPage() {
   const itemsPerPage = 10;
 
   useEffect(() => {
-    if (!loading && (!user || user.role !== 'admin')) {
-      router.push('/auth/login');
+    if (!isUserDataLoading && !loading) {
+      if (!user || !isAdmin) {
+        router.push('/auth/login');
+      }
     }
-  }, [user, loading, router]);
+  }, [user, isUserDataLoading, isAdmin, router, loading]);
 
   useEffect(() => {
     // 초기 상품 데이터 생성
@@ -116,24 +118,26 @@ export default function AdminProductsPage() {
     document.body.removeChild(link);
   };
 
-  if (loading) {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <div>로딩중...</div>
-      </div>
-    );
-  }
-
-  if (!user || user.role !== 'admin') {
-    return null;
-  }
-
   const stats = getProductStats();
   const paginatedProducts = filteredProducts.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+
+  // 로딩 중이거나 인증 확인 중일 때
+  if (isUserDataLoading || loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100dvh' }}>
+        <div>로딩중...</div>
+      </div>
+    );
+  }
+
+  // 사용자가 없거나 관리자가 아닐 때
+  if (!user || !isAdmin) {
+    return null;
+  }
 
   return (
     <div className={styles.container}>
@@ -217,9 +221,9 @@ export default function AdminProductsPage() {
               <option value="inactive">판매중지</option>
               <option value="draft">준비중</option>
             </select>
-            <button className={styles.addButton}>
+            <Link href="/admin/dashboard/products/add" className={styles.addButton}>
               ➕ 상품 추가
-            </button>
+            </Link>
             <button onClick={handleExport} className={styles.exportButton}>
               📊 내보내기
             </button>

@@ -30,6 +30,12 @@
   color: white;
 }
 
+.productImage{
+  width: 100%;
+  padding-bottom: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
 .bannerTitle {
   font-size: 3rem;
   font-weight: bold;

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import styles from './page.module.css';
 import { orders as mockOrders } from '@/src/mocks/order';
