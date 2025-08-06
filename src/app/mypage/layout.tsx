@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import PageHeader from "../../shared/components/PageHeader";
 import styles from "./layout.module.css";
-import { useParams, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/authProvider";
 
 interface MyPageLayoutProps {
@@ -36,22 +36,20 @@ export default function MyPageLayout({ children }: MyPageLayoutProps) {
   ];
 
   useEffect(() => {
-    if (pathname.includes("/mypage/order-list")) {
-      setActiveTab("orders");
-    } else if (pathname.includes("/mypage/qa")) {
-      setActiveTab("reviews");
-    } else if (pathname.includes("/mypage/recently-viewed")) {
-      setActiveTab("wishlist");
-    } else if (pathname.includes("/mypage/coupons")) {
-      setActiveTab("coupons");
-    } else if (pathname.includes("/mypage/point")) {
-      setActiveTab("points");
-    } else if (pathname.includes("/mypage/info-edit")) {
-      setActiveTab("profile");
-    } else if (pathname.includes("/mypage/counsel")) {
-      setActiveTab("counsel");
-    } else if (pathname.includes("/mypage/restock")) {
-      setActiveTab("restock");
+    const tabMap = {
+      "/mypage/order-list": "orders",
+      "/mypage/qa": "reviews",
+      "/mypage/recently-viewed": "wishlist",
+      "/mypage/coupons": "coupons",
+      "/mypage/point": "point",
+      "/mypage/info-edit": "profile",
+      "/mypage/counsel": "counsel",
+      "/mypage/restock": "restock",
+    };
+
+    const found = Object.entries(tabMap).find(([key]) => pathname.includes(key));
+    if (found) {
+      setActiveTab(found[1]);
     }
   }, [pathname]);
 

@@ -55,8 +55,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const logout = () => firebaseLogout();
-  
+  const logout = () => {
+    firebaseLogout();
+    router.replace("/auth/login");
+  };
+
   const signUp = async (email: string, password: string) => {
     try {
       setError(null);
@@ -73,21 +76,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { data: userData, isLoading: userDataLoading } = useUserData(user?.uid || "");
 
   useEffect(() => {
-    // 일반 사용자 로그인 리다이렉트만 처리 (admin 페이지는 제외)
-    if (!loading && !user && pathname !== "/auth/login" && !pathname.startsWith("/admin")) {
+    const loginRedirect = !loading && !user && pathname !== "/auth/login" && !pathname.startsWith("/admin") && pathname.includes("/mypage");
+    const userRedirect = !loading && user && !pathname.startsWith("/admin") && pathname === "/auth/login";
+
+    if (loginRedirect) {
       router.replace("/auth/login");
-    } else if (!loading && user && !pathname.startsWith("/admin") && pathname === "/auth/login") {
+    } else if (userRedirect) {
       router.replace("/mypage");
     }
   }, [user, loading, pathname, router]);
 
+  // 관리자일 경우
   useEffect(() => {
     if (userData?.role === 'admin') {
       setIsAdmin(true);
     } else {
       setIsAdmin(false);
     }
-    // userDataLoading 상태를 사용하여 정확한 로딩 상태 관리
     setIsUserDataLoading(userDataLoading || loading);
   }, [userData, userDataLoading, loading]);
 

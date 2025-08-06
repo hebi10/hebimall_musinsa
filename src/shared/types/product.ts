@@ -26,7 +26,15 @@ export interface Product {
     manufacturer: string,
     precautions: string,
     sizes: {
-      [key: string]: { waist?: number, thigh?: number, chest?: number, length?: number, shoulder?: number }
+      [key: string]: { 
+        waist?: number, 
+        thigh?: number, 
+        chest?: number, 
+        length?: number, 
+        shoulder?: number,
+        width?: number,
+        height?: number
+      }
     }
   };
 }

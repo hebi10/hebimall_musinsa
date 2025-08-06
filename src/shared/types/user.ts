@@ -6,7 +6,8 @@ export interface User {
   phone: string;
   birthDate?: Date;
   gender?: 'male' | 'female';
-  isAdmin: boolean;
+  isAdmin?: boolean;
+  pointBalance: number;
   createdAt: Date;
   updatedAt: Date;
 }

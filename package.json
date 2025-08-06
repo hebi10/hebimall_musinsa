@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "seed": "node scripts/seed-data.js"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.84.1",
@@ -20,6 +21,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "ts-node": "^10.9.2",
     "typescript": "^5"
   }
 }

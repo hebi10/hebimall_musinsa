@@ -7,7 +7,7 @@ import styles from "./page.module.css";
 import useInputs from "@/shared/hooks/useInput";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/shared/libs/firebase/firebase";
-import { setDoc, doc } from "firebase/firestore";
+import { setDoc, doc, addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "@/shared/libs/firebase/firebase";
 import { useAuth } from "@/context/authProvider";
 
@@ -119,13 +119,28 @@ export default function SignupPage() {
         termsAgree: formData.termsAgree,
         privacyAgree: formData.privacyAgree,
         marketingAgree: formData.marketingAgree,
-        createdAt: new Date()
+        pointBalance: 5000,
+        createdAt: serverTimestamp(),
       });
+
+      // Firebase Functions를 통한 포인트 적립으로 변경
+      // 회원가입 완료 후 포인트 서비스를 통해 적립
+      try {
+        const { getFunctions, httpsCallable } = await import('firebase/functions');
+        const functions = getFunctions();
+        const addPoint = httpsCallable(functions, 'addPoint');
+        
+        await addPoint({
+          amount: 5000,
+          description: '신규 회원가입 적립'
+        });
+      } catch (pointError) {
+        console.error("포인트 적립 실패:", pointError);
+      }
 
       alert("회원가입이 완료되었습니다!");
       router.push("/mypage");
     } catch (error) {
-      // 에러는 AuthProvider에서 처리됨
       console.error("Signup failed:", error);
     } finally {
       setIsSubmitting(false);

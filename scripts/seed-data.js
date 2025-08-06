@@ -1,6 +1,8 @@
-import { Product } from "@/shared/types/product";
+const { collection, doc, setDoc, writeBatch } = require('firebase/firestore');
+const { db } = require('./firebase-config.js');
 
-export const mockProducts: Product[] = [
+// Mock data (JavaScript로 변환)
+const mockProducts = [
   {
     id: 'product-1',
     name: '프리미엄 코튼 티셔츠',
@@ -234,16 +236,93 @@ export const mockProducts: Product[] = [
   }
 ];
 
-
-export const mockCategories = [
+const mockCategories = [
   { id: 'tops', name: '상의', productCount: 1250 },
   { id: 'bottoms', name: '하의', productCount: 890 },
   { id: 'shoes', name: '신발', productCount: 640 },
   { id: 'accessories', name: '액세서리', productCount: 320 },
 ];
 
-export const mockBrands = [
+const mockBrands = [
   { id: 'hebimall', name: 'HEBIMALL', productCount: 450 },
   { id: 'denim-brand', name: 'DENIM BRAND', productCount: 230 },
   { id: 'shoe-brand', name: 'SHOE BRAND', productCount: 180 },
 ];
+
+const seedProducts = async () => {
+  console.log('🌱 상품 시드 데이터를 Firebase에 추가 중...');
+  
+  try {
+    const batch = writeBatch(db);
+    const productsRef = collection(db, 'products');
+
+    mockProducts.forEach((product) => {
+      const productDoc = doc(productsRef, product.id);
+      batch.set(productDoc, product);
+    });
+
+    await batch.commit();
+    console.log(`✅ ${mockProducts.length}개의 상품이 성공적으로 추가되었습니다.`);
+  } catch (error) {
+    console.error('❌ 상품 추가 중 오류 발생:', error);
+    throw error;
+  }
+};
+
+const seedCategories = async () => {
+  console.log('🌱 카테고리 시드 데이터를 Firebase에 추가 중...');
+  
+  try {
+    const batch = writeBatch(db);
+    const categoriesRef = collection(db, 'categories');
+
+    mockCategories.forEach((category) => {
+      const categoryDoc = doc(categoriesRef, category.id);
+      batch.set(categoryDoc, category);
+    });
+
+    await batch.commit();
+    console.log(`✅ ${mockCategories.length}개의 카테고리가 성공적으로 추가되었습니다.`);
+  } catch (error) {
+    console.error('❌ 카테고리 추가 중 오류 발생:', error);
+    throw error;
+  }
+};
+
+const seedBrands = async () => {
+  console.log('🌱 브랜드 시드 데이터를 Firebase에 추가 중...');
+  
+  try {
+    const batch = writeBatch(db);
+    const brandsRef = collection(db, 'brands');
+
+    mockBrands.forEach((brand) => {
+      const brandDoc = doc(brandsRef, brand.id);
+      batch.set(brandDoc, brand);
+    });
+
+    await batch.commit();
+    console.log(`✅ ${mockBrands.length}개의 브랜드가 성공적으로 추가되었습니다.`);
+  } catch (error) {
+    console.error('❌ 브랜드 추가 중 오류 발생:', error);
+    throw error;
+  }
+};
+
+const seedAllData = async () => {
+  console.log('🚀 Firebase 시드 데이터 추가 시작...\n');
+  
+  try {
+    await seedCategories();
+    await seedBrands();
+    await seedProducts();
+    
+    console.log('\n🎉 모든 시드 데이터가 성공적으로 추가되었습니다!');
+  } catch (error) {
+    console.error('\n💥 시드 데이터 추가 중 오류 발생:', error);
+    process.exit(1);
+  }
+};
+
+// 스크립트 실행
+seedAllData();
