@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "hebimall"
-  }
+    "default": "hebimall",
+    "hebimall": "hebimall"
+  },
+  "targets": {},
+  "etags": {}
 }

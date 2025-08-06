@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import ProductCard from "../../shared/components/ProductCard";
-import Input from "../../shared/components/Input";
+import ProductCard from "../products/_components/ProductCard";
+import Input from "../_components/Input";
 import styles from "./page.module.css";
 
 export default function SearchPage() {

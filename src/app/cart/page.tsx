@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import PageHeader from "../../shared/components/PageHeader";
-import Button from "../../shared/components/Button";
+import PageHeader from "../_components/PageHeader";
+import Button from "../_components/Button";
 import styles from "./page.module.css";
 
 export default function CartPage() {

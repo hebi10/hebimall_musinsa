@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
-import PageHeader from "../../shared/components/PageHeader";
+import PageHeader from "../_components/PageHeader";
 import styles from "./layout.module.css";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/authProvider";
+import { ProfileSection, QuickActions, SidebarMenu } from "./_components";
 
 interface MyPageLayoutProps {
   children: React.ReactNode;
@@ -22,7 +22,6 @@ export default function MyPageLayout({ children }: MyPageLayoutProps) {
     membershipLevel: "VIP",
     orders: 15,
     reviews: 8,
-    points: 12500,
     coupons: 3
   };
 
@@ -66,113 +65,15 @@ export default function MyPageLayout({ children }: MyPageLayoutProps) {
       
       <div className={styles.content}>
         {/* 프로필 섹션 */}
-        <div className={styles.profileSection}>
-          <div className={styles.profileHeader}>
-            <div className={styles.profileAvatar}>
-              {userInfo.name.charAt(0)}
-            </div>
-            <div className={styles.profileInfo}>
-              <h2 className={styles.profileName}>{userInfo.name}님</h2>
-              <p className={styles.profileEmail}>{userInfo.email}</p>
-              <span className={styles.membershipLevel}>{userInfo.membershipLevel} 회원</span>
-            </div>
-          </div>
-          
-          <div className={styles.profileStats}>
-            <div className={styles.statItem}>
-              <div className={styles.statNumber}>{userInfo.orders}</div>
-              <div className={styles.statLabel}>총 주문</div>
-            </div>
-            <div className={styles.statItem}>
-              <div className={styles.statNumber}>{userInfo.reviews}</div>
-              <div className={styles.statLabel}>작성 리뷰</div>
-            </div>
-            <div className={styles.statItem}>
-              <div className={styles.statNumber}>{userInfo.points.toLocaleString()}</div>
-              <div className={styles.statLabel}>적립금</div>
-            </div>
-            <div className={styles.statItem}>
-              <div className={styles.statNumber}>{userInfo.coupons}</div>
-              <div className={styles.statLabel}>쿠폰</div>
-            </div>
-          </div>
-        </div>
+        <ProfileSection userInfo={userInfo} />
 
         {/* 빠른 메뉴 */}
-        <div className={styles.quickActions}>
-          {quickActions.map((action) => (
-            <Link key={action.title} href={action.href} className={styles.actionCard}>
-              <div className={styles.actionIcon}>{action.icon}</div>
-              <div className={styles.actionTitle}>{action.title}</div>
-              <div className={styles.actionDesc}>{action.desc}</div>
-            </Link>
-          ))}
-        </div>
+        <QuickActions actions={quickActions} />
 
         {/* 메인 콘텐츠 */}
         <div className={styles.mainContent}>
           {/* 사이드바 */}
-          <div className={styles.sidebar}>
-            <div className={styles.sidebarCard}>
-              <h3 className={styles.sidebarTitle}>마이메뉴</h3>
-              <nav className={styles.sidebarMenu}>
-                <Link 
-                  href="/mypage/order-list" 
-                  className={`${styles.menuItem} ${activeTab === 'orders' ? styles.active : ''}`}
-                >
-                  주문내역
-                </Link>
-                <Link 
-                  href="/mypage/qa" 
-                  className={`${styles.menuItem} ${activeTab === 'reviews' ? styles.active : ''}`}
-                >
-                  문의관리
-                </Link>
-                <Link 
-                  href="/mypage/recently-viewed" 
-                  className={`${styles.menuItem} ${activeTab === 'wishlist' ? styles.active : ''}`}
-                >
-                  최근본상품
-                </Link>
-                <Link 
-                  href="/mypage/coupons" 
-                  className={`${styles.menuItem} ${activeTab === 'coupons' ? styles.active : ''}`}
-                >
-                  쿠폰관리
-                </Link>
-                <Link 
-                  href="/mypage/point" 
-                  className={`${styles.menuItem} ${activeTab === 'point' ? styles.active : ''}`}
-                >
-                  적립금
-                </Link>
-                <Link 
-                  href="/mypage/info-edit" 
-                  className={`${styles.menuItem} ${activeTab === 'profile' ? styles.active : ''}`}
-                >
-                  회원정보수정
-                </Link>
-                <Link 
-                  href="/mypage/counsel" 
-                  className={`${styles.menuItem} ${activeTab === 'counsel' ? styles.active : ''}`}
-                >
-                  상담내역
-                </Link>
-                <Link 
-                  href="/mypage/restock" 
-                  className={`${styles.menuItem} ${activeTab === 'restock' ? styles.active : ''}`}
-                >
-                  재입고알림
-                </Link>
-                <button
-                  className={styles.menuItem}
-                  onClick={logout}
-                >
-                  로그아웃
-                </button>
-              </nav>
-            </div>
-          </div>
+          <SidebarMenu activeTab={activeTab} logout={logout} />
 
           {/* 콘텐츠 영역 - 여기에 각 페이지의 내용이 들어감 */}
           <div className={styles.contentArea}>

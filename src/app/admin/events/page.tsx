@@ -1,6 +1,6 @@
 
 
-import AdminEventList from "@/features/admin/components/AdminEventList";
+import AdminEventList from "./_components/AdminEventList";
 import styles from "./page.module.css";
 
 export default function AdminEventsPage() {

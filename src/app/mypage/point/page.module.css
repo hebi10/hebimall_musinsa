@@ -1,145 +1,117 @@
 .container {
-  padding: 0;
-  margin: 0;
+  padding: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-.pageHeader {
+.header {
   margin-bottom: 2rem;
   text-align: center;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white;
-  padding: 2rem;
-  border-radius: 16px;
-  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.25);
 }
 
-.pageTitle {
+.header h1 {
   font-size: 2rem;
-  font-weight: 800;
+  font-weight: 700;
+  color: #111827;
   margin: 0 0 0.5rem 0;
 }
 
-.pageDesc {
+.header p {
   font-size: 1rem;
+  color: #6b7280;
   margin: 0;
-  opacity: 0.9;
 }
 
-.summarySection {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-
-@media (min-width: 768px) {
-  .summarySection {
-    grid-template-columns: 2fr 1fr;
-  }
-}
-
-.currentPointsCard,
-.expiryWarningCard {
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+.balanceCard {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   border-radius: 16px;
   padding: 2rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 2rem;
+  color: white;
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 1.5rem;
-  transition: all 0.3s ease;
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.25);
 }
 
-.currentPointsCard {
-  border: 2px solid #10b981;
-}
-
-.expiryWarningCard {
-  border: 2px solid #f59e0b;
-}
-
-.currentPointsCard:hover,
-.expiryWarningCard:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.15);
-}
-
-.pointsIcon,
-.warningIcon {
-  font-size: 3rem;
-  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
-  width: 4rem;
-  height: 4rem;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid #a7f3d0;
-}
-
-.warningIcon {
-  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-  border-color: #fbbf24;
-}
-
-.pointsInfo,
-.warningInfo {
+.balanceInfo {
   flex: 1;
 }
 
-.pointsLabel,
-.warningLabel {
-  font-size: 0.875rem;
-  color: #6b7280;
-  margin-bottom: 0.5rem;
-  font-weight: 500;
+.balanceInfo h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 1rem 0;
+  opacity: 0.9;
 }
 
-.pointsAmount {
-  font-size: 2rem;
+.balance {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.amount {
+  font-size: 2.5rem;
   font-weight: 800;
-  color: #10b981;
 }
 
-.warningAmount {
+.unit {
+  font-size: 1.5rem;
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+.balanceDesc {
+  font-size: 0.875rem;
+  opacity: 0.8;
+  margin: 0;
+}
+
+.balanceIcon {
+  font-size: 3rem;
+}
+.earnInfo {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.earnInfo h3 {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #f59e0b;
+  color: #111827;
+  margin: 0 0 1.5rem 0;
 }
 
-.statsGrid {
+.earnMethods {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 1rem;
-  margin-bottom: 2rem;
 }
 
-@media (min-width: 768px) {
-  .statsGrid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-.statCard {
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  padding: 1.5rem;
+.earnMethod {
   display: flex;
   align-items: center;
   gap: 1rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
   transition: all 0.3s ease;
 }
 
-.statCard:hover {
-  transform: translateY(-4px);
+.earnMethod:hover {
+  transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(16, 185, 129, 0.15);
+  border-color: #10b981;
 }
 
-.statIcon {
+.methodIcon {
   font-size: 2rem;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: #f0fdf4;
   width: 3rem;
   height: 3rem;
   border-radius: 50%;
@@ -148,290 +120,262 @@
   justify-content: center;
 }
 
-.statContent {
-  flex: 1;
-}
-
-.statNumber {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #111827;
-  margin-bottom: 0.25rem;
-}
-
-.statLabel {
-  font-size: 0.875rem;
-  color: #6b7280;
-}
-
-.filterSection {
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  padding: 2rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-@media (min-width: 1024px) {
-  .filterSection {
-    flex-direction: row;
-    justify-content: space-between;
-  }
-}
-
-.filterGroup {
-  flex: 1;
-}
-
-.filterLabel {
-  display: block;
+.methodInfo h4 {
+  font-size: 1rem;
   font-weight: 600;
   color: #111827;
-  margin-bottom: 1rem;
-  font-size: 1rem;
+  margin: 0 0 0.25rem 0;
 }
 
-.filterButtons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-}
-
-.filterButton {
-  padding: 0.75rem 1.5rem;
-  border: 2px solid #e2e8f0;
-  background: white;
-  border-radius: 50px;
+.methodInfo p {
   font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0;
+  word-break: keep-all;
+}
+
+.tabMenu {
+  display: flex;
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 2rem;
+}
+
+.tabButton {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  font-size: 1rem;
   font-weight: 500;
   color: #6b7280;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
-.filterButton:hover {
-  border-color: #10b981;
-  background: #f8fafc;
+.tabButton.active {
+  background: white;
   color: #10b981;
-}
-
-.filterButton.active {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  border-color: #059669;
-  color: white;
   font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.transactionsSection {
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-  border: 1px solid #e2e8f0;
+.tabContent {
+  min-height: 400px;
+}
+
+.balanceTab {
+  background: white;
   border-radius: 16px;
   padding: 2rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.balanceDetails {
   margin-bottom: 2rem;
 }
 
-.sectionHeader {
+.balanceItem {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 2px solid #f1f5f9;
+  padding: 1rem;
+  border-bottom: 1px solid #f3f4f6;
 }
 
-.sectionTitle {
-  font-size: 1.5rem;
+.balanceItem:last-child {
+  border-bottom: none;
+}
+
+.balanceItem .label {
+  font-weight: 500;
+  color: #374151;
+}
+
+.balanceItem .value {
   font-weight: 700;
-  color: #111827;
-  margin: 0;
+  color: #10b981;
+  font-size: 1.1rem;
 }
 
-.resultCount {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 50px;
-  font-size: 0.875rem;
+.pointNote {
+  background: #f0fdf4;
+  border-radius: 12px;
+  padding: 1.5rem;
+  border-left: 4px solid #10b981;
+}
+
+.pointNote h4 {
+  font-size: 1.125rem;
   font-weight: 600;
+  color: #065f46;
+  margin: 0 0 1rem 0;
 }
 
-.transactionsList {
+.pointNote ul {
+  margin: 0;
+  padding-left: 1rem;
+}
+
+.pointNote li {
+  color: #374151;
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+}
+
+.historyTab {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.historyList {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
-.transactionCard {
-  background: linear-gradient(135deg, #ffffff 0%, #fefefe 100%);
-  border: 2px solid #f1f5f9;
-  border-radius: 16px;
+.historyItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
   padding: 1.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
   transition: all 0.3s ease;
 }
 
-.transactionCard:hover {
-  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.15);
+.historyItem:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transform: translateY(-2px);
 }
 
-.transactionCard.type-적립 {
-  border-left-color: #10b981;
-  border-left-width: 4px;
+.historyContent {
+  flex: 1;
 }
 
-.transactionCard.type-사용 {
-  border-left-color: #3b82f6;
-  border-left-width: 4px;
-}
-
-.transactionCard.type-소멸 {
-  border-left-color: #ef4444;
-  border-left-width: 4px;
-}
-
-.transactionMain {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-@media (max-width: 768px) {
-  .transactionMain {
-    flex-direction: column;
-    gap: 1rem;
-    align-items: stretch;
-  }
-}
-
-.transactionLeft {
+.historyHeader {
   display: flex;
   align-items: center;
   gap: 1rem;
-  flex: 1;
+  margin-bottom: 0.5rem;
 }
 
-@media (max-width: 768px) {
-  .transactionLeft {
-    justify-content: center;
-    text-align: center;
-  }
-}
-
-.transactionType {
-  font-size: 2rem;
-  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-  width: 3rem;
-  height: 3rem;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid #bbf7d0;
-}
-
-.transactionInfo {
-  flex: 1;
-}
-
-.transactionDescription {
-  font-size: 1rem;
+.pointType {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
   font-weight: 600;
-  color: #111827;
-  margin: 0 0 0.5rem 0;
 }
 
-.transactionDate {
+.pointType.earn {
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+}
+
+.pointType.use {
+  background: #eff6ff;
+  color: #2563eb;
+  border: 1px solid #93c5fd;
+}
+
+.pointType.expire {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fca5a5;
+}
+
+.pointType.refund {
+  background: #fef3c7;
+  color: #d97706;
+  border: 1px solid #fbbf24;
+}
+
+.historyDate {
   font-size: 0.875rem;
   color: #6b7280;
-  margin-bottom: 0.25rem;
+}
+
+.historyDesc {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #111827;
+  margin-bottom: 0.5rem;
 }
 
 .orderId {
   font-size: 0.75rem;
   color: #9ca3af;
-  margin-bottom: 0.25rem;
 }
 
-.expiryInfo {
-  font-size: 0.75rem;
-  color: #6b7280;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
+.historyAmount {
+  text-align: right;
 }
 
-.expiryLabel {
-  font-weight: 500;
-}
-
-.expiryDate {
-  color: #374151;
-}
-
-.expiryWarning {
-  color: #ef4444;
-  font-weight: 600;
-}
-
-.transactionRight {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 0.5rem;
-}
-
-@media (max-width: 768px) {
-  .transactionRight {
-    align-items: center;
-    text-align: center;
-  }
-}
-
-.transactionAmount {
+.historyAmount .amount {
   font-size: 1.25rem;
   font-weight: 700;
+  display: block;
+  margin-bottom: 0.5rem;
 }
 
-.transactionAmount.amount-적립 {
+.historyAmount .amount.earn {
   color: #10b981;
 }
 
-.transactionAmount.amount-사용 {
+.historyAmount .amount.use {
   color: #3b82f6;
 }
 
-.transactionAmount.amount-소멸 {
+.historyAmount .amount.expire {
   color: #ef4444;
 }
 
-.transactionTypeLabel {
-  padding: 0.25rem 0.75rem;
-  border-radius: 50px;
+.historyAmount .amount.refund {
+  color: #f59e0b;
+}
+
+.balanceAfter {
   font-size: 0.75rem;
-  font-weight: 600;
+  color: #6b7280;
 }
 
-.transactionTypeLabel.label-적립 {
-  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
-  color: #059669;
-  border: 1px solid #a7f3d0;
+.loadMore {
+  text-align: center;
+  margin-top: 2rem;
 }
 
-.transactionTypeLabel.label-사용 {
-  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-  color: #2563eb;
-  border: 1px solid #93c5fd;
+.loadMoreButton {
+  padding: 0.75rem 2rem;
+  background: #10b981;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.transactionTypeLabel.label-소멸 {
-  background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
-  color: #dc2626;
-  border: 1px solid #fca5a5;
+.loadMoreButton:hover {
+  background: #059669;
+  transform: translateY(-2px);
+}
+
+.loadMoreButton:disabled {
+  background: #d1d5db;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.loading {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #6b7280;
+  font-size: 1.125rem;
 }
 
 .emptyState {
@@ -442,89 +386,59 @@
 
 .emptyIcon {
   font-size: 4rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   opacity: 0.6;
 }
 
-.emptyTitle {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #111827;
-  margin-bottom: 0.5rem;
+.emptyState p {
+  font-size: 1.125rem;
+  margin: 0;
 }
 
-.emptyDesc {
-  margin-bottom: 2rem;
-  line-height: 1.6;
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+  border-radius: 8px;
+  height: 2.5rem;
+  width: 200px;
 }
 
-.guideSection {
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  padding: 2rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-
-.guideTitle {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #111827;
-  margin: 0 0 1.5rem 0;
-  text-align: center;
-}
-
-.guideGrid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
-}
-
-@media (min-width: 640px) {
-  .guideGrid {
-    grid-template-columns: repeat(2, 1fr);
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
   }
 }
 
-@media (min-width: 1024px) {
-  .guideGrid {
-    grid-template-columns: repeat(4, 1fr);
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem 0.5rem;
   }
-}
 
-.guideCard {
-  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-  border: 1px solid #bbf7d0;
-  border-radius: 12px;
-  padding: 1.5rem;
-  text-align: center;
-  transition: all 0.3s ease;
-}
+  .balanceCard {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
 
-.guideCard:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.15);
-}
+  .earnMethods {
+    grid-template-columns: 1fr;
+  }
 
-.guideIcon {
-  font-size: 2rem;
-  margin-bottom: 1rem;
-}
+  .historyItem {
+    flex-direction: column;
+    gap: 1rem;
+  }
 
-.guideContent {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
+  .historyAmount {
+    text-align: left;
+  }
 
-.guideItemTitle {
-  font-weight: 600;
-  color: #065f46;
-  font-size: 0.875rem;
-}
-
-.guideItemDesc {
-  font-size: 0.75rem;
-  color: #6b7280;
-  line-height: 1.4;
+  .tabButton {
+    font-size: 0.875rem;
+    padding: 0.5rem;
+  }
 }

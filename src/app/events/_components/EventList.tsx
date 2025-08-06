@@ -4,78 +4,10 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Event } from '@/shared/types/event';
-import Button from '@/shared/components/Button';
+import Button from '@/app/_components/Button';
 import styles from './EventList.module.css';
 
-// Mock 데이터
-const mockEvents: Event[] = [
-  {
-    id: 'event-1',
-    title: '신규 회원 가입 이벤트',
-    description: '첫 구매 시 20% 할인 쿠폰 증정!',
-    content: '신규 회원가입 후 첫 구매 시 20% 할인 쿠폰을 드립니다. 기간 내에 사용해주세요.',
-    bannerImage: '/images/events/signup-event.jpg',
-    thumbnailImage: '/images/events/signup-thumb.jpg',
-    eventType: 'coupon',
-    startDate: new Date('2024-01-01'),
-    endDate: new Date('2024-12-31'),
-    isActive: true,
-    discountRate: 20,
-    couponCode: 'WELCOME20',
-    participantCount: 1245,
-    maxParticipants: 5000,
-    createdAt: new Date('2024-01-01'),
-    updatedAt: new Date('2024-01-01')
-  },
-  {
-    id: 'event-2',
-    title: '봄맞이 특가 세일',
-    description: '봄 신상품 최대 50% 할인!',
-    content: '따뜻한 봄을 맞아 신상품을 특가로 만나보세요. 기간 한정 특가입니다.',
-    bannerImage: '/images/events/spring-sale.jpg',
-    thumbnailImage: '/images/events/spring-thumb.jpg',
-    eventType: 'sale',
-    startDate: new Date('2024-03-01'),
-    endDate: new Date('2024-03-31'),
-    isActive: true,
-    discountRate: 50,
-    targetCategories: ['상의', '하의', '아우터'],
-    participantCount: 892,
-    createdAt: new Date('2024-02-25'),
-    updatedAt: new Date('2024-02-25')
-  },
-  {
-    id: 'event-3',
-    title: '리뷰 작성 이벤트',
-    description: '리뷰 작성하고 적립금 받자!',
-    content: '구매 후 리뷰 작성 시 1,000원 적립금을 드립니다.',
-    bannerImage: '/images/events/review-event.jpg',
-    thumbnailImage: '/images/events/review-thumb.jpg',
-    eventType: 'special',
-    startDate: new Date('2024-01-15'),
-    endDate: new Date('2024-06-30'),
-    isActive: true,
-    discountAmount: 1000,
-    participantCount: 2341,
-    createdAt: new Date('2024-01-10'),
-    updatedAt: new Date('2024-01-10')
-  },
-  {
-    id: 'event-4',
-    title: '신상품 출시 기념',
-    description: '새로운 컬렉션을 만나보세요',
-    content: '2024 S/S 신상품 컬렉션이 출시되었습니다. 트렌디한 스타일을 만나보세요.',
-    bannerImage: '/images/events/new-collection.jpg',
-    thumbnailImage: '/images/events/new-thumb.jpg',
-    eventType: 'new',
-    startDate: new Date('2024-02-01'),
-    endDate: new Date('2024-04-30'),
-    isActive: true,
-    participantCount: 567,
-    createdAt: new Date('2024-01-25'),
-    updatedAt: new Date('2024-01-25')
-  }
-];
+import { mockEvents } from '@/mocks/event';
 
 export default function EventList() {
   const [filterType, setFilterType] = useState<'all' | 'sale' | 'coupon' | 'special' | 'new'>('all');

@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { Product } from '@/shared/types/product';
-import Button from '@/shared/components/Button';
-import ProductReviews from '@/features/product/components/ProductReviews';
+import Button from '@/app/_components/Button';
+// import ProductReviews from '@/features/product/components/ProductReviews';
 import styles from './ProductDetail.module.css';
 
 interface Props {
@@ -280,7 +280,9 @@ export default function ProductDetailClient({ product }: Props) {
           )}
 
           {activeTab === 'review' && (
-            <ProductReviews productId={product.id} />
+            <div className={styles.reviewsContent}>
+              <p>리뷰 컴포넌트는 추후 구현 예정입니다.</p>
+            </div>
           )}
 
           {activeTab === 'qna' && (

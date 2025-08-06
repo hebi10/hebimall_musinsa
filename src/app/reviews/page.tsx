@@ -1,5 +1,5 @@
-import PageHeader from "@/shared/components/PageHeader";
-import ReviewList from "@/features/review/components/ReviewList";
+import PageHeader from "@/app/_components/PageHeader";
+import ReviewList from "./_components/ReviewList";
 import styles from "./page.module.css";
 
 export default function ReviewsPage() {

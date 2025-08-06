@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { Event } from '@/shared/types/event';
-import Button from '@/shared/components/Button';
+import Button from '@/app/_components/Button';
 import styles from './EventDetail.module.css';
 
 interface Props {

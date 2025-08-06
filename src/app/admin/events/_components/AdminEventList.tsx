@@ -3,63 +3,10 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { Event } from '@/shared/types/event';
-import Button from '@/shared/components/Button';
+import Button from '@/app/_components/Button';
 import styles from './AdminEventList.module.css';
 
-// Mock 데이터
-const mockEvents: Event[] = [
-  {
-    id: 'event-1',
-    title: '신규 회원 가입 이벤트',
-    description: '첫 구매 시 20% 할인 쿠폰 증정!',
-    content: '신규 회원가입 후 첫 구매 시 20% 할인 쿠폰을 드립니다.',
-    bannerImage: '/images/events/signup-event.jpg',
-    thumbnailImage: '/images/events/signup-thumb.jpg',
-    eventType: 'coupon',
-    startDate: new Date('2024-01-01'),
-    endDate: new Date('2024-12-31'),
-    isActive: true,
-    discountRate: 20,
-    couponCode: 'WELCOME20',
-    participantCount: 1245,
-    maxParticipants: 5000,
-    createdAt: new Date('2024-01-01'),
-    updatedAt: new Date('2024-01-01')
-  },
-  {
-    id: 'event-2',
-    title: '봄맞이 특가 세일',
-    description: '봄 신상품 최대 50% 할인!',
-    content: '따뜻한 봄을 맞아 신상품을 특가로 만나보세요.',
-    bannerImage: '/images/events/spring-sale.jpg',
-    thumbnailImage: '/images/events/spring-thumb.jpg',
-    eventType: 'sale',
-    startDate: new Date('2024-03-01'),
-    endDate: new Date('2024-03-31'),
-    isActive: true,
-    discountRate: 50,
-    targetCategories: ['상의', '하의', '아우터'],
-    participantCount: 892,
-    createdAt: new Date('2024-02-25'),
-    updatedAt: new Date('2024-02-25')
-  },
-  {
-    id: 'event-3',
-    title: '종료된 이벤트',
-    description: '지난 이벤트입니다',
-    content: '이미 종료된 이벤트입니다.',
-    bannerImage: '/images/events/ended-event.jpg',
-    thumbnailImage: '/images/events/ended-thumb.jpg',
-    eventType: 'special',
-    startDate: new Date('2023-12-01'),
-    endDate: new Date('2023-12-31'),
-    isActive: false,
-    discountAmount: 1000,
-    participantCount: 2341,
-    createdAt: new Date('2023-11-25'),
-    updatedAt: new Date('2023-11-25')
-  }
-];
+import { mockEvents } from '@/mocks/event';
 
 export default function AdminEventList() {
   const [events, setEvents] = useState(mockEvents);

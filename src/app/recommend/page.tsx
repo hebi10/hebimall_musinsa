@@ -1,5 +1,5 @@
-import PageHeader from "@/shared/components/PageHeader";
-import ProductCard from "@/shared/components/ProductCard";
+import PageHeader from "@/app/_components/PageHeader";
+import ProductCard from "@/app/products/_components/ProductCard";
 import styles from "./page.module.css";
 import { mockProducts } from "@/mocks/products";
 

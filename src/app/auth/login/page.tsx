@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import Button from "../../../shared/components/Button";
-import Input from "../../../shared/components/Input";
+import Button from "../../_components/Button";
+import Input from "../../_components/Input";
 import styles from "./page.module.css";
 import useInput from "@/shared/hooks/useInput";
 import { useEffect, useState } from "react";

@@ -1,5 +1,4 @@
 // 포인트 관련 React Hook
-
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import PointService from '@/shared/services/pointService';
@@ -12,7 +11,7 @@ export const usePointBalance = () => {
   
   return useQuery({
     queryKey: ['pointBalance', user?.uid],
-    queryFn: () => PointService.getPointBalance(),
+    queryFn: () => PointService.getPointBalance(user!.uid),
     enabled: !!user,
     staleTime: 1000 * 60 * 5, // 5분
   });
@@ -33,7 +32,7 @@ export const usePointHistory = (limit: number = 50) => {
     refetch,
   } = useQuery({
     queryKey: ['pointHistory', user?.uid, limit],
-    queryFn: () => PointService.getPointHistory(limit),
+    queryFn: () => PointService.getPointHistory(user!.uid, limit),
     enabled: !!user,
   });
 
@@ -50,7 +49,7 @@ export const usePointHistory = (limit: number = 50) => {
 
     setIsLoadingMore(true);
     try {
-      const response = await PointService.getPointHistory(limit, lastDoc);
+      const response = await PointService.getPointHistory(user!.uid, limit, lastDoc);
       if (response.success) {
         setAllHistory(prev => [...prev, ...response.history]);
         setLastDoc(response.lastDoc);

@@ -1,25 +1,22 @@
 // 포인트 관리 서비스
 
-import { getFunctions, httpsCallable } from 'firebase/functions';
-import app from '@/shared/libs/firebase/firebase';
+import { httpsCallable } from 'firebase/functions';
+import { doc, getDoc, collection, query, orderBy, limit, getDocs, startAfter } from 'firebase/firestore';
+import { functions, db } from '@/shared/libs/firebase/firebase';
 import { 
   AddPointRequest, 
   UsePointRequest, 
   RefundPointRequest,
   PointResponse,
   PointHistoryResponse,
-  PointBalanceResponse 
+  PointBalanceResponse,
+  PointHistory
 } from '@/shared/types/point';
 
-// Firebase Functions 초기화
-const functions = getFunctions(app);
-
-// Firebase Functions 호출 함수들
+// Firebase Functions 호출 함수들 (쓰기 작업만)
 const addPointFunction = httpsCallable<AddPointRequest, PointResponse>(functions, 'addPoint');
 const usePointFunction = httpsCallable<UsePointRequest, PointResponse>(functions, 'usePoint');
 const refundPointFunction = httpsCallable<RefundPointRequest, PointResponse>(functions, 'refundPoint');
-const getPointHistoryFunction = httpsCallable<any, PointHistoryResponse>(functions, 'getPointHistory');
-const getPointBalanceFunction = httpsCallable<any, PointBalanceResponse>(functions, 'getPointBalance');
 
 export class PointService {
   /**
@@ -62,12 +59,33 @@ export class PointService {
   }
 
   /**
-   * 포인트 내역 조회
+   * 포인트 내역 조회 (클라이언트에서 직접 Firestore 읽기)
    */
-  static async getPointHistory(limit: number = 50, lastDoc?: any): Promise<PointHistoryResponse> {
+  static async getPointHistory(userId: string, limitCount: number = 50, lastDoc?: any): Promise<PointHistoryResponse> {
     try {
-      const result = await getPointHistoryFunction({ limit, lastDoc });
-      return result.data;
+      let q = query(
+        collection(db, 'users', userId, 'pointHistory'),
+        orderBy('date', 'desc'),
+        limit(limitCount)
+      );
+
+      if (lastDoc) {
+        q = query(q, startAfter(lastDoc));
+      }
+
+      const snapshot = await getDocs(q);
+      
+      const history = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as PointHistory[];
+
+      return {
+        success: true,
+        history,
+        hasMore: snapshot.docs.length === limitCount,
+        lastDoc: snapshot.docs.length > 0 ? snapshot.docs[snapshot.docs.length - 1] : null
+      };
     } catch (error: any) {
       console.error('포인트 내역 조회 실패:', error);
       throw new Error(error.message || '포인트 내역 조회에 실패했습니다.');
@@ -75,12 +93,23 @@ export class PointService {
   }
 
   /**
-   * 포인트 잔액 조회
+   * 포인트 잔액 조회 (클라이언트에서 직접 Firestore 읽기)
    */
-  static async getPointBalance(): Promise<PointBalanceResponse> {
+  static async getPointBalance(userId: string): Promise<PointBalanceResponse> {
     try {
-      const result = await getPointBalanceFunction({});
-      return result.data;
+      const userDoc = await getDoc(doc(db, 'users', userId));
+      
+      if (!userDoc.exists()) {
+        throw new Error('사용자 정보를 찾을 수 없습니다.');
+      }
+
+      const userData = userDoc.data();
+      const pointBalance = userData?.pointBalance || 0;
+
+      return {
+        success: true,
+        pointBalance
+      };
     } catch (error: any) {
       console.error('포인트 잔액 조회 실패:', error);
       throw new Error(error.message || '포인트 잔액 조회에 실패했습니다.');

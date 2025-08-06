@@ -1,66 +1,17 @@
 'use client';
 
 import { useState } from 'react';
-import { Review, ReviewSummary } from '@/shared/types/review';
-import Button from '@/shared/components/Button';
-import styles from './ProductReviews.module.css';
+import { Review } from '@/shared/types/review';
+import Button from '@/app/_components/Button';
+import styles from './ReviewList.module.css';
 
-interface Props {
-  productId: string;
-}
+import { mockReviews } from '@/mocks/review';
 
-// Mock 데이터
-const mockReviewSummary: ReviewSummary = {
-  averageRating: 4.5,
-  totalReviews: 128,
-  ratingDistribution: {
-    5: 80,
-    4: 30,
-    3: 12,
-    2: 4,
-    1: 2
-  },
-  recommendationRate: 92
-};
-
-const mockReviews: Review[] = [
-  {
-    id: 'review-1',
-    productId: 'product-1',
-    userId: 'user-1',
-    userName: '김**',
-    rating: 5,
-    title: '정말 만족합니다!',
-    content: '소재도 좋고 핏도 완벽해요. 배송도 빨라서 좋았습니다.',
-    images: [],
-    size: 'M',
-    color: 'black',
-    height: 170,
-    weight: 65,
-    isRecommended: true,
-    createdAt: new Date('2024-01-15'),
-    updatedAt: new Date('2024-01-15')
-  },
-  {
-    id: 'review-2',
-    productId: 'product-1',
-    userId: 'user-2',
-    userName: '이**',
-    rating: 4,
-    title: '괜찮아요',
-    content: '생각보다 얇은 느낌이지만 여름용으로는 좋을 것 같아요.',
-    images: [],
-    size: 'L',
-    color: 'white',
-    isRecommended: true,
-    createdAt: new Date('2024-01-10'),
-    updatedAt: new Date('2024-01-10')
-  }
-];
-
-export default function ProductReviews({ productId }: Props) {
+export default function ReviewList() {
   const [sortBy, setSortBy] = useState<'latest' | 'rating' | 'helpful'>('latest');
   const [filterRating, setFilterRating] = useState<number | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const reviewsPerPage = 10;
 
   const filteredReviews = mockReviews.filter(review => 
     filterRating === null || review.rating === filterRating
@@ -76,52 +27,29 @@ export default function ProductReviews({ productId }: Props) {
     }
   });
 
+  const totalPages = Math.ceil(sortedReviews.length / reviewsPerPage);
+  const startIndex = (currentPage - 1) * reviewsPerPage;
+  const displayedReviews = sortedReviews.slice(startIndex, startIndex + reviewsPerPage);
+
   return (
     <div className={styles.container}>
-      {/* 리뷰 요약 */}
-      <div className={styles.summary}>
-        <div className={styles.ratingOverview}>
-          <div className={styles.averageRating}>
-            <span className={styles.ratingNumber}>{mockReviewSummary.averageRating}</span>
-            <div className={styles.stars}>
-              {Array.from({ length: 5 }, (_, i) => (
-                <span key={i} className={i < Math.floor(mockReviewSummary.averageRating) ? styles.filled : styles.empty}>
-                  ★
-                </span>
-              ))}
-            </div>
-            <span className={styles.totalReviews}>
-              총 {mockReviewSummary.totalReviews}개 리뷰
-            </span>
-          </div>
-
-          <div className={styles.ratingDistribution}>
-            {Object.entries(mockReviewSummary.ratingDistribution)
-              .reverse()
-              .map(([rating, count]) => (
-                <div key={rating} className={styles.ratingBar}>
-                  <span className={styles.ratingLabel}>{rating}점</span>
-                  <div className={styles.barContainer}>
-                    <div 
-                      className={styles.bar}
-                      style={{ 
-                        width: `${(count / mockReviewSummary.totalReviews) * 100}%` 
-                      }}
-                    />
-                  </div>
-                  <span className={styles.ratingCount}>{count}</span>
-                </div>
-              ))}
-          </div>
+      {/* 통계 정보 */}
+      <div className={styles.stats}>
+        <div className={styles.statItem}>
+          <div className={styles.statNumber}>{mockReviews.length}</div>
+          <div className={styles.statLabel}>전체 리뷰</div>
         </div>
-
-        <div className={styles.recommendation}>
-          <div className={styles.recommendationRate}>
-            {mockReviewSummary.recommendationRate}%
+        <div className={styles.statItem}>
+          <div className={styles.statNumber}>
+            {(mockReviews.reduce((sum, review) => sum + review.rating, 0) / mockReviews.length).toFixed(1)}
           </div>
-          <div className={styles.recommendationText}>
-            구매자가 추천합니다
+          <div className={styles.statLabel}>평균 평점</div>
+        </div>
+        <div className={styles.statItem}>
+          <div className={styles.statNumber}>
+            {Math.round((mockReviews.filter(r => r.isRecommended).length / mockReviews.length) * 100)}%
           </div>
+          <div className={styles.statLabel}>추천율</div>
         </div>
       </div>
 
@@ -158,14 +86,9 @@ export default function ProductReviews({ productId }: Props) {
         </div>
       </div>
 
-      {/* 리뷰 작성 버튼 */}
-      <div className={styles.writeReview}>
-        <Button variant="primary">리뷰 작성하기</Button>
-      </div>
-
       {/* 리뷰 목록 */}
       <div className={styles.reviewList}>
-        {sortedReviews.map(review => (
+        {displayedReviews.map(review => (
           <div key={review.id} className={styles.reviewItem}>
             <div className={styles.reviewHeader}>
               <div className={styles.userInfo}>
@@ -207,14 +130,48 @@ export default function ProductReviews({ productId }: Props) {
               <button className={styles.helpfulButton}>
                 도움돼요 <span className={styles.helpfulCount}>12</span>
               </button>
+              <button className={styles.productLink}>
+                상품 보기
+              </button>
             </div>
           </div>
         ))}
       </div>
 
-      {/* 더보기 버튼 */}
-      <div className={styles.loadMore}>
-        <Button variant="outline">리뷰 더보기</Button>
+      {/* 페이지네이션 */}
+      {totalPages > 1 && (
+        <div className={styles.pagination}>
+          <button
+            className={styles.pageButton}
+            onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+            disabled={currentPage === 1}
+          >
+            이전
+          </button>
+          
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+            <button
+              key={page}
+              className={`${styles.pageButton} ${currentPage === page ? styles.active : ''}`}
+              onClick={() => setCurrentPage(page)}
+            >
+              {page}
+            </button>
+          ))}
+          
+          <button
+            className={styles.pageButton}
+            onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+            disabled={currentPage === totalPages}
+          >
+            다음
+          </button>
+        </div>
+      )}
+
+      {/* 리뷰 작성 버튼 */}
+      <div className={styles.writeReview}>
+        <Button variant="primary" size="lg">리뷰 작성하기</Button>
       </div>
     </div>
   );

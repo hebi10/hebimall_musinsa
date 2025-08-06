@@ -1,5 +1,5 @@
-import PageHeader from "@/shared/components/PageHeader";
-import ProductList from "@/features/product/components/ProductList";
+import PageHeader from "@/app/_components/PageHeader";
+import ProductList from "./_components/ProductList";
 import styles from "./page.module.css";
 
 export default function ProductsPage() {

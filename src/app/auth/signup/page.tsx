@@ -5,9 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 import useInputs from "@/shared/hooks/useInput";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/shared/libs/firebase/firebase";
-import { setDoc, doc, addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { setDoc, doc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/shared/libs/firebase/firebase";
 import { useAuth } from "@/context/authProvider";
 

@@ -30,7 +30,15 @@ interface PointHistoryRequest {
 }
 
 // 1. 포인트 적립 함수
-export const addPoint = onCall(async (request: CallableRequest<AddPointData>) => {
+export const addPoint = onCall({
+  cors: [
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "https://hebimall.firebaseapp.com",
+    "https://hebimall.web.app"
+  ],
+  region: 'us-central1'
+}, async (request: CallableRequest<AddPointData>) => {
   // 인증 확인
   if (!request.auth) {
     throw new functions.https.HttpsError(
@@ -104,7 +112,15 @@ export const addPoint = onCall(async (request: CallableRequest<AddPointData>) =>
 });
 
 // 2. 포인트 사용 함수
-export const usePoint = onCall(async (request: CallableRequest<UsePointData>) => {
+export const usePoint = onCall({
+  cors: [
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "https://hebimall.firebaseapp.com",
+    "https://hebimall.web.app"
+  ],
+  region: 'us-central1'
+}, async (request: CallableRequest<UsePointData>) => {
   if (!request.auth) {
     throw new functions.https.HttpsError(
       "unauthenticated",
@@ -179,7 +195,15 @@ export const usePoint = onCall(async (request: CallableRequest<UsePointData>) =>
 });
 
 // 3. 포인트 환불 함수 (주문 취소/환불 시)
-export const refundPoint = onCall(async (request: CallableRequest<RefundPointData>) => {
+export const refundPoint = onCall({
+  cors: [
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "https://hebimall.firebaseapp.com",
+    "https://hebimall.web.app"
+  ],
+  region: 'us-central1'
+}, async (request: CallableRequest<RefundPointData>) => {
   if (!request.auth) {
     throw new functions.https.HttpsError(
       "unauthenticated",
@@ -250,7 +274,15 @@ export const refundPoint = onCall(async (request: CallableRequest<RefundPointDat
 });
 
 // 4. 포인트 내역 조회 함수
-export const getPointHistory = onCall(async (request: CallableRequest<PointHistoryRequest>) => {
+export const getPointHistory = onCall({
+  cors: [
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "https://hebimall.firebaseapp.com",
+    "https://hebimall.web.app"
+  ],
+  region: 'us-central1'
+}, async (request: CallableRequest<PointHistoryRequest>) => {
   if (!request.auth) {
     throw new functions.https.HttpsError(
       "unauthenticated",
@@ -298,7 +330,15 @@ export const getPointHistory = onCall(async (request: CallableRequest<PointHisto
 });
 
 // 5. 포인트 잔액 조회 함수
-export const getPointBalance = onCall(async (request: CallableRequest<any>) => {
+export const getPointBalance = onCall({
+  cors: [
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "https://hebimall.firebaseapp.com",
+    "https://hebimall.web.app"
+  ],
+  region: 'us-central1'
+}, async (request: CallableRequest<any>) => {
   if (!request.auth) {
     throw new functions.https.HttpsError(
       "unauthenticated",

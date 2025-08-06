@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import "../styles/variables.css";
-import Header from "../shared/components/header/Header";
-import Footer from "../shared/components/footer/Footer";
-import RootProviders from "../shared/components/providers/RootProviders";
+import Header from "./_components/header/Header";
+import Footer from "./_components/footer/Footer";
+import RootProviders from "./_components/providers/RootProviders";
 
 const inter = Inter({
   variable: "--font-inter",
