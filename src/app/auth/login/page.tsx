@@ -13,11 +13,16 @@ export default function LoginPage() {
   const router = useRouter();
   const [values, onChange] = useInput({
     id: '',
-    password: ''
+    password: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
   const { login, error, clearError, user, loading } = useAuth();
+  
+  const handleRememberMeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setRememberMe(e.target.checked);
+  };
   
   useEffect(() => {
     if (!loading && user) {
@@ -36,7 +41,7 @@ export default function LoginPage() {
     clearError();
     
     try {
-      await login(values.id, values.password);
+      await login(values.id, values.password, rememberMe);
       router.replace("/mypage");
     } catch (error) {
       console.error("Login failed:", error);
@@ -89,6 +94,8 @@ export default function LoginPage() {
                 name="remember-me"
                 type="checkbox"
                 style={{ marginRight: '0.5rem' }}
+                checked={rememberMe}
+                onChange={handleRememberMeChange}
               />
               <label htmlFor="remember-me" style={{ fontSize: '0.875rem', color: '#111827' }}>
                 로그인 상태 유지

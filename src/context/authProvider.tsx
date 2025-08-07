@@ -4,7 +4,8 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { useAuthUser } from "../shared/hooks/useAuthUser";
 import { 
   logout as firebaseLogout, 
-  signIn as firebaseSignIn, 
+  loginOneSession as firebaseSignIn, 
+  loginKeepAlive as firebaseLoginKeepAlive, 
   signUp as firebaseSignUp  
 } from "../shared/libs/firebase/auth";
 import { useUserData } from "../shared/hooks/useUserData";
@@ -12,7 +13,7 @@ import { getErrorMessage } from "../shared/utils/authErrorMessages";
 
 interface AuthContextType {
   user: any;
-  login: (email: string, password: string) => Promise<any>;
+  login: (email: string, password: string, keepAlive: boolean) => Promise<any>;
   logout: () => void;
   signUp: (email: string, password: string) => Promise<any>;
   loading: boolean;
@@ -44,10 +45,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string, keepAlive: boolean) => {
     try {
       setError(null);
-      return await firebaseSignIn(email, password);
+      if (keepAlive) {
+        return await firebaseLoginKeepAlive(email, password);
+      } else {
+        return await firebaseSignIn(email, password);
+      }
     } catch (err: any) {
       const errorMessage = getErrorMessage(err.code);
       setError(errorMessage);
