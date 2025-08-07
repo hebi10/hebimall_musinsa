@@ -96,9 +96,10 @@
 
 @media (min-width: 1024px) {
   .filterSection {
-    flex-direction: row;
     justify-content: space-between;
-    align-items: flex-end;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 2rem;  
   }
 }
 

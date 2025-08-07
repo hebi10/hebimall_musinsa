@@ -5,6 +5,7 @@ import PageHeader from "../_components/PageHeader";
 import styles from "./layout.module.css";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/authProvider";
+import { CouponProvider } from "@/context/couponProvider";
 import { ProfileSection, QuickActions, SidebarMenu } from "./_components";
 
 interface MyPageLayoutProps {
@@ -77,7 +78,9 @@ export default function MyPageLayout({ children }: MyPageLayoutProps) {
 
           {/* 콘텐츠 영역 - 여기에 각 페이지의 내용이 들어감 */}
           <div className={styles.contentArea}>
-            {children}
+            <CouponProvider>
+              {children}
+            </CouponProvider>
           </div>
         </div>
       </div>

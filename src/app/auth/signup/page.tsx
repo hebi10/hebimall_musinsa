@@ -105,6 +105,7 @@ export default function SignupPage() {
       const user = userCredential.user;
 
       await setDoc(doc(db, "users", user.uid), {
+        id: user.uid,
         email: formData.email,
         name: formData.name,
         phone: formData.phone,

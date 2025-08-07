@@ -1,88 +1,85 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './page.module.css';
-
-interface Coupon {
-  id: string;
-  name: string;
-  type: '할인금액' | '할인율' | '무료배송';
-  value: number;
-  minOrderAmount?: number;
-  expiryDate: string;
-  status: '사용가능' | '사용완료' | '기간만료';
-  usedDate?: string;
-  description?: string;
-}
+import { useCoupon } from '@/context/couponProvider';
+import { CouponFilter } from '@/shared/types/coupon';
 
 export default function CouponsPage() {
+  const {
+    userCoupons,
+    couponStats,
+    loading,
+    error,
+    getUserCouponsWithFilter,
+    registerCouponByCode,
+    getDaysUntilExpiry
+  } = useCoupon();
+
   const [selectedStatus, setSelectedStatus] = useState<string>('전체');
   const [showRegistrationForm, setShowRegistrationForm] = useState(false);
   const [couponCode, setCouponCode] = useState('');
+  const [isRegistering, setIsRegistering] = useState(false);
 
   const statusOptions = ['전체', '사용가능', '사용완료', '기간만료'];
 
-  const coupons: Coupon[] = [
-    {
-      id: 'C001',
-      name: '신규회원 환영 쿠폰',
-      type: '할인금액',
-      value: 10000,
-      minOrderAmount: 50000,
-      expiryDate: '2024.12.31',
-      status: '사용가능',
-      description: '첫 구매 시 사용 가능한 특별 할인 쿠폰'
-    },
-    {
-      id: 'C002',
-      name: '겨울 세일 쿠폰',
-      type: '할인율',
-      value: 20,
-      minOrderAmount: 100000,
-      expiryDate: '2024.12.25',
-      status: '사용가능',
-      description: '겨울 상품 전용 할인 쿠폰'
-    },
-    {
-      id: 'C003',
-      name: '무료배송 쿠폰',
-      type: '무료배송',
-      value: 0,
-      expiryDate: '2024.12.15',
-      status: '사용완료',
-      usedDate: '2024.11.28',
-      description: '배송비 무료 혜택'
-    },
-    {
-      id: 'C004',
-      name: '추석 특가 쿠폰',
-      type: '할인율',
-      value: 15,
-      minOrderAmount: 80000,
-      expiryDate: '2024.10.15',
-      status: '기간만료',
-      description: '추석 연휴 특별 할인'
-    }
-  ];
+  // 필터 변경시 쿠폰 목록 다시 조회
+  useEffect(() => {
+    const filter: CouponFilter = {
+      status: selectedStatus === '전체' ? undefined : selectedStatus as any,
+      sortBy: 'issuedDate',
+      sortOrder: 'desc'
+    };
+    getUserCouponsWithFilter(filter);
+  }, [selectedStatus, getUserCouponsWithFilter]); // 이제 안전하게 포함 가능
 
-  const filteredCoupons = coupons.filter(coupon => 
-    selectedStatus === '전체' || coupon.status === selectedStatus
-  );
-
-  const handleCouponRegistration = (e: React.FormEvent) => {
+  const handleCouponRegistration = async (e: React.FormEvent) => {
     e.preventDefault();
-    // 쿠폰 등록 로직
-    console.log('쿠폰 등록:', couponCode);
-    setCouponCode('');
-    setShowRegistrationForm(false);
+    
+    if (!couponCode.trim()) {
+      alert('쿠폰 코드를 입력해주세요.');
+      return;
+    }
+
+    try {
+      setIsRegistering(true);
+      const response = await registerCouponByCode(couponCode.trim());
+      
+      if (response.success) {
+        alert('쿠폰이 성공적으로 등록되었습니다!');
+        setCouponCode('');
+        setShowRegistrationForm(false);
+      } else {
+        alert(response.message || '쿠폰 등록에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('쿠폰 등록 오류:', error);
+      alert(error instanceof Error ? error.message : '쿠폰 등록에 실패했습니다.');
+    } finally {
+      setIsRegistering(false);
+    }
   };
 
-  const getDaysUntilExpiry = (expiryDate: string): number => {
-    const expiry = new Date(expiryDate);
-    const today = new Date();
-    const diffTime = expiry.getTime() - today.getTime();
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  };
+  if (loading && userCoupons.length === 0) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.loadingContainer}>
+          <div className={styles.spinner}></div>
+          <p>쿠폰을 불러오는 중...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.errorContainer}>
+          <p className={styles.errorMessage}>{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.container}>
@@ -96,28 +93,44 @@ export default function CouponsPage() {
         <div className={styles.statCard}>
           <div className={styles.statIcon}>🎫</div>
           <div className={styles.statContent}>
-            <div className={styles.statNumber}>8</div>
+            <div className={styles.statNumber}>{couponStats?.total || 0}</div>
             <div className={styles.statLabel}>전체 쿠폰</div>
           </div>
         </div>
         <div className={styles.statCard}>
           <div className={styles.statIcon}>✅</div>
           <div className={styles.statContent}>
-            <div className={styles.statNumber}>3</div>
+            <div className={styles.statNumber}>{couponStats?.available || 0}</div>
             <div className={styles.statLabel}>사용가능</div>
           </div>
         </div>
         <div className={styles.statCard}>
           <div className={styles.statIcon}>💰</div>
           <div className={styles.statContent}>
-            <div className={styles.statNumber}>45,000원</div>
+            <div className={styles.statNumber}>
+              {userCoupons
+                .filter(uc => uc.status === '사용가능')
+                .reduce((sum, uc) => {
+                  if (uc.coupon.type === '할인금액') return sum + uc.coupon.value;
+                  return sum;
+                }, 0)
+                .toLocaleString()}원
+            </div>
             <div className={styles.statLabel}>절약 가능 금액</div>
           </div>
         </div>
         <div className={styles.statCard}>
           <div className={styles.statIcon}>⏰</div>
           <div className={styles.statContent}>
-            <div className={styles.statNumber}>2개</div>
+            <div className={styles.statNumber}>
+              {userCoupons
+                .filter(uc => {
+                  if (uc.status !== '사용가능') return false;
+                  const days = getDaysUntilExpiry(uc.coupon.expiryDate);
+                  return days <= 7 && days > 0;
+                })
+                .length}개
+            </div>
             <div className={styles.statLabel}>곧 만료</div>
           </div>
         </div>
@@ -173,9 +186,14 @@ export default function CouponsPage() {
                   placeholder="쿠폰 코드를 입력하세요"
                   value={couponCode}
                   onChange={(e) => setCouponCode(e.target.value)}
+                  disabled={isRegistering}
                 />
-                <button type="submit" className={styles.registerButton}>
-                  등록
+                <button 
+                  type="submit" 
+                  className={styles.registerButton}
+                  disabled={isRegistering}
+                >
+                  {isRegistering ? '등록 중...' : '등록'}
                 </button>
               </div>
             </div>
@@ -190,57 +208,57 @@ export default function CouponsPage() {
       <div className={styles.couponsSection}>
         <div className={styles.sectionHeader}>
           <h3 className={styles.sectionTitle}>보유 쿠폰</h3>
-          <div className={styles.resultCount}>총 {filteredCoupons.length}장</div>
+          <div className={styles.resultCount}>총 {userCoupons.length}장</div>
         </div>
 
         <div className={styles.couponsList}>
-          {filteredCoupons.length > 0 ? (
-            filteredCoupons.map((coupon) => {
-              const daysUntilExpiry = getDaysUntilExpiry(coupon.expiryDate);
-              const isExpiringSoon = daysUntilExpiry <= 7 && coupon.status === '사용가능';
+          {userCoupons.length > 0 ? (
+            userCoupons.map((userCouponView) => {
+              const daysUntilExpiry = getDaysUntilExpiry(userCouponView.coupon.expiryDate);
+              const isExpiringSoon = daysUntilExpiry <= 7 && userCouponView.status === '사용가능';
               
               return (
-                <div key={coupon.id} className={`${styles.couponCard} ${styles[`status-${coupon.status}`]}`}>
+                <div key={userCouponView.id} className={`${styles.couponCard} ${styles[`status-${userCouponView.status}`]}`}>
                   <div className={styles.couponMain}>
                     <div className={styles.couponLeft}>
                       <div className={styles.couponType}>
-                        {coupon.type === '할인금액' && '💰'}
-                        {coupon.type === '할인율' && '📊'}
-                        {coupon.type === '무료배송' && '🚚'}
+                        {userCouponView.coupon.type === '할인금액' && '💰'}
+                        {userCouponView.coupon.type === '할인율' && '📊'}
+                        {userCouponView.coupon.type === '무료배송' && '🚚'}
                       </div>
                       
                       <div className={styles.couponInfo}>
-                        <h4 className={styles.couponName}>{coupon.name}</h4>
+                        <h4 className={styles.couponName}>{userCouponView.coupon.name}</h4>
                         <div className={styles.couponValue}>
-                          {coupon.type === '할인금액' && `${coupon.value.toLocaleString()}원 할인`}
-                          {coupon.type === '할인율' && `${coupon.value}% 할인`}
-                          {coupon.type === '무료배송' && '무료배송'}
+                          {userCouponView.coupon.type === '할인금액' && `${userCouponView.coupon.value.toLocaleString()}원 할인`}
+                          {userCouponView.coupon.type === '할인율' && `${userCouponView.coupon.value}% 할인`}
+                          {userCouponView.coupon.type === '무료배송' && '무료배송'}
                         </div>
-                        {coupon.minOrderAmount && (
+                        {userCouponView.coupon.minOrderAmount && (
                           <div className={styles.minOrder}>
-                            {coupon.minOrderAmount.toLocaleString()}원 이상 구매 시
+                            {userCouponView.coupon.minOrderAmount.toLocaleString()}원 이상 구매 시
                           </div>
                         )}
-                        {coupon.description && (
+                        {userCouponView.coupon.description && (
                           <div className={styles.couponDescription}>
-                            {coupon.description}
+                            {userCouponView.coupon.description}
                           </div>
                         )}
                       </div>
                     </div>
 
                     <div className={styles.couponRight}>
-                      <div className={`${styles.couponStatus} ${styles[`status-${coupon.status}`]}`}>
-                        {coupon.status}
+                      <div className={`${styles.couponStatus} ${styles[`status-${userCouponView.status}`]}`}>
+                        {userCouponView.status}
                       </div>
                       
                       <div className={styles.couponExpiry}>
-                        {coupon.status === '사용완료' ? (
-                          <span className={styles.usedDate}>사용일: {coupon.usedDate}</span>
+                        {userCouponView.status === '사용완료' ? (
+                          <span className={styles.usedDate}>사용일: {userCouponView.usedDate}</span>
                         ) : (
                           <>
                             <span className={styles.expiryLabel}>만료일</span>
-                            <span className={styles.expiryDate}>{coupon.expiryDate}</span>
+                            <span className={styles.expiryDate}>{userCouponView.coupon.expiryDate}</span>
                             {isExpiringSoon && (
                               <span className={styles.expiryWarning}>
                                 {daysUntilExpiry}일 남음!
@@ -252,7 +270,7 @@ export default function CouponsPage() {
                     </div>
                   </div>
 
-                  {coupon.status === '사용가능' && (
+                  {userCouponView.status === '사용가능' && (
                     <div className={styles.couponFooter}>
                       <button className={styles.useCouponButton}>
                         쿠폰 사용하기
