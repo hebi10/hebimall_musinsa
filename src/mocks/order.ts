@@ -1,4 +1,4 @@
-import { Order } from "../types/order";
+import { Order } from "../shared/types/order";
 
 // 관리자 페이지용 주문 데이터 인터페이스
 export interface OrderData {

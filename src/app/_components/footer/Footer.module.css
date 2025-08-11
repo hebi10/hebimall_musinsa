@@ -9,28 +9,10 @@
   padding: 3rem 1rem;
 }
 
-@media (min-width: 640px) {
-  .container {
-    padding: 3rem 1.5rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .container {
-    padding: 3rem 2rem;
-  }
-}
-
 .grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 2rem;
-}
-
-@media (min-width: 768px) {
-  .grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
 }
 
 .section h3 {
@@ -64,4 +46,34 @@
   border-top: 1px solid #e5e7eb;
   color: #6b7280;
   font-size: 0.875rem;
+}
+
+/* ========== Mobile First Media Queries ========== */
+
+/* Extra Small Devices (480px and down) */
+@media (max-width: 480px) {
+  .grid {
+    gap: 1.5rem;
+  }
+}
+
+/* Large Screens (640px and up) */
+@media (min-width: 640px) {
+  .container {
+    padding: 3rem 1.5rem;
+  }
+}
+
+/* Large Screens (768px and up) */
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Extra Large Screens (1024px and up) */
+@media (min-width: 1024px) {
+  .container {
+    padding: 3rem 2rem;
+  }
 }

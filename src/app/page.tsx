@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Button from "./_components/Button";
+import ProductSection from "./_components/ProductSection";
 import styles from "./page.module.css";
 
 export default function Home() {
@@ -14,7 +15,7 @@ export default function Home() {
           <p className={styles.bannerSubtitle}>
             최신 패션 트렌드를 만나보세요
           </p>
-          <Link href="/main/recommend">
+          <Link href="/products">
             <Button size="lg">
               쇼핑하러 가기
             </Button>
@@ -27,19 +28,19 @@ export default function Home() {
         <h2 className={styles.sectionTitle}>인기 카테고리</h2>
         <p className={styles.sectionSubtitle}>다양한 스타일을 만나보세요</p>
         <div className={styles.categoryGrid}>
-          <Link href="/category/tops" className={styles.categoryCard}>
+          <Link href="/products?category=상의" className={styles.categoryCard}>
             <div className={styles.categoryIcon}>👕</div>
             <span className={styles.categoryLabel}>상의</span>
           </Link>
-          <Link href="/category/bottoms" className={styles.categoryCard}>
+          <Link href="/products?category=하의" className={styles.categoryCard}>
             <div className={styles.categoryIcon}>👖</div>
             <span className={styles.categoryLabel}>하의</span>
           </Link>
-          <Link href="/category/shoes" className={styles.categoryCard}>
+          <Link href="/products?category=신발" className={styles.categoryCard}>
             <div className={styles.categoryIcon}>👟</div>
             <span className={styles.categoryLabel}>신발</span>
           </Link>
-          <Link href="/category/accessories" className={styles.categoryCard}>
+          <Link href="/products?category=액세서리" className={styles.categoryCard}>
             <div className={styles.categoryIcon}>👜</div>
             <span className={styles.categoryLabel}>액세서리</span>
           </Link>
@@ -70,30 +71,26 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 추천 상품 섹션 */}
-      <section className={styles.productsSection}>
-        <div className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>추천 상품</h2>
-            <Link href="/main/recommend" className={styles.moreLink}>
-              더보기 →
-            </Link>
-          </div>
-          <div className={styles.productGrid}>
-            {/* 예시 상품 카드들 */}
-            {[1, 2, 3, 4].map((item) => (
-              <div key={item} className={styles.productCard}>
-                <div className={styles.productImage}></div>
-                <div className={styles.productInfo}>
-                  <h3 className={styles.productName}>상품명 {item}</h3>
-                  <p className={styles.productBrand}>브랜드명</p>
-                  <p className={styles.productPrice}>29,900원</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* 상품 섹션들 */}
+      <ProductSection 
+        title="추천 상품" 
+        type="recommended" 
+      />
+      
+      <ProductSection 
+        title="신상품" 
+        type="new" 
+      />
+      
+      <ProductSection 
+        title="세일 상품" 
+        type="sale" 
+      />
+      
+      <ProductSection 
+        title="베스트셀러" 
+        type="bestseller" 
+      />
     </div>
   );
 }

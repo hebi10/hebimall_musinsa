@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 
 interface AdminDashboardLayoutProps {
   children: ReactNode;
-  products?: ReactNode; // Parallel route slot - optional로 변경
+  products: ReactNode; // Parallel route slot - required로 변경
 }
 
 export default function AdminDashboardLayout({ 
@@ -14,7 +14,7 @@ export default function AdminDashboardLayout({
       <div className="dashboard-main">
         {children}
       </div>
-      {products && products}
+      {products}
     </div>
   );
 }

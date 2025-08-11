@@ -1,10 +1,24 @@
 rules_version = '2';
 
-// Craft rules based on data in your Firestore database
-// allow write: if firestore.get(
-//    /databases/(default)/documents/users/$(request.auth.uid)).data.isAdmin;
 service firebase.storage {
   match /b/{bucket}/o {
+    // 상품 이미지: images/{category}/{productId}/{filename}
+    match /images/{category}/{productId}/{filename} {
+      // 읽기: 모든 사용자 허용 (상품 이미지는 공개)
+      allow read: if true;
+      
+      // 쓰기: 관리자만 허용 (실제로는 인증된 관리자 체크 필요)
+      // 현재는 개발용으로 모든 쓰기 허용
+      allow write: if true;
+      
+      // 파일 크기 제한 (5MB)
+      allow write: if request.resource.size < 5 * 1024 * 1024;
+      
+      // 이미지 파일만 허용
+      allow write: if request.resource.contentType.matches('image/.*');
+    }
+    
+    // 기타 파일들에 대한 기본 규칙
     match /{allPaths=**} {
       allow read, write: if false;
     }

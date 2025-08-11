@@ -112,8 +112,6 @@ const mockPointHistory = [
 ];
 
 const seedUsers = async () => {
-  console.log('🌱 사용자 시드 데이터를 Firebase에 추가 중...');
-  
   try {
     const batch = db.batch();
 
@@ -123,7 +121,6 @@ const seedUsers = async () => {
     });
 
     await batch.commit();
-    console.log(`✅ ${mockUsers.length}명의 사용자가 성공적으로 추가되었습니다.`);
   } catch (error) {
     console.error('❌ 사용자 추가 중 오류 발생:', error);
     throw error;
@@ -131,8 +128,6 @@ const seedUsers = async () => {
 };
 
 const seedPointHistory = async () => {
-  console.log('🌱 포인트 내역 시드 데이터를 Firebase에 추가 중...');
-  
   try {
     for (const userPointData of mockPointHistory) {
       const batch = db.batch();
@@ -143,7 +138,6 @@ const seedPointHistory = async () => {
       });
 
       await batch.commit();
-      console.log(`✅ 사용자 ${userPointData.userId}의 포인트 내역 ${userPointData.history.length}건이 추가되었습니다.`);
     }
   } catch (error) {
     console.error('❌ 포인트 내역 추가 중 오류 발생:', error);
@@ -152,23 +146,11 @@ const seedPointHistory = async () => {
 };
 
 const seedUserData = async () => {
-  console.log('🚀 사용자 및 포인트 시드 데이터 추가 시작...\n');
-  
   try {
     await seedUsers();
     await seedPointHistory();
-    
-    console.log('\n🎉 모든 사용자 시드 데이터가 성공적으로 추가되었습니다!');
-    console.log('\n📋 테스트용 계정 정보:');
-    console.log('- 사용자 ID: test-user-1');
-    console.log('- 이메일: test@example.com');
-    console.log('- 초기 포인트: 10,000점');
-    console.log('\n- 사용자 ID: test-user-2');
-    console.log('- 이메일: user2@example.com');  
-    console.log('- 초기 포인트: 5,000점');
-    process.exit(0);
   } catch (error) {
-    console.error('\n💥 사용자 시드 데이터 추가 중 오류 발생:', error);
+    console.error('💥 사용자 시드 데이터 추가 중 오류 발생:', error);
     process.exit(1);
   }
 };

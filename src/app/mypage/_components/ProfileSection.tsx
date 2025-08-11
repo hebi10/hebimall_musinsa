@@ -2,6 +2,7 @@
 
 import { usePointBalance } from "@/shared/hooks/usePoint";
 import styles from "../layout.module.css";
+import { useCoupon } from "@/context/couponProvider";
 
 interface ProfileSectionProps {
   userInfo: {
@@ -15,9 +16,10 @@ interface ProfileSectionProps {
 }
 
 export default function ProfileSection({ userInfo }: ProfileSectionProps) {
-  // 포인트 잔액 조회
   const { data: balanceData, isLoading: isBalanceLoading } = usePointBalance();
   const pointBalance = balanceData?.pointBalance || 0;
+  const { userCoupons } = useCoupon();
+  const availableCouponCount = userCoupons.filter(coupon => coupon.status === "사용가능").length;
 
   return (
     <div className={styles.profileSection}>
@@ -50,7 +52,7 @@ export default function ProfileSection({ userInfo }: ProfileSectionProps) {
           <div className={styles.statLabel}>적립금</div>
         </div>
         <div className={styles.statItem}>
-          <div className={styles.statNumber}>{userInfo.coupons}</div>
+          <div className={styles.statNumber}>{availableCouponCount}</div>
           <div className={styles.statLabel}>쿠폰</div>
         </div>
       </div>

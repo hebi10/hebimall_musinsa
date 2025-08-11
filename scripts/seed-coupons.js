@@ -9,20 +9,18 @@ const {
   Timestamp 
 } = require('firebase/firestore');
 
-// 환경 변수 직접 설정 (실제 프로젝트 정보)
-const firebaseConfig = {
-  apiKey: "AIzaSyD9xCrkmFZw0PvS9hXl5kpWv81qX1v4lcw",
-  authDomain: "hebimall.firebaseapp.com",
-  projectId: "hebimall",
-  storageBucket: "hebimall.firebasestorage.app",
-  messagingSenderId: "404572243739",
-  appId: "1:404572243739:web:8a5b237d8532015cde35be"
-};
+// 환경변수 로드
+require('dotenv').config({ path: '.env.local' });
 
-console.log('Firebase Config:', {
-  projectId: firebaseConfig.projectId,
-  authDomain: firebaseConfig.authDomain
-});
+// 환경 변수에서 Firebase 설정 가져오기
+const firebaseConfig = {
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
+};
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -139,33 +137,20 @@ const userCoupons = [
 
 async function seedCouponData() {
   try {
-    console.log('🚀 쿠폰 시드 데이터 생성을 시작합니다...');
-
     // 1. 쿠폰 마스터 데이터 생성
-    console.log('📝 쿠폰 마스터 데이터 생성 중...');
     for (const coupon of coupons) {
       await setDoc(doc(db, 'coupons', coupon.id), coupon);
-      console.log(`✅ 쿠폰 마스터 생성: ${coupon.name} (${coupon.id})`);
     }
 
     // 2. 유저-쿠폰 매핑 데이터 생성
-    console.log('👤 유저-쿠폰 매핑 데이터 생성 중...');
     for (const userCoupon of userCoupons) {
-      const docRef = await addDoc(collection(db, 'user_coupons'), userCoupon);
-      console.log(`✅ 유저쿠폰 생성: ${docRef.id} (${userCoupon.uid} - ${userCoupon.couponId})`);
+      await addDoc(collection(db, 'user_coupons'), userCoupon);
     }
-
-    console.log('🎉 쿠폰 시드 데이터 생성이 완료되었습니다!');
-    console.log(`📊 생성된 데이터:
-    - 쿠폰 마스터: ${coupons.length}개
-    - 유저쿠폰 매핑: ${userCoupons.length}개`);
 
   } catch (error) {
     console.error('❌ 시드 데이터 생성 중 오류 발생:', error);
+    process.exit(1);
   }
-  
-  // 프로세스 종료
-  process.exit(0);
 }
 
 // 스크립트 실행

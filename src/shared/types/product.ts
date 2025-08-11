@@ -49,6 +49,7 @@ export interface ProductFilter {
   rating?: number;
   isNew?: boolean;
   isSale?: boolean;
+  status?: 'active' | 'inactive' | 'draft';
 }
 
 export interface ProductSort {

@@ -1,4 +1,4 @@
-import { UserProfile } from "../types/user";
+import { UserProfile } from "../shared/types/user";
 
 
 export const mockUsers: UserProfile[] = [

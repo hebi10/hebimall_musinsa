@@ -1,9 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Product } from '@/shared/types/product';
+import { useProduct } from '@/context/productProvider';
 import Button from '@/app/_components/Button';
+import ProductCard from '../_components/ProductCard';
 // import ProductReviews from '@/features/product/components/ProductReviews';
 import styles from './ProductDetail.module.css';
 
@@ -12,18 +14,35 @@ interface Props {
 }
 
 export default function ProductDetailClient({ product }: Props) {
+  const { 
+    relatedProducts, 
+    getProductById, 
+    loadRelatedProducts,
+    calculateDiscountPrice, 
+    isInStock,
+    loading 
+  } = useProduct();
+
   const [selectedSize, setSelectedSize] = useState<string>('');
   const [selectedColor, setSelectedColor] = useState<string>('');
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<'detail' | 'size' | 'review' | 'qna'>('detail');
 
+  // 컴포넌트 마운트 시 상품 정보와 연관 상품 로드
+  useEffect(() => {
+    if (product.id) {
+      // 관련 상품 로드
+      loadRelatedProducts(product.id, 4);
+    }
+  }, [product.id, loadRelatedProducts]);
+
   const handleAddToCart = () => {
     if (!selectedSize || !selectedColor) {
       alert('사이즈와 색상을 선택해주세요.');
       return;
     }
-    // 장바구니 추가 로직
+    // TODO: 장바구니 추가 로직 (CartProvider와 연동)
     alert('장바구니에 추가되었습니다.');
   };
 
@@ -32,9 +51,15 @@ export default function ProductDetailClient({ product }: Props) {
       alert('사이즈와 색상을 선택해주세요.');
       return;
     }
-    // 즉시 구매 로직
+    // TODO: 즉시 구매 로직 (OrderProvider와 연동)
     alert('주문 페이지로 이동합니다.');
   };
+
+  const displayPrice = product.saleRate ? 
+    calculateDiscountPrice(product.price, product.saleRate) : 
+    product.price;
+
+  const inStock = isInStock(product);
 
   return (
     <div className={styles.container}>
@@ -87,17 +112,26 @@ export default function ProductDetailClient({ product }: Props) {
           </div>
 
           <div className={styles.priceSection}>
-            {product.originalPrice && (
+            {product.originalPrice && product.originalPrice > displayPrice && (
               <div className={styles.originalPrice}>
                 {product.originalPrice.toLocaleString()}원
               </div>
             )}
             <div className={styles.currentPrice}>
-              {product.price.toLocaleString()}원
+              {displayPrice.toLocaleString()}원
               {product.saleRate && (
                 <span className={styles.saleRate}>{product.saleRate}%</span>
               )}
             </div>
+          </div>
+
+          {/* 재고 상태 */}
+          <div className={styles.stockInfo}>
+            {inStock ? (
+              <span className={styles.inStock}>✓ 재고 있음 ({product.stock}개)</span>
+            ) : (
+              <span className={styles.outOfStock}>✗ 품절</span>
+            )}
           </div>
 
           {/* 옵션 선택 */}
@@ -110,6 +144,7 @@ export default function ProductDetailClient({ product }: Props) {
                     key={size}
                     className={`${styles.sizeButton} ${selectedSize === size ? styles.selected : ''}`}
                     onClick={() => setSelectedSize(size)}
+                    disabled={!inStock}
                   >
                     {size}
                   </button>
@@ -126,6 +161,7 @@ export default function ProductDetailClient({ product }: Props) {
                     className={`${styles.colorButton} ${selectedColor === color ? styles.selected : ''} ${styles[color]}`}
                     onClick={() => setSelectedColor(color)}
                     title={color}
+                    disabled={!inStock}
                   />
                 ))}
               </div>
@@ -137,13 +173,15 @@ export default function ProductDetailClient({ product }: Props) {
                 <button
                   className={styles.quantityButton}
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  disabled={!inStock}
                 >
                   -
                 </button>
                 <span className={styles.quantityValue}>{quantity}</span>
                 <button
                   className={styles.quantityButton}
-                  onClick={() => setQuantity(quantity + 1)}
+                  onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
+                  disabled={!inStock}
                 >
                   +
                 </button>
@@ -158,6 +196,7 @@ export default function ProductDetailClient({ product }: Props) {
               size="lg"
               onClick={handleAddToCart}
               className={styles.cartButton}
+              disabled={!inStock}
             >
               장바구니
             </Button>
@@ -166,8 +205,9 @@ export default function ProductDetailClient({ product }: Props) {
               size="lg"
               onClick={handleBuyNow}
               className={styles.buyButton}
+              disabled={!inStock}
             >
-              바로구매
+              {inStock ? '바로구매' : '품절'}
             </Button>
           </div>
 
@@ -183,11 +223,43 @@ export default function ProductDetailClient({ product }: Props) {
             </div>
             <div className={styles.summaryItem}>
               <span className={styles.summaryLabel}>재고</span>
-              <span className={styles.summaryValue}>{product.stock}개</span>
+              <span className={styles.summaryValue}>
+                {inStock ? `${product.stock}개` : '품절'}
+              </span>
+            </div>
+            <div className={styles.summaryItem}>
+              <span className={styles.summaryLabel}>SKU</span>
+              <span className={styles.summaryValue}>{product.sku}</span>
             </div>
           </div>
         </div>
       </div>
+
+      {/* 연관 상품 */}
+      {relatedProducts.length > 0 && (
+        <div className={styles.relatedProducts}>
+          <h2 className={styles.sectionTitle}>관련 상품</h2>
+          <div className={styles.relatedGrid}>
+            {relatedProducts.map(relatedProduct => (
+              <ProductCard
+                key={relatedProduct.id}
+                id={relatedProduct.id}
+                name={relatedProduct.name}
+                brand={relatedProduct.brand}
+                price={relatedProduct.price}
+                originalPrice={relatedProduct.originalPrice}
+                isNew={relatedProduct.isNew}
+                isSale={relatedProduct.isSale}
+                saleRate={relatedProduct.saleRate}
+                rating={relatedProduct.rating}
+                reviewCount={relatedProduct.reviewCount}
+                image={relatedProduct.images[0]}
+                stock={relatedProduct.stock}
+              />
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* 상세 정보 탭 */}
       <div className={styles.detailTabs}>
@@ -259,7 +331,9 @@ export default function ProductDetailClient({ product }: Props) {
                            key === 'length' ? '총장' :
                            key === 'shoulder' ? '어깨너비' :
                            key === 'waist' ? '허리둘레' :
-                           key === 'thigh' ? '허벅지둘레' : key}
+                           key === 'thigh' ? '허벅지둘레' :
+                           key === 'width' ? '너비' :
+                           key === 'height' ? '높이' : key}
                         </th>
                       ))}
                     </tr>
@@ -281,6 +355,20 @@ export default function ProductDetailClient({ product }: Props) {
 
           {activeTab === 'review' && (
             <div className={styles.reviewsContent}>
+              <h3>상품 리뷰</h3>
+              <div className={styles.reviewSummary}>
+                <div className={styles.ratingOverview}>
+                  <span className={styles.avgRating}>{product.rating}</span>
+                  <div className={styles.stars}>
+                    {Array.from({ length: 5 }, (_, i) => (
+                      <span key={i} className={i < Math.floor(product.rating) ? styles.filled : styles.empty}>
+                        ★
+                      </span>
+                    ))}
+                  </div>
+                  <span className={styles.reviewCount}>총 {product.reviewCount}개 리뷰</span>
+                </div>
+              </div>
               <p>리뷰 컴포넌트는 추후 구현 예정입니다.</p>
             </div>
           )}

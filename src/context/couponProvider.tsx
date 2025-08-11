@@ -275,7 +275,7 @@ export function CouponProvider({ children }: CouponProviderProps) {
 export function useCoupon() {
   const context = useContext(CouponContext);
   if (context === undefined) {
-    throw new Error('useCoupon must be used within a CouponProvider');
+    throw new Error('useCoupon은 반드시 CouponProvider 내부에서 사용해야 합니다.');
   }
   return context;
 }

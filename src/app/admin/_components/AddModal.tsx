@@ -6,9 +6,19 @@ import styles from './AddModal.module.css';
 import useInputs from '@/shared/hooks/useInput';
 import { Product } from '@/shared/types/product';
 import { generateId } from '@/shared/utils/common';
+import { useProduct } from '@/context/productProvider';
+import { 
+  uploadProductImages, 
+  validateImageFiles,
+  createPreviewUrl,
+  revokePreviewUrl 
+} from '@/shared/libs/firebase/storage';
 
 export default function AddProductModal() {
   const router = useRouter();
+  const { createProduct } = useProduct();
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({});
   
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -68,42 +78,162 @@ export default function AddProductModal() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleImageUpload = async (files: FileList) => {
+    if (!files.length || !basicFields.category) {
+      if (!basicFields.category) {
+        alert('먼저 카테고리를 선택해주세요.');
+      }
+      return;
+    }
+
+    try {
+      setUploading(true);
+      console.log('📤 이미지 업로드 시작:', files.length, '개 파일');
+      
+      // 파일 유효성 검사
+      const fileArray = Array.from(files);
+      const { valid, errors } = validateImageFiles(fileArray);
+      
+      if (errors.length > 0) {
+        console.warn('⚠️ 파일 유효성 검사 오류:', errors);
+        alert(errors.join('\n'));
+        if (valid.length === 0) {
+          setUploading(false);
+          return;
+        }
+      }
+      
+      console.log('✅ 유효한 파일:', valid.length, '개');
+      
+      // 임시 상품 ID 생성 (실제 상품 추가 시 사용될 ID)
+      const tempProductId = generateId();
+      
+      // 카테고리별 구조화된 경로로 업로드: images/{category}/{productId}/
+      const uploadedUrls = await uploadProductImages(
+        valid,
+        basicFields.category,
+        tempProductId,
+        (progress: number, fileName: string) => {
+          console.log(`📊 업로드 진행률: ${fileName} - ${progress}%`);
+          setUploadProgress(prev => ({
+            ...prev,
+            [fileName]: progress
+          }));
+        }
+      );
+      
+      console.log('✅ 이미지 업로드 완료:', uploadedUrls);
+      
+      setComplexFields(prev => ({
+        ...prev,
+        images: [...prev.images, ...uploadedUrls]
+      }));
+      
+      setUploadProgress({});
+      alert(`${uploadedUrls.length}개의 이미지가 성공적으로 업로드되었습니다.`);
+      
+    } catch (error) {
+      console.error('❌ 이미지 업로드 실패:', error);
+      const errorMessage = error instanceof Error ? error.message : '이미지 업로드에 실패했습니다.';
+      alert(`이미지 업로드 실패: ${errorMessage}`);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    const newProduct: Product = {
-      id: generateId(),
-      name: basicFields.name,
-      description: basicFields.description,
-      price: Number(basicFields.price),
-      originalPrice: basicFields.originalPrice ? Number(basicFields.originalPrice) : undefined,
-      brand: basicFields.brand,
-      category: basicFields.category,
-      stock: Number(basicFields.stock),
-      sku: basicFields.sku || undefined,
-      saleRate: basicFields.saleRate ? Number(basicFields.saleRate) : undefined,
-      images: complexFields.images,
-      sizes: complexFields.sizes,
-      colors: complexFields.colors,
-      tags: complexFields.tags,
-      isNew: complexFields.isNew,
-      isSale: complexFields.isSale,
-      status: complexFields.status,
-      rating: 0,
-      reviewCount: 0,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      details: {
-        material: basicFields.material,
-        origin: basicFields.origin,
-        manufacturer: basicFields.manufacturer,
-        precautions: basicFields.precautions,
-        sizes: {}
+    try {
+      console.log('💾 상품 추가 시작...');
+      
+      // 필수 필드 검증
+      if (!basicFields.name.trim()) {
+        alert('상품명을 입력해주세요.');
+        return;
       }
-    };
-    
-    console.log('상품 추가:', newProduct);
-    router.back();
+      
+      if (!basicFields.brand.trim()) {
+        alert('브랜드를 입력해주세요.');
+        return;
+      }
+      
+      if (!basicFields.category) {
+        alert('카테고리를 선택해주세요.');
+        return;
+      }
+      
+      if (!basicFields.description.trim()) {
+        alert('상품 설명을 입력해주세요.');
+        return;
+      }
+      
+      if (Number(basicFields.price) <= 0) {
+        alert('올바른 가격을 입력해주세요.');
+        return;
+      }
+      
+      if (Number(basicFields.stock) < 0) {
+        alert('올바른 재고 수량을 입력해주세요.');
+        return;
+      }
+      
+      setUploading(true);
+      
+      // Firestore는 undefined 값을 허용하지 않으므로 조건부로 필드 추가
+      const newProduct: Omit<Product, 'id' | 'createdAt' | 'updatedAt'> = {
+        name: basicFields.name.trim(),
+        description: basicFields.description.trim(),
+        price: Number(basicFields.price),
+        brand: basicFields.brand.trim(),
+        category: basicFields.category,
+        stock: Number(basicFields.stock),
+        images: complexFields.images,
+        sizes: complexFields.sizes,
+        colors: complexFields.colors,
+        tags: complexFields.tags,
+        isNew: complexFields.isNew,
+        isSale: complexFields.isSale,
+        status: complexFields.status,
+        rating: 0,
+        reviewCount: 0,
+        details: {
+          material: basicFields.material?.trim() || '',
+          origin: basicFields.origin?.trim() || '',
+          manufacturer: basicFields.manufacturer?.trim() || '',
+          precautions: basicFields.precautions?.trim() || '',
+          sizes: {}
+        }
+      };
+
+      // 조건부로 필드 추가 (undefined 값 방지)
+      if (basicFields.originalPrice && Number(basicFields.originalPrice) > 0) {
+        newProduct.originalPrice = Number(basicFields.originalPrice);
+      }
+
+      if (basicFields.sku?.trim()) {
+        newProduct.sku = basicFields.sku.trim();
+      }
+
+      if (basicFields.saleRate && Number(basicFields.saleRate) > 0) {
+        newProduct.saleRate = Number(basicFields.saleRate);
+      }
+      
+      console.log('📤 추가할 상품 데이터:', newProduct);
+      
+      await createProduct(newProduct);
+      
+      console.log('✅ 상품 추가 완료');
+      alert('상품이 성공적으로 추가되었습니다.');
+      router.push('/admin/dashboard/products');
+      
+    } catch (error) {
+      console.error('❌ 상품 추가 실패:', error);
+      const errorMessage = error instanceof Error ? error.message : '상품 추가에 실패했습니다.';
+      alert(`상품 추가 실패: ${errorMessage}`);
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleClose = () => {
@@ -226,11 +356,11 @@ export default function AddProductModal() {
                 required
               >
                 <option value="">카테고리를 선택하세요</option>
-                <option value="clothing">의류</option>
-                <option value="shoes">신발</option>
-                <option value="accessories">액세서리</option>
-                <option value="bags">가방</option>
-                <option value="beauty">뷰티</option>
+                <option value="상의">상의</option>
+                <option value="하의">하의</option>
+                <option value="신발">신발</option>
+                <option value="액세서리">액세서리</option>
+                <option value="가방">가방</option>
               </select>
             </div>
 
@@ -450,30 +580,57 @@ export default function AddProductModal() {
                   accept="image/*"
                   className={styles.fileInput}
                   onChange={(e) => {
-                    const files = Array.from(e.target.files || []);
-                    const imageUrls = files.map(file => URL.createObjectURL(file));
-                    handleComplexFieldChange('images', [...complexFields.images, ...imageUrls]);
+                    if (e.target.files) {
+                      handleImageUpload(e.target.files);
+                    }
                   }}
+                  disabled={uploading}
                 />
                 <p className={styles.uploadText}>
-                  이미지를 선택하거나 드래그 앤 드롭으로 업로드하세요
+                  {uploading ? '업로드 중...' : 
+                   !basicFields.category ? '카테고리 선택 후 이미지를 업로드할 수 있습니다' :
+                   '이미지를 선택하거나 드래그 앤 드롭으로 업로드하세요'}
                 </p>
               </div>
+              
+              {/* 업로드 진행률 표시 */}
+              {Object.keys(uploadProgress).length > 0 && (
+                <div className={styles.uploadProgress}>
+                  {Object.entries(uploadProgress).map(([fileName, progress]) => (
+                    <div key={fileName} className={styles.progressItem}>
+                      <span>{fileName}</span>
+                      <div className={styles.progressBar}>
+                        <div 
+                          className={styles.progressFill} 
+                          style={{ width: `${progress}%` }}
+                        />
+                      </div>
+                      <span>{Math.round(progress)}%</span>
+                    </div>
+                  ))}
+                </div>
+              )}
               
               {complexFields.images.length > 0 && (
                 <div className={styles.imagePreview}>
                   {complexFields.images.map((image, index) => (
                     <div key={index} className={styles.imageItem}>
                       <img src={image} alt={`Preview ${index + 1}`} />
-                      <button 
-                        type="button" 
-                        onClick={() => {
-                          const newImages = complexFields.images.filter((_, i) => i !== index);
-                          handleComplexFieldChange('images', newImages);
-                        }}
-                      >
-                        삭제
-                      </button>
+                      <div className={styles.imageActions}>
+                        <span className={styles.imageOrder}>
+                          {index === 0 ? '대표' : index + 1}
+                        </span>
+                        <button 
+                          type="button" 
+                          className={styles.deleteImageButton}
+                          onClick={() => {
+                            const newImages = complexFields.images.filter((_, i) => i !== index);
+                            setComplexFields(prev => ({ ...prev, images: newImages }));
+                          }}
+                        >
+                          삭제
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -486,11 +643,16 @@ export default function AddProductModal() {
               type="button" 
               onClick={handleClose}
               className={styles.cancelButton}
+              disabled={uploading}
             >
               취소
             </button>
-            <button type="submit" className={styles.submitButton}>
-              상품 추가
+            <button 
+              type="submit" 
+              className={styles.submitButton}
+              disabled={uploading}
+            >
+              {uploading ? '처리 중...' : '상품 추가'}
             </button>
           </div>
         </form>

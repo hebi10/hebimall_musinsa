@@ -98,8 +98,6 @@ export class CouponService {
     limitCount: number = 50
   ): Promise<UserCouponView[]> {
     try {
-      console.log('🔍 쿠폰 조회 시작:', { uid, filter });
-      
       // 1. user_coupons 조회 (단순 쿼리로 수정)
       let q = query(
         collection(db, 'user_coupons'),
@@ -115,9 +113,7 @@ export class CouponService {
         );
       }
 
-      console.log('📋 Firestore 쿼리 실행 중...');
       const userCouponsSnapshot = await getDocs(q);
-      console.log(`📊 조회된 사용자 쿠폰: ${userCouponsSnapshot.size}개`);
       
       let userCoupons = userCouponsSnapshot.docs.map(doc => ({
         id: doc.id,
@@ -156,13 +152,10 @@ export class CouponService {
       // 제한 적용
       userCoupons = userCoupons.slice(0, limitCount);
 
-      console.log('🎫 사용자 쿠폰 데이터:', userCoupons);
-
       // 2. 각 유저쿠폰에 대한 쿠폰 마스터 정보 조회
       const userCouponViews: UserCouponView[] = [];
       
       for (const userCoupon of userCoupons) {
-        console.log(`🔍 쿠폰 마스터 조회: ${userCoupon.couponId}`);
         const coupon = await this.getCouponById(userCoupon.couponId);
         if (coupon) {
           // 타입별 필터링
@@ -188,8 +181,7 @@ export class CouponService {
           }
         });
       }
-
-      console.log('✅ 최종 쿠폰 목록:', userCouponViews);
+      
       return userCouponViews;
     } catch (error) {
       console.error('❌ 사용자 쿠폰 목록 조회 실패:', error);

@@ -268,7 +268,9 @@
   border-top: 1px solid var(--color-border-light);
 }
 
-/* 반응형 */
+/* ========== Mobile First Media Queries ========== */
+
+/* Medium Devices (768px and down) */
 @media (max-width: 768px) {
   .stats {
     grid-template-columns: 1fr;

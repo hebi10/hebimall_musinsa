@@ -57,6 +57,9 @@
   font-weight: 500;
 }
 
+/* ========== Mobile First Media Queries ========== */
+
+/* Extra Small Devices (480px and down) */
 @media (max-width: 480px) {
   .authContainer {
     padding: 1rem;

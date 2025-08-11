@@ -118,7 +118,7 @@ export default function OrderListPage() {
                 </div>
 
                 <div className={styles.orderProducts}>
-                  {order.products.map((product) => (
+                  {order.products.map((product: any) => (
                     <div key={product.id} className={styles.productItem}>
                       <div className={styles.productImage}>
                         <img src={product.productImage} alt={product.productName} />

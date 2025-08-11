@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/authProvider";
 import styles from "./page.module.css";
 import AdminNav from "../../_components/adminNav";
+import FirebaseStorageTest from "../../_components/FirebaseStorageTest";
 
 interface StatData {
   title: string;
@@ -215,6 +216,9 @@ export default function AdminDashboardPage() {
 
   return (
     <div className={styles.container}>
+      {/* Firebase Storage 테스트 컴포넌트 (개발용) */}
+      {process.env.NODE_ENV === 'development' && <FirebaseStorageTest />}
+      
       {/* 관리자 헤더 */}
       <div className={styles.adminHeader}>
         <div className={styles.headerContainer}>

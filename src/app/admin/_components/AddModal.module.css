@@ -112,6 +112,11 @@
   text-align: center;
   transition: border-color 0.2s;
   cursor: pointer;
+  position: relative;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .imageUpload:hover {
@@ -119,17 +124,22 @@
 }
 
 .fileInput {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  padding: 0;
-  border: none;
-  background: none;
+  height: 100%;
+  opacity: 0;
   cursor: pointer;
+  z-index: 1;
 }
 
 .uploadText {
-  margin: 8px 0 0 0;
+  margin: 0;
   color: #6c757d;
   font-size: 14px;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .formActions {
@@ -197,6 +207,78 @@
   .submitButton {
     width: 100%;
   }
+}
+
+/* 업로드 진행률 */
+.uploadProgress {
+  margin: 16px 0;
+}
+
+.progressItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+  font-size: 0.75rem;
+  color: #6c757d;
+}
+
+.progressBar {
+  flex: 1;
+  height: 6px;
+  background-color: #f0f0f0;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background-color: #007bff;
+  transition: width 0.3s ease;
+}
+
+.imageActions {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 8px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.imageItem:hover .imageActions {
+  opacity: 1;
+}
+
+.imageOrder {
+  background: #007bff;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.625rem;
+  font-weight: 600;
+  align-self: flex-start;
+}
+
+.deleteImageButton {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.625rem;
+  cursor: pointer;
+  align-self: flex-end;
+}
+
+.deleteImageButton:hover {
+  background: #c82333;
 }
 
 /* 새로 추가된 스타일들 */

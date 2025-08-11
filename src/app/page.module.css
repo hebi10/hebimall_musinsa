@@ -43,12 +43,6 @@
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-@media (max-width: 768px) {
-  .bannerTitle {
-    font-size: 2rem;
-  }
-}
-
 .bannerSubtitle {
   font-size: 1.25rem;
   margin-bottom: 2rem;
@@ -59,18 +53,6 @@
   max-width: 1280px;
   margin: 0 auto;
   padding: 4rem 1rem;
-}
-
-@media (min-width: 640px) {
-  .section {
-    padding: 4rem 1.5rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .section {
-    padding: 4rem 2rem;
-  }
 }
 
 .sectionTitle {
@@ -93,12 +75,6 @@
   grid-template-columns: repeat(2, 1fr);
   gap: 1.5rem;
   margin-bottom: 2rem;
-}
-
-@media (min-width: 768px) {
-  .categoryGrid {
-    grid-template-columns: repeat(4, 1fr);
-  }
 }
 
 .categoryCard {
@@ -183,12 +159,6 @@
   z-index: 1;
 }
 
-@media (min-width: 768px) {
-  .statsGrid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
 .statItem {
   display: flex;
   flex-direction: column;
@@ -204,22 +174,10 @@
   background-clip: text;
 }
 
-@media (min-width: 768px) {
-  .statNumber {
-    font-size: 3rem;
-  }
-}
-
 .statLabel {
   font-size: 1rem;
   font-weight: 500;
   opacity: 0.9;
-}
-
-@media (min-width: 768px) {
-  .statLabel {
-    font-size: 1.1rem;
-  }
 }
 
 .productsSection {
@@ -246,57 +204,6 @@
 
 .moreLink:hover {
   color: #764ba2;
-}
-
-.productGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2rem;
-}
-
-@media (min-width: 768px) {
-  .productGrid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-.statsSection {
-  background-color: white;
-  border-radius: 1rem;
-  padding: 3rem 2rem;
-  margin: 4rem auto;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-}
-
-.statsGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2rem;
-}
-
-@media (min-width: 768px) {
-  .statsGrid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-.statItem {
-  text-align: center;
-  padding: 1.5rem;
-  border-radius: 0.75rem;
-  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
-}
-
-.statNumber {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #667eea;
-  margin-bottom: 0.5rem;
-}
-
-.statLabel {
-  color: #6b7280;
-  font-weight: 500;
 }
 
 .main code {
@@ -358,24 +265,30 @@ a.secondary {
   flex-shrink: 0;
 }
 
-/* Enable hover only on non-touch devices */
-@media (hover: hover) and (pointer: fine) {
-  a.primary:hover {
-    background: var(--button-primary-hover);
-    border-color: transparent;
-  }
-
-  a.secondary:hover {
-    background: var(--button-secondary-hover);
-    border-color: transparent;
-  }
-
-  .footer a:hover {
-    text-decoration: underline;
-    text-underline-offset: 4px;
+@media (prefers-color-scheme: dark) {
+  .logo {
+    filter: invert();
   }
 }
 
+/* ========== Mobile First Media Queries ========== */
+
+/* Extra Small Devices (480px and down) */
+@media (max-width: 480px) {
+  .bannerTitle {
+    font-size: 2rem;
+  }
+
+  .bannerSubtitle {
+    font-size: 1rem;
+  }
+
+  .categoryGrid {
+    gap: 1rem;
+  }
+}
+
+/* Small Devices (600px and down) */
 @media (max-width: 600px) {
   .page {
     padding: 32px;
@@ -411,8 +324,72 @@ a.secondary {
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  .logo {
-    filter: invert();
+/* Small to Medium Devices (640px and down) */
+@media (max-width: 640px) {
+  .bannerSubtitle {
+    font-size: 1.125rem;
+    margin-bottom: 1.5rem;
+  }
+}
+
+/* Medium Devices (768px and down) */
+@media (max-width: 768px) {
+  .bannerTitle {
+    font-size: 2.5rem;
+  }
+}
+
+/* Large Screens (640px and up) */
+@media (min-width: 640px) {
+  .section {
+    padding: 4rem 1.5rem;
+  }
+}
+
+/* Large Screens (768px and up) */
+@media (min-width: 768px) {
+  .categoryGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .statsGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .statNumber {
+    font-size: 3rem;
+  }
+
+  .statLabel {
+    font-size: 1.1rem;
+  }
+
+  .productGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Extra Large Screens (1024px and up) */
+@media (min-width: 1024px) {
+  .section {
+    padding: 4rem 2rem;
+  }
+}
+
+/* Hover States (for devices that support hover) */
+@media (hover: hover) and (pointer: fine) {
+  a.primary:hover {
+    background: var(--button-primary-hover);
+    border-color: transparent;
+  }
+
+  a.secondary:hover {
+    background: var(--button-secondary-hover);
+    border-color: transparent;
+  }
+
+  .footer a:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
   }
 }

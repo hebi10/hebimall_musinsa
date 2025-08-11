@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "seed": "node scripts/seed-data.js"
+    "seed": "node scripts/seed-data.js",
+    "seed:categories": "node scripts/seed-categories.js",
+    "seed:users": "node scripts/seed-users.js",
+    "seed:coupons": "node scripts/seed-coupons.js"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.84.1",

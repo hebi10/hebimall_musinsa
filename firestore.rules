@@ -2,17 +2,39 @@ rules_version='2'
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    // 개발용 임시 규칙 - 모든 읽기/쓰기 허용
     match /{document=**} {
-      // This rule allows anyone with your database reference to view, edit,
-      // and delete all data in your database. It is useful for getting
-      // started, but it is configured to expire after 30 days because it
-      // leaves your app open to attackers. At that time, all client
-      // requests to your database will be denied.
-      //
-      // Make sure to write security rules for your app before that time, or
-      // else all client requests to your database will be denied until you
-      // update your rules.
-      allow read, write: if request.time < timestamp.date(2025, 9, 3);
+      allow read, write: if true;
+    }
+    
+    // 카테고리 컬렉션 규칙
+    match /categories/{categoryId} {
+      allow read, write: if true;
+      
+      // 카테고리 내 상품 컬렉션 규칙
+      match /products/{productId} {
+        allow read, write: if true;
+      }
+    }
+    
+    // 기존 products 컬렉션 (마이그레이션 중)
+    match /products/{productId} {
+      allow read, write: if true;
+    }
+    
+    // 사용자 관련 컬렉션
+    match /users/{userId} {
+      allow read, write: if true;
+    }
+    
+    // 주문 관련 컬렉션
+    match /orders/{orderId} {
+      allow read, write: if true;
+    }
+    
+    // 리뷰 관련 컬렉션
+    match /reviews/{reviewId} {
+      allow read, write: if true;
     }
   }
 }

@@ -11,14 +11,17 @@ const {
   Timestamp 
 } = require('firebase/firestore');
 
+// 환경변수 로드
+require('dotenv').config({ path: '.env.local' });
+
 // Firebase 설정
 const firebaseConfig = {
-  apiKey: "AIzaSyD9xCrkmFZw0PvS9hXl5kpWv81qX1v4lcw",
-  authDomain: "hebimall.firebaseapp.com",
-  projectId: "hebimall",
-  storageBucket: "hebimall.firebasestorage.app",
-  messagingSenderId: "404572243739",
-  appId: "1:404572243739:web:8a5b237d8532015cde35be"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
 };
 
 const app = initializeApp(firebaseConfig);
@@ -31,8 +34,6 @@ if (!userUID) {
   console.error('사용법: node scripts/add-user-coupons.js [USER_UID]');
   process.exit(1);
 }
-
-console.log(`사용자 ${userUID}에게 쿠폰을 발급합니다...`);
 
 // 해당 사용자에게 발급할 쿠폰들
 const userCoupons = [
@@ -74,8 +75,6 @@ const userCoupons = [
 
 async function addUserCoupons() {
   try {
-    console.log('🚀 사용자 쿠폰 발급을 시작합니다...');
-
     // 기존 사용자 쿠폰이 있는지 확인
     const q = query(
       collection(db, 'user_coupons'),
@@ -83,30 +82,15 @@ async function addUserCoupons() {
     );
     const existingSnapshot = await getDocs(q);
     
-    if (!existingSnapshot.empty) {
-      console.log(`⚠️  사용자 ${userUID}에게 이미 ${existingSnapshot.size}개의 쿠폰이 있습니다.`);
-      console.log('기존 쿠폰:');
-      existingSnapshot.forEach(doc => {
-        const data = doc.data();
-        console.log(`  - ${data.couponId} (${data.status})`);
-      });
-    }
-
     // 새로운 쿠폰 발급
-    console.log('👤 새로운 쿠폰 발급 중...');
     for (const userCoupon of userCoupons) {
-      const docRef = await addDoc(collection(db, 'user_coupons'), userCoupon);
-      console.log(`✅ 유저쿠폰 발급: ${docRef.id} (${userCoupon.couponId} - ${userCoupon.status})`);
+      await addDoc(collection(db, 'user_coupons'), userCoupon);
     }
-
-    console.log('🎉 사용자 쿠폰 발급이 완료되었습니다!');
-    console.log(`📊 발급된 쿠폰: ${userCoupons.length}개`);
 
   } catch (error) {
     console.error('❌ 쿠폰 발급 중 오류 발생:', error);
+    process.exit(1);
   }
-  
-  process.exit(0);
 }
 
 addUserCoupons();

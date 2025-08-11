@@ -1,12 +1,39 @@
 :root {
-  /* Colors */
-  --color-primary: #000000;
-  --color-primary-hover: #1a1a1a;
+  /* Primary Colors */
+  --color-primary: #3b82f6;
+  --color-primary-hover: #2563eb;
+  --color-primary-dark: #1d4ed8;
+  --color-primary-light: #dbeafe;
+  
+  /* Secondary Colors */
   --color-secondary: #f5f5f5;
   --color-accent: #ff6b6b;
-  --color-success: #51cf66;
-  --color-warning: #ffd43b;
-  --color-error: #ff6b6b;
+  --color-success: #10b981;
+  --color-warning: #fbbf24;
+  --color-error: #ef4444;
+  
+  /* Gray Scale */
+  --color-white: #ffffff;
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+  
+  /* Semantic Colors */
+  --color-blue-500: #3b82f6;
+  --color-blue-600: #2563eb;
+  --color-red-500: #ef4444;
+  --color-red-600: #dc2626;
+  --color-green-500: #10b981;
+  --color-green-600: #059669;
+  --color-yellow-500: #eab308;
+  --color-yellow-600: #ca8a04;
   
   /* Text Colors */
   --color-text-primary: #212529;
