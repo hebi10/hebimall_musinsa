@@ -1,19 +1,37 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { Event } from '@/shared/types/event';
+import { EventService } from '@/shared/services/eventService';
 import Button from '@/app/_components/Button';
 import styles from './AdminEventList.module.css';
 
-import { mockEvents } from '@/mocks/event';
-
 export default function AdminEventList() {
-  const [events, setEvents] = useState(mockEvents);
+  const [events, setEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'ended'>('all');
   const [filterType, setFilterType] = useState<'all' | 'sale' | 'coupon' | 'special' | 'new'>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedEvents, setSelectedEvents] = useState<string[]>([]);
+
+  useEffect(() => {
+    loadEvents();
+  }, []);
+
+  const loadEvents = async () => {
+    try {
+      setLoading(true);
+      const eventsData = await EventService.getEvents();
+      setEvents(eventsData);
+    } catch (error) {
+      console.error('Error loading events:', error);
+      alert('이벤트를 불러오는데 실패했습니다.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getEventStatus = (event: Event) => {
     const now = new Date();
@@ -53,24 +71,37 @@ export default function AdminEventList() {
     }
   };
 
-  const handleToggleActive = (eventId: string) => {
-    setEvents(events.map(event => 
-      event.id === eventId 
-        ? { ...event, isActive: !event.isActive }
-        : event
-    ));
+  const handleToggleActive = async (eventId: string) => {
+    try {
+      await EventService.toggleEventStatus(eventId);
+      setEvents(events.map(event => 
+        event.id === eventId 
+          ? { ...event, isActive: !event.isActive }
+          : event
+      ));
+      alert('이벤트 상태가 변경되었습니다.');
+    } catch (error) {
+      console.error('Error toggling event status:', error);
+      alert('이벤트 상태 변경에 실패했습니다.');
+    }
   };
 
-  const handleDeleteEvents = () => {
+  const handleDeleteEvents = async () => {
     if (selectedEvents.length === 0) {
       alert('삭제할 이벤트를 선택해주세요.');
       return;
     }
     
     if (confirm(`선택한 ${selectedEvents.length}개의 이벤트를 삭제하시겠습니까?`)) {
-      setEvents(events.filter(event => !selectedEvents.includes(event.id)));
-      setSelectedEvents([]);
-      alert('선택한 이벤트가 삭제되었습니다.');
+      try {
+        await Promise.all(selectedEvents.map(id => EventService.deleteEvent(id)));
+        setEvents(events.filter(event => !selectedEvents.includes(event.id)));
+        setSelectedEvents([]);
+        alert('선택한 이벤트가 삭제되었습니다.');
+      } catch (error) {
+        console.error('Error deleting events:', error);
+        alert('이벤트 삭제에 실패했습니다.');
+      }
     }
   };
 
@@ -83,6 +114,14 @@ export default function AdminEventList() {
       default: return type;
     }
   };
+
+  if (loading) {
+    return (
+      <div className={styles.loading}>
+        <p>이벤트를 불러오는 중...</p>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.container}>
@@ -149,7 +188,9 @@ export default function AdminEventList() {
         </div>
 
         <div className={styles.actionSection}>
-          <Button variant="primary">새 이벤트 생성</Button>
+          <Link href="/admin/events/create">
+            <Button variant="primary">새 이벤트 생성</Button>
+          </Link>
         </div>
       </div>
 
@@ -178,6 +219,7 @@ export default function AdminEventList() {
       {/* 이벤트 목록 */}
       <div className={styles.eventList}>
         {filteredEvents.map(event => {
+          console.log('Rendering event:', event); // 디버깅용
           const status = getEventStatus(event);
           return (
             <div key={event.id} className={styles.eventItem}>
@@ -231,9 +273,13 @@ export default function AdminEventList() {
                     </span>
                     <span className={styles.participants}>
                       참여자: {event.participantCount.toLocaleString()}명
-                      {event.maxParticipants && (
+                      {event.hasMaxParticipants && event.maxParticipants && event.maxParticipants > 0 ? (
                         <span className={styles.maxParticipants}>
                           / {event.maxParticipants.toLocaleString()}명
+                        </span>
+                      ) : (
+                        <span className={styles.noLimit}>
+                          (제한 없음)
                         </span>
                       )}
                     </span>
@@ -241,7 +287,9 @@ export default function AdminEventList() {
                 </div>
 
                 <div className={styles.eventActions}>
-                  <Button variant="outline" size="sm">수정</Button>
+                  <Link href={`/admin/events/${event.id}/edit`}>
+                    <Button variant="outline" size="sm">수정</Button>
+                  </Link>
                   <Button
                     variant={event.isActive ? "outline" : "primary"}
                     size="sm"
@@ -253,16 +301,16 @@ export default function AdminEventList() {
               </div>
 
               <div className={styles.eventDetails}>
-                {event.discountRate && (
+                {event.discountRate && event.discountRate > 0 ? (
                   <div className={styles.eventBenefit}>
                     할인율: {event.discountRate}%
                   </div>
-                )}
-                {event.discountAmount && (
+                ) : null}
+                {event.discountAmount && event.discountAmount > 0 ? (
                   <div className={styles.eventBenefit}>
                     적립금: {event.discountAmount.toLocaleString()}원
                   </div>
-                )}
+                ) : null}
                 {event.couponCode && (
                   <div className={styles.eventBenefit}>
                     쿠폰코드: {event.couponCode}

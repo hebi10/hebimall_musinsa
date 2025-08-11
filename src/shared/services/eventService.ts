@@ -14,9 +14,10 @@ import {
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { db, storage } from '../libs/firebase/firebase';
-import { Event, EventFilter } from '../types/event';
+import { Event, EventFilter, EventParticipant } from '../types/event';
 
 const EVENTS_COLLECTION = 'events';
+const EVENT_PARTICIPANTS_COLLECTION = 'eventParticipants';
 
 export class EventService {
   // 모든 이벤트 가져오기
@@ -260,6 +261,119 @@ export class EventService {
       await batch.commit();
     } catch (error) {
       console.error('Error batch updating events:', error);
+      throw error;
+    }
+  }
+
+  // 이벤트 참여
+  static async participateInEvent(eventId: string, userId: string, userName: string): Promise<void> {
+    try {
+      // 이미 참여했는지 확인
+      const isAlreadyParticipated = await this.checkEventParticipation(eventId, userId);
+      if (isAlreadyParticipated) {
+        throw new Error('이미 참여한 이벤트입니다.');
+      }
+
+      // 이벤트 정보 확인
+      const event = await this.getEventById(eventId);
+      if (!event) {
+        throw new Error('존재하지 않는 이벤트입니다.');
+      }
+
+      // 이벤트 상태 확인
+      const now = new Date();
+      if (now < event.startDate) {
+        throw new Error('아직 시작되지 않은 이벤트입니다.');
+      }
+      if (now > event.endDate) {
+        throw new Error('종료된 이벤트입니다.');
+      }
+      if (!event.isActive) {
+        throw new Error('비활성화된 이벤트입니다.');
+      }
+
+      // manual 타입 쿠폰 이벤트는 참여 불가
+      if (event.eventType === 'coupon' && event.couponType === 'manual') {
+        throw new Error('수동 쿠폰 이벤트는 직접 참여할 수 없습니다.');
+      }
+
+      // 최대 참여자 수 확인
+      if (event.hasMaxParticipants && event.maxParticipants && event.participantCount >= event.maxParticipants) {
+        throw new Error('참여 인원이 마감되었습니다.');
+      }
+
+      // 참여자 추가
+      await addDoc(collection(db, EVENT_PARTICIPANTS_COLLECTION), {
+        eventId,
+        userId,
+        userName,
+        participatedAt: Timestamp.now(),
+        couponUsed: false,
+      });
+
+      // 참여자 수 증가
+      await this.incrementParticipantCount(eventId);
+    } catch (error) {
+      console.error('Error participating in event:', error);
+      throw error;
+    }
+  }
+
+  // 이벤트 참여 여부 확인
+  static async checkEventParticipation(eventId: string, userId: string): Promise<boolean> {
+    try {
+      const q = query(
+        collection(db, EVENT_PARTICIPANTS_COLLECTION),
+        where('eventId', '==', eventId),
+        where('userId', '==', userId)
+      );
+
+      const querySnapshot = await getDocs(q);
+      return !querySnapshot.empty;
+    } catch (error) {
+      console.error('Error checking event participation:', error);
+      return false;
+    }
+  }
+
+  // 이벤트 참여자 목록 가져오기
+  static async getEventParticipants(eventId: string): Promise<EventParticipant[]> {
+    try {
+      const q = query(
+        collection(db, EVENT_PARTICIPANTS_COLLECTION),
+        where('eventId', '==', eventId),
+        orderBy('participatedAt', 'desc')
+      );
+
+      const querySnapshot = await getDocs(q);
+      return querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        participatedAt: doc.data().participatedAt.toDate(),
+      } as EventParticipant));
+    } catch (error) {
+      console.error('Error getting event participants:', error);
+      throw error;
+    }
+  }
+
+  // 사용자 참여 이벤트 목록 가져오기
+  static async getUserParticipatedEvents(userId: string): Promise<EventParticipant[]> {
+    try {
+      const q = query(
+        collection(db, EVENT_PARTICIPANTS_COLLECTION),
+        where('userId', '==', userId),
+        orderBy('participatedAt', 'desc')
+      );
+
+      const querySnapshot = await getDocs(q);
+      return querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        participatedAt: doc.data().participatedAt.toDate(),
+      } as EventParticipant));
+    } catch (error) {
+      console.error('Error getting user participated events:', error);
       throw error;
     }
   }

@@ -43,8 +43,6 @@ export default async function ProductDetailPage({ params }: Props) {
   const { productId } = await params;
   
   try {
-    console.log('🔍 상품 상세 페이지 로드:', productId);
-    
     // Firebase에서 상품 정보 가져오기
     const product = await CategoryBasedProductService.findProductById(productId);
     
@@ -53,7 +51,6 @@ export default async function ProductDetailPage({ params }: Props) {
       notFound();
     }
 
-    console.log('✅ 상품 정보 로드 완료:', product.name);
     return <ProductDetailClient product={product} />;
     
   } catch (error) {

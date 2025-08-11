@@ -1,4 +1,5 @@
 .card {
+  width: 24%;
   cursor: pointer;
   text-decoration: none;
   color: inherit;

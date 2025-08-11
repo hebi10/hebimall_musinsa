@@ -9,6 +9,7 @@ export const mockEvents: Event[] = [
     bannerImage: '/images/events/signup-event.jpg',
     thumbnailImage: '/images/events/signup-thumb.jpg',
     eventType: 'coupon',
+    couponType: 'auto',
     startDate: new Date('2024-01-01'),
     endDate: new Date('2024-12-31'),
     isActive: true,
@@ -16,6 +17,7 @@ export const mockEvents: Event[] = [
     couponCode: 'WELCOME20',
     participantCount: 1245,
     maxParticipants: 5000,
+    hasMaxParticipants: true,
     createdAt: new Date('2024-01-01'),
     updatedAt: new Date('2024-01-01')
   },
@@ -33,6 +35,7 @@ export const mockEvents: Event[] = [
     discountRate: 50,
     targetCategories: ['상의', '하의', '아우터'],
     participantCount: 892,
+    hasMaxParticipants: false,
     createdAt: new Date('2024-02-25'),
     updatedAt: new Date('2024-02-25')
   },
@@ -49,6 +52,7 @@ export const mockEvents: Event[] = [
     isActive: true,
     discountAmount: 1000,
     participantCount: 2341,
+    hasMaxParticipants: false,
     createdAt: new Date('2024-01-10'),
     updatedAt: new Date('2024-01-10')
   },
@@ -64,8 +68,28 @@ export const mockEvents: Event[] = [
     endDate: new Date('2024-04-30'),
     isActive: true,
     participantCount: 567,
+    hasMaxParticipants: false,
     createdAt: new Date('2024-01-25'),
     updatedAt: new Date('2024-01-25')
+  },
+  {
+    id: 'event-5',
+    title: '수동 쿠폰 이벤트',
+    description: '고객센터를 통해 쿠폰을 받으세요',
+    content: '특별한 쿠폰을 받으려면 고객센터로 문의해주세요.',
+    bannerImage: '/images/events/manual-coupon.jpg',
+    thumbnailImage: '/images/events/manual-thumb.jpg',
+    eventType: 'coupon',
+    couponType: 'manual',
+    startDate: new Date('2024-03-01'),
+    endDate: new Date('2024-03-31'),
+    isActive: true,
+    discountRate: 30,
+    couponCode: 'MANUAL30',
+    participantCount: 0,
+    hasMaxParticipants: false,
+    createdAt: new Date('2024-02-25'),
+    updatedAt: new Date('2024-02-25')
   }
 ];
 
@@ -104,6 +128,7 @@ export const mockEvent = {
   bannerImage: '/images/events/signup-event.jpg',
   thumbnailImage: '/images/events/signup-thumb.jpg',
   eventType: 'coupon' as const,
+  couponType: 'auto' as const,
   startDate: new Date('2024-01-01'),
   endDate: new Date('2024-12-31'),
   isActive: true,
@@ -111,6 +136,7 @@ export const mockEvent = {
   couponCode: 'WELCOME20',
   participantCount: 1245,
   maxParticipants: 5000,
+  hasMaxParticipants: true,
   createdAt: new Date('2024-01-01'),
   updatedAt: new Date('2024-01-01')
 };

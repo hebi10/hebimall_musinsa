@@ -6,20 +6,48 @@ import Link from 'next/link';
 import { Event } from '@/shared/types/event';
 import Button from '@/app/_components/Button';
 import styles from './EventList.module.css';
-
-import { mockEvents } from '@/mocks/event';
 import { useEvent } from '@/context/eventProvider';
 
 export default function EventList() {
-  const [filterType, setFilterType] = useState<'all' | 'sale' | 'coupon' | 'special' | 'new'>('all');
   const [currentPage, setCurrentPage] = useState(1);
   const eventsPerPage = 6;
 
-  const { events: filteredEvents } = useEvent();
+  const { 
+    events, 
+    setFilter, 
+    setCurrentPage: setContextPage,
+    getActiveEvents,
+    getTotalParticipants 
+  } = useEvent();
 
-  const totalPages = Math.ceil(filteredEvents.length / eventsPerPage);
+  // 필터 타입 변경 시 context의 setFilter 사용
+  const handleFilterChange = (type: 'all' | 'sale' | 'coupon' | 'special' | 'new') => {
+    if (type === 'all') {
+      setFilter({});
+    } else {
+      setFilter({ eventType: type });
+    }
+    setCurrentPage(1);
+  };
+
+  const [filterType, setFilterType] = useState<'all' | 'sale' | 'coupon' | 'special' | 'new'>('all');
+
+  const totalPages = Math.ceil(events.length / eventsPerPage);
   const startIndex = (currentPage - 1) * eventsPerPage;
-  const displayedEvents = filteredEvents.slice(startIndex, startIndex + eventsPerPage);
+  const displayedEvents = events.slice(startIndex, startIndex + eventsPerPage);
+
+  console.log('events', events);
+
+  // events가 비어있거나 로딩 중일 때 처리
+  if (events.length === 0) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.emptyState}>
+          <p>진행 중인 이벤트가 없습니다.</p>
+        </div>
+      </div>
+    );
+  }
 
   const getEventTypeLabel = (type: string) => {
     switch (type) {
@@ -52,15 +80,15 @@ export default function EventList() {
       <div className={styles.bannerSection}>
         <div className={styles.mainBanner}>
           <Image
-            src={mockEvents[0].bannerImage}
-            alt={mockEvents[0].title}
+            src={events[0]?.bannerImage || '/images/events/default-banner.jpg'}
+            alt={events[0]?.title || 'Default Event'}
             width={1200}
             height={400}
             className={styles.bannerImage}
           />
           <div className={styles.bannerContent}>
-            <h2 className={styles.bannerTitle}>{mockEvents[0].title}</h2>
-            <p className={styles.bannerDescription}>{mockEvents[0].description}</p>
+            <h2 className={styles.bannerTitle}>{events[0]?.title || 'No Event Available'}</h2>
+            <p className={styles.bannerDescription}>{events[0]?.description || 'No description available'}</p>
             <Button variant="primary" size="lg">
               이벤트 참여하기
             </Button>
@@ -71,15 +99,15 @@ export default function EventList() {
       {/* 이벤트 통계 */}
       <div className={styles.stats}>
         <div className={styles.statItem}>
-          <div className={styles.statNumber}>{mockEvents.filter(e => getEventStatus(e) === 'active').length}</div>
+          <div className={styles.statNumber}>{getActiveEvents().length}</div>
           <div className={styles.statLabel}>진행중</div>
         </div>
         <div className={styles.statItem}>
-          <div className={styles.statNumber}>{mockEvents.reduce((sum, e) => sum + e.participantCount, 0)}</div>
+          <div className={styles.statNumber}>{getTotalParticipants()}</div>
           <div className={styles.statLabel}>총 참여자</div>
         </div>
         <div className={styles.statItem}>
-          <div className={styles.statNumber}>{mockEvents.length}</div>
+          <div className={styles.statNumber}>{events.length}</div>
           <div className={styles.statLabel}>전체 이벤트</div>
         </div>
       </div>
@@ -88,31 +116,46 @@ export default function EventList() {
       <div className={styles.filters}>
         <button
           className={`${styles.filterButton} ${filterType === 'all' ? styles.active : ''}`}
-          onClick={() => setFilterType('all')}
+          onClick={() => {
+            setFilterType('all');
+            handleFilterChange('all');
+          }}
         >
           전체
         </button>
         <button
           className={`${styles.filterButton} ${filterType === 'sale' ? styles.active : ''}`}
-          onClick={() => setFilterType('sale')}
+          onClick={() => {
+            setFilterType('sale');
+            handleFilterChange('sale');
+          }}
         >
           세일
         </button>
         <button
           className={`${styles.filterButton} ${filterType === 'coupon' ? styles.active : ''}`}
-          onClick={() => setFilterType('coupon')}
+          onClick={() => {
+            setFilterType('coupon');
+            handleFilterChange('coupon');
+          }}
         >
           쿠폰
         </button>
         <button
           className={`${styles.filterButton} ${filterType === 'special' ? styles.active : ''}`}
-          onClick={() => setFilterType('special')}
+          onClick={() => {
+            setFilterType('special');
+            handleFilterChange('special');
+          }}
         >
           특별 이벤트
         </button>
         <button
           className={`${styles.filterButton} ${filterType === 'new' ? styles.active : ''}`}
-          onClick={() => setFilterType('new')}
+          onClick={() => {
+            setFilterType('new');
+            handleFilterChange('new');
+          }}
         >
           신상품
         </button>
@@ -171,16 +214,16 @@ export default function EventList() {
                   </div>
                 </div>
 
-                {event.discountRate && event.discountRate > 0 && (
+                {event.discountRate && event.discountRate > 0 ? (
                   <div className={styles.eventDiscount}>
                     최대 {event.discountRate}% 할인
                   </div>
-                )}
-                {event.discountAmount && event.discountAmount > 0 && (
+                ) : null}
+                {event.discountAmount && event.discountAmount > 0 ? (
                   <div className={styles.eventDiscount}>
                     {event.discountAmount.toLocaleString()}원 적립
                   </div>
-                )}
+                ) : null}
               </div>
             </Link>
           );

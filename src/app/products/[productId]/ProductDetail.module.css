@@ -11,6 +11,11 @@
   margin-bottom: var(--spacing-xl);
 }
 
+.relatedGrid{
+  display: flex;
+  justify-content: space-between;
+}
+
 /* 이미지 섹션 */
 .imageSection {
   display: flex;

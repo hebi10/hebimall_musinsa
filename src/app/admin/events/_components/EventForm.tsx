@@ -77,7 +77,6 @@ export default function EventForm({ event, isEdit = false }: Props) {
   };
 
   const handleInputChange = (field: string, value: any) => {
-    console.log(`Changing ${field} to:`, value);
     setFormData(prev => ({
       ...prev,
       [field]: value

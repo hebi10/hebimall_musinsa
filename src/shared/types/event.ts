@@ -6,6 +6,7 @@ export interface Event {
   bannerImage: string;
   thumbnailImage: string;
   eventType: 'sale' | 'coupon' | 'special' | 'new';
+  couponType?: 'manual' | 'auto';
   startDate: Date;
   endDate: Date;
   isActive: boolean;
