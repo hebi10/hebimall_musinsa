@@ -5,6 +5,9 @@ import * as admin from "firebase-admin";
 
 admin.initializeApp();
 
+// 쿠폰 함수들 export
+export * from './couponFunctions';
+
 // 포인트 타입 정의
 interface AddPointData {
   amount: number;

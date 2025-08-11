@@ -5,14 +5,11 @@ import {
 } from 'firebase-functions/v2/https';
 import { 
   getFirestore, 
-  FieldValue,
-  Timestamp 
+  FieldValue 
 } from 'firebase-admin/firestore';
-import { initializeApp } from 'firebase-admin/app';
 
-// Firebase Admin 초기화
-const app = initializeApp();
-const db = getFirestore(app);
+// Firebase Admin은 index.ts에서 이미 초기화됨
+const db = getFirestore();
 
 interface IssueCouponRequest {
   uid: string;
@@ -40,7 +37,7 @@ interface CouponResponse {
  * 쿠폰 발급 함수
  */
 export const issueCoupon = onCall<IssueCouponRequest>(
-  { region: 'asia-northeast3' },
+  { region: 'us-central1' },
   async (request: CallableRequest<IssueCouponRequest>): Promise<CouponResponse> => {
     try {
       const { uid, couponId } = request.data;
@@ -115,7 +112,7 @@ export const issueCoupon = onCall<IssueCouponRequest>(
  * 쿠폰 사용 함수
  */
 export const useCoupon = onCall<UseCouponRequest>(
-  { region: 'asia-northeast3' },
+  { region: 'us-central1' },
   async (request: CallableRequest<UseCouponRequest>): Promise<CouponResponse> => {
     try {
       const { userCouponId, orderId, uid } = request.data;
@@ -201,7 +198,7 @@ export const useCoupon = onCall<UseCouponRequest>(
  * 쿠폰 코드로 등록 함수
  */
 export const registerCoupon = onCall<RegisterCouponRequest>(
-  { region: 'asia-northeast3' },
+  { region: 'us-central1' },
   async (request: CallableRequest<RegisterCouponRequest>): Promise<CouponResponse> => {
     try {
       const { uid, couponCode } = request.data;
@@ -215,12 +212,12 @@ export const registerCoupon = onCall<RegisterCouponRequest>(
         throw new HttpsError('permission-denied', '권한이 없습니다.');
       }
 
-      // 1. 쿠폰 코드로 쿠폰 마스터 찾기 (여기서는 예제로 쿠폰 ID와 동일하다고 가정)
-      // 실제로는 별도의 coupon_codes 컬렉션을 만들거나 쿠폰 마스터에 코드 필드를 추가할 수 있습니다.
+      // 1. 쿠폰 코드로 쿠폰 마스터 찾기
       const couponQuery = await db
         .collection('coupons')
-        .where('id', '==', couponCode) // 실제로는 별도의 코드 필드 사용
+        .where('couponCode', '==', couponCode.toUpperCase()) // couponCode 필드로 검색
         .where('isActive', '==', true)
+        .where('isDirectAssign', '==', false) // 코드 입력 방식만 허용
         .get();
 
       if (couponQuery.empty) {
@@ -230,6 +227,18 @@ export const registerCoupon = onCall<RegisterCouponRequest>(
       const couponDoc = couponQuery.docs[0];
       const coupon = couponDoc.data();
       const couponId = couponDoc.id;
+
+      // 1.5. 쿠폰 사용 제한 확인
+      if (coupon.usageLimit && coupon.usedCount >= coupon.usageLimit) {
+        throw new HttpsError('resource-exhausted', '쿠폰 사용 한도가 초과되었습니다.');
+      }
+
+      // 1.6. 쿠폰 만료일 확인
+      const currentDate = new Date();
+      const expiryDate = new Date(coupon.expiryDate);
+      if (expiryDate < currentDate) {
+        throw new HttpsError('failed-precondition', '만료된 쿠폰 코드입니다.');
+      }
 
       // 2. 중복 발급 확인
       const existingUserCoupon = await db
@@ -254,6 +263,12 @@ export const registerCoupon = onCall<RegisterCouponRequest>(
       };
 
       const userCouponRef = await db.collection('user_coupons').add(newUserCoupon);
+
+      // 4. 쿠폰 마스터의 사용 횟수 증가
+      await db.collection('coupons').doc(couponId).update({
+        usedCount: FieldValue.increment(1),
+        updatedAt: FieldValue.serverTimestamp()
+      });
 
       return {
         success: true,
@@ -282,7 +297,7 @@ export const registerCoupon = onCall<RegisterCouponRequest>(
  */
 export const cleanupExpiredCoupons = onCall(
   { 
-    region: 'asia-northeast3',
+    region: 'us-central1',
     // schedule: 'every day 00:00' // 실제로는 onSchedule 사용
   },
   async (): Promise<void> => {
