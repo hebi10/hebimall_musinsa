@@ -8,15 +8,14 @@ import Button from '@/app/_components/Button';
 import styles from './EventList.module.css';
 
 import { mockEvents } from '@/mocks/event';
+import { useEvent } from '@/context/eventProvider';
 
 export default function EventList() {
   const [filterType, setFilterType] = useState<'all' | 'sale' | 'coupon' | 'special' | 'new'>('all');
   const [currentPage, setCurrentPage] = useState(1);
   const eventsPerPage = 6;
 
-  const filteredEvents = mockEvents.filter(event =>
-    filterType === 'all' || event.eventType === filterType
-  );
+  const { events: filteredEvents } = useEvent();
 
   const totalPages = Math.ceil(filteredEvents.length / eventsPerPage);
   const startIndex = (currentPage - 1) * eventsPerPage;
@@ -160,20 +159,24 @@ export default function EventList() {
                   </div>
                   <div className={styles.eventParticipants}>
                     참여자: {event.participantCount.toLocaleString()}명
-                    {event.maxParticipants && (
+                    {event.hasMaxParticipants && event.maxParticipants && event.maxParticipants > 0 ? (
                       <span className={styles.maxParticipants}>
                         / {event.maxParticipants.toLocaleString()}명
+                      </span>
+                    ) : (
+                      <span className={styles.noLimit}>
+                        (제한 없음)
                       </span>
                     )}
                   </div>
                 </div>
 
-                {event.discountRate && (
+                {event.discountRate && event.discountRate > 0 && (
                   <div className={styles.eventDiscount}>
                     최대 {event.discountRate}% 할인
                   </div>
                 )}
-                {event.discountAmount && (
+                {event.discountAmount && event.discountAmount > 0 && (
                   <div className={styles.eventDiscount}>
                     {event.discountAmount.toLocaleString()}원 적립
                   </div>

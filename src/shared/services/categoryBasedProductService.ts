@@ -44,7 +44,6 @@ export class CategoryBasedProductService {
    */
   static async getAllProducts(): Promise<Product[]> {
     try {
-      console.log('📦 모든 상품 조회 시작...');
       const allProducts: Product[] = [];
       
       // 모든 카테고리를 조회
@@ -52,7 +51,6 @@ export class CategoryBasedProductService {
       
       for (const categoryDoc of categoriesSnapshot.docs) {
         const categoryId = categoryDoc.id;
-        console.log(`📂 카테고리 ${categoryId} 상품 조회 중...`);
         
         const productsRef = collection(db, 'categories', categoryId, 'products');
         const productsSnapshot = await getDocs(productsRef);
@@ -89,7 +87,6 @@ export class CategoryBasedProductService {
         }
       }
       
-      console.log(`✅ 총 ${allProducts.length}개 상품 조회 완료`);
       return allProducts;
       
     } catch (error) {
@@ -103,8 +100,6 @@ export class CategoryBasedProductService {
    */
   static async getProductsByCategory(category: string): Promise<Product[]> {
     try {
-      console.log(`📂 카테고리 "${category}" 상품 조회 시작...`);
-      
       const categoryPath = this.getCategoryPath(category);
       const productsRef = collection(db, 'categories', categoryPath, 'products');
       const snapshot = await getDocs(productsRef);
@@ -191,7 +186,6 @@ export class CategoryBasedProductService {
         details: data.details
       };
       
-      console.log(`✅ 상품 조회 완료: ${product.name}`);
       return product;
       
     } catch (error) {

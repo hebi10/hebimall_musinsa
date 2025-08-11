@@ -139,6 +139,11 @@
   font-weight: 400;
 }
 
+.noLimit {
+  color: #10b981;
+  font-weight: 500;
+}
+
 .couponCode {
   background: var(--color-primary);
   color: white;

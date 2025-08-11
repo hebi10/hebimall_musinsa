@@ -7,7 +7,7 @@ import { useAuth } from '@/context/authProvider';
 import { useCategories } from '@/context/categoryProvider';
 
 export default function Header() {
-  const { user, isAdmin } = useAuth();
+  const { user, isAdmin, logout } = useAuth();
   const { categories, loading: categoriesLoading } = useCategories();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
@@ -170,6 +170,14 @@ export default function Header() {
               )}
               {isAdmin && (
                 <Link href="/admin" className={styles.mobileUserLink} onClick={closeMobileMenu}>Admin</Link>
+              )}
+              {user && (
+                <button
+                  className={styles.menuItem}
+                  onClick={logout}
+                >
+                  로그아웃
+                </button>
               )}
             </div>
           </div>

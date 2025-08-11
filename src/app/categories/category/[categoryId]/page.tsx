@@ -51,8 +51,6 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     // Firebase에서 해당 카테고리의 상품들 가져오기
     const products = await CategoryBasedProductService.getProductsByCategory(categoryId);
     
-    console.log(`✅ ${categoryName} 카테고리 상품 로드 완료:`, products.length, '개');
-
     return (
       <div className={styles.container}>
         <div className={styles.header}>

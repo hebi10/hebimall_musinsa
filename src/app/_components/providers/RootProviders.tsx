@@ -8,6 +8,7 @@ import { PointProvider } from "@/context/pointProvider";
 import { CategoryProvider } from "@/context/categoryProvider";
 import { useState } from "react";
 import { CouponProvider } from "@/context/couponProvider";
+import { EventProvider } from "@/context/eventProvider";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient({
@@ -25,9 +26,11 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         <CategoryProvider>
           <PointProvider>
             <ProductProvider>
+              <EventProvider>
               <CouponProvider>
                 {children}
               </CouponProvider>
+              </EventProvider>
             </ProductProvider>
           </PointProvider>
         </CategoryProvider>

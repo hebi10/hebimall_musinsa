@@ -122,9 +122,7 @@ export function CategoryProvider({ children }: CategoryProviderProps) {
       setLoading(true);
       setError(null);
       
-      console.log('🔍 카테고리 불러오기 시작...');
       const fetchedCategories = await CategoryService.getCategories();
-      console.log('✅ 카테고리 불러오기 성공:', fetchedCategories);
       
       if (fetchedCategories && fetchedCategories.length > 0) {
         setCategories(fetchedCategories);

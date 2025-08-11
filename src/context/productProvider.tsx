@@ -108,12 +108,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       // 가격 범위 설정
       const range = CategoryBasedProductService.getPriceRange(allProducts);
       setPriceRange(range);
-
-      console.log('✅ 상품 로드 완료:', {
-        products: allProducts.length,
-        categories: categories.length,
-        brands: brands.length
-      });
+      
 
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '상품을 불러오는데 실패했습니다.';

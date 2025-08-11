@@ -23,6 +23,40 @@ export default function LoginPage() {
   const handleRememberMeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setRememberMe(e.target.checked);
   };
+
+  // 네이버 로그인 (관리자 계정)
+  const handleNaverLogin = async () => {
+    setIsSubmitting(true);
+    clearError();
+    
+    try {
+      await login("test@test.com", "testtest", false);
+      // 페이지 최상단으로 스크롤
+      window.scrollTo(0, 0);
+      router.replace("/mypage");
+    } catch (error) {
+      console.error("Naver login failed:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // 카카오 로그인 (일반 유저 계정)
+  const handleKakaoLogin = async () => {
+    setIsSubmitting(true);
+    clearError();
+    
+    try {
+      await login("test01@test.com", "test01test01", false);
+      // 페이지 최상단으로 스크롤
+      window.scrollTo(0, 0);
+      router.replace("/mypage");
+    } catch (error) {
+      console.error("Kakao login failed:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
   
   useEffect(() => {
     if (!loading && user) {
@@ -42,6 +76,8 @@ export default function LoginPage() {
     
     try {
       await login(values.id, values.password, rememberMe);
+      // 페이지 최상단으로 스크롤
+      window.scrollTo(0, 0);
       router.replace("/mypage");
     } catch (error) {
       console.error("Login failed:", error);
@@ -86,9 +122,9 @@ export default function LoginPage() {
             value={values.password}
             onChange={onChange}
           />
-            
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
+
+          <div className={styles.loginStatus}>
+            <div className={styles.rememberMe}>
               <input
                 id="remember-me"
                 name="remember-me"
@@ -122,13 +158,23 @@ export default function LoginPage() {
         </div>
         
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-          <button className={styles.socialButton}>
+          <button 
+            type="button"
+            className={styles.socialButton}
+            onClick={handleKakaoLogin}
+            disabled={isSubmitting}
+          >
             <span className={`${styles.socialBtn} ${styles.kakaoIcon}`}>K</span>
-            카카오 로그인
+            {isSubmitting ? "로그인 중..." : "일반 유저 로그인"}
           </button>
-          <button className={styles.socialButton}>
+          <button 
+            type="button"
+            className={styles.socialButton}
+            onClick={handleNaverLogin}
+            disabled={isSubmitting}
+          >
             <span className={`${styles.socialBtn} ${styles.naverIcon}`}>N</span>
-            네이버 로그인
+            {isSubmitting ? "로그인 중..." : "관리자 로그인"}
           </button>
           <button className={styles.socialButton}>
             <span className={`${styles.socialBtn} ${styles.googleIcon}`}>G</span>

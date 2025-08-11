@@ -14,6 +14,8 @@ export default function OrderListPage() {
   if (loading) return <div>로딩 중...</div>;
   if (!user) return <div>로그인이 필요합니다.</div>;
 
+  console.log('userData:', userData);
+
   const statusOptions = ['전체', '배송완료', '배송중', '주문확인', '취소', '교환', '반품'];
   const periodOptions = ['1개월', '3개월', '6개월', '1년'];
 

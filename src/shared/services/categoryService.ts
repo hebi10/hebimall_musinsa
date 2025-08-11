@@ -31,25 +31,20 @@ const CATEGORIES_COLLECTION = 'categories';
 export class CategoryService {
   // 모든 카테고리 가져오기
   static async getCategories(): Promise<Category[]> {
-    try {
-      console.log('🔍 Firebase에서 카테고리 조회 시작...');
-      
+    try {      
       // 인덱스 없이도 작동하도록 간단한 쿼리 사용
       const q = query(
         collection(db, CATEGORIES_COLLECTION),
         orderBy('order', 'asc')
       );
       
-      console.log('📋 Firestore 쿼리 실행 중...');
       const querySnapshot = await getDocs(q);
-      console.log('📊 쿼리 결과:', querySnapshot.size, '개 문서');
       
       const categories: Category[] = [];
       
       querySnapshot.forEach((doc) => {
         try {
           const data = doc.data();
-          console.log('📄 문서 데이터:', doc.id, data);
           
           // isActive가 true인 것만 필터링 (클라이언트 사이드에서)
           if (data.isActive === true) {
@@ -65,7 +60,6 @@ export class CategoryService {
         }
       });
       
-      console.log('✅ 최종 카테고리 목록:', categories);
       return categories;
     } catch (error) {
       console.error('❌ 카테고리 조회 에러:', error);

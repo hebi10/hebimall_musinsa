@@ -29,6 +29,18 @@
   gap: 1rem;
 }
 
+.loginStatus{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.rememberMe {
+  display: flex;
+  align-items: center;
+}
+
 .inputGroup {
   display: flex;
   flex-direction: column;

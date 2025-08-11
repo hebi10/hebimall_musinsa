@@ -10,6 +10,9 @@ export default function AdminNav() {
       <Link href="/admin/categories" className={styles.navLink}>
         📂 카테고리 관리
       </Link>
+      <Link href="/admin/events" className={styles.navLink}>
+        🎉 이벤트 관리
+      </Link>
       <Link href="/admin/dashboard/users" className={styles.navLink}>
         👥 사용자 관리
       </Link>

@@ -63,7 +63,7 @@ export default function EventDetailClient({ event }: Props) {
   };
 
   const status = getEventStatus();
-  const participationRate = event.maxParticipants 
+  const participationRate = (event.hasMaxParticipants && event.maxParticipants && event.maxParticipants > 0)
     ? (event.participantCount / event.maxParticipants) * 100 
     : 0;
 
@@ -124,9 +124,13 @@ export default function EventDetailClient({ event }: Props) {
               <div className={styles.infoLabel}>참여자 수</div>
               <div className={styles.infoValue}>
                 {event.participantCount.toLocaleString()}명
-                {event.maxParticipants && (
+                {event.hasMaxParticipants && event.maxParticipants && event.maxParticipants > 0 ? (
                   <span className={styles.maxParticipants}>
                     / {event.maxParticipants.toLocaleString()}명
+                  </span>
+                ) : (
+                  <span className={styles.noLimit}>
+                    (제한 없음)
                   </span>
                 )}
               </div>
@@ -157,7 +161,7 @@ export default function EventDetailClient({ event }: Props) {
           </div>
 
           {/* 참여 현황 */}
-          {event.maxParticipants && (
+          {event.hasMaxParticipants && event.maxParticipants && event.maxParticipants > 0 && (
             <div className={styles.progressSection}>
               <div className={styles.progressHeader}>
                 <span className={styles.progressLabel}>참여 현황</span>

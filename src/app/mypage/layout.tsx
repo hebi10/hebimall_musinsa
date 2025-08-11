@@ -15,15 +15,15 @@ interface MyPageLayoutProps {
 export default function MyPageLayout({ children }: MyPageLayoutProps) {
   const [activeTab, setActiveTab] = useState('orders');
   const pathname = usePathname();
-  const { logout } = useAuth();
+  const { userData, logout } = useAuth();
 
   const userInfo = {
-    name: "김철수",
-    email: "kimcs@example.com",
-    membershipLevel: "VIP",
-    orders: 15,
-    reviews: 8,
-    coupons: 3
+    name: userData?.name || "로딩중...",
+    email: userData?.email || "로딩중...",
+    membershipLevel: userData?.membershipLevel || "silver",
+    orders: userData?.orders || 0,
+    reviews: userData?.reviews || 0,
+    coupons: userData?.coupons || 0
   };
 
   const quickActions = [
@@ -52,6 +52,11 @@ export default function MyPageLayout({ children }: MyPageLayoutProps) {
       setActiveTab(found[1]);
     }
   }, [pathname]);
+
+  // 마이페이지 접속 시 페이지 최상단으로 스크롤
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <div className={styles.container}>

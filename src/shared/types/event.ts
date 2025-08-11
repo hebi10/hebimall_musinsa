@@ -16,6 +16,7 @@ export interface Event {
   targetCategories?: string[];
   participantCount: number;
   maxParticipants?: number;
+  hasMaxParticipants?: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
