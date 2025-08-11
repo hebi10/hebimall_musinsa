@@ -1,0 +1,358 @@
+.container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+.header {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.header h1 {
+  margin: 0 0 10px 0;
+  color: #333;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.header p {
+  margin: 0;
+  color: #666;
+  font-size: 16px;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.section {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.section h3 {
+  margin: 0 0 20px 0;
+  color: #333;
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.userSearch {
+  margin-bottom: 20px;
+}
+
+.searchGroup {
+  display: flex;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.searchInput {
+  flex: 1;
+  padding: 12px 16px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.searchBtn {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.searchBtn:hover:not(:disabled) {
+  background: #0056b3;
+}
+
+.searchBtn:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+}
+
+.userInfo {
+  margin-top: 20px;
+}
+
+.userInfo h4 {
+  margin: 0 0 12px 0;
+  color: #333;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.userCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f8f9fa;
+  padding: 16px;
+  border-radius: 8px;
+  border: 2px solid #28a745;
+}
+
+.userDetails p {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.userDetails p:last-child {
+  margin-bottom: 0;
+}
+
+.clearBtn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.clearBtn:hover {
+  background: #c82333;
+}
+
+.couponSelect {
+  margin-bottom: 20px;
+}
+
+.select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 14px;
+  background: white;
+  transition: border-color 0.2s;
+}
+
+.select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.couponInfo {
+  margin-top: 20px;
+}
+
+.couponInfo h4 {
+  margin: 0 0 12px 0;
+  color: #333;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.couponPreview {
+  background: #f8f9fa;
+  padding: 16px;
+  border-radius: 8px;
+  border: 2px solid #17a2b8;
+}
+
+.couponCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.couponType {
+  font-size: 24px;
+  background: white;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.couponDetails h5 {
+  margin: 0 0 4px 0;
+  color: #333;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.couponDetails p {
+  margin: 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.assignSection {
+  text-align: center;
+}
+
+.assignConfirm {
+  background: #e8f5e8;
+  padding: 20px;
+  border-radius: 8px;
+  border: 2px solid #28a745;
+}
+
+.confirmInfo {
+  margin-bottom: 20px;
+}
+
+.confirmInfo p {
+  margin: 0;
+  font-size: 16px;
+  color: #333;
+  line-height: 1.5;
+}
+
+.assignBtn {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.assignBtn:hover:not(:disabled) {
+  background: #218838;
+  transform: translateY(-1px);
+}
+
+.assignBtn:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.assignDisabled {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  border: 2px solid #e9ecef;
+  text-align: center;
+}
+
+.assignDisabled p {
+  margin: 0;
+  color: #666;
+  font-size: 16px;
+}
+
+.historySection {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 30px;
+}
+
+.historySection h3 {
+  margin: 0 0 20px 0;
+  color: #333;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.historyList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.historyItem {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #28a745;
+}
+
+.historyDate {
+  font-size: 12px;
+  color: #666;
+  white-space: nowrap;
+  min-width: 120px;
+}
+
+.historyContent {
+  flex: 1;
+  font-size: 14px;
+  color: #333;
+}
+
+.historyUser {
+  font-weight: 600;
+  color: #007bff;
+}
+
+.historyCoupon {
+  font-weight: 600;
+  color: #28a745;
+}
+
+.historyStatus {
+  background: #28a745;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .searchGroup {
+    flex-direction: column;
+  }
+  
+  .userCard {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  
+  .couponCard {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .historyItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .historyDate {
+    min-width: auto;
+  }
+}

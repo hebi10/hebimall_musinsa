@@ -29,6 +29,24 @@ export default function AdminDashboard() {
         </div>
 
         <div className={styles.statCard}>
+          <div className={styles.statIcon}>🎫</div>
+          <div className={styles.statContent}>
+            <h3>발급된 쿠폰</h3>
+            <p className={styles.statNumber}>3,245</p>
+            <span className={styles.statChange}>+45% 이번 달</span>
+          </div>
+        </div>
+
+        <div className={styles.statCard}>
+          <div className={styles.statIcon}>🎉</div>
+          <div className={styles.statContent}>
+            <h3>진행중 이벤트</h3>
+            <p className={styles.statNumber}>12</p>
+            <span className={styles.statChange}>+3개 이번 달</span>
+          </div>
+        </div>
+
+        <div className={styles.statCard}>
           <div className={styles.statIcon}>📋</div>
           <div className={styles.statContent}>
             <h3>총 주문</h3>

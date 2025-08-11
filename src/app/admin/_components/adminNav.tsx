@@ -13,6 +13,12 @@ export default function AdminNav() {
       <Link href="/admin/events" className={styles.navLink}>
         🎉 이벤트 관리
       </Link>
+      <Link href="/admin/coupons" className={styles.navLink}>
+        🎫 쿠폰 관리
+      </Link>
+      <Link href="/admin/user-coupons" className={styles.navLink}>
+        🎁 사용자 쿠폰 지급
+      </Link>
       <Link href="/admin/dashboard/users" className={styles.navLink}>
         👥 사용자 관리
       </Link>

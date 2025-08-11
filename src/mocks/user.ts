@@ -10,6 +10,7 @@ export const mockUsers: UserProfile[] = [
     birthDate: new Date('1996-02-12'),
     gender: 'female',
     isAdmin: false,
+    pointBalance: 15000, // 추가된 필드
     createdAt: new Date('2024-01-15'),
     updatedAt: new Date('2024-07-31'),
     addresses: [
@@ -45,6 +46,7 @@ export const mockUsers: UserProfile[] = [
     birthDate: new Date('1994-10-21'),
     gender: 'male',
     isAdmin: false,
+    pointBalance: 12000,
     createdAt: new Date('2023-12-24'),
     updatedAt: new Date('2024-08-03'),
     addresses: [
@@ -80,6 +82,7 @@ export const mockUsers: UserProfile[] = [
     birthDate: new Date('1997-05-15'),
     gender: 'female',
     isAdmin: false,
+    pointBalance: 12000,
     createdAt: new Date('2022-08-18'),
     updatedAt: new Date('2024-07-30'),
     addresses: [
@@ -115,6 +118,7 @@ export const mockUsers: UserProfile[] = [
     birthDate: new Date('1989-11-07'),
     gender: 'male',
     isAdmin: true,
+    pointBalance: 50000,
     createdAt: new Date('2021-10-01'),
     updatedAt: new Date('2024-08-01'),
     addresses: [
@@ -150,6 +154,7 @@ export const mockUsers: UserProfile[] = [
     birthDate: new Date('1992-03-30'),
     gender: 'female',
     isAdmin: false,
+    pointBalance: 12000,
     createdAt: new Date('2024-03-14'),
     updatedAt: new Date('2024-07-29'),
     addresses: [
@@ -185,6 +190,7 @@ export const mockUsers: UserProfile[] = [
     birthDate: new Date('1995-09-18'),
     gender: 'male',
     isAdmin: false,
+    pointBalance: 12000,
     createdAt: new Date('2023-09-20'),
     updatedAt: new Date('2024-08-05'),
     addresses: [
@@ -220,6 +226,7 @@ export const mockUsers: UserProfile[] = [
     birthDate: new Date('1983-07-11'),
     gender: 'female',
     isAdmin: false,
+    pointBalance: 12000,
     createdAt: new Date('2022-01-11'),
     updatedAt: new Date('2024-07-27'),
     addresses: [
@@ -255,6 +262,7 @@ export const mockUsers: UserProfile[] = [
     birthDate: new Date('1968-06-05'),
     gender: 'male',
     isAdmin: false,
+    pointBalance: 12000,
     createdAt: new Date('2024-06-05'),
     updatedAt: new Date('2024-08-02'),
     addresses: [
@@ -290,6 +298,7 @@ export const mockUsers: UserProfile[] = [
     birthDate: new Date('2001-12-29'),
     gender: 'female',
     isAdmin: false,
+    pointBalance: 12000,
     createdAt: new Date('2024-07-01'),
     updatedAt: new Date('2024-08-05'),
     addresses: [
@@ -325,6 +334,7 @@ export const mockUsers: UserProfile[] = [
     birthDate: new Date('1990-01-05'),
     gender: 'male',
     isAdmin: false,
+    pointBalance: 12000,
     createdAt: new Date('2023-03-09'),
     updatedAt: new Date('2024-07-22'),
     addresses: [

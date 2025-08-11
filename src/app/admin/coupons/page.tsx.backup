@@ -1,0 +1,509 @@
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import styles from './page.module.css';
+
+interface CouponStats {
+  total: number;
+  available: number;
+  used: number;
+  expired: number;
+}
+
+interface Coupon {
+  id: string;
+  name: string;
+  type: string;
+  value: number;
+  minOrderAmount: number;
+  expiryDate: string;
+  description: string;
+  isActive: boolean;
+  couponCode?: string; // 사용자가 입력할 쿠폰 코드 (옵션)
+  isDirectAssign: boolean; // 관리자가 직접 할당하는 쿠폰인지
+  usageLimit: number; // 사용 제한 횟수
+  usedCount: number; // 사용된 횟수
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export default function AdminCouponsPage() {
+  const [coupons, setCoupons] = useState<Coupon[]>([]);
+  const [stats, setStats] = useState<CouponStats>({
+    total: 0,
+    available: 0,
+    used: 0,
+    expired: 0
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
+  const [formData, setFormData] = useState({
+    name: '',
+    type: '할인금액',
+    value: 0,
+    minOrderAmount: 0,
+    expiryDate: '',
+    description: '',
+    isActive: true,
+    couponCode: '',
+    isDirectAssign: false,
+    usageLimit: 1,
+    usedCount: 0
+  });
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      // 임시로 목 데이터 사용
+      const mockCoupons: Coupon[] = [
+        {
+          id: 'COUPON001',
+          name: '신규 회원 할인 쿠폰',
+          type: '할인금액',
+          value: 5000,
+          minOrderAmount: 30000,
+          expiryDate: '2024.12.31',
+          description: '신규 회원 대상 할인 쿠폰',
+          isActive: true,
+          couponCode: 'WELCOME2024',
+          isDirectAssign: false,
+          usageLimit: 100,
+          usedCount: 25,
+          createdAt: new Date('2024-01-01'),
+          updatedAt: new Date('2024-01-01')
+        },
+        {
+          id: 'COUPON002',
+          name: '10% 할인 쿠폰',
+          type: '할인율',
+          value: 10,
+          minOrderAmount: 50000,
+          expiryDate: '2024.12.31',
+          description: '전 상품 10% 할인',
+          isActive: true,
+          isDirectAssign: true, // 관리자가 직접 할당
+          usageLimit: 1,
+          usedCount: 0,
+          createdAt: new Date('2024-01-01'),
+          updatedAt: new Date('2024-01-01')
+        }
+      ];
+      
+      const mockStats: CouponStats = {
+        total: 150,
+        available: 120,
+        used: 25,
+        expired: 5
+      };
+      
+      setCoupons(mockCoupons);
+      setStats(mockStats);
+    } catch (error) {
+      console.error('Error loading data:', error);
+      setError('데이터를 불러오는데 실패했습니다.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCreateCoupon = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      // 임시로 로컬 추가
+      const newCoupon: Coupon = {
+        id: `COUPON${Date.now()}`,
+        name: formData.name,
+        type: formData.type,
+        value: Number(formData.value),
+        minOrderAmount: Number(formData.minOrderAmount),
+        expiryDate: formData.expiryDate,
+        description: formData.description,
+        isActive: formData.isActive,
+        couponCode: formData.couponCode,
+        isDirectAssign: formData.isDirectAssign,
+        usageLimit: Number(formData.usageLimit),
+        usedCount: 0,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      
+      setCoupons(prev => [...prev, newCoupon]);
+      setStats(prev => ({ ...prev, total: prev.total + 1, available: prev.available + 1 }));
+      resetForm();
+      alert('쿠폰이 생성되었습니다.');
+    } catch (error) {
+      console.error('Error creating coupon:', error);
+      alert('쿠폰 생성에 실패했습니다.');
+    }
+  };
+
+  const handleUpdateCoupon = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedCoupon) return;
+
+    try {
+      // 임시로 로컬 업데이트
+      setCoupons(prev => prev.map(coupon => 
+        coupon.id === selectedCoupon.id 
+          ? { ...coupon, ...formData, updatedAt: new Date() }
+          : coupon
+      ));
+      resetForm();
+      alert('쿠폰이 수정되었습니다.');
+    } catch (error) {
+      console.error('Error updating coupon:', error);
+      alert('쿠폰 수정에 실패했습니다.');
+    }
+  };
+
+  const handleDeleteCoupon = async (couponId: string) => {
+    if (!confirm('정말로 이 쿠폰을 삭제하시겠습니까?')) return;
+
+    try {
+      // 임시로 로컬 삭제
+      setCoupons(prev => prev.filter(coupon => coupon.id !== couponId));
+      setStats(prev => ({ ...prev, total: prev.total - 1, available: prev.available - 1 }));
+      alert('쿠폰이 삭제되었습니다.');
+    } catch (error) {
+      console.error('Error deleting coupon:', error);
+      alert('쿠폰 삭제에 실패했습니다.');
+    }
+  };
+
+  const handleToggleStatus = async (coupon: Coupon) => {
+    try {
+      // 임시로 로컬 상태 변경
+      setCoupons(prev => prev.map(c => 
+        c.id === coupon.id 
+          ? { ...c, isActive: !c.isActive, updatedAt: new Date() }
+          : c
+      ));
+    } catch (error) {
+      console.error('Error toggling status:', error);
+      alert('상태 변경에 실패했습니다.');
+    }
+  };
+
+  const openEditForm = (coupon: Coupon) => {
+    setSelectedCoupon(coupon);
+    setFormData({
+      name: coupon.name,
+      type: coupon.type,
+      value: coupon.value,
+      minOrderAmount: coupon.minOrderAmount,
+      expiryDate: coupon.expiryDate,
+      description: coupon.description,
+      isActive: coupon.isActive,
+      couponCode: coupon.couponCode || '',
+      isDirectAssign: coupon.isDirectAssign,
+      usageLimit: coupon.usageLimit,
+      usedCount: coupon.usedCount
+    });
+    setShowEditForm(true);
+  };
+
+  const resetForm = () => {
+    setFormData({
+      name: '',
+      type: '할인금액',
+      value: 0,
+      minOrderAmount: 0,
+      expiryDate: '',
+      description: '',
+      isActive: true,
+      couponCode: '',
+      isDirectAssign: false,
+      usageLimit: 1,
+      usedCount: 0
+    });
+    setSelectedCoupon(null);
+    setShowCreateForm(false);
+    setShowEditForm(false);
+  };
+
+  if (loading) {
+    return <div className={styles.loading}>로딩중...</div>;
+  }
+
+  return (
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <h1>쿠폰 관리</h1>
+        <button onClick={() => setShowCreateForm(true)} className={styles.createBtn}>
+          새 쿠폰 생성
+        </button>
+      </div>
+
+      {error && <div className={styles.error}>{error}</div>}
+
+      {/* 통계 */}
+      <div className={styles.stats}>
+        <div className={styles.statCard}>
+          <h3>전체 쿠폰</h3>
+          <p>{stats.total}개</p>
+        </div>
+        <div className={styles.statCard}>
+          <h3>사용 가능</h3>
+          <p>{stats.available}개</p>
+        </div>
+        <div className={styles.statCard}>
+          <h3>사용 완료</h3>
+          <p>{stats.used}개</p>
+        </div>
+        <div className={styles.statCard}>
+          <h3>만료</h3>
+          <p>{stats.expired}개</p>
+        </div>
+      </div>
+
+      {/* 쿠폰 목록 */}
+      <div className={styles.couponList}>
+        <table>
+          <thead>
+            <tr>
+              <th>쿠폰명</th>
+              <th>타입</th>
+              <th>할인값</th>
+              <th>최소주문금액</th>
+              <th>만료일</th>
+              <th>쿠폰코드</th>
+              <th>배포방식</th>
+              <th>사용현황</th>
+              <th>상태</th>
+              <th>관리</th>
+            </tr>
+          </thead>
+          <tbody>
+            {coupons.map((coupon) => (
+              <tr key={coupon.id}>
+                <td>{coupon.name}</td>
+                <td>{coupon.type}</td>
+                <td>{coupon.type === '할인율' ? `${coupon.value}%` : `${coupon.value.toLocaleString()}원`}</td>
+                <td>{coupon.minOrderAmount.toLocaleString()}원</td>
+                <td>{coupon.expiryDate}</td>
+                <td>
+                  {coupon.couponCode ? (
+                    <span style={{backgroundColor: '#e3f2fd', padding: '4px 8px', borderRadius: '4px', fontSize: '12px'}}>
+                      {coupon.couponCode}
+                    </span>
+                  ) : (
+                    <span style={{color: '#999'}}>-</span>
+                  )}
+                </td>
+                <td>
+                  <span style={{
+                    backgroundColor: coupon.isDirectAssign ? '#fff3e0' : '#e8f5e8',
+                    color: coupon.isDirectAssign ? '#e65100' : '#2e7d32',
+                    padding: '4px 8px',
+                    borderRadius: '12px',
+                    fontSize: '12px'
+                  }}>
+                    {coupon.isDirectAssign ? '관리자 할당' : '코드 입력'}
+                  </span>
+                </td>
+                <td>
+                  <span style={{fontSize: '12px', color: '#666'}}>
+                    {coupon.usedCount}/{coupon.usageLimit}
+                  </span>
+                </td>
+                <td>
+                  <button 
+                    onClick={() => handleToggleStatus(coupon)}
+                    className={coupon.isActive ? styles.active : styles.inactive}
+                  >
+                    {coupon.isActive ? '활성' : '비활성'}
+                  </button>
+                </td>
+                <td>
+                  <button onClick={() => openEditForm(coupon)} className={styles.editBtn}>
+                    수정
+                  </button>
+                  <button onClick={() => handleDeleteCoupon(coupon.id)} className={styles.deleteBtn}>
+                    삭제
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* 생성 폼 모달 */}
+      {showCreateForm && (
+        <div className={styles.modal}>
+          <div className={styles.modalContent}>
+            <h2>새 쿠폰 생성</h2>
+            <form onSubmit={handleCreateCoupon}>
+              <div className={styles.formGroup}>
+                <label>쿠폰명</label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  required
+                />
+              </div>
+              
+              <div className={styles.formGroup}>
+                <label>할인 타입</label>
+                <select
+                  value={formData.type}
+                  onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                >
+                  <option value="할인금액">할인금액</option>
+                  <option value="할인율">할인율</option>
+                </select>
+              </div>
+              
+              <div className={styles.formGroup}>
+                <label>할인값</label>
+                <input
+                  type="number"
+                  value={formData.value}
+                  onChange={(e) => setFormData({ ...formData, value: Number(e.target.value) })}
+                  required
+                />
+              </div>
+              
+              <div className={styles.formGroup}>
+                <label>최소 주문 금액</label>
+                <input
+                  type="number"
+                  value={formData.minOrderAmount}
+                  onChange={(e) => setFormData({ ...formData, minOrderAmount: Number(e.target.value) })}
+                  required
+                />
+              </div>
+              
+              <div className={styles.formGroup}>
+                <label>만료일</label>
+                <input
+                  type="date"
+                  value={formData.expiryDate}
+                  onChange={(e) => setFormData({ ...formData, expiryDate: e.target.value })}
+                  required
+                />
+              </div>
+              
+              <div className={styles.formGroup}>
+                <label>설명</label>
+                <textarea
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                />
+              </div>
+              
+              <div className={styles.formGroup}>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={formData.isActive}
+                    onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                  />
+                  활성화
+                </label>
+              </div>
+              
+              <div className={styles.formActions}>
+                <button type="button" onClick={resetForm}>취소</button>
+                <button type="submit">생성</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* 수정 폼 모달 */}
+      {showEditForm && (
+        <div className={styles.modal}>
+          <div className={styles.modalContent}>
+            <h2>쿠폰 수정</h2>
+            <form onSubmit={handleUpdateCoupon}>
+              <div className={styles.formGroup}>
+                <label>쿠폰명</label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  required
+                />
+              </div>
+              
+              <div className={styles.formGroup}>
+                <label>할인 타입</label>
+                <select
+                  value={formData.type}
+                  onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                >
+                  <option value="할인금액">할인금액</option>
+                  <option value="할인율">할인율</option>
+                </select>
+              </div>
+              
+              <div className={styles.formGroup}>
+                <label>할인값</label>
+                <input
+                  type="number"
+                  value={formData.value}
+                  onChange={(e) => setFormData({ ...formData, value: Number(e.target.value) })}
+                  required
+                />
+              </div>
+              
+              <div className={styles.formGroup}>
+                <label>최소 주문 금액</label>
+                <input
+                  type="number"
+                  value={formData.minOrderAmount}
+                  onChange={(e) => setFormData({ ...formData, minOrderAmount: Number(e.target.value) })}
+                  required
+                />
+              </div>
+              
+              <div className={styles.formGroup}>
+                <label>만료일</label>
+                <input
+                  type="date"
+                  value={formData.expiryDate}
+                  onChange={(e) => setFormData({ ...formData, expiryDate: e.target.value })}
+                  required
+                />
+              </div>
+              
+              <div className={styles.formGroup}>
+                <label>설명</label>
+                <textarea
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                />
+              </div>
+              
+              <div className={styles.formGroup}>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={formData.isActive}
+                    onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                  />
+                  활성화
+                </label>
+              </div>
+              
+              <div className={styles.formActions}>
+                <button type="button" onClick={resetForm}>취소</button>
+                <button type="submit">수정</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

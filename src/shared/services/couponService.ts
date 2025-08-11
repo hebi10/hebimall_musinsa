@@ -40,6 +40,107 @@ export class CouponService {
   // ============ 쿠폰 마스터 관련 ============
   
   /**
+   * 모든 쿠폰 마스터 조회 (관리자용)
+   */
+  static async getAllCoupons(): Promise<Coupon[]> {
+    try {
+      const q = query(
+        collection(db, 'coupons'),
+        orderBy('createdAt', 'desc')
+      );
+      
+      const querySnapshot = await getDocs(q);
+      return querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        createdAt: doc.data().createdAt?.toDate() || new Date(),
+        updatedAt: doc.data().updatedAt?.toDate() || new Date()
+      })) as Coupon[];
+    } catch (error) {
+      console.error('모든 쿠폰 조회 실패:', error);
+      throw new Error('쿠폰 정보를 불러오는데 실패했습니다.');
+    }
+  }
+
+  /**
+   * 쿠폰 마스터 생성 (관리자용)
+   */
+  static async createCoupon(couponData: Omit<Coupon, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
+    try {
+      const docRef = await addDoc(collection(db, 'coupons'), {
+        ...couponData,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      });
+      return docRef.id;
+    } catch (error) {
+      console.error('쿠폰 생성 실패:', error);
+      throw new Error('쿠폰 생성에 실패했습니다.');
+    }
+  }
+
+  /**
+   * 쿠폰 마스터 수정 (관리자용)
+   */
+  static async updateCoupon(couponId: string, updateData: Partial<Coupon>): Promise<void> {
+    try {
+      // undefined 값들을 제거한 클린 데이터 생성
+      const cleanedData: any = {};
+      
+      Object.entries(updateData).forEach(([key, value]) => {
+        if (value !== undefined) {
+          cleanedData[key] = value;
+        }
+      });
+      
+      const docRef = doc(db, 'coupons', couponId);
+      await updateDoc(docRef, {
+        ...cleanedData,
+        updatedAt: serverTimestamp()
+      });
+    } catch (error) {
+      console.error('쿠폰 수정 실패:', error);
+      throw new Error('쿠폰 수정에 실패했습니다.');
+    }
+  }
+
+  /**
+   * 쿠폰 마스터 삭제 (관리자용)
+   */
+  static async deleteCoupon(couponId: string): Promise<void> {
+    try {
+      const docRef = doc(db, 'coupons', couponId);
+      await deleteDoc(docRef);
+    } catch (error) {
+      console.error('쿠폰 삭제 실패:', error);
+      throw new Error('쿠폰 삭제에 실패했습니다.');
+    }
+  }
+
+  /**
+   * 전체 쿠폰 통계 조회 (관리자용)
+   */
+  static async getCouponStats(): Promise<CouponStats> {
+    try {
+      const q = query(collection(db, 'user_coupons'));
+      const querySnapshot = await getDocs(q);
+      const userCoupons = querySnapshot.docs.map(doc => doc.data()) as UserCoupon[];
+
+      const stats: CouponStats = {
+        total: userCoupons.length,
+        available: userCoupons.filter(c => c.status === '사용가능').length,
+        used: userCoupons.filter(c => c.status === '사용완료').length,
+        expired: userCoupons.filter(c => c.status === '기간만료').length
+      };
+
+      return stats;
+    } catch (error) {
+      console.error('전체 쿠폰 통계 조회 실패:', error);
+      throw new Error('쿠폰 통계를 불러오는데 실패했습니다.');
+    }
+  }
+  
+  /**
    * 모든 활성화된 쿠폰 마스터 조회
    */
   static async getActiveCoupons(): Promise<Coupon[]> {
@@ -317,10 +418,18 @@ export class CouponService {
    */
   static async registerCouponByCode(uid: string, couponCode: string): Promise<CouponResponse> {
     try {
+      console.log('쿠폰 등록 시도:', { uid, couponCode });
       const result = await registerCouponFunction({ uid, couponCode });
+      console.log('쿠폰 등록 결과:', result.data);
       return result.data;
     } catch (error) {
-      console.error('쿠폰 등록 실패:', error);
+      console.error('쿠폰 등록 실패 상세:', error);
+      
+      // Firebase Function 오류를 더 자세히 처리
+      if (error && typeof error === 'object' && 'message' in error) {
+        throw new Error(error.message as string);
+      }
+      
       throw new Error('쿠폰 등록에 실패했습니다.');
     }
   }

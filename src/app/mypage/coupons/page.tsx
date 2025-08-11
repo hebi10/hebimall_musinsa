@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import styles from './page.module.css';
 import { useCoupon } from '@/context/couponProvider';
 import { CouponFilter } from '@/shared/types/coupon';
+import CouponRegister from '../_components/CouponRegister';
 
 export default function CouponsPage() {
   const {
@@ -17,9 +18,6 @@ export default function CouponsPage() {
   } = useCoupon();
 
   const [selectedStatus, setSelectedStatus] = useState<string>('전체');
-  const [showRegistrationForm, setShowRegistrationForm] = useState(false);
-  const [couponCode, setCouponCode] = useState('');
-  const [isRegistering, setIsRegistering] = useState(false);
 
   const statusOptions = ['전체', '사용가능', '사용완료', '기간만료'];
 
@@ -33,30 +31,29 @@ export default function CouponsPage() {
     getUserCouponsWithFilter(filter);
   }, [selectedStatus, getUserCouponsWithFilter]); // 이제 안전하게 포함 가능
 
-  const handleCouponRegistration = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
+  const handleCouponRegistration = async (couponCode: string): Promise<boolean> => {
     if (!couponCode.trim()) {
-      alert('쿠폰 코드를 입력해주세요.');
-      return;
+      return false;
     }
 
     try {
-      setIsRegistering(true);
       const response = await registerCouponByCode(couponCode.trim());
       
       if (response.success) {
-        alert('쿠폰이 성공적으로 등록되었습니다!');
-        setCouponCode('');
-        setShowRegistrationForm(false);
+        // 성공시 쿠폰 목록 새로고침
+        const filter: CouponFilter = {
+          status: selectedStatus === '전체' ? undefined : selectedStatus as any,
+          sortBy: 'issuedDate',
+          sortOrder: 'desc'
+        };
+        getUserCouponsWithFilter(filter);
+        return true;
       } else {
-        alert(response.message || '쿠폰 등록에 실패했습니다.');
+        return false;
       }
     } catch (error) {
       console.error('쿠폰 등록 오류:', error);
-      alert(error instanceof Error ? error.message : '쿠폰 등록에 실패했습니다.');
-    } finally {
-      setIsRegistering(false);
+      return false;
     }
   };
 
@@ -154,55 +151,14 @@ export default function CouponsPage() {
         </div>
 
         <div className={styles.registrationButtonContainer}>
-          <button 
-            className={styles.registrationButton}
-            onClick={() => setShowRegistrationForm(!showRegistrationForm)}
-          >
-            <span className={styles.buttonIcon}>➕</span>
-            쿠폰 등록
-          </button>
+          {/* CouponRegister 컴포넌트에서 버튼도 포함하여 처리 */}
         </div>
       </div>
 
-      {/* Coupon Registration Form */}
-      {showRegistrationForm && (
-        <div className={styles.registrationForm}>
-          <div className={styles.formHeader}>
-            <h3 className={styles.formTitle}>쿠폰 등록</h3>
-            <button 
-              className={styles.closeButton}
-              onClick={() => setShowRegistrationForm(false)}
-            >
-              ✕
-            </button>
-          </div>
-          <form onSubmit={handleCouponRegistration} className={styles.form}>
-            <div className={styles.formGroup}>
-              <label className={styles.formLabel}>쿠폰 코드</label>
-              <div className={styles.inputGroup}>
-                <input 
-                  type="text" 
-                  className={styles.formInput}
-                  placeholder="쿠폰 코드를 입력하세요"
-                  value={couponCode}
-                  onChange={(e) => setCouponCode(e.target.value)}
-                  disabled={isRegistering}
-                />
-                <button 
-                  type="submit" 
-                  className={styles.registerButton}
-                  disabled={isRegistering}
-                >
-                  {isRegistering ? '등록 중...' : '등록'}
-                </button>
-              </div>
-            </div>
-            <div className={styles.formNote}>
-              * 쿠폰 코드는 대소문자를 구분합니다. 정확히 입력해주세요.
-            </div>
-          </form>
-        </div>
-      )}
+      {/* Coupon Registration Component */}
+      <CouponRegister 
+        onRegister={handleCouponRegistration}
+      />
 
       {/* Coupons List */}
       <div className={styles.couponsSection}>
@@ -285,12 +241,7 @@ export default function CouponsPage() {
               <div className={styles.emptyIcon}>🎫</div>
               <div className={styles.emptyTitle}>보유하신 쿠폰이 없습니다</div>
               <div className={styles.emptyDesc}>쿠폰을 등록하거나 이벤트에 참여하여 쿠폰을 받아보세요.</div>
-              <button 
-                className={styles.registrationButton}
-                onClick={() => setShowRegistrationForm(true)}
-              >
-                쿠폰 등록하기
-              </button>
+              {/* CouponRegister 컴포넌트에서 버튼을 제공 */}
             </div>
           )}
         </div>

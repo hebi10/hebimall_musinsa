@@ -13,6 +13,10 @@ export interface Coupon {
   expiryDate: string; // 쿠폰 유효기간 (YYYY.MM.DD)
   description?: string; // 쿠폰 설명
   isActive: boolean; // 쿠폰 활성 상태 (발급 가능 여부)
+  couponCode?: string; // 사용자가 입력할 쿠폰 코드 (옵션)
+  isDirectAssign: boolean; // 관리자가 직접 할당하는 쿠폰인지
+  usageLimit: number; // 사용 제한 횟수
+  usedCount: number; // 사용된 횟수
   createdAt: Date; // 생성일
   updatedAt: Date; // 수정일
 }
