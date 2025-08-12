@@ -76,27 +76,32 @@ export class EventService {
   // 활성 이벤트만 가져오기
   static async getActiveEvents(): Promise<Event[]> {
     try {
-      const now = Timestamp.now();
+      // 복합 인덱스가 필요한 복잡한 쿼리 대신 간단한 쿼리 사용
       const q = query(
         collection(db, EVENTS_COLLECTION),
         where('isActive', '==', true),
-        where('startDate', '<=', now),
-        where('endDate', '>=', now),
-        orderBy('startDate', 'desc')
+        orderBy('createdAt', 'desc')
       );
 
       const querySnapshot = await getDocs(q);
-      return querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-        startDate: doc.data().startDate.toDate(),
-        endDate: doc.data().endDate.toDate(),
-        createdAt: doc.data().createdAt.toDate(),
-        updatedAt: doc.data().updatedAt.toDate(),
-      } as Event));
+      const now = new Date();
+      
+      // 클라이언트 사이드에서 날짜 필터링
+      return querySnapshot.docs
+        .map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+          startDate: doc.data().startDate.toDate(),
+          endDate: doc.data().endDate.toDate(),
+          createdAt: doc.data().createdAt.toDate(),
+          updatedAt: doc.data().updatedAt.toDate(),
+        } as Event))
+        .filter(event => event.startDate <= now && event.endDate >= now);
     } catch (error) {
       console.error('Error getting active events:', error);
-      throw error;
+      // Firebase 에러가 발생하면 빈 배열 반환 (대시보드가 중단되지 않도록)
+      console.warn('Firebase 인덱스가 필요할 수 있습니다. 빈 배열을 반환합니다.');
+      return [];
     }
   }
 

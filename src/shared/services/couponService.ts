@@ -160,7 +160,9 @@ export class CouponService {
       })) as Coupon[];
     } catch (error) {
       console.error('쿠폰 마스터 조회 실패:', error);
-      throw new Error('쿠폰 정보를 불러오는데 실패했습니다.');
+      // 대시보드가 중단되지 않도록 빈 배열 반환
+      console.warn('쿠폰 데이터를 불러올 수 없습니다. 빈 배열을 반환합니다.');
+      return [];
     }
   }
 

@@ -1,0 +1,133 @@
+.wrapper {
+  width: 100%;
+}
+
+.title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 1rem 0;
+  text-align: center;
+}
+
+.chartContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.chart {
+  overflow: visible;
+}
+
+/* 막대 그래프 스타일 */
+.bar {
+  transition: opacity 0.2s ease;
+  cursor: pointer;
+}
+
+.bar:hover {
+  opacity: 0.8;
+}
+
+/* 라인 그래프 스타일 */
+.line {
+  transition: stroke-width 0.2s ease;
+}
+
+.line:hover {
+  stroke-width: 4;
+}
+
+.point {
+  transition: r 0.2s ease;
+  cursor: pointer;
+}
+
+.point:hover {
+  r: 6;
+}
+
+/* 파이 차트 스타일 */
+.pieSlice {
+  transition: transform 0.2s ease;
+  cursor: pointer;
+  transform-origin: center;
+}
+
+.pieSlice:hover {
+  transform: scale(1.05);
+}
+
+/* 텍스트 스타일 */
+.valueText {
+  font-size: 0.75rem;
+  font-weight: 600;
+  fill: #374151;
+}
+
+.labelText {
+  font-size: 0.625rem;
+  fill: #6b7280;
+  font-weight: 500;
+}
+
+.axisText {
+  font-size: 0.625rem;
+  fill: #9ca3af;
+}
+
+/* 범례 스타일 */
+.legend {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 300px;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.legendColor {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.legendLabel {
+  flex: 1;
+  color: #374151;
+  font-weight: 500;
+}
+
+.legendValue {
+  color: #6b7280;
+  font-size: 0.75rem;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+  .valueText {
+    font-size: 0.625rem;
+  }
+  
+  .labelText {
+    font-size: 0.5rem;
+  }
+  
+  .legend {
+    max-width: 100%;
+  }
+  
+  .legendItem {
+    font-size: 0.75rem;
+  }
+}
