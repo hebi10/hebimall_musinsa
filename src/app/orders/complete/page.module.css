@@ -1,0 +1,403 @@
+.container {
+  min-height: 100vh;
+  background-color: #f9fafb;
+}
+
+.content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+@media (min-width: 640px) {
+  .content {
+    padding: 2rem 1.5rem;
+  }
+}
+
+.completeCard {
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+/* 성공 메시지 섹션 */
+.successSection {
+  text-align: center;
+  padding: 3rem 2rem;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.successIcon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+.successTitle {
+  font-size: 1.75rem;
+  font-weight: bold;
+  margin: 0 0 1rem 0;
+}
+
+.successMessage {
+  font-size: 1.125rem;
+  margin: 0 0 1rem 0;
+  opacity: 0.95;
+}
+
+.successMessage strong {
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+}
+
+.successDescription {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  opacity: 0.9;
+  margin: 0;
+}
+
+/* 주문 정보 섹션 */
+.orderInfo {
+  padding: 2rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.sectionTitle {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #111827;
+  margin: 0 0 1.5rem 0;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .infoGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.infoItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: #f9fafb;
+  border-radius: 0.5rem;
+}
+
+.infoLabel {
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.infoValue {
+  font-weight: 600;
+  color: #111827;
+  text-align: right;
+}
+
+/* 주문 상품 섹션 */
+.orderProducts {
+  padding: 2rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.productsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.productItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #f3f4f6;
+  border-radius: 0.5rem;
+  background-color: #fafafa;
+}
+
+.productImage {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 0.375rem;
+  overflow: hidden;
+  flex-shrink: 0;
+  background-color: #e5e7eb;
+}
+
+.productImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.productInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.productBrand {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-bottom: 0.25rem;
+}
+
+.productName {
+  font-weight: 500;
+  color: #111827;
+  margin-bottom: 0.25rem;
+  line-height: 1.4;
+}
+
+.productOptions {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.productPrice {
+  font-weight: 600;
+  color: #111827;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* 배송 정보 섹션 */
+.deliveryInfo {
+  padding: 2rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.addressCard {
+  padding: 1.5rem;
+  background-color: #f9fafb;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+}
+
+.addressHeader {
+  margin-bottom: 0.75rem;
+}
+
+.addressName {
+  font-weight: 600;
+  color: #111827;
+  background-color: #e0e7ff;
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.addressRecipient {
+  font-size: 0.95rem;
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+.addressLocation {
+  font-size: 0.875rem;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+/* 액션 버튼들 */
+.actionButtons {
+  display: flex;
+  gap: 1rem;
+  padding: 2rem;
+}
+
+@media (max-width: 640px) {
+  .actionButtons {
+    flex-direction: column;
+  }
+}
+
+.primaryButton {
+  flex: 1;
+  background-color: #111827;
+  color: white;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  text-decoration: none;
+  text-align: center;
+  transition: background-color 0.2s;
+}
+
+.primaryButton:hover {
+  background-color: #374151;
+}
+
+.secondaryButton {
+  flex: 1;
+  background-color: white;
+  color: #374151;
+  padding: 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  text-decoration: none;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.secondaryButton:hover {
+  background-color: #f9fafb;
+  border-color: #9ca3af;
+}
+
+/* 안내 사항 */
+.noticeSection {
+  padding: 2rem;
+  background-color: #fef3c7;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.noticeTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #92400e;
+  margin-bottom: 1rem;
+}
+
+.noticeList {
+  margin: 0;
+  padding-left: 1.5rem;
+  font-size: 0.875rem;
+  color: #78350f;
+  line-height: 1.6;
+}
+
+.noticeList li {
+  margin-bottom: 0.75rem;
+}
+
+.noticeList strong {
+  color: #92400e;
+}
+
+/* 추천 상품 섹션 */
+.recommendSection {
+  padding: 2rem;
+  text-align: center;
+  background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+}
+
+.recommendTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #0369a1;
+  margin-bottom: 0.5rem;
+}
+
+.recommendDescription {
+  font-size: 0.875rem;
+  color: #0284c7;
+  margin: 0 0 1.5rem 0;
+  line-height: 1.5;
+}
+
+.recommendButton {
+  display: inline-block;
+  background-color: #3b82f6;
+  color: white;
+  padding: 0.75rem 2rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.recommendButton:hover {
+  background-color: #2563eb;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .successSection {
+    padding: 2rem 1rem;
+  }
+
+  .successIcon {
+    font-size: 3rem;
+  }
+
+  .successTitle {
+    font-size: 1.5rem;
+  }
+
+  .successMessage {
+    font-size: 1rem;
+  }
+
+  .orderInfo,
+  .orderProducts,
+  .deliveryInfo,
+  .actionButtons,
+  .noticeSection,
+  .recommendSection {
+    padding: 1.5rem;
+  }
+
+  .productItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .productPrice {
+    text-align: left;
+  }
+
+  .infoItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .infoValue {
+    text-align: left;
+  }
+}
+
+@media (max-width: 640px) {
+  .content {
+    padding: 1rem;
+  }
+
+  .productImage {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .successMessage strong {
+    display: block;
+    margin-top: 0.5rem;
+  }
+}

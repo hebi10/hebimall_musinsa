@@ -53,11 +53,6 @@ export default function MyPageLayout({ children }: MyPageLayoutProps) {
     }
   }, [pathname]);
 
-  // 마이페이지 접속 시 페이지 최상단으로 스크롤
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-
   return (
     <div className={styles.container}>
       <PageHeader
