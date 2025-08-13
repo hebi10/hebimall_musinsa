@@ -84,7 +84,7 @@ export default function ProductSection({
             saleRate={product.saleRate}
             rating={product.rating}
             reviewCount={product.reviewCount}
-            image={product.images[0]}
+            image={product.mainImage || product.images[0]} // 대표 이미지 우선 사용
             stock={product.stock}
           />
         ))}

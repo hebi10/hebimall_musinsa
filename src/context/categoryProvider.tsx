@@ -127,7 +127,6 @@ export function CategoryProvider({ children }: CategoryProviderProps) {
       if (fetchedCategories && fetchedCategories.length > 0) {
         setCategories(fetchedCategories);
       } else {
-        console.log('⚠️ Firebase에서 카테고리가 없어서 fallback 사용');
         setCategories(fallbackCategories);
       }
     } catch (err) {

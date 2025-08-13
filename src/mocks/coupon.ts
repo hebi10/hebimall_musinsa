@@ -11,6 +11,9 @@ export const coupons: Coupon[] = [
     expiryDate: '2024.12.31',
     description: '첫 구매 시 사용 가능한 특별 할인 쿠폰',
     isActive: true,
+    isDirectAssign: false,
+    usageLimit: 100,
+    usedCount: 25,
     createdAt: new Date('2024-01-01'),
     updatedAt: new Date('2024-01-01')
   },
@@ -23,6 +26,9 @@ export const coupons: Coupon[] = [
     expiryDate: '2024.12.25',
     description: '겨울 상품 전용 할인 쿠폰',
     isActive: true,
+    isDirectAssign: false,
+    usageLimit: 50,
+    usedCount: 12,
     createdAt: new Date('2024-11-01'),
     updatedAt: new Date('2024-11-01')
   },
@@ -34,6 +40,9 @@ export const coupons: Coupon[] = [
     expiryDate: '2024.12.15',
     description: '배송비 무료 혜택',
     isActive: true,
+    isDirectAssign: false,
+    usageLimit: 200,
+    usedCount: 89,
     createdAt: new Date('2024-10-01'),
     updatedAt: new Date('2024-10-01')
   },
@@ -46,6 +55,9 @@ export const coupons: Coupon[] = [
     expiryDate: '2024.10.15',
     description: '추석 연휴 특별 할인',
     isActive: false, // 비활성화된 쿠폰
+    isDirectAssign: true,
+    usageLimit: 30,
+    usedCount: 30,
     createdAt: new Date('2024-09-01'),
     updatedAt: new Date('2024-10-16')
   },
@@ -58,6 +70,9 @@ export const coupons: Coupon[] = [
     expiryDate: '2025.01.31',
     description: '새해 첫 구매 특별 혜택',
     isActive: true,
+    isDirectAssign: true,
+    usageLimit: 75,
+    usedCount: 8,
     createdAt: new Date('2024-12-01'),
     updatedAt: new Date('2024-12-01')
   }

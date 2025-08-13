@@ -285,6 +285,53 @@
   border-top: 1px solid var(--color-border-light);
 }
 
+.wishlistButton {
+  width: 48px;
+  height: 48px;
+  border: 2px solid var(--color-border-light);
+  background: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  color: var(--color-text-secondary);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.wishlistButton:hover {
+  border-color: var(--color-primary);
+  transform: translateY(-1px);
+  color: var(--color-primary);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.wishlistButton.wishlisted {
+  border-color: var(--color-danger);
+  background: var(--color-danger);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+}
+
+.wishlistButton.wishlisted:hover {
+  background: #c82333;
+  border-color: #c82333;
+}
+
+.wishlistButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.wishlistButton:active {
+  transform: scale(0.95);
+}
+
 .cartButton,
 .buyButton {
   flex: 1;
@@ -437,7 +484,19 @@
   }
   
   .actions {
-    flex-direction: column;
+    flex-direction: row; /* 모바일에서도 가로로 유지 */
+    align-items: stretch;
+  }
+  
+  .wishlistButton {
+    width: 48px; /* 모바일에서도 동일한 크기 유지 */
+    height: 48px;
+  }
+  
+  .cartButton,
+  .buyButton {
+    flex: 1;
+    min-height: 48px;
   }
   
   .tabHeaders {

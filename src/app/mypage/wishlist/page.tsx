@@ -1,19 +1,19 @@
 'use client';
 
 import React from 'react';
-import RecentProducts from '../_components/RecentProducts';
+import WishlistProducts from '../_components/WishlistProducts';
 import styles from './page.module.css';
 
-export default function RecentlyViewedPage() {
+export default function WishlistPage() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1>최근 본 상품</h1>
-        <p>최근에 확인한 상품들을 다시 살펴보세요</p>
+        <h1>찜한 상품</h1>
+        <p>관심 있는 상품들을 모아보세요</p>
       </div>
       
       <div className={styles.content}>
-        <RecentProducts />
+        <WishlistProducts />
       </div>
     </div>
   );

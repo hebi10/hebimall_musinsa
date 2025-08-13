@@ -49,6 +49,7 @@ export default function EditProductModal({ product, onSave, onClose }: EditProdu
   // 복잡한 필드들은 별도 state로 관리
   const [complexFields, setComplexFields] = useState({
     images: product.images || [],
+    mainImage: product.mainImage || '', // 기존 대표 이미지만 사용, 없으면 빈 문자열
     sizes: product.sizes || [],
     colors: product.colors || [],
     tags: product.tags || [],
@@ -120,7 +121,9 @@ export default function EditProductModal({ product, onSave, onClose }: EditProdu
       
       setComplexFields(prev => ({
         ...prev,
-        images: [...prev.images, ...uploadedUrls]
+        images: [...prev.images, ...uploadedUrls],
+        // 대표 이미지가 없을 때만 첫 번째 업로드된 이미지로 설정
+        mainImage: prev.mainImage || (uploadedUrls.length > 0 ? uploadedUrls[0] : '')
       }));
       
       setUploadProgress({});
@@ -150,7 +153,11 @@ export default function EditProductModal({ product, onSave, onClose }: EditProdu
       const newImages = complexFields.images.filter((_, i) => i !== index);
       setComplexFields(prev => ({
         ...prev,
-        images: newImages
+        images: newImages,
+        // 삭제된 이미지가 대표 이미지였다면 첫 번째 이미지로 변경
+        mainImage: prev.mainImage === imageUrl 
+          ? (newImages.length > 0 ? newImages[0] : '') 
+          : prev.mainImage
       }));
       
       console.log('✅ 이미지 삭제 완료');
@@ -161,6 +168,14 @@ export default function EditProductModal({ product, onSave, onClose }: EditProdu
       const errorMessage = error instanceof Error ? error.message : '이미지 삭제에 실패했습니다.';
       alert(`이미지 삭제 실패: ${errorMessage}`);
     }
+  };
+
+  // 대표 이미지 설정 함수
+  const handleSetMainImage = (imageUrl: string) => {
+    setComplexFields(prev => ({
+      ...prev,
+      mainImage: imageUrl
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -210,6 +225,7 @@ export default function EditProductModal({ product, onSave, onClose }: EditProdu
         category: basicFields.category,
         stock: Number(basicFields.stock),
         images: complexFields.images,
+        mainImage: complexFields.mainImage, // 대표 이미지 추가
         sizes: complexFields.sizes,
         colors: complexFields.colors,
         tags: complexFields.tags,
@@ -626,21 +642,42 @@ export default function EditProductModal({ product, onSave, onClose }: EditProdu
               {/* 이미지 미리보기 */}
               {complexFields.images.length > 0 && (
                 <div className={styles.imagePreview}>
+                  <p className={styles.imageGuide}>
+                    이미지를 클릭하여 대표 이미지로 설정하세요. 
+                    {!complexFields.mainImage && '현재 대표 이미지가 설정되지 않았습니다.'}
+                  </p>
                   {complexFields.images.map((image, index) => (
-                    <div key={index} className={styles.imageItem}>
+                    <div 
+                      key={index} 
+                      className={`${styles.imageItem} ${
+                        complexFields.mainImage === image ? styles.mainImage : ''
+                      }`}
+                      onClick={() => handleSetMainImage(image)}
+                    >
                       <img src={image} alt={`Product ${index + 1}`} />
                       <div className={styles.imageActions}>
-                        <span className={styles.imageOrder}>
-                          {index === 0 ? '대표' : index + 1}
+                        <span className={`${styles.imageOrder} ${
+                          complexFields.mainImage === image ? styles.mainImageBadge : ''
+                        }`}>
+                          {complexFields.mainImage === image ? '대표' : 
+                           (!complexFields.mainImage && index === 0 ? '추천' : index + 1)}
                         </span>
                         <button 
                           type="button" 
                           className={styles.deleteImageButton}
-                          onClick={() => handleImageDelete(image, index)}
+                          onClick={(e) => {
+                            e.stopPropagation(); // 클릭 이벤트 버블링 방지
+                            handleImageDelete(image, index);
+                          }}
                         >
                           삭제
                         </button>
                       </div>
+                      {complexFields.mainImage === image && (
+                        <div className={styles.mainImageOverlay}>
+                          <span>대표 이미지</span>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>

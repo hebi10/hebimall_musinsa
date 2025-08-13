@@ -37,6 +37,7 @@ export interface Product {
       }
     }
   };
+  mainImage?: string; // 대표 이미지 필드 추가
 }
 
 export interface ProductFilter {

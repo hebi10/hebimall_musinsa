@@ -1,72 +1,104 @@
 'use client';
 
-import { useState } from 'react';
-import { Review } from '@/shared/types/review';
+import React, { useEffect, useState } from 'react';
+import { useReview } from '@/context/reviewProvider';
+import { useProduct } from '@/context/productProvider';
+import Link from 'next/link';
 import Button from '@/app/_components/Button';
 import styles from './ReviewList.module.css';
 
-import { mockReviews } from '@/mocks/review';
-
 export default function ReviewList() {
+  const { 
+    allReviews, 
+    loading, 
+    error,
+    loadAllReviews 
+  } = useReview();
+  
+  const { getProductById } = useProduct();
+  
+  const [ratingFilter, setRatingFilter] = useState<number | undefined>();
   const [sortBy, setSortBy] = useState<'latest' | 'rating' | 'helpful'>('latest');
-  const [filterRating, setFilterRating] = useState<number | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const reviewsPerPage = 10;
+  const [productInfo, setProductInfo] = useState<{ [key: string]: { name: string; mainImage?: string } }>({});
 
-  const filteredReviews = mockReviews.filter(review => 
-    filterRating === null || review.rating === filterRating
-  );
+  useEffect(() => {
+    loadAllReviews(ratingFilter, sortBy);
+  }, [ratingFilter, sortBy, loadAllReviews]);
 
-  const sortedReviews = [...filteredReviews].sort((a, b) => {
-    switch (sortBy) {
-      case 'rating':
-        return b.rating - a.rating;
-      case 'latest':
-      default:
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+  // 상품 정보를 가져오는 함수
+  useEffect(() => {
+    const loadProductInfo = async () => {
+      const uniqueProductIds = [...new Set(allReviews.map(review => review.productId))];
+      const productData: { [key: string]: { name: string; mainImage?: string } } = {};
+      
+      for (const productId of uniqueProductIds) {
+        try {
+          const product = await getProductById(productId);
+          if (product) {
+            productData[productId] = {
+              name: product.name,
+              mainImage: product.mainImage
+            };
+          }
+        } catch (error) {
+          console.error(`상품 ${productId} 정보 로드 실패:`, error);
+        }
+      }
+      
+      setProductInfo(productData);
+    };
+
+    if (allReviews.length > 0) {
+      loadProductInfo();
     }
-  });
+  }, [allReviews, getProductById]);
 
-  const totalPages = Math.ceil(sortedReviews.length / reviewsPerPage);
-  const startIndex = (currentPage - 1) * reviewsPerPage;
-  const displayedReviews = sortedReviews.slice(startIndex, startIndex + reviewsPerPage);
+  const renderStars = (rating: number) => {
+    return '★'.repeat(rating) + '☆'.repeat(5 - rating);
+  };
+
+  if (error) {
+    return <div className={styles.error}>{error}</div>;
+  }
 
   return (
     <div className={styles.container}>
       {/* 통계 정보 */}
-      <div className={styles.stats}>
-        <div className={styles.statItem}>
-          <div className={styles.statNumber}>{mockReviews.length}</div>
-          <div className={styles.statLabel}>전체 리뷰</div>
-        </div>
-        <div className={styles.statItem}>
-          <div className={styles.statNumber}>
-            {(mockReviews.reduce((sum, review) => sum + review.rating, 0) / mockReviews.length).toFixed(1)}
+      {allReviews.length > 0 && (
+        <div className={styles.stats}>
+          <div className={styles.statItem}>
+            <div className={styles.statNumber}>{allReviews.length}</div>
+            <div className={styles.statLabel}>전체 리뷰</div>
           </div>
-          <div className={styles.statLabel}>평균 평점</div>
-        </div>
-        <div className={styles.statItem}>
-          <div className={styles.statNumber}>
-            {Math.round((mockReviews.filter(r => r.isRecommended).length / mockReviews.length) * 100)}%
+          <div className={styles.statItem}>
+            <div className={styles.statNumber}>
+              {(allReviews.reduce((sum, review) => sum + review.rating, 0) / allReviews.length).toFixed(1)}
+            </div>
+            <div className={styles.statLabel}>평균 평점</div>
           </div>
-          <div className={styles.statLabel}>추천율</div>
+          <div className={styles.statItem}>
+            <div className={styles.statNumber}>
+              {Math.round((allReviews.filter(r => r.isRecommended).length / allReviews.length) * 100)}%
+            </div>
+            <div className={styles.statLabel}>추천율</div>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* 필터 및 정렬 */}
       <div className={styles.controls}>
         <div className={styles.filters}>
           <button
-            className={`${styles.filterButton} ${filterRating === null ? styles.active : ''}`}
-            onClick={() => setFilterRating(null)}
+            className={`${styles.filterButton} ${ratingFilter === undefined ? styles.active : ''}`}
+            onClick={() => setRatingFilter(undefined)}
           >
             전체
           </button>
           {[5, 4, 3, 2, 1].map(rating => (
             <button
               key={rating}
-              className={`${styles.filterButton} ${filterRating === rating ? styles.active : ''}`}
-              onClick={() => setFilterRating(rating)}
+              className={`${styles.filterButton} ${ratingFilter === rating ? styles.active : ''}`}
+              onClick={() => setRatingFilter(rating)}
             >
               {rating}점
             </button>
@@ -88,90 +120,76 @@ export default function ReviewList() {
 
       {/* 리뷰 목록 */}
       <div className={styles.reviewList}>
-        {displayedReviews.map(review => (
-          <div key={review.id} className={styles.reviewItem}>
-            <div className={styles.reviewHeader}>
-              <div className={styles.userInfo}>
-                <span className={styles.userName}>{review.userName}</span>
-                <div className={styles.reviewStars}>
-                  {Array.from({ length: 5 }, (_, i) => (
-                    <span key={i} className={i < review.rating ? styles.filled : styles.empty}>
-                      ★
-                    </span>
-                  ))}
+        {loading ? (
+          <div className={styles.loading}>리뷰를 불러오는 중...</div>
+        ) : allReviews.length === 0 ? (
+          <div className={styles.empty}>등록된 리뷰가 없습니다.</div>
+        ) : (
+          allReviews.map((review) => (
+            <div key={review.id} className={styles.reviewItem}>
+              {/* 상품 정보 */}
+              <div className={styles.productInfo}>
+                {productInfo[review.productId]?.mainImage && (
+                  <img 
+                    src={productInfo[review.productId].mainImage} 
+                    alt={productInfo[review.productId]?.name || '상품'}
+                    className={styles.productImage}
+                  />
+                )}
+                <div className={styles.productDetails}>
+                  <Link 
+                    href={`/products/${review.productId}`}
+                    className={styles.productName}
+                  >
+                    {productInfo[review.productId]?.name || '상품 정보 로딩 중...'}
+                  </Link>
+                  {(review.size || review.color) && (
+                    <div className={styles.productOptions}>
+                      {review.size && <span>사이즈: {review.size}</span>}
+                      {review.color && <span>색상: {review.color}</span>}
+                    </div>
+                  )}
                 </div>
               </div>
-              <div className={styles.reviewDate}>
-                {review.createdAt.toLocaleDateString()}
-              </div>
-            </div>
 
-            <div className={styles.reviewContent}>
-              <h4 className={styles.reviewTitle}>{review.title}</h4>
-              <p className={styles.reviewText}>{review.content}</p>
-            </div>
-
-            <div className={styles.reviewMeta}>
-              <div className={styles.purchaseInfo}>
-                <span className={styles.option}>사이즈: {review.size}</span>
-                <span className={styles.option}>색상: {review.color}</span>
-                {review.height && review.weight && (
-                  <span className={styles.option}>
-                    {review.height}cm, {review.weight}kg
+              {/* 리뷰 내용 */}
+              <div className={styles.reviewContent}>
+                <div className={styles.reviewHeader}>
+                  <div className={styles.userInfo}>
+                    <span className={styles.userName}>{review.userName}</span>
+                    <span className={styles.rating}>{renderStars(review.rating)}</span>
+                    {review.isRecommended && (
+                      <span className={styles.recommended}>추천</span>
+                    )}
+                  </div>
+                  <span className={styles.reviewDate}>
+                    {review.createdAt.toLocaleDateString()}
                   </span>
-                )}
-              </div>
-              {review.isRecommended && (
-                <span className={styles.recommended}>추천</span>
-              )}
-            </div>
+                </div>
 
-            <div className={styles.reviewActions}>
-              <button className={styles.helpfulButton}>
-                도움돼요 <span className={styles.helpfulCount}>12</span>
-              </button>
-              <button className={styles.productLink}>
-                상품 보기
-              </button>
+                <div className={styles.reviewBody}>
+                  <h4 className={styles.reviewTitle}>{review.title}</h4>
+                  <p className={styles.reviewText}>{review.content}</p>
+                </div>
+
+                <div className={styles.reviewActions}>
+                  <Link 
+                    href={`/products/${review.productId}`}
+                    className={styles.productLink}
+                  >
+                    상품 보기
+                  </Link>
+                </div>
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
 
-      {/* 페이지네이션 */}
-      {totalPages > 1 && (
-        <div className={styles.pagination}>
-          <button
-            className={styles.pageButton}
-            onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-            disabled={currentPage === 1}
-          >
-            이전
-          </button>
-          
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-            <button
-              key={page}
-              className={`${styles.pageButton} ${currentPage === page ? styles.active : ''}`}
-              onClick={() => setCurrentPage(page)}
-            >
-              {page}
-            </button>
-          ))}
-          
-          <button
-            className={styles.pageButton}
-            onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-            disabled={currentPage === totalPages}
-          >
-            다음
-          </button>
-        </div>
-      )}
-
-      {/* 리뷰 작성 버튼 */}
+      {/* 리뷰 작성 안내 */}
       <div className={styles.writeReview}>
-        <Button variant="primary" size="lg">리뷰 작성하기</Button>
+        <p>구매하신 상품에 대한 리뷰를 작성해보세요!</p>
+        <Button variant="primary" size="lg">마이페이지에서 리뷰 작성하기</Button>
       </div>
     </div>
   );

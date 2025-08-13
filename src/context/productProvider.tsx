@@ -30,7 +30,7 @@ interface ProductContextType {
   searchQuery: string;
   
   // 액션
-  loadProducts: () => Promise<void>;
+  loadProducts: (forceReload?: boolean) => Promise<void>;
   getAllProducts: () => Promise<void>; // admin 페이지에서 사용
   getProductById: (productId: string) => Promise<Product | null>; // 단일 상품 반환
   loadProductById: (productId: string) => Promise<void>;
@@ -87,9 +87,28 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [lastFetchTime, setLastFetchTime] = useState<number>(0);
 
-  // 모든 상품 로드
-  const loadProducts = useCallback(async () => {
+  // 상품 데이터 정규화 (mainImage가 없으면 첫 번째 이미지로 설정)
+  const normalizeProduct = useCallback((product: Product): Product => {
+    const normalizedProduct = {
+      ...product,
+      mainImage: product.mainImage || (product.images && product.images.length > 0 ? product.images[0] : undefined)
+    };
+    return normalizedProduct;
+  }, []);
+
+  // 모든 상품 로드 (10초 디바운스 적용)
+  const loadProducts = useCallback(async (forceReload: boolean = false) => {
+    const now = Date.now();
+    const CACHE_DURATION = 10000; // 10초
+    
+    // 강제 새로고침이 아니고 캐시 기간 내라면 로딩하지 않음
+    if (!forceReload && now - lastFetchTime < CACHE_DURATION) {
+      console.log('⏰ 캐시된 데이터 사용 중... 남은 시간:', Math.ceil((CACHE_DURATION - (now - lastFetchTime)) / 1000), '초');
+      return;
+    }
+
     try {
       setLoading(true);
       setError(null);
@@ -100,8 +119,11 @@ export function ProductProvider({ children }: { children: ReactNode }) {
         CategoryBasedProductService.getBrands()
       ]);
       
-      setProducts(allProducts);
-      setFilteredProducts(allProducts);
+      // 상품 정규화
+      const normalizedProducts = allProducts.map(normalizeProduct);
+      
+      setProducts(normalizedProducts);
+      setFilteredProducts(normalizedProducts);
       setCategories(categories);
       setBrands(brands);
       
@@ -109,6 +131,9 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       const range = CategoryBasedProductService.getPriceRange(allProducts);
       setPriceRange(range);
       
+      // 마지막 fetch 시간 업데이트
+      setLastFetchTime(now);
+      console.log('✅ 상품 데이터 로드 완료 - 다음 새로고침까지:', CACHE_DURATION / 1000, '초');
 
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '상품을 불러오는데 실패했습니다.';
@@ -117,7 +142,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [normalizeProduct, lastFetchTime]);
 
   // 단일 상품 로드
   const loadProductById = useCallback(async (productId: string) => {
@@ -128,7 +153,8 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       // 모든 카테고리에서 상품을 찾아야 하므로 getAllProducts에서 필터링
       const allProducts = await CategoryBasedProductService.getAllProducts();
       const product = allProducts.find((p: Product) => p.id === productId);
-      setCurrentProduct(product || null);
+      
+      setCurrentProduct(product ? normalizeProduct(product) : null);
 
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '상품을 불러오는데 실패했습니다.';
@@ -142,32 +168,28 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   // 단일 상품 조회 (Product 반환)
   const getProductById = useCallback(async (productId: string): Promise<Product | null> => {
     try {
-      console.log('🔍 getProductById 호출됨:', productId);
-      
       // 현재 products 배열에서 먼저 찾기
       const existingProduct = products.find(p => p.id === productId);
       if (existingProduct) {
         console.log('✅ products 배열에서 찾음:', existingProduct.name);
-        return existingProduct;
+        return normalizeProduct(existingProduct);
       }
-
-      console.log('📦 CategoryBasedProductService.findProductById 사용하여 검색 중...');
+      
       // 새로운 findProductById 메서드 사용
       const product = await CategoryBasedProductService.findProductById(productId);
       
       if (product) {
-        console.log('✅ 상품 찾음:', product.name);
+        return normalizeProduct(product);
       } else {
         console.log('❌ 상품을 찾을 수 없음');
+        return null;
       }
-      
-      return product;
 
     } catch (err) {
       console.error('상품 조회 실패:', err);
       return null;
     }
-  }, [products]);
+  }, [products, normalizeProduct]);
 
   // 상품 검색
   const searchProducts = useCallback(async (query: string) => {
@@ -387,10 +409,10 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     }
   }, [currentProduct]);
 
-  // 초기 데이터 로드
+  // 초기 데이터 로드 (한번만 실행)
   useEffect(() => {
-    loadProducts();
-  }, [loadProducts]);
+    loadProducts(true); // 초기 로드는 강제로 실행
+  }, []); // 빈 의존성 배열로 한번만 실행
 
   const value: ProductContextType = {
     // 상태
@@ -419,7 +441,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     
     // 액션
     loadProducts,
-    getAllProducts: loadProducts, // loadProducts와 동일한 기능
+    getAllProducts: () => loadProducts(true), // admin 페이지에서는 강제 새로고침
     getProductById,
     loadProductById,
     searchProducts,

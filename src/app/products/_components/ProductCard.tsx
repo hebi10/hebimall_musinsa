@@ -1,8 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useProduct } from '@/context/productProvider';
+import { getProductReviewStats } from '@/shared/utils/syncProductReviews';
 import styles from './ProductCard.module.css';
 
 interface ProductCardProps {
@@ -37,6 +38,21 @@ export default function ProductCard({
   const { calculateDiscountPrice } = useProduct();
   const [imageError, setImageError] = useState(false);
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [actualReviewStats, setActualReviewStats] = useState<{ reviewCount: number; rating: number } | null>(null);
+
+  // 실제 리뷰 개수와 평점 가져오기
+  useEffect(() => {
+    const fetchReviewStats = async () => {
+      try {
+        const stats = await getProductReviewStats(id);
+        setActualReviewStats(stats);
+      } catch (error) {
+        console.error('리뷰 통계 조회 실패:', error);
+      }
+    };
+
+    fetchReviewStats();
+  }, [id]);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('ko-KR').format(price) + '원';
@@ -48,6 +64,10 @@ export default function ProductCard({
 
   const displayPrice = saleRate ? calculateDiscountPrice(price, saleRate) : price;
   const inStock = stock > 0;
+
+  // 실제 리뷰 데이터가 있으면 우선 사용, 없으면 기본값 사용
+  const displayRating = actualReviewStats?.rating || rating || 0;
+  const displayReviewCount = actualReviewStats?.reviewCount ?? reviewCount ?? 0;
 
   const handleWishlistClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -125,10 +145,10 @@ export default function ProductCard({
           </span>
         </div>
         
-        {rating && reviewCount && (
+        {displayRating > 0 && displayReviewCount > 0 && (
           <div className={styles.rating}>
-            <span className={styles.ratingValue}>★ {rating}</span>
-            <span className={styles.reviewCount}>({reviewCount})</span>
+            <span className={styles.ratingValue}>★ {displayRating}</span>
+            <span className={styles.reviewCount}>({displayReviewCount})</span>
           </div>
         )}
 

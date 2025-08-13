@@ -12,10 +12,9 @@ import { useCategories } from '@/context/categoryProvider';
 export default function Header() {
   const { user, isAdmin, logout } = useAuth();
   const { data: cartItemCount = 0 } = useCartItemCount(user?.uid || null);
+  const { categories, loading: categoriesLoading } = useCategories();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [categoriesLoading, setCategoriesLoading] = useState(true);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -63,7 +62,7 @@ export default function Header() {
                 <Link href="/categories" className={styles.navLink}>
                   카테고리
                 </Link>
-                {isCategoryOpen && !categoriesLoading && (
+                {isCategoryOpen && !categoriesLoading && categories.length > 0 && (
                   <div className={styles.dropdownMenu}>
                     {categories.map((category) => (
                       <Link
@@ -123,7 +122,7 @@ export default function Header() {
             <div className={styles.mobileCategory}>
               <h3 className={styles.mobileCategoryTitle}>카테고리</h3>
               <div className={styles.mobileCategoryList}>
-                {!categoriesLoading && categories.map((category) => (
+                {!categoriesLoading && categories.length > 0 && categories.map((category) => (
                   <Link
                     key={category.id}
                     href={category.path}
@@ -136,6 +135,9 @@ export default function Header() {
                 ))}
                 {categoriesLoading && (
                   <div className={styles.loadingText}>카테고리 로딩 중...</div>
+                )}
+                {!categoriesLoading && categories.length === 0 && (
+                  <div className={styles.loadingText}>카테고리를 불러올 수 없습니다.</div>
                 )}
               </div>
             </div>

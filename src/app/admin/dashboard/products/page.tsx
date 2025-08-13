@@ -189,8 +189,8 @@ export default function AdminProductsPage() {
               <tr key={product.id}>
                 <td>
                   <div className={styles.productImage}>
-                    {product.images && product.images.length > 0 ? (
-                      <img src={product.images[0]} alt={product.name} />
+                    {(product.mainImage || (product.images && product.images.length > 0)) ? (
+                      <img src={product.mainImage || product.images[0]} alt={product.name} />
                     ) : (
                       <div className={styles.noImage}>이미지 없음</div>
                     )}

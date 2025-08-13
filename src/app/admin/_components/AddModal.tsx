@@ -47,6 +47,7 @@ export default function AddProductModal() {
   // 복잡한 필드들은 별도 state로 관리
   const [complexFields, setComplexFields] = useState({
     images: [] as string[],
+    mainImage: '', // 대표 이미지
     sizes: [] as string[],
     colors: [] as string[],
     tags: [] as string[],
@@ -126,7 +127,9 @@ export default function AddProductModal() {
       
       setComplexFields(prev => ({
         ...prev,
-        images: [...prev.images, ...uploadedUrls]
+        images: [...prev.images, ...uploadedUrls],
+        // 대표 이미지가 없을 때만 첫 번째 업로드된 이미지로 설정
+        mainImage: prev.mainImage || (uploadedUrls.length > 0 ? uploadedUrls[0] : '')
       }));
       
       setUploadProgress({});
@@ -139,6 +142,14 @@ export default function AddProductModal() {
     } finally {
       setUploading(false);
     }
+  };
+
+  // 대표 이미지 설정 함수
+  const handleSetMainImage = (imageUrl: string) => {
+    setComplexFields(prev => ({
+      ...prev,
+      mainImage: imageUrl
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -189,6 +200,7 @@ export default function AddProductModal() {
         category: basicFields.category,
         stock: Number(basicFields.stock),
         images: complexFields.images,
+        mainImage: complexFields.mainImage, // 대표 이미지 추가
         sizes: complexFields.sizes,
         colors: complexFields.colors,
         tags: complexFields.tags,
@@ -613,24 +625,49 @@ export default function AddProductModal() {
               
               {complexFields.images.length > 0 && (
                 <div className={styles.imagePreview}>
+                  <p className={styles.imageGuide}>
+                    이미지를 클릭하여 대표 이미지로 설정하세요. 
+                    첫 번째 이미지가 기본 대표 이미지입니다.
+                  </p>
                   {complexFields.images.map((image, index) => (
-                    <div key={index} className={styles.imageItem}>
+                    <div 
+                      key={index} 
+                      className={`${styles.imageItem} ${
+                        complexFields.mainImage === image ? styles.mainImage : ''
+                      }`}
+                      onClick={() => handleSetMainImage(image)}
+                    >
                       <img src={image} alt={`Preview ${index + 1}`} />
                       <div className={styles.imageActions}>
-                        <span className={styles.imageOrder}>
-                          {index === 0 ? '대표' : index + 1}
+                        <span className={`${styles.imageOrder} ${
+                          complexFields.mainImage === image ? styles.mainImageBadge : ''
+                        }`}>
+                          {complexFields.mainImage === image ? '대표' : index + 1}
                         </span>
                         <button 
                           type="button" 
                           className={styles.deleteImageButton}
-                          onClick={() => {
+                          onClick={(e) => {
+                            e.stopPropagation(); // 클릭 이벤트 버블링 방지
                             const newImages = complexFields.images.filter((_, i) => i !== index);
-                            setComplexFields(prev => ({ ...prev, images: newImages }));
+                            setComplexFields(prev => ({ 
+                              ...prev, 
+                              images: newImages,
+                              // 삭제된 이미지가 대표 이미지였다면 첫 번째 이미지로 변경
+                              mainImage: prev.mainImage === image 
+                                ? (newImages.length > 0 ? newImages[0] : '') 
+                                : prev.mainImage
+                            }));
                           }}
                         >
                           삭제
                         </button>
                       </div>
+                      {complexFields.mainImage === image && (
+                        <div className={styles.mainImageOverlay}>
+                          <span>대표 이미지</span>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>

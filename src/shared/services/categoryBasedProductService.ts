@@ -59,6 +59,7 @@ export class CategoryBasedProductService {
             brand: data.brand,
             category: data.category,
             images: data.images || [],
+            mainImage: data.mainImage, // 대표 이미지 필드 추가
             sizes: data.sizes || [],
             colors: data.colors || [],
             stock: data.stock,
@@ -109,6 +110,7 @@ export class CategoryBasedProductService {
           brand: data.brand,
           category: data.category,
           images: data.images || [],
+          mainImage: data.mainImage, // 대표 이미지 필드 추가
           sizes: data.sizes || [],
           colors: data.colors || [],
           stock: data.stock,
@@ -141,8 +143,6 @@ export class CategoryBasedProductService {
    */
   static async getProductById(productId: string, category: string): Promise<Product | null> {
     try {
-      console.log(`🔍 상품 조회: ${productId} (카테고리: ${category})`);
-      
       const categoryPath = this.getCategoryPath(category);
       const productRef = doc(db, 'categories', categoryPath, 'products', productId);
       const snapshot = await getDoc(productRef);
@@ -162,6 +162,7 @@ export class CategoryBasedProductService {
         brand: data.brand,
         category: data.category,
         images: data.images || [],
+        mainImage: data.mainImage, // 대표 이미지 필드 추가
         sizes: data.sizes || [],
         colors: data.colors || [],
         stock: data.stock,
@@ -210,6 +211,7 @@ export class CategoryBasedProductService {
               brand: data.brand,
               category: data.category,
               images: data.images || [],
+              mainImage: data.mainImage, // 대표 이미지 필드 추가
               sizes: data.sizes || [],
               colors: data.colors || [],
               stock: data.stock,
@@ -319,17 +321,9 @@ export class CategoryBasedProductService {
       
       Object.entries(updates).forEach(([key, value]) => {
         if (value !== undefined) {
-          // 빈 문자열이나 0인 경우에도 유효한 값으로 처리
-          if (value === '' || value === 0 || value === false || value !== null) {
-            cleanUpdates[key] = value;
-          } else if (value !== null) {
-            cleanUpdates[key] = value;
-          }
+          cleanUpdates[key] = value;
         } else {
-          // undefined인 경우 필드를 삭제하도록 표시
-          if (key === 'originalPrice' || key === 'sku' || key === 'saleRate') {
-            cleanUpdates[key] = deleteField();
-          }
+          cleanUpdates[key] = deleteField();
         }
       });
       

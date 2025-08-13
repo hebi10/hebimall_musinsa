@@ -31,6 +31,12 @@ export default function SidebarMenu({ activeTab, logout }: SidebarMenuProps) {
             최근본상품
           </Link>
           <Link 
+            href="/mypage/wishlist" 
+            className={`${styles.menuItem} ${activeTab === 'favorite' ? styles.active : ''}`}
+          >
+            찜한상품
+          </Link>
+          <Link 
             href="/mypage/coupons" 
             className={`${styles.menuItem} ${activeTab === 'coupons' ? styles.active : ''}`}
           >

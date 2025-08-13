@@ -266,6 +266,25 @@
   align-self: flex-start;
 }
 
+.imageOrder.mainImageBadge {
+  background: #28a745;
+  color: white;
+  font-weight: 700;
+}
+
+.mainImageOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  color: white;
+  padding: 8px;
+  text-align: center;
+  font-size: 0.625rem;
+  font-weight: 600;
+}
+
 .deleteImageButton {
   background: #dc3545;
   color: white;
@@ -376,6 +395,32 @@
   border-radius: 8px;
   overflow: hidden;
   background: #f8f9fa;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid #e0e0e0;
+}
+
+.imageItem:hover {
+  border-color: #007bff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.imageItem.mainImage {
+  border-color: #007bff;
+  border-width: 2px;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+}
+
+.imageGuide {
+  grid-column: 1 / -1;
+  margin: 0 0 12px 0;
+  padding: 8px 12px;
+  background-color: #e7f3ff;
+  color: #0056b3;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  border-left: 3px solid #007bff;
 }
 
 .imageItem img {

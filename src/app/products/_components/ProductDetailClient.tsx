@@ -6,7 +6,9 @@ import { useRouter } from 'next/navigation';
 import { Product } from '@/shared/types/product';
 import { useProduct } from '@/context/productProvider';
 import { useAuth } from '@/context/authProvider';
+import { useUserActivity } from '@/context/userActivityProvider';
 import { useAddToCart } from '@/shared/hooks/useCart';
+import { getProductReviewStats } from '@/shared/utils/syncProductReviews';
 import Button from '@/app/_components/Button';
 import ProductCard from './ProductCard';
 // import ProductReviews from '@/features/product/components/ProductReviews';
@@ -19,6 +21,7 @@ interface Props {
 export default function ProductDetailClient({ product }: Props) {
   const router = useRouter();
   const { user } = useAuth();
+  const { addRecentProduct, addToWishlist, removeFromWishlist, isInWishlist } = useUserActivity();
   const { 
     relatedProducts, 
     getProductById, 
@@ -33,17 +36,47 @@ export default function ProductDetailClient({ product }: Props) {
   const [selectedSize, setSelectedSize] = useState<string>('');
   const [selectedColor, setSelectedColor] = useState<string>('');
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+
+  // 대표 이미지가 있으면 해당 인덱스를 찾아서 기본값으로 설정
+  useEffect(() => {
+    if (product.mainImage && product.images.includes(product.mainImage)) {
+      const mainImageIndex = product.images.indexOf(product.mainImage);
+      setSelectedImageIndex(mainImageIndex);
+    }
+  }, [product.mainImage, product.images]);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<'detail' | 'size' | 'review' | 'qna'>('detail');
   const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [isWishlistLoading, setIsWishlistLoading] = useState(false);
+  const [actualReviewStats, setActualReviewStats] = useState<{ reviewCount: number; rating: number } | null>(null);
+
+  // 찜 상태 확인
+  const isWishlisted = user?.uid ? isInWishlist(product.id) : false;
 
   // 컴포넌트 마운트 시 상품 정보와 연관 상품 로드
   useEffect(() => {
     if (product.id) {
       // 관련 상품 로드
       loadRelatedProducts(product.id, 4);
+      
+      // 최근 본 상품에 추가 (로그인한 사용자만)
+      if (user?.uid) {
+        addRecentProduct(product.id);
+      }
+
+      // 실제 리뷰 통계 가져오기
+      const fetchReviewStats = async () => {
+        try {
+          const stats = await getProductReviewStats(product.id);
+          setActualReviewStats(stats);
+        } catch (error) {
+          console.error('리뷰 통계 조회 실패:', error);
+        }
+      };
+
+      fetchReviewStats();
     }
-  }, [product.id, loadRelatedProducts]);
+  }, [product.id, loadRelatedProducts, addRecentProduct, user?.uid]);
 
   const handleAddToCart = async () => {
     // 로그인 확인
@@ -143,11 +176,45 @@ export default function ProductDetailClient({ product }: Props) {
     router.push('/orders/checkout');
   };
 
+  // 찜하기 토글
+  const handleWishlistToggle = async () => {
+    if (!user) {
+      alert('로그인이 필요합니다.');
+      router.push('/auth/login');
+      return;
+    }
+
+    setIsWishlistLoading(true);
+    
+    try {
+      if (isWishlisted) {
+        await removeFromWishlist(product.id);
+        alert('찜 목록에서 제거되었습니다.');
+      } else {
+        await addToWishlist(product.id);
+        alert('찜 목록에 추가되었습니다.');
+      }
+    } catch (error) {
+      console.error('찜하기 토글 실패:', error);
+      if (error instanceof Error) {
+        alert(error.message);
+      } else {
+        alert('찜하기 처리에 실패했습니다.');
+      }
+    } finally {
+      setIsWishlistLoading(false);
+    }
+  };
+
   const displayPrice = product.saleRate ? 
     calculateDiscountPrice(product.price, product.saleRate) : 
     product.price;
 
   const inStock = isInStock(product);
+
+  // 실제 리뷰 데이터가 있으면 우선 사용, 없으면 기본값 사용
+  const displayRating = actualReviewStats?.rating || product.rating || 0;
+  const displayReviewCount = actualReviewStats?.reviewCount ?? product.reviewCount ?? 0;
 
   return (
     <div className={styles.container}>
@@ -183,13 +250,13 @@ export default function ProductDetailClient({ product }: Props) {
           <div className={styles.rating}>
             <div className={styles.stars}>
               {Array.from({ length: 5 }, (_, i) => (
-                <span key={i} className={i < Math.floor(product.rating) ? styles.filled : styles.empty}>
+                <span key={i} className={i < Math.floor(displayRating) ? styles.filled : styles.empty}>
                   ★
                 </span>
               ))}
             </div>
             <span className={styles.ratingText}>
-              {product.rating} ({product.reviewCount}개 리뷰)
+              {displayRating} ({displayReviewCount}개 리뷰)
             </span>
           </div>
 
@@ -279,6 +346,14 @@ export default function ProductDetailClient({ product }: Props) {
 
           {/* 구매 버튼 */}
           <div className={styles.actions}>
+            <button
+              className={`${styles.wishlistButton} ${isWishlisted ? styles.wishlisted : ''}`}
+              onClick={handleWishlistToggle}
+              disabled={isWishlistLoading}
+              title={isWishlisted ? '찜 해제' : '찜하기'}
+            >
+              {isWishlistLoading ? '⏳' : isWishlisted ? '❤️' : '🤍'}
+            </button>
             <Button
               variant="secondary"
               size="lg"
@@ -341,7 +416,7 @@ export default function ProductDetailClient({ product }: Props) {
                 saleRate={relatedProduct.saleRate}
                 rating={relatedProduct.rating}
                 reviewCount={relatedProduct.reviewCount}
-                image={relatedProduct.images[0]}
+                image={relatedProduct.mainImage || relatedProduct.images[0]} // 대표 이미지 우선 사용
                 stock={relatedProduct.stock}
               />
             ))}
@@ -368,7 +443,7 @@ export default function ProductDetailClient({ product }: Props) {
             className={`${styles.tabHeader} ${activeTab === 'review' ? styles.active : ''}`}
             onClick={() => setActiveTab('review')}
           >
-            리뷰 ({product.reviewCount})
+            리뷰 ({displayReviewCount})
           </button>
           <button
             className={`${styles.tabHeader} ${activeTab === 'qna' ? styles.active : ''}`}
@@ -446,15 +521,15 @@ export default function ProductDetailClient({ product }: Props) {
               <h3>상품 리뷰</h3>
               <div className={styles.reviewSummary}>
                 <div className={styles.ratingOverview}>
-                  <span className={styles.avgRating}>{product.rating}</span>
+                  <span className={styles.avgRating}>{displayRating}</span>
                   <div className={styles.stars}>
                     {Array.from({ length: 5 }, (_, i) => (
-                      <span key={i} className={i < Math.floor(product.rating) ? styles.filled : styles.empty}>
+                      <span key={i} className={i < Math.floor(displayRating) ? styles.filled : styles.empty}>
                         ★
                       </span>
                     ))}
                   </div>
-                  <span className={styles.reviewCount}>총 {product.reviewCount}개 리뷰</span>
+                  <span className={styles.reviewCount}>총 {displayReviewCount}개 리뷰</span>
                 </div>
               </div>
               <p>리뷰 컴포넌트는 추후 구현 예정입니다.</p>

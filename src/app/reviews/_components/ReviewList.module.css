@@ -152,7 +152,7 @@
 .reviewText {
   color: var(--color-text-primary);
   line-height: 1.6;
-  margin: 0;
+  margin: 0 0 var(--spacing-2xl);
   font-size: 1rem;
 }
 
@@ -263,9 +263,83 @@
 /* 리뷰 작성 */
 .writeReview {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
   padding: var(--spacing-xl) 0;
   border-top: 1px solid var(--color-border-light);
+  text-align: center;
+}
+
+.writeReview p {
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+/* 상품 정보 추가 스타일 */
+.productInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.productImage {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid var(--color-border-light);
+}
+
+.productDetails {
+  flex: 1;
+}
+
+.productName {
+  color: var(--color-text-primary);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.875rem;
+  display: block;
+  margin-bottom: var(--spacing-xs);
+}
+
+.productName:hover {
+  color: var(--color-primary);
+}
+
+.productOptions {
+  display: flex;
+  gap: var(--spacing-sm);
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+}
+
+/* 로딩, 빈 상태, 에러 스타일 */
+.loading,
+.empty {
+  text-align: center;
+  padding: var(--spacing-xl);
+  color: var(--color-text-secondary);
+}
+
+.error {
+  text-align: center;
+  padding: var(--spacing-xl);
+  color: var(--color-error);
+  background-color: rgba(244, 67, 54, 0.1);
+  border: 1px solid rgba(244, 67, 54, 0.2);
+  border-radius: 4px;
+  margin-bottom: var(--spacing-lg);
+}
+
+/* 리뷰 평점 스타일 통일 */
+.rating {
+  color: #ffd43b;
+  font-size: 0.875rem;
 }
 
 /* ========== Mobile First Media Queries ========== */
