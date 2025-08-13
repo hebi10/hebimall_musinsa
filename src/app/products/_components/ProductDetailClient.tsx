@@ -2,10 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { Product } from '@/shared/types/product';
 import { useProduct } from '@/context/productProvider';
+import { useAuth } from '@/context/authProvider';
+import { useAddToCart } from '@/shared/hooks/useCart';
 import Button from '@/app/_components/Button';
-import ProductCard from '../_components/ProductCard';
+import ProductCard from './ProductCard';
 // import ProductReviews from '@/features/product/components/ProductReviews';
 import styles from './ProductDetail.module.css';
 
@@ -14,6 +17,8 @@ interface Props {
 }
 
 export default function ProductDetailClient({ product }: Props) {
+  const router = useRouter();
+  const { user } = useAuth();
   const { 
     relatedProducts, 
     getProductById, 
@@ -23,11 +28,14 @@ export default function ProductDetailClient({ product }: Props) {
     loading 
   } = useProduct();
 
+  const addToCartMutation = useAddToCart();
+
   const [selectedSize, setSelectedSize] = useState<string>('');
   const [selectedColor, setSelectedColor] = useState<string>('');
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<'detail' | 'size' | 'review' | 'qna'>('detail');
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
 
   // 컴포넌트 마운트 시 상품 정보와 연관 상품 로드
   useEffect(() => {
@@ -37,22 +45,102 @@ export default function ProductDetailClient({ product }: Props) {
     }
   }, [product.id, loadRelatedProducts]);
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
+    // 로그인 확인
+    if (!user) {
+      alert('로그인이 필요합니다.');
+      router.push('/auth/login');
+      return;
+    }
+
+    // 옵션 선택 확인
     if (!selectedSize || !selectedColor) {
       alert('사이즈와 색상을 선택해주세요.');
       return;
     }
-    // TODO: 장바구니 추가 로직 (CartProvider와 연동)
-    alert('장바구니에 추가되었습니다.');
+
+    // 재고 확인
+    if (!inStock || quantity > product.stock) {
+      alert('재고가 부족합니다.');
+      return;
+    }
+
+    setIsAddingToCart(true);
+
+    try {
+      await addToCartMutation.mutateAsync({
+        userId: user.uid,
+        product,
+        request: {
+          productId: product.id,
+          size: selectedSize,
+          color: selectedColor,
+          quantity
+        }
+      });
+
+      alert('장바구니에 추가되었습니다.');
+      
+      // 장바구니 페이지로 이동할지 물어보기
+      const goToCart = confirm('장바구니로 이동하시겠습니까?');
+      if (goToCart) {
+        router.push('/orders/cart');
+      }
+    } catch (error) {
+      console.error('장바구니 추가 실패:', error);
+      alert('장바구니 추가에 실패했습니다. 다시 시도해주세요.');
+    } finally {
+      setIsAddingToCart(false);
+    }
   };
 
   const handleBuyNow = () => {
+    // 로그인 확인
+    if (!user) {
+      alert('로그인이 필요합니다.');
+      router.push('/auth/login');
+      return;
+    }
+
+    // 옵션 선택 확인
     if (!selectedSize || !selectedColor) {
       alert('사이즈와 색상을 선택해주세요.');
       return;
     }
-    // TODO: 즉시 구매 로직 (OrderProvider와 연동)
-    alert('주문 페이지로 이동합니다.');
+
+    // 재고 확인
+    if (!inStock || quantity > product.stock) {
+      alert('재고가 부족합니다.');
+      return;
+    }
+
+    // 주문 데이터 생성
+    const orderData = {
+      items: [{
+        productId: product.id,
+        productName: product.name,
+        productImage: product.images[0],
+        brand: product.brand,
+        size: selectedSize,
+        color: selectedColor,
+        quantity,
+        price: displayPrice,
+        discountAmount: product.saleRate ? 
+          Math.floor(product.price * (product.saleRate / 100)) : 0
+      }],
+      subtotal: displayPrice * quantity,
+      couponDiscount: 0,
+      deliveryFee: displayPrice * quantity >= 50000 ? 0 : 3000, // 5만원 이상 무료배송
+      finalAmount: (displayPrice * quantity) + (displayPrice * quantity >= 50000 ? 0 : 3000),
+      selectedCoupon: '',
+      deliveryOption: 'standard'
+    };
+
+    // 세션 스토리지에 주문 데이터 저장
+    sessionStorage.setItem('orderData', JSON.stringify(orderData));
+    
+    // 주문서 작성 페이지로 이동
+    router.push('/orders/checkout');
   };
 
   const displayPrice = product.saleRate ? 
@@ -196,9 +284,9 @@ export default function ProductDetailClient({ product }: Props) {
               size="lg"
               onClick={handleAddToCart}
               className={styles.cartButton}
-              disabled={!inStock}
+              disabled={!inStock || isAddingToCart}
             >
-              장바구니
+              {isAddingToCart ? '추가 중...' : '장바구니'}
             </Button>
             <Button
               variant="primary"

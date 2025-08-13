@@ -6,21 +6,13 @@ import {
   addDoc, 
   updateDoc, 
   deleteDoc, 
-  query, 
-  where, 
-  orderBy, 
-  limit, 
   Timestamp,
-  Query,
-  DocumentData,
-  writeBatch,
   deleteField
 } from 'firebase/firestore';
 import { db } from '@/shared/libs/firebase/firebase';
 import { Product, ProductFilter, ProductSort } from '@/shared/types/product';
 
 export class CategoryBasedProductService {
-  
   /**
    * 카테고리명을 영어 경로로 변환
    */
@@ -199,22 +191,15 @@ export class CategoryBasedProductService {
    */
   static async findProductById(productId: string): Promise<Product | null> {
     try {
-      console.log(`🔍 전체 카테고리에서 상품 검색: ${productId}`);
-      
       // 모든 카테고리를 조회
       const categoriesSnapshot = await getDocs(collection(db, 'categories'));
-      console.log(`📂 검색할 카테고리 수: ${categoriesSnapshot.size}`);
-      
       for (const categoryDoc of categoriesSnapshot.docs) {
         const categoryId = categoryDoc.id;
-        console.log(`🔍 ${categoryId} 카테고리에서 검색 중...`);
-        
         try {
           const productRef = doc(db, 'categories', categoryId, 'products', productId);
           const snapshot = await getDoc(productRef);
           
           if (snapshot.exists()) {
-            console.log(`✅ ${categoryId} 카테고리에서 상품 발견!`);
             const data = snapshot.data();
             const product: Product = {
               id: snapshot.id,
@@ -240,8 +225,6 @@ export class CategoryBasedProductService {
               sku: data.sku,
               details: data.details
             };
-            
-            console.log(`✅ 상품 찾음: ${product.name} (카테고리: ${categoryId})`);
             return product;
           } else {
             console.log(`❌ ${categoryId} 카테고리에 상품 없음`);

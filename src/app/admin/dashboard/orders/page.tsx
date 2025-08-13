@@ -30,6 +30,8 @@ export default function AdminOrdersPage() {
         router.push('/auth/login');
       }
     }
+    console.log(user)
+    console.log(user.role)
   }, [user, isUserDataLoading, isAdmin, router, loading]);
 
   useEffect(() => {

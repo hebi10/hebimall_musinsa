@@ -32,11 +32,14 @@ export default function Chart({ data, type, title, height = 200, width = 400 }: 
   };
 
   const renderBarChart = () => {
-    const barWidth = Math.max(40, (width - 60) / data.length);
-    const spacing = Math.min(10, (width - data.length * barWidth) / (data.length + 1));
+    const chartWidth = width - 50; // 양쪽 여백 제외 (40px + 10px)
+    const totalSpacing = chartWidth * 0.2; // 전체 폭의 20%를 spacing으로 사용
+    const totalBarWidth = chartWidth - totalSpacing;
+    const barWidth = Math.max(20, totalBarWidth / data.length); // 최소 20px
+    const spacing = data.length > 1 ? totalSpacing / (data.length + 1) : totalSpacing / 2;
 
     return (
-      <div className={styles.chartContainer} style={{ height, width }}>
+      <div className={styles.chartContainer}>
         <svg width={width} height={height} className={styles.chart}>
           {/* Y축 그리드 라인 */}
           {[0, 0.25, 0.5, 0.75, 1].map((ratio) => (

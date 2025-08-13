@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import ProductDetailClient from './ProductDetailClient';
+import ProductDetailClient from '../_components/ProductDetailClient';
 import { CategoryBasedProductService } from '@/shared/services/categoryBasedProductService';
 
 interface Props {

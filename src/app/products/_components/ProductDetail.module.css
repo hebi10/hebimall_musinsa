@@ -4,6 +4,10 @@
   padding: var(--spacing-lg);
 }
 
+.sectionTitle{
+  padding: var(--spacing-xl) 0 var(--spacing-md) var(--spacing-xs);
+}
+
 .productInfo {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -14,6 +18,7 @@
 .relatedGrid{
   display: flex;
   justify-content: space-between;
+  gap: var(--spacing-md);
 }
 
 /* 이미지 섹션 */

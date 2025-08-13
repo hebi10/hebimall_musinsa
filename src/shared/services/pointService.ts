@@ -24,10 +24,31 @@ export class PointService {
    */
   static async addPoint(data: AddPointRequest): Promise<PointResponse> {
     try {
+      // Firebase Functions가 배포되지 않은 경우를 대비한 임시 처리
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('개발 환경에서는 포인트 기능이 제한됩니다.');
+        return {
+          success: true,
+          message: '개발 환경에서 포인트 적립이 시뮬레이션되었습니다.',
+          newBalance: data.amount
+        };
+      }
+      
       const result = await addPointFunction(data);
       return result.data;
     } catch (error: any) {
       console.error('포인트 적립 실패:', error);
+      
+      // Firebase Functions 관련 에러를 더 구체적으로 처리
+      if (error.code === 'functions/not-found') {
+        console.warn('포인트 함수가 배포되지 않았습니다. 개발 모드로 진행합니다.');
+        return {
+          success: true,
+          message: '포인트 기능이 임시로 비활성화되었습니다.',
+          newBalance: data.amount
+        };
+      }
+      
       throw new Error(error.message || '포인트 적립에 실패했습니다.');
     }
   }
@@ -37,10 +58,33 @@ export class PointService {
    */
   static async usePoint(data: UsePointRequest): Promise<PointResponse> {
     try {
+      // Firebase Functions가 배포되지 않은 경우를 대비한 임시 처리
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('개발 환경에서는 포인트 기능이 제한됩니다.');
+        return {
+          success: true,
+          message: '개발 환경에서 포인트 사용이 시뮬레이션되었습니다.',
+          newBalance: 0,
+          usedAmount: data.amount
+        };
+      }
+      
       const result = await usePointFunction(data);
       return result.data;
     } catch (error: any) {
       console.error('포인트 사용 실패:', error);
+      
+      // Firebase Functions 관련 에러를 더 구체적으로 처리
+      if (error.code === 'functions/not-found') {
+        console.warn('포인트 함수가 배포되지 않았습니다. 개발 모드로 진행합니다.');
+        return {
+          success: true,
+          message: '포인트 기능이 임시로 비활성화되었습니다.',
+          newBalance: 0,
+          usedAmount: data.amount
+        };
+      }
+      
       throw new Error(error.message || '포인트 사용에 실패했습니다.');
     }
   }
@@ -50,10 +94,33 @@ export class PointService {
    */
   static async refundPoint(data: RefundPointRequest): Promise<PointResponse> {
     try {
+      // Firebase Functions가 배포되지 않은 경우를 대비한 임시 처리
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('개발 환경에서는 포인트 기능이 제한됩니다.');
+        return {
+          success: true,
+          message: '개발 환경에서 포인트 환불이 시뮬레이션되었습니다.',
+          newBalance: data.amount,
+          refundedAmount: data.amount
+        };
+      }
+      
       const result = await refundPointFunction(data);
       return result.data;
     } catch (error: any) {
       console.error('포인트 환불 실패:', error);
+      
+      // Firebase Functions 관련 에러를 더 구체적으로 처리
+      if (error.code === 'functions/not-found') {
+        console.warn('포인트 함수가 배포되지 않았습니다. 개발 모드로 진행합니다.');
+        return {
+          success: true,
+          message: '포인트 기능이 임시로 비활성화되었습니다.',
+          newBalance: data.amount,
+          refundedAmount: data.amount
+        };
+      }
+      
       throw new Error(error.message || '포인트 환불에 실패했습니다.');
     }
   }

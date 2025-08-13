@@ -1,4 +1,4 @@
-import ProductDetailClient from '../../[productId]/ProductDetailClient';
+import ProductDetailClient from '../../_components/ProductDetailClient';
 import { CategoryBasedProductService } from '@/shared/services/categoryBasedProductService';
 import { notFound } from 'next/navigation';
 

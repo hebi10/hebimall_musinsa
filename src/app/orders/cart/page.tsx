@@ -7,21 +7,12 @@ import PageHeader from "../../_components/PageHeader";
 import Button from "../../_components/Button";
 import { useAuth } from "@/context/authProvider";
 import { useCoupon } from "@/context/couponProvider";
+import { useCart, useUpdateCartItem, useRemoveFromCart, useClearCart } from "@/shared/hooks/useCart";
+import { CartItem } from "@/shared/types/cart";
 import styles from "./page.module.css";
 
-interface CartItem {
-  id: string;
-  productId: string;
-  productName: string;
-  productImage: string;
-  brand: string;
-  size: string;
-  color: string;
-  quantity: number;
-  price: number;
-  originalPrice?: number;
-  discountAmount: number;
-  isAvailable: boolean;
+// 장바구니 아이템에 선택 상태 추가
+interface CartItemWithSelection extends CartItem {
   selected: boolean;
 }
 
@@ -30,42 +21,28 @@ export default function OrderCartPage() {
   const { user, userData } = useAuth();
   const { userCoupons, calculateDiscount } = useCoupon();
   
-  const [cartItems, setCartItems] = useState<CartItem[]>([
-    {
-      id: "1",
-      productId: "P001",
-      productName: "오버사이즈 후드티",
-      productImage: "/api/placeholder/80/80",
-      brand: "HEBIMALL",
-      size: "L",
-      color: "블랙",
-      quantity: 1,
-      price: 89000,
-      originalPrice: 129000,
-      discountAmount: 40000,
-      isAvailable: true,
-      selected: true,
-    },
-    {
-      id: "2",
-      productId: "P002",
-      productName: "슬림핏 청바지",
-      productImage: "/api/placeholder/80/80",
-      brand: "DENIM CO",
-      size: "32",
-      color: "인디고",
-      quantity: 1,
-      price: 79000,
-      originalPrice: 79000,
-      discountAmount: 0,
-      isAvailable: true,
-      selected: true,
-    }
-  ]);
-
+  // Firebase 장바구니 데이터 가져오기
+  const { data: cart, isLoading: cartLoading, error: cartError } = useCart(user?.uid || null);
+  const updateCartItemMutation = useUpdateCartItem();
+  const removeFromCartMutation = useRemoveFromCart();
+  const clearCartMutation = useClearCart();
+  
+  // 장바구니 아이템에 선택 상태 추가
+  const [cartItems, setCartItems] = useState<CartItemWithSelection[]>([]);
   const [selectedCoupon, setSelectedCoupon] = useState<string>("");
   const [selectAll, setSelectAll] = useState(true);
   const [deliveryOption, setDeliveryOption] = useState<"standard" | "express">("standard");
+
+  // Firebase 장바구니 데이터를 로컬 상태로 변환
+  useEffect(() => {
+    if (cart?.items) {
+      const itemsWithSelection: CartItemWithSelection[] = cart.items.map(item => ({
+        ...item,
+        selected: true // 기본적으로 모든 아이템 선택
+      }));
+      setCartItems(itemsWithSelection);
+    }
+  }, [cart]);
 
   // 로그인 체크
   useEffect(() => {
@@ -75,18 +52,47 @@ export default function OrderCartPage() {
   }, [user, router]);
 
   // 수량 변경
-  const updateQuantity = (id: string, newQuantity: number) => {
+  const updateQuantity = async (id: string, newQuantity: number) => {
     if (newQuantity < 1) return;
-    setCartItems(items =>
-      items.map(item =>
-        item.id === id ? { ...item, quantity: newQuantity } : item
-      )
-    );
+    
+    try {
+      // 로컬 상태 즉시 업데이트
+      setCartItems(items =>
+        items.map(item =>
+          item.id === id ? { ...item, quantity: newQuantity } : item
+        )
+      );
+
+      // Firebase 업데이트
+      if (user) {
+        await updateCartItemMutation.mutateAsync({
+          userId: user.uid,
+          request: { cartItemId: id, quantity: newQuantity }
+        });
+      }
+    } catch (error) {
+      console.error('수량 업데이트 실패:', error);
+      alert('수량 변경에 실패했습니다.');
+    }
   };
 
   // 상품 제거
-  const removeItem = (id: string) => {
-    setCartItems(items => items.filter(item => item.id !== id));
+  const removeItem = async (id: string) => {
+    try {
+      // 로컬 상태 즉시 업데이트
+      setCartItems(items => items.filter(item => item.id !== id));
+      
+      // Firebase에서 제거
+      if (user) {
+        await removeFromCartMutation.mutateAsync({
+          userId: user.uid,
+          cartItemId: id
+        });
+      }
+    } catch (error) {
+      console.error('아이템 제거 실패:', error);
+      alert('상품 제거에 실패했습니다.');
+    }
   };
 
   // 전체 선택/해제
@@ -166,7 +172,48 @@ export default function OrderCartPage() {
     return <div>로그인이 필요합니다...</div>;
   }
 
-  if (cartItems.length === 0) {
+  if (cartLoading) {
+    return (
+      <div className={styles.container}>
+        <PageHeader
+          title="주문/결제"
+          description="장바구니를 불러오는 중..."
+          breadcrumb={[
+            { label: '홈', href: '/' },
+            { label: '장바구니', href: '/cart' },
+            { label: '주문/결제' }
+          ]}
+        />
+        <div className={styles.content}>
+          <div className={styles.loading}>장바구니를 불러오는 중...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (cartError) {
+    return (
+      <div className={styles.container}>
+        <PageHeader
+          title="주문/결제"
+          description="장바구니 오류"
+          breadcrumb={[
+            { label: '홈', href: '/' },
+            { label: '장바구니', href: '/cart' },
+            { label: '주문/결제' }
+          ]}
+        />
+        <div className={styles.content}>
+          <div className={styles.error}>
+            장바구니를 불러오는 중 오류가 발생했습니다.
+            <Button onClick={() => window.location.reload()}>다시 시도</Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!cart || cartItems.length === 0) {
     return (
       <div className={styles.container}>
         <PageHeader
@@ -283,9 +330,9 @@ export default function OrderCartPage() {
                   </div>
                   
                   <div className={styles.itemPrice}>
-                    {item.originalPrice && item.originalPrice > item.price && (
+                    {item.discountAmount > 0 && (
                       <div className={styles.originalPrice}>
-                        {item.originalPrice.toLocaleString()}원
+                        {(item.price + item.discountAmount).toLocaleString()}원
                       </div>
                     )}
                     <div className={styles.salePrice}>

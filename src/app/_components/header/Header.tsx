@@ -1,16 +1,21 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useState } from 'react';
-import styles from './Header.module.css';
-import { useAuth } from '@/context/authProvider';
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useAuth } from "@/context/authProvider";
+import { useCartItemCount } from "@/shared/hooks/useCart";
+import { CategoryBasedProductService } from "@/shared/services/categoryBasedProductService";
+import { Category } from "@/shared/types/category";
+import styles from "./Header.module.css";
 import { useCategories } from '@/context/categoryProvider';
 
 export default function Header() {
   const { user, isAdmin, logout } = useAuth();
-  const { categories, loading: categoriesLoading } = useCategories();
+  const { data: cartItemCount = 0 } = useCartItemCount(user?.uid || null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -95,6 +100,9 @@ export default function Header() {
             </Link>
             <Link href="/orders/cart" className={styles.userLink}>
               장바구니
+              {cartItemCount > 0 && (
+                <span className={styles.cartBadge}>{cartItemCount}</span>
+              )}
             </Link>
             {user && (
               <Link href="/mypage" className={styles.userLink}>마이페이지</Link>
@@ -161,6 +169,9 @@ export default function Header() {
               </Link>
               <Link href="/orders/cart" className={styles.mobileUserLink} onClick={closeMobileMenu}>
                 장바구니
+                {cartItemCount > 0 && (
+                  <span className={styles.cartBadge}>{cartItemCount}</span>
+                )}
               </Link>
               {user && (
                 <Link href="/mypage" className={styles.mobileUserLink} onClick={closeMobileMenu}>마이페이지</Link>
