@@ -1,0 +1,232 @@
+.inquiryContainer {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.tabContainer {
+  display: flex;
+  border-bottom: 1px solid #e1e5e9;
+  margin-bottom: 2rem;
+}
+
+.tab {
+  padding: 1rem 2rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #6c757d;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.tab.active {
+  color: #007bff;
+  border-bottom-color: #007bff;
+}
+
+.tab:hover {
+  color: #007bff;
+}
+
+/* 문의 작성 폼 */
+.inquiryForm {
+  background: white;
+  border: 1px solid #e1e5e9;
+  border-radius: 8px;
+  padding: 2rem;
+}
+
+.formGroup {
+  margin-bottom: 1.5rem;
+}
+
+.label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.required {
+  color: #dc3545;
+  margin-left: 0.25rem;
+}
+
+.input,
+.select,
+.textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #e1e5e9;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.submitButton {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.submitButton:hover {
+  background: #0056b3;
+}
+
+.submitButton:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+}
+
+/* 문의 내역 */
+.inquiryList {
+  margin-top: 2rem;
+}
+
+.inquiryItem {
+  border: 1px solid #e1e5e9;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+.inquiryHeader {
+  background: #f8f9fa;
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.inquiryHeader:hover {
+  background: #e9ecef;
+}
+
+.inquiryTitle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.titleText {
+  font-weight: 500;
+  color: #333;
+}
+
+.status {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.statusWaiting {
+  background: #ffc107;
+  color: #856404;
+}
+
+.statusCompleted {
+  background: #28a745;
+  color: white;
+}
+
+.inquiryMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+.category {
+  background: #007bff;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+}
+
+.inquiryContent {
+  padding: 1.5rem;
+  background: white;
+}
+
+.questionSection {
+  margin-bottom: 2rem;
+}
+
+.sectionTitle {
+  font-weight: 500;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.questionText {
+  line-height: 1.6;
+  color: #333;
+  white-space: pre-wrap;
+}
+
+.answerSection {
+  padding-top: 1.5rem;
+  border-top: 1px solid #e1e5e9;
+}
+
+.answerText {
+  line-height: 1.6;
+  color: #333;
+  white-space: pre-wrap;
+}
+
+.answeredBy {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #f0f0f0;
+  font-size: 0.9rem;
+  color: #6c757d;
+  text-align: right;
+}
+
+.noInquiries {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #6c757d;
+}
+
+.formNote {
+  background: #f8f9fa;
+  border: 1px solid #e1e5e9;
+  border-radius: 4px;
+  padding: 1rem;
+  margin-bottom: 2rem;
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+.icon {
+  font-size: 1.2rem;
+  transition: transform 0.2s ease;
+}
+
+.iconRotated {
+  transform: rotate(180deg);
+}

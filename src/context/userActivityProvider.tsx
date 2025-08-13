@@ -22,6 +22,8 @@ interface UserActivityContextType {
   loadWishlistItems: (userId: string) => void;
   isInWishlist: (productId: string) => boolean;
   clearUserActivity: () => void;
+  clearAllRecentProducts: () => Promise<void>;
+  clearAllWishlistItems: () => Promise<void>;
 }
 
 const UserActivityContext = createContext<UserActivityContextType | undefined>(undefined);
@@ -147,6 +149,46 @@ export function UserActivityProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  // 모든 최근 본 상품 삭제
+  const clearAllRecentProducts = useCallback(async () => {
+    if (!user?.uid) return;
+    
+    try {
+      setError(null);
+      
+      LocalUserActivityService.clearAllRecentProducts(user.uid);
+      
+      // 로컬 상태 업데이트
+      setRecentProducts([]);
+
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : '최근 본 상품 삭제에 실패했습니다.';
+      setError(errorMessage);
+      console.error('최근 본 상품 전체 삭제 실패:', err);
+      throw err;
+    }
+  }, [user?.uid]);
+
+  // 모든 찜한 상품 삭제
+  const clearAllWishlistItems = useCallback(async () => {
+    if (!user?.uid) return;
+    
+    try {
+      setError(null);
+      
+      LocalUserActivityService.clearAllWishlistItems(user.uid);
+      
+      // 로컬 상태 업데이트
+      setWishlistItems([]);
+
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : '찜한 상품 삭제에 실패했습니다.';
+      setError(errorMessage);
+      console.error('찜한 상품 전체 삭제 실패:', err);
+      throw err;
+    }
+  }, [user?.uid]);
+
   // 찜 여부 확인
   const isInWishlist = useCallback((productId: string): boolean => {
     if (!user?.uid) return false;
@@ -180,6 +222,8 @@ export function UserActivityProvider({ children }: { children: ReactNode }) {
     loadWishlistItems,
     isInWishlist,
     clearUserActivity,
+    clearAllRecentProducts,
+    clearAllWishlistItems,
   };
 
   return (

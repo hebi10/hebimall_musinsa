@@ -15,7 +15,8 @@ export default function WishlistProducts() {
     loading, 
     error,
     loadWishlistItems,
-    removeFromWishlist 
+    removeFromWishlist,
+    clearAllWishlistItems
   } = useUserActivity();
   
   const { getProductById } = useProduct();
@@ -66,6 +67,18 @@ export default function WishlistProducts() {
     setRemoving(null);
   };
 
+  // 모든 찜한 상품 삭제 확인
+  const handleClearAll = async () => {
+    if (window.confirm('모든 찜한 상품을 삭제하시겠습니까?')) {
+      try {
+        await clearAllWishlistItems();
+      } catch (error) {
+        console.error('찜한 상품 삭제 실패:', error);
+        alert('찜한 상품 삭제에 실패했습니다.');
+      }
+    }
+  };
+
   if (!user) {
     return (
       <div className={styles.notLoggedIn}>
@@ -85,7 +98,18 @@ export default function WishlistProducts() {
     <div className={styles.container}>
       <div className={styles.header}>
         <h2>찜한 상품</h2>
-        <span className={styles.count}>{wishlistItems.length}개</span>
+        <div className={styles.headerActions}>
+          <span className={styles.count}>{wishlistItems.length}개</span>
+          {wishlistItems.length > 0 && (
+            <button 
+              className={styles.clearButton}
+              onClick={handleClearAll}
+              type="button"
+            >
+              전체 삭제
+            </button>
+          )}
+        </div>
       </div>
 
       {loading ? (

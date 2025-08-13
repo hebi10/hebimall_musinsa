@@ -16,6 +16,9 @@ export default function Footer() {
               <Link href="/cs/notice_list" className={styles.link}>
                 공지사항
               </Link>
+              <Link href="/cs/inquiry" className={styles.link}>
+                1:1 문의
+              </Link>
             </div>
           </div>
 
@@ -39,7 +42,7 @@ export default function Footer() {
           <div className={styles.section}>
             <h3>쇼핑안내</h3>
             <div className={styles.linkList}>
-              <Link href="/offline" className={styles.link}>
+              <Link href="/support/offline" className={styles.link}>
                 매장안내
               </Link>
               <Link href="/orders/delivery" className={styles.link}>

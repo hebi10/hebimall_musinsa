@@ -89,6 +89,12 @@ export default function Header() {
               <Link href="/main/sale" className={styles.navLink}>
                 세일
               </Link>
+              <Link href="/cs/inquiry" className={styles.navLink}>
+                1:1문의
+              </Link>
+              <Link href="/qna" className={styles.navLink}>
+                QnA
+              </Link>
             </div>
           </nav>
 
@@ -161,6 +167,12 @@ export default function Header() {
               </Link>
               <Link href="/main/sale" className={styles.mobileNavLink} onClick={closeMobileMenu}>
                 세일
+              </Link>
+              <Link href="/cs/inquiry" className={styles.mobileNavLink} onClick={closeMobileMenu}>
+                1:1문의
+              </Link>
+              <Link href="/qna" className={styles.mobileNavLink} onClick={closeMobileMenu}>
+                QnA
               </Link>
             </div>
 

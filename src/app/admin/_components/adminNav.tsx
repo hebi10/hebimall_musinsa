@@ -28,6 +28,12 @@ export default function AdminNav() {
       <Link href="/admin/dashboard/orders" className={styles.navLink}>
         🛒 주문 관리
       </Link>
+      <Link href="/admin/qna" className={styles.navLink}>
+        💬 QnA 관리
+      </Link>
+      <Link href="/admin/reviews" className={styles.navLink}>
+        ⭐ 리뷰 관리
+      </Link>
     </nav>
   );
 }

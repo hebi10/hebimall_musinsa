@@ -1,0 +1,300 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+}
+
+.pageHeader {
+  text-align: center;
+  margin-bottom: 40px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #f5f5f5;
+}
+
+.pageTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 10px 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.pageDesc {
+  font-size: 1.1rem;
+  color: #666;
+  margin: 0;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.input,
+.select,
+.textarea {
+  padding: 12px 16px;
+  border: 2px solid #e1e5e9;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  background: #fff;
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 120px;
+  font-family: inherit;
+  line-height: 1.6;
+}
+
+.charCount {
+  font-size: 0.875rem;
+  color: #888;
+  text-align: right;
+  margin-top: 4px;
+}
+
+.checkboxGroup {
+  margin: 8px 0;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: #667eea;
+}
+
+.checkboxText {
+  color: #333;
+}
+
+.passwordField {
+  margin-top: 12px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+}
+
+.fieldHelp {
+  font-size: 0.875rem;
+  color: #666;
+  margin-top: 8px;
+}
+
+.authorInfo {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #e1e5e9;
+}
+
+.authorTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 16px 0;
+}
+
+.authorDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.authorItem {
+  display: flex;
+  gap: 12px;
+}
+
+.authorLabel {
+  font-weight: 600;
+  color: #555;
+  min-width: 60px;
+}
+
+.authorValue {
+  color: #333;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 2px solid #f5f5f5;
+}
+
+.cancelButton,
+.submitButton {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 120px;
+  justify-content: center;
+}
+
+.cancelButton {
+  background: #f8f9fa;
+  color: #666;
+  border: 2px solid #e1e5e9;
+}
+
+.cancelButton:hover:not(:disabled) {
+  background: #e9ecef;
+  border-color: #ced4da;
+}
+
+.submitButton {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: 2px solid transparent;
+}
+
+.submitButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.submitButton:disabled,
+.cancelButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.errorMessage {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+  color: white;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+
+.loginRequired {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.loginRequired h2 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 16px;
+}
+
+.loginRequired p {
+  color: #666;
+  margin-bottom: 24px;
+}
+
+.loginButton {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.loginButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .container {
+    margin: 0;
+    padding: 16px;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  
+  .pageTitle {
+    font-size: 1.5rem;
+  }
+  
+  .buttonGroup {
+    flex-direction: column-reverse;
+  }
+  
+  .cancelButton,
+  .submitButton {
+    width: 100%;
+  }
+  
+  .authorDetails {
+    gap: 12px;
+  }
+  
+  .authorItem {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .authorLabel {
+    min-width: auto;
+  }
+}

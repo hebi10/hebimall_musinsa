@@ -1,6 +1,9 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useDashboardData, useDashboardFormatters } from '@/shared/hooks/useDashboardQuery';
+import { SimpleQnAService } from '@/shared/services/simpleQnAService';
+import { QnA } from '@/shared/types/qna';
 import Chart from './_components/Chart';
 import ErrorBoundary from './_components/ErrorBoundary';
 import LoadingSpinner from './_components/LoadingSpinner';
@@ -17,6 +20,37 @@ export default function AdminDashboard() {
 function DashboardContent() {
   const { stats, loading, error, lastUpdated, refresh, isRefreshing } = useDashboardData();
   const { formatNumber, formatCurrency, formatTimeAgo, getGrowthColor, getGrowthIcon } = useDashboardFormatters();
+  
+  // QnA 데이터 상태
+  const [qnaStats, setQnaStats] = useState({
+    total: 0,
+    waiting: 0,
+    answered: 0,
+    closed: 0,
+  });
+  const [qnaLoading, setQnaLoading] = useState(true);
+
+  // QnA 통계 로드
+  useEffect(() => {
+    const loadQnaStats = async () => {
+      try {
+        const qnas = await SimpleQnAService.getAllQnAs(100);
+        const statsData = {
+          total: qnas.length,
+          waiting: qnas.filter(q => q.status === 'waiting').length,
+          answered: qnas.filter(q => q.status === 'answered').length,
+          closed: qnas.filter(q => q.status === 'closed').length,
+        };
+        setQnaStats(statsData);
+      } catch (err) {
+        console.error('Error loading QnA stats:', err);
+      } finally {
+        setQnaLoading(false);
+      }
+    };
+
+    loadQnaStats();
+  }, []);
 
   if (loading && !stats) {
     return (
@@ -188,6 +222,23 @@ function DashboardContent() {
                 style={{ color: getGrowthColor(stats.monthlyGrowth.revenue) }}
               >
                 {getGrowthIcon(stats.monthlyGrowth.revenue)} {stats.monthlyGrowth.revenue}% 이번 달
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* QnA 통계 */}
+        {!qnaLoading && qnaStats.total > 0 && (
+          <div className={styles.statCard}>
+            <div className={styles.statIcon}>💬</div>
+            <div className={styles.statContent}>
+              <h3>총 문의</h3>
+              <p className={styles.statNumber}>{formatNumber(qnaStats.total)}</p>
+              <span 
+                className={styles.statChange}
+                style={{ color: qnaStats.waiting > 0 ? '#f56565' : '#48bb78' }}
+              >
+                {qnaStats.waiting > 0 ? '⚠️' : '✅'} {qnaStats.waiting}개 답변 대기
               </span>
             </div>
           </div>

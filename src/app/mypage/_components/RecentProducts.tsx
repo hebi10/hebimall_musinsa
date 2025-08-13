@@ -13,13 +13,26 @@ export default function RecentProducts() {
     recentProducts, 
     loading, 
     error,
-    loadRecentProducts 
+    loadRecentProducts,
+    clearAllRecentProducts
   } = useUserActivity();
   
   const { getProductById } = useProduct();
   const { user } = useAuth();
   
   const [productsData, setProductsData] = useState<{ [key: string]: Product }>({});
+
+  // 모든 최근 본 상품 삭제 확인
+  const handleClearAll = async () => {
+    if (window.confirm('모든 최근 본 상품을 삭제하시겠습니까?')) {
+      try {
+        await clearAllRecentProducts();
+      } catch (error) {
+        console.error('최근 본 상품 삭제 실패:', error);
+        alert('최근 본 상품 삭제에 실패했습니다.');
+      }
+    }
+  };
 
   useEffect(() => {
     if (user?.uid) {
@@ -70,7 +83,18 @@ export default function RecentProducts() {
     <div className={styles.container}>
       <div className={styles.header}>
         <h2>최근 본 상품</h2>
-        <span className={styles.count}>{recentProducts.length}개</span>
+        <div className={styles.headerActions}>
+          <span className={styles.count}>{recentProducts.length}개</span>
+          {recentProducts.length > 0 && (
+            <button 
+              className={styles.clearButton}
+              onClick={handleClearAll}
+              type="button"
+            >
+              전체 삭제
+            </button>
+          )}
+        </div>
       </div>
 
       {loading ? (

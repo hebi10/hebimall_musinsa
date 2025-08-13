@@ -188,4 +188,28 @@ export class LocalUserActivityService {
       };
     }
   }
+
+  // 모든 최근 본 상품 삭제
+  static clearAllRecentProducts(userId: string): void {
+    try {
+      const key = `${RECENT_PRODUCTS_KEY}_${userId}`;
+      localStorage.removeItem(key);
+      console.log('모든 최근 본 상품이 삭제되었습니다.');
+    } catch (error) {
+      console.error('최근 본 상품 전체 삭제 실패:', error);
+      throw error;
+    }
+  }
+
+  // 모든 찜한 상품 삭제
+  static clearAllWishlistItems(userId: string): void {
+    try {
+      const key = `${WISHLIST_KEY}_${userId}`;
+      localStorage.removeItem(key);
+      console.log('모든 찜한 상품이 삭제되었습니다.');
+    } catch (error) {
+      console.error('찜한 상품 전체 삭제 실패:', error);
+      throw error;
+    }
+  }
 }

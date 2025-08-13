@@ -1,0 +1,658 @@
+/* 관리자 QnA 페이지 스타일 */
+.container {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* 헤더 */
+.header {
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0 0 0.5rem 0;
+}
+
+.subtitle {
+  color: #718096;
+  margin: 0;
+}
+
+/* 통계 그리드 */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.statCard {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.statCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.statIcon {
+  font-size: 2rem;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f7fafc;
+  border-radius: 12px;
+}
+
+.statContent h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.9rem;
+  color: #718096;
+  font-weight: 500;
+}
+
+.statNumber {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2d3748;
+}
+
+.statNumber.waiting {
+  color: #f56565;
+}
+
+.statNumber.answered {
+  color: #48bb78;
+}
+
+.statNumber.closed {
+  color: #718096;
+}
+
+/* 필터 섹션 */
+.filterSection {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.searchBox {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.searchInput {
+  flex: 1;
+  padding: 0.75rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #3182ce;
+}
+
+.searchButton {
+  padding: 0.75rem 1.5rem;
+  background: #3182ce;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.searchButton:hover {
+  background: #2c5282;
+}
+
+.filterRow {
+  display: flex;
+  gap: 1rem;
+}
+
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.filterGroup label {
+  font-weight: 500;
+  color: #4a5568;
+  font-size: 0.9rem;
+}
+
+.filterSelect {
+  padding: 0.5rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 6px;
+  min-width: 120px;
+  transition: border-color 0.3s ease;
+}
+
+.filterSelect:focus {
+  outline: none;
+  border-color: #3182ce;
+}
+
+/* QnA 목록 */
+.qnaList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.qnaCard {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.qnaCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.qnaHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.qnaInfo {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.category {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: white;
+}
+
+.category.product {
+  background: #9f7aea;
+}
+
+.category.delivery {
+  background: #4fd1c7;
+}
+
+.category.payment {
+  background: #f6ad55;
+}
+
+.category.general {
+  background: #68d391;
+}
+
+.status {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.status.waiting {
+  background: #fed7d7;
+  color: #c53030;
+}
+
+.status.answered {
+  background: #c6f6d5;
+  color: #22543d;
+}
+
+.status.closed {
+  background: #e2e8f0;
+  color: #4a5568;
+}
+
+.secretBadge {
+  background: #2d3748;
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.priority {
+  background: #feb2b2;
+  color: #c53030;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.qnaStats {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #718096;
+}
+
+.views {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.date {
+  color: #a0aec0;
+}
+
+/* QnA 컨텐츠 */
+.qnaContent {
+  margin-bottom: 1rem;
+}
+
+.qnaTitle {
+  margin: 0 0 1rem 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #2d3748;
+  line-height: 1.4;
+}
+
+.qnaDetails {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  color: #718096;
+  flex-wrap: wrap;
+}
+
+.author {
+  font-weight: 500;
+}
+
+.email {
+  color: #a0aec0;
+}
+
+.product {
+  color: #3182ce;
+  font-weight: 500;
+}
+
+.qnaQuestion {
+  background: #f7fafc;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.qnaQuestion strong {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #2d3748;
+}
+
+.qnaQuestion p {
+  margin: 0;
+  line-height: 1.6;
+  color: #4a5568;
+}
+
+.qnaAnswer {
+  background: #f0fff4;
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid #48bb78;
+}
+
+.answerHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.answerHeader strong {
+  color: #22543d;
+}
+
+.answeredBy {
+  font-size: 0.8rem;
+  color: #68d391;
+}
+
+.qnaAnswer p {
+  margin: 0;
+  line-height: 1.6;
+  color: #22543d;
+}
+
+/* QnA 액션 */
+.qnaActions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.answerButton {
+  padding: 0.5rem 1rem;
+  background: #48bb78;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.answerButton:hover {
+  background: #38a169;
+}
+
+.viewButton {
+  padding: 0.5rem 1rem;
+  background: #3182ce;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.viewButton:hover {
+  background: #2c5282;
+}
+
+/* 모달 */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 2rem;
+}
+
+.modal {
+  background: white;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.modalHeader h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #2d3748;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #718096;
+  padding: 0.5rem;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+}
+
+.closeButton:hover {
+  background: #f7fafc;
+}
+
+.modalContent {
+  padding: 1.5rem;
+}
+
+.originalQuestion {
+  background: #f7fafc;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.originalQuestion h4 {
+  margin: 0 0 1rem 0;
+  color: #2d3748;
+}
+
+.originalQuestion p {
+  margin: 0 0 0.5rem 0;
+  line-height: 1.6;
+}
+
+.answerForm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.answerForm label {
+  font-weight: 500;
+  color: #4a5568;
+}
+
+.answerTextarea {
+  padding: 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 120px;
+  transition: border-color 0.3s ease;
+}
+
+.answerTextarea:focus {
+  outline: none;
+  border-color: #3182ce;
+}
+
+.modalActions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  padding: 1.5rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.cancelButton {
+  padding: 0.75rem 1.5rem;
+  background: #e2e8f0;
+  color: #4a5568;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.cancelButton:hover {
+  background: #cbd5e0;
+}
+
+.submitButton {
+  padding: 0.75rem 1.5rem;
+  background: #48bb78;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submitButton:hover:not(:disabled) {
+  background: #38a169;
+}
+
+.submitButton:disabled {
+  background: #cbd5e0;
+  color: #a0aec0;
+  cursor: not-allowed;
+}
+
+/* 로딩 및 에러 상태 */
+.loading {
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3182ce;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error {
+  text-align: center;
+  padding: 2rem;
+  background: #fed7d7;
+  border-radius: 12px;
+  color: #c53030;
+}
+
+.retryButton {
+  padding: 0.75rem 1.5rem;
+  background: #c53030;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.retryButton:hover {
+  background: #9c2626;
+}
+
+.empty {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #718096;
+}
+
+.emptyIcon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.empty h3 {
+  margin: 0 0 0.5rem 0;
+  color: #4a5568;
+}
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .searchBox {
+    flex-direction: column;
+  }
+
+  .filterRow {
+    flex-direction: column;
+  }
+
+  .qnaHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .qnaInfo {
+    gap: 0.25rem;
+  }
+
+  .qnaDetails {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .qnaActions {
+    justify-content: stretch;
+  }
+
+  .answerButton,
+  .viewButton {
+    flex: 1;
+  }
+
+  .modalOverlay {
+    padding: 1rem;
+  }
+
+  .modalActions {
+    flex-direction: column;
+  }
+}

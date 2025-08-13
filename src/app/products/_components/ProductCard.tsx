@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useProduct } from '@/context/productProvider';
+import { useUserActivity } from '@/context/userActivityProvider';
 import { getProductReviewStats } from '@/shared/utils/syncProductReviews';
 import styles from './ProductCard.module.css';
 
@@ -36,9 +37,12 @@ export default function ProductCard({
   stock = 0,
 }: ProductCardProps) {
   const { calculateDiscountPrice } = useProduct();
+  const { wishlistItems, addToWishlist, removeFromWishlist } = useUserActivity();
   const [imageError, setImageError] = useState(false);
-  const [isWishlisted, setIsWishlisted] = useState(false);
   const [actualReviewStats, setActualReviewStats] = useState<{ reviewCount: number; rating: number } | null>(null);
+
+  // 찜하기 상태는 실제 데이터에서 가져오기
+  const isWishlisted = wishlistItems.some(item => item.productId === id);
 
   // 실제 리뷰 개수와 평점 가져오기
   useEffect(() => {
@@ -69,11 +73,19 @@ export default function ProductCard({
   const displayRating = actualReviewStats?.rating || rating || 0;
   const displayReviewCount = actualReviewStats?.reviewCount ?? reviewCount ?? 0;
 
-  const handleWishlistClick = (e: React.MouseEvent) => {
+  const handleWishlistClick = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsWishlisted(!isWishlisted);
-    // 실제 위시리스트 API 호출
+    
+    try {
+      if (isWishlisted) {
+        await removeFromWishlist(id);
+      } else {
+        await addToWishlist(id);
+      }
+    } catch (error) {
+      console.error('찜하기 처리 실패:', error);
+    }
   };
 
   const handleImageError = () => {
