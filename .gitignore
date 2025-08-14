@@ -19,6 +19,12 @@ dist/
 .turbo/
 .vercel/
 
+# next.js (anywhere)
+**/.next/
+**/out/
+**/dist/
+**/.cache/
+
 # Firebase / Functions
 /.firebase/
 firebase-debug.log
