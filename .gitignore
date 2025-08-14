@@ -22,8 +22,14 @@ dist/
 # Firebase / Functions
 /.firebase/
 firebase-debug.log
+firebase-debug.*.log
+ui-debug.log
 functions/node_modules/
 functions/.next/
+functions/dist/
+functions/.cache/
+**/.next/
+**/node_modules/.cache/
 
 # misc
 .DS_Store
