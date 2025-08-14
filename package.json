@@ -10,7 +10,11 @@
     "seed": "node scripts/seed-data.js",
     "seed:categories": "node scripts/seed-categories.js",
     "seed:users": "node scripts/seed-users.js",
-    "seed:coupons": "node scripts/seed-coupons.js"
+    "seed:coupons": "node scripts/seed-coupons.js",
+    "deploy:firebase": "npm run build && cp -r .next functions/ && firebase deploy",
+    "deploy:prep": "npm run build && cp -r .next functions/ && cp -r node_modules functions/",
+    "deploy:functions": "firebase deploy --only functions",
+    "deploy:hosting": "firebase deploy --only hosting"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.84.1",

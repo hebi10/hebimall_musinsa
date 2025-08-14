@@ -36,6 +36,17 @@ export default function ProductDetailClient({ product }: Props) {
   const [selectedSize, setSelectedSize] = useState<string>('');
   const [selectedColor, setSelectedColor] = useState<string>('');
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [imageErrors, setImageErrors] = useState<{ [key: number]: boolean }>({});
+
+  // 이미지 오류 처리 함수
+  const handleImageError = (index: number) => {
+    setImageErrors(prev => ({ ...prev, [index]: true }));
+    console.error('이미지 로드 실패:', product.images[index]);
+  };
+
+  // 유효한 이미지들만 필터링
+  const validImages = product.images.filter((_, index) => !imageErrors[index]);
+  const currentImageSrc = validImages[selectedImageIndex] || product.images[0] || '/placeholder-image.svg';
 
   // 대표 이미지가 있으면 해당 인덱스를 찾아서 기본값으로 설정
   useEffect(() => {
@@ -222,23 +233,35 @@ export default function ProductDetailClient({ product }: Props) {
       <div className={styles.productInfo}>
         <div className={styles.imageSection}>
           <div className={styles.mainImage}>
-            <Image
-              src={product.images[selectedImageIndex]}
-              alt={product.name}
-              width={500}
-              height={600}
-              priority
-            />
+            {product.images && product.images.length > 0 ? (
+              <img
+                src={currentImageSrc}
+                alt={product.name}
+                className={styles.productImage}
+                onError={() => handleImageError(selectedImageIndex)}
+              />
+            ) : (
+              <div className={styles.noImage}>
+                <span>이미지가 없습니다</span>
+              </div>
+            )}
           </div>
           <div className={styles.thumbnails}>
-            {product.images.map((image, index) => (
-              <button
-                key={index}
-                className={`${styles.thumbnail} ${index === selectedImageIndex ? styles.active : ''}`}
-                onClick={() => setSelectedImageIndex(index)}
-              >
-                <Image src={image} alt={`${product.name} ${index + 1}`} width={80} height={80} />
-              </button>
+            {product.images && product.images.map((image, index) => (
+              !imageErrors[index] && (
+                <button
+                  key={index}
+                  className={`${styles.thumbnail} ${index === selectedImageIndex ? styles.active : ''}`}
+                  onClick={() => setSelectedImageIndex(index)}
+                >
+                  <img 
+                    src={image} 
+                    alt={`${product.name} ${index + 1}`} 
+                    className={styles.thumbnailImage}
+                    onError={() => handleImageError(index)}
+                  />
+                </button>
+              )
             ))}
           </div>
         </div>

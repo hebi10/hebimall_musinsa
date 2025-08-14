@@ -4,6 +4,9 @@ import { CategoryBasedProductService } from '@/shared/services/categoryBasedProd
 import ProductCard from '@/app/products/_components/ProductCard';
 import styles from './CategoryPage.module.css';
 
+// 동적 배포에서는 generateStaticParams 불필요
+// 모든 카테고리 페이지는 런타임에 동적으로 처리됨
+
 interface CategoryPageProps {
   params: Promise<{
     categoryId: string;
@@ -17,7 +20,10 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
     'clothing': '의류',
     'bags': '가방',
     'accessories': '액세서리',
-    'shoes': '신발'
+    'shoes': '신발',
+    'outdoor': '아웃도어',
+    'sports': '스포츠',
+    'jewelry': '주얼리'
   };
 
   const categoryName = categoryNames[categoryId] || categoryId;
@@ -35,7 +41,10 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     'clothing': '의류',
     'bags': '가방', 
     'accessories': '액세서리',
-    'shoes': '신발'
+    'shoes': '신발',
+    'outdoor': '아웃도어',
+    'sports': '스포츠',
+    'jewelry': '주얼리'
   };
 
   const categoryName = categoryNames[categoryId];

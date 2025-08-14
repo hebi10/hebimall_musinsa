@@ -6,22 +6,8 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/authProvider";
 import styles from "./page.module.css";
 import AdminNav from "../../_components/adminNav";
-import { mockUsers } from "@/mocks/user";
 import AuthChecking from "@/app/admin/_components/AuthChecking";
-import { UserProfile } from "@/shared/types/user";
-
-interface AdminUserData extends UserProfile {
-  lastLogin: string;
-  orders: number;
-  totalSpent: string;
-}
-
-interface UserStats {
-  total: number;
-  active: number;
-  admin: number;
-  newUsers: number;
-}
+import { AdminUserService, AdminUserData, UserStats, UserFilter } from "@/shared/services/adminUserService";
 
 export default function AdminUsersPage() {
   const router = useRouter();
@@ -33,6 +19,8 @@ export default function AdminUsersPage() {
   const [users, setUsers] = useState<AdminUserData[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<AdminUserData[]>([]);
   const [stats, setStats] = useState<UserStats>({ total: 0, active: 0, admin: 0, newUsers: 0 });
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isUserDataLoading && !loading) {
@@ -42,70 +30,77 @@ export default function AdminUsersPage() {
     }
   }, [user, isUserDataLoading, isAdmin, router, loading]);
 
+  // 사용자 데이터 로드
+  const loadUsers = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      const filters: UserFilter = {
+        searchTerm: searchTerm || undefined,
+        role: roleFilter !== 'all' ? roleFilter : undefined,
+        status: statusFilter !== 'all' ? statusFilter : undefined,
+      };
+
+      const { users: fetchedUsers } = await AdminUserService.getUsers(filters, currentPage, 10);
+      const userStats = await AdminUserService.getUserStats();
+      
+      setUsers(fetchedUsers);
+      setStats(userStats);
+    } catch (err) {
+      console.error('Error loading users:', err);
+      setError('사용자 데이터를 불러오는데 실패했습니다.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    setUsers(mockUsers.map(user => ({
-      ...user,
-      lastLogin: '2024-08-04 14:30',
-      orders: Math.floor(Math.random() * 50),
-      totalSpent: `${(Math.random() * 1000000).toLocaleString()}원`
-    })));
+    if (isAdmin) {
+      loadUsers();
+    }
+  }, [isAdmin, searchTerm, roleFilter, statusFilter, currentPage]);
 
-    // 통계 계산
-    const newStats = {
-      total: users.length,
-      active: users.filter(user => user.status === "active").length,
-      admin: users.filter(user => user.role === "admin").length,
-      newUsers: users.filter(user => {
-        const joinDate = new Date(user.joinDate);
-        const weekAgo = new Date();
-        weekAgo.setDate(weekAgo.getDate() - 7);
-        return joinDate >= weekAgo;
-      }).length
-    };
-    setStats(newStats);
-  }, [router, user]);
-
-  // 필터링 로직
+  // 필터링된 사용자 설정
   useEffect(() => {
-    let filtered = users;
-
-    // 검색어 필터링
-    if (searchTerm) {
-      filtered = filtered.filter(user =>
-        user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    // 역할 필터링
-    if (roleFilter !== "all") {
-      filtered = filtered.filter(user => user.role === roleFilter);
-    }
-
-    // 상태 필터링
-    if (statusFilter !== "all") {
-      filtered = filtered.filter(user => user.status === statusFilter);
-    }
-
-    setFilteredUsers(filtered);
-    setCurrentPage(1);
-  }, [users, searchTerm, roleFilter, statusFilter]);
+    setFilteredUsers(users);
+  }, [users]);
 
   // 권한 체크 로딩
   if (!isAdmin && !isUserDataLoading) {
     return <AuthChecking />;
   }
 
-  const handleStatusChange = (userId: string, newStatus: 'active' | 'inactive' | 'banned') => {
-    setUsers(prev => prev.map(user => 
-      user.id === userId ? { ...user, status: newStatus } : user
-    ));
+  const handleStatusChange = async (userId: string, newStatus: 'active' | 'inactive' | 'banned') => {
+    try {
+      await AdminUserService.updateUserStatus(userId, newStatus);
+      await loadUsers(); // 데이터 새로고침
+    } catch (error) {
+      console.error('Error updating user status:', error);
+      alert('사용자 상태 변경에 실패했습니다.');
+    }
   };
 
-  const handleRoleChange = (userId: string, newRole: 'user' | 'admin') => {
-    setUsers(prev => prev.map(user => 
-      user.id === userId ? { ...user, role: newRole } : user
-    ));
+  const handleRoleChange = async (userId: string, newRole: 'user' | 'admin') => {
+    try {
+      await AdminUserService.updateUserRole(userId, newRole);
+      await loadUsers(); // 데이터 새로고침
+    } catch (error) {
+      console.error('Error updating user role:', error);
+      alert('사용자 역할 변경에 실패했습니다.');
+    }
+  };
+
+  const handleDeleteUser = async (userId: string) => {
+    if (confirm('정말 이 사용자를 삭제하시겠습니까?')) {
+      try {
+        await AdminUserService.deleteUser(userId);
+        await loadUsers(); // 데이터 새로고침
+      } catch (error) {
+        console.error('Error deleting user:', error);
+        alert('사용자 삭제에 실패했습니다.');
+      }
+    }
   };
 
   const getStatusText = (status: string) => {
@@ -125,12 +120,52 @@ export default function AdminUsersPage() {
     }
   };
 
-  const handleExport = () => {
-    alert("사용자 데이터를 CSV로 내보냅니다.");
+  const formatDate = (date: Date) => {
+    return new Intl.DateTimeFormat('ko-KR', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(date);
+  };
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('ko-KR', {
+      style: 'currency',
+      currency: 'KRW',
+    }).format(amount);
+  };
+
+  const handleExport = async () => {
+    try {
+      const csvContent = await AdminUserService.exportUsersToCSV();
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `users_${new Date().toISOString().split('T')[0]}.csv`;
+      link.click();
+    } catch (error) {
+      console.error('Error exporting users:', error);
+      alert('사용자 데이터 내보내기에 실패했습니다.');
+    }
   };
 
   const handleAddUser = () => {
-    alert("새 사용자 추가 기능을 구현해야 합니다.");
+    const name = prompt('사용자 이름을 입력하세요:');
+    const email = prompt('사용자 이메일을 입력하세요:');
+    
+    if (name && email) {
+      AdminUserService.createUser({ name, email })
+        .then(() => {
+          alert('사용자가 성공적으로 추가되었습니다.');
+          loadUsers();
+        })
+        .catch(error => {
+          console.error('Error creating user:', error);
+          alert('사용자 추가에 실패했습니다.');
+        });
+    }
   };
 
   // 페이지네이션
@@ -241,7 +276,24 @@ export default function AdminUsersPage() {
             <h3 className={styles.tableTitle}>👥 사용자 목록</h3>
           </div>
           
-          <table className={styles.table}>
+          {isLoading ? (
+            <div className={styles.loadingState}>
+              <div className={styles.spinner}></div>
+              <p>사용자 데이터를 불러오는 중...</p>
+            </div>
+          ) : error ? (
+            <div className={styles.errorState}>
+              <p>{error}</p>
+              <button onClick={loadUsers} className={styles.retryButton}>
+                다시 시도
+              </button>
+            </div>
+          ) : filteredUsers.length === 0 ? (
+            <div className={styles.emptyState}>
+              <p>검색 조건에 맞는 사용자가 없습니다.</p>
+            </div>
+          ) : (
+            <table className={styles.table}>
             <thead>
               <tr>
                 <th>사용자</th>
@@ -279,9 +331,9 @@ export default function AdminUsersPage() {
                     </span>
                   </td>
                   <td>{userData.joinDate}</td>
-                  <td>{userData.lastLogin}</td>
+                  <td>{formatDate(userData.lastLogin)}</td>
                   <td>{userData.orders}건</td>
-                  <td><strong>{userData.totalSpent}</strong></td>
+                  <td><strong>{formatCurrency(userData.totalSpent)}</strong></td>
                   <td>
                     <button className={`${styles.actionButton} ${styles.primary}`}>
                       상세
@@ -323,7 +375,10 @@ export default function AdminUsersPage() {
                         사용자화
                       </button>
                     )}
-                    <button className={`${styles.actionButton} ${styles.danger}`}>
+                    <button 
+                      className={`${styles.actionButton} ${styles.danger}`}
+                      onClick={() => handleDeleteUser(userData.id)}
+                    >
                       삭제
                     </button>
                   </td>
@@ -331,6 +386,7 @@ export default function AdminUsersPage() {
               ))}
             </tbody>
           </table>
+          )}
         </div>
 
         {/* 페이지네이션 */}

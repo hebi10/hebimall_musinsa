@@ -2,7 +2,9 @@ import { notFound } from 'next/navigation';
 import { EventProvider } from '@/context/eventProvider';
 import EventNavigation from '@/app/admin/events/_components/EventNavigation';
 import styles from './page.module.css';
-import EventEditClient from './EventEditClient';
+import { EventService } from '@/shared/services/eventService';
+
+// 동적 배포에서는 generateStaticParams 불필요
 
 interface Props {
   params: Promise<{
@@ -24,7 +26,11 @@ export default async function EditEventPage({ params }: Props) {
         <EventNavigation />
         
         <div className={styles.content}>
-          <EventEditClient eventId={eventId} />
+          <div style={{ padding: '20px', textAlign: 'center' }}>
+            <h2>이벤트 편집</h2>
+            <p>이벤트 ID: {eventId}</p>
+            <p>이벤트 편집 기능은 구현 중입니다.</p>
+          </div>
         </div>
       </div>
     </EventProvider>

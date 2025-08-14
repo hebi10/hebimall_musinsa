@@ -1,19 +1,18 @@
 import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
 import ProductDetailClient from '../_components/ProductDetailClient';
 import { CategoryBasedProductService } from '@/shared/services/categoryBasedProductService';
+import { notFound } from 'next/navigation';
 
-interface Props {
+interface ProductPageProps {
   params: Promise<{
     productId: string;
   }>;
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   const { productId } = await params;
   
   try {
-    // Firebase에서 상품 정보 가져오기
     const product = await CategoryBasedProductService.findProductById(productId);
     
     if (!product) {
@@ -39,15 +38,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-export default async function ProductDetailPage({ params }: Props) {
+export default async function ProductPage({ params }: ProductPageProps) {
   const { productId } = await params;
   
   try {
-    // Firebase에서 상품 정보 가져오기
     const product = await CategoryBasedProductService.findProductById(productId);
     
     if (!product) {
-      console.log('❌ 상품을 찾을 수 없음:', productId);
       notFound();
     }
 

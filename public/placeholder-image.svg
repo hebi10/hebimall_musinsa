@@ -1,0 +1,6 @@
+<svg width="500" height="600" xmlns="http://www.w3.org/2000/svg">
+  <rect width="500" height="600" fill="#f5f5f5"/>
+  <text x="250" y="300" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#999">
+    이미지를 불러올 수 없습니다
+  </text>
+</svg>

@@ -1,8 +1,5 @@
-import { 
-  onCall, 
-  HttpsError,
-  CallableRequest 
-} from 'firebase-functions/v2/https';
+import { onCall, CallableRequest } from 'firebase-functions/v2/https';
+import { HttpsError } from 'firebase-functions/v2/https';
 import { 
   getFirestore, 
   FieldValue 

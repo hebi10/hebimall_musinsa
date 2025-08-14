@@ -1,7 +1,10 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import EventDetailClient from './EventDetailClient';
 import { EventService } from '@/shared/services/eventService';
+import EventDetailClient from './EventDetailClient';
+
+// 동적 배포에서는 generateStaticParams가 필요 없음
+// 모든 라우트는 런타임에 동적으로 처리됨
 
 interface Props {
   params: Promise<{

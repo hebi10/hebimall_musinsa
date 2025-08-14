@@ -37,10 +37,23 @@
   overflow: hidden;
 }
 
-.mainImage img {
+.mainImage img,
+.productImage {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
+}
+
+.noImage {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
+  font-size: 1rem;
 }
 
 .thumbnails {
@@ -66,10 +79,12 @@
   border-color: var(--color-primary);
 }
 
-.thumbnail img {
+.thumbnail img,
+.thumbnailImage {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
 }
 
 /* 정보 섹션 */

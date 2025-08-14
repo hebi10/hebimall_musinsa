@@ -5,6 +5,7 @@ import "../styles/variables.css";
 import Header from "./_components/header/Header";
 import Footer from "./_components/footer/Footer";
 import RootProviders from "./_components/providers/RootProviders";
+import ChatWidget from "./_components/chat/ChatWidget";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -14,6 +15,11 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "HEBIMALL - 깔끔한 스타일 쇼핑몰",
   description: "최신 패션 트렌드를 만나보세요",
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/favicon.ico',
+  },
 };
 
 export default function RootLayout({
@@ -30,6 +36,7 @@ export default function RootLayout({
             {children}
           </main>
           <Footer />
+          <ChatWidget />
         </RootProviders>
       </body>
     </html>

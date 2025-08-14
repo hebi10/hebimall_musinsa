@@ -1,9 +1,54 @@
 import * as functions from "firebase-functions/v2";
 import { onCall, CallableRequest } from "firebase-functions/v2/https";
 import { onSchedule } from "firebase-functions/v2/scheduler";
+import { onRequest } from "firebase-functions/v2/https";
 import * as admin from "firebase-admin";
+import * as path from "path";
 
 admin.initializeApp();
+
+// Next.js SSR 서버 설정
+
+let app: any;
+
+// 동적 Next.js 서버 함수
+export const nextjsServer = onRequest({
+  region: 'us-central1',
+  memory: '2GiB',
+  timeoutSeconds: 60,
+  invoker: 'public',
+  cors: true,
+}, async (req, res) => {
+  // CORS 헤더 설정
+  res.set('Access-Control-Allow-Origin', '*');
+  res.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
+  if (req.method === 'OPTIONS') {
+    res.status(204).send('');
+    return;
+  }
+
+  try {
+    if (!app) {
+      // Next.js 앱 동적 로드
+      const next = require('next');
+      app = next({
+        dev: false,
+        dir: path.join(__dirname, '..'),
+        conf: {
+          distDir: '.next',
+        }
+      });
+      await app.prepare();
+    }
+
+    return app.getRequestHandler()(req, res);
+  } catch (error) {
+    console.error('Next.js server error:', error);
+    res.status(500).json({ error: 'Internal Server Error', details: String(error) });
+  }
+});
 
 // 쿠폰 함수들 export
 export * from './couponFunctions';
@@ -73,7 +118,7 @@ export const addPoint = onCall({
     const result = await admin.firestore().runTransaction(async (transaction) => {
       const userRef = admin.firestore().collection("users").doc(userId);
       const userSnap = await transaction.get(userRef);
-      
+
       if (!userSnap.exists) {
         throw new functions.https.HttpsError(
           "not-found",
@@ -153,7 +198,7 @@ export const usePoint = onCall({
     const result = await admin.firestore().runTransaction(async (transaction) => {
       const userRef = admin.firestore().collection("users").doc(userId);
       const userSnap = await transaction.get(userRef);
-      
+
       if (!userSnap.exists) {
         throw new functions.https.HttpsError(
           "not-found",
@@ -236,7 +281,7 @@ export const refundPoint = onCall({
     const result = await admin.firestore().runTransaction(async (transaction) => {
       const userRef = admin.firestore().collection("users").doc(userId);
       const userSnap = await transaction.get(userRef);
-      
+
       if (!userSnap.exists) {
         throw new functions.https.HttpsError(
           "not-found",
@@ -310,7 +355,7 @@ export const getPointHistory = onCall({
     }
 
     const snapshot = await query.get();
-    
+
     const history = snapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data()
@@ -406,11 +451,11 @@ export const expirePoints = onSchedule({
     expiredPointsQuery.docs.forEach(doc => {
       const data = doc.data();
       const userId = doc.ref.parent.parent?.id;
-      
+
       if (userId) {
         // 만료 표시
         batch.update(doc.ref, { expired: true });
-        
+
         // 사용자별 만료 포인트 합계
         const currentExpired = userPointUpdates.get(userId) || 0;
         userPointUpdates.set(userId, currentExpired + data.amount);
@@ -421,14 +466,14 @@ export const expirePoints = onSchedule({
     for (const [userId, expiredAmount] of userPointUpdates) {
       const userRef = admin.firestore().collection('users').doc(userId);
       const userDoc = await userRef.get();
-      
+
       if (userDoc.exists) {
         const userData = userDoc.data();
         const currentBalance = userData?.pointBalance || 0;
         const newBalance = Math.max(0, currentBalance - expiredAmount);
-        
+
         batch.update(userRef, { pointBalance: newBalance });
-        
+
         // 만료 내역 추가
         const pointHistoryRef = userRef.collection('pointHistory').doc();
         batch.set(pointHistoryRef, {
@@ -442,7 +487,7 @@ export const expirePoints = onSchedule({
     }
 
     await batch.commit();
-    
+
     console.log(`포인트 만료 처리 완료: ${userPointUpdates.size}명의 사용자, 총 ${Array.from(userPointUpdates.values()).reduce((a, b) => a + b, 0)} 포인트 만료`);
   } catch (error) {
     console.error('포인트 만료 처리 실패:', error);
