@@ -4,6 +4,7 @@ import { onSchedule } from "firebase-functions/v2/scheduler";
 import { onRequest } from "firebase-functions/v2/https";
 import * as admin from "firebase-admin";
 import * as path from "path";
+import { secrets } from "./config/environment";
 
 admin.initializeApp();
 
@@ -18,6 +19,18 @@ export const nextjsServer = onRequest({
   timeoutSeconds: 60,
   invoker: 'public',
   cors: true,
+  secrets: [
+    secrets.FIREBASE_API_KEY,
+    secrets.FIREBASE_AUTH_DOMAIN,
+    secrets.FIREBASE_PROJECT_ID,
+    secrets.FIREBASE_STORAGE_BUCKET,
+    secrets.FIREBASE_MESSAGING_SENDER_ID,
+    secrets.FIREBASE_APP_ID,
+    secrets.OPENAI_API_KEY,
+    secrets.NEXT_PUBLIC_API_URL,
+    secrets.NODE_ENV,
+    secrets.NEXT_PUBLIC_USE_FIREBASE_EMULATOR
+  ]
 }, async (req, res) => {
   // CORS 헤더 설정
   res.set('Access-Control-Allow-Origin', '*');
@@ -53,6 +66,9 @@ export const nextjsServer = onRequest({
 // 쿠폰 함수들 export
 export * from './couponFunctions';
 
+// 환경변수 함수들 export
+export * from './environmentFunctions';
+
 // 포인트 타입 정의
 interface AddPointData {
   amount: number;
@@ -85,7 +101,8 @@ export const addPoint = onCall({
     "https://hebimall.firebaseapp.com",
     "https://hebimall.web.app"
   ],
-  region: 'us-central1'
+  region: 'us-central1',
+  secrets: [secrets.NODE_ENV]
 }, async (request: CallableRequest<AddPointData>) => {
   // 인증 확인
   if (!request.auth) {
@@ -167,7 +184,8 @@ export const usePoint = onCall({
     "https://hebimall.firebaseapp.com",
     "https://hebimall.web.app"
   ],
-  region: 'us-central1'
+  region: 'us-central1',
+  secrets: [secrets.NODE_ENV]
 }, async (request: CallableRequest<UsePointData>) => {
   if (!request.auth) {
     throw new functions.https.HttpsError(
@@ -250,7 +268,8 @@ export const refundPoint = onCall({
     "https://hebimall.firebaseapp.com",
     "https://hebimall.web.app"
   ],
-  region: 'us-central1'
+  region: 'us-central1',
+  secrets: [secrets.NODE_ENV]
 }, async (request: CallableRequest<RefundPointData>) => {
   if (!request.auth) {
     throw new functions.https.HttpsError(
@@ -329,7 +348,8 @@ export const getPointHistory = onCall({
     "https://hebimall.firebaseapp.com",
     "https://hebimall.web.app"
   ],
-  region: 'us-central1'
+  region: 'us-central1',
+  secrets: [secrets.NODE_ENV]
 }, async (request: CallableRequest<PointHistoryRequest>) => {
   if (!request.auth) {
     throw new functions.https.HttpsError(
@@ -385,7 +405,8 @@ export const getPointBalance = onCall({
     "https://hebimall.firebaseapp.com",
     "https://hebimall.web.app"
   ],
-  region: 'us-central1'
+  region: 'us-central1',
+  secrets: [secrets.NODE_ENV]
 }, async (request: CallableRequest<any>) => {
   if (!request.auth) {
     throw new functions.https.HttpsError(
