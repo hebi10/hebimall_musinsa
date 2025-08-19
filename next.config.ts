@@ -27,11 +27,15 @@ const nextConfig: NextConfig = {
 
   // Webpack 설정 최소화
   webpack: (config, { dev, isServer }) => {
-    // 클라이언트 사이드에서만 적용
-    if (!isServer && !dev) {
-      // publicPath를 상대 경로로 설정하여 호스팅 호환성 개선
-      config.output.publicPath = '/_next/';
-    }
+    // 폰트 파일 처리 최적화
+    config.module.rules.push({
+      test: /\.(woff|woff2|eot|ttf|otf)$/,
+      type: 'asset/resource',
+      generator: {
+        filename: 'static/chunks/[name].[hash][ext]',
+      },
+    });
+    
     return config;
   },
 };

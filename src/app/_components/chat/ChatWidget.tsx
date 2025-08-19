@@ -25,15 +25,24 @@ const MessageText: React.FC<{ text: string }> = ({ text }) => {
   );
 };
 
-// API 연결을 위한 인터페이스 (추후 구현)
-interface ChatAPI {
-  sendMessage: (message: string) => Promise<string>;
-}
-
 const ChatWidget: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
+  const [isChatStarted, setIsChatStarted] = useState(false); // 채팅 시작 여부
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [inputValue, setInputValue] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [useAI, setUseAI] = useState(false); // AI 상담원 연결 상태
+  
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const chatMessagesRef = useRef<HTMLDivElement>(null);
+  const [isUserScrolling, setIsUserScrolling] = useState(false);
+
+  // 채팅 상담 시작 함수
+  const startChat = () => {
+    setIsChatStarted(true);
+    const initialMessage: ChatMessage = {
       id: '1',
       text: `안녕하세요! HEBIMALL 고객지원팀입니다. 😊
 
@@ -51,21 +60,20 @@ const ChatWidget: React.FC = () => {
 번호를 입력하시거나 궁금한 점을 직접 말씀해 주세요!`,
       sender: 'bot',
       timestamp: new Date()
-    }
-  ]);
-  const [inputValue, setInputValue] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [useAI, setUseAI] = useState(false); // AI 상담원 연결 상태
-  
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLTextAreaElement>(null);
-  const chatMessagesRef = useRef<HTMLDivElement>(null);
-  const [isUserScrolling, setIsUserScrolling] = useState(false);
+    };
+    setMessages([initialMessage]);
+    
+    // 입력창에 포커스
+    setTimeout(() => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+    }, 100);
+  };
 
-  // 메시지 스크롤을 맨 아래로 (새 메시지가 있을 때만)
+  // 메시지 스크롤을 맨 아래로 (항상 스크롤)
   const scrollToBottom = () => {
-    if (!isUserScrolling && messagesEndRef.current) {
+    if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   };
@@ -79,23 +87,39 @@ const ChatWidget: React.FC = () => {
     }
   };
 
+  // 메시지가 추가될 때마다 스크롤
   useEffect(() => {
-    scrollToBottom();
-  }, [messages, isTyping]);
-
-  // 입력창 포커스 (채팅창 열릴 때) 및 스크롤 리셋
-  useEffect(() => {
-    if (isOpen && inputRef.current) {
-      inputRef.current.focus();
-      // 채팅창 열릴 때 스크롤 상태 리셋
-      setIsUserScrolling(false);
+    if (messages.length > 0) {
       setTimeout(() => scrollToBottom(), 100);
     }
-  }, [isOpen]);
+  }, [messages]);
+
+  // 타이핑 인디케이터가 표시될 때 스크롤
+  useEffect(() => {
+    if (isTyping) {
+      setTimeout(() => scrollToBottom(), 100);
+    }
+  }, [isTyping]);
+
+  // 채팅창 닫기 함수
+  const closeChatWindow = () => {
+    setIsOpen(false);
+    // 채팅창을 닫을 때 상태 초기화는 하지 않음 (대화 기록 유지)
+  };
+
+  // 채팅 리셋 함수 (완전히 새로 시작하고 싶을 때)
+  const resetChat = () => {
+    setIsChatStarted(false);
+    setMessages([]);
+    setUseAI(false);
+    setInputValue('');
+    setIsTyping(false);
+    setIsLoading(false);
+  };
 
   // 메시지 전송 함수
   const sendMessage = async () => {
-    if (!inputValue.trim() || isLoading) return;
+    if (!inputValue.trim() || isLoading || !isChatStarted) return;
 
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
@@ -118,8 +142,20 @@ const ChatWidget: React.FC = () => {
     }
 
     try {
-      // 실제 API 호출 (GPT API와 연결됨)
-      const response = await fetch('/api/chat', {
+      // 개발 환경에서는 로컬 API route 사용, 프로덕션에서는 Firebase Functions 사용
+      const isLocalhost = typeof window !== 'undefined' && window.location.hostname === 'localhost';
+      const apiUrl = isLocalhost
+        ? '/api/chat'  // 로컬 개발 서버
+        : 'https://us-central1-hebimall.cloudfunctions.net/chatAPI';  // Firebase Functions
+      
+      console.log('Chat API 호출:', { 
+        apiUrl, 
+        shouldUseAI, 
+        isLocalhost,
+        hostname: typeof window !== 'undefined' ? window.location.hostname : 'server'
+      });
+      
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -133,6 +169,12 @@ const ChatWidget: React.FC = () => {
           }))
         })
       });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("API Error Response:", errorText);
+        throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+      }
 
       const data = await response.json();
       
@@ -182,14 +224,109 @@ AI 상담원은 다음과 같은 도움을 드릴 수 있습니다:
   };
 
   // 빠른 선택 버튼 클릭 처리
-  const handleQuickButton = (text: string) => {
-    setInputValue(text);
-    // 자동으로 메시지 전송
-    setTimeout(() => {
-      const event = new KeyboardEvent('keypress', { key: 'Enter' });
-      document.dispatchEvent(event);
-      sendMessage();
-    }, 100);
+  const handleQuickButton = async (text: string) => {
+    if (!isChatStarted) return;
+    
+    // 직접 메시지 전송 (inputValue 상태를 거치지 않음)
+    const userMessage: ChatMessage = {
+      id: Date.now().toString(),
+      text: text,
+      sender: 'user',
+      timestamp: new Date()
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    setIsLoading(true);
+    setIsTyping(true);
+
+    // "상담원연결" 명령어 감지
+    const shouldUseAI = text.toLowerCase() === '상담원연결' || text.toLowerCase() === '상담원 연결' || useAI;
+    
+    if (text.toLowerCase() === '상담원연결' || text.toLowerCase() === '상담원 연결') {
+      setUseAI(true);
+    }
+
+    try {
+      // 개발 환경에서는 로컬 API route 사용, 프로덕션에서는 Firebase Functions 사용
+      const isLocalhost = typeof window !== 'undefined' && window.location.hostname === 'localhost';
+      const apiUrl = isLocalhost
+        ? '/api/chat'  // 로컬 개발 서버
+        : 'https://us-central1-hebimall.cloudfunctions.net/chatAPI';  // Firebase Functions
+      
+      console.log('Quick Button - Chat API 호출:', { 
+        apiUrl, 
+        text,
+        shouldUseAI, 
+        isLocalhost,
+        hostname: typeof window !== 'undefined' ? window.location.hostname : 'server'
+      });
+      
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: text,
+          useAI: shouldUseAI,
+          conversationHistory: messages.slice(-10).map(msg => ({
+            role: msg.sender === 'user' ? 'user' : 'assistant',
+            content: msg.text
+          }))
+        })
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("API Error Response:", errorText);
+        throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+      }
+
+      const data = await response.json();
+      
+      // 타이핑 효과를 위한 지연
+      setTimeout(() => {
+        let responseText = data.response || data.error || '응답을 받을 수 없습니다.';
+        
+        // AI 상담원 연결 시 특별 처리
+        if ((text.toLowerCase() === '상담원연결' || text.toLowerCase() === '상담원 연결') && shouldUseAI) {
+          responseText = `AI 상담원과 연결됩니다. 이제 더 자세하고 개인화된 상담을 받으실 수 있습니다! 
+
+무엇을 도와드릴까요? 😊
+
+AI 상담원은 다음과 같은 도움을 드릴 수 있습니다:
+• 맞춤형 상품 추천
+• 상세한 주문/배송 안내  
+• 개인화된 고객 지원
+• 실시간 문제 해결`;
+        }
+        
+        const botMessage: ChatMessage = {
+          id: (Date.now() + 1).toString(),
+          text: responseText,
+          sender: 'bot',
+          timestamp: new Date()
+        };
+        
+        setIsTyping(false);
+        setMessages(prev => [...prev, botMessage]);
+        setIsLoading(false);
+      }, 800 + Math.random() * 400); // 0.8-1.2초 랜덤 지연
+
+    } catch (error) {
+      console.error('Quick Button Chat error:', error);
+      setIsTyping(false);
+      setIsLoading(false);
+      
+      const errorMessage: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        text: '죄송합니다. 네트워크 문제가 발생했습니다. 잠시 후 다시 시도해 주시거나 고객센터(1588-0000)로 연락해 주세요.',
+        sender: 'bot',
+        timestamp: new Date()
+      };
+      
+      setMessages(prev => [...prev, errorMessage]);
+    }
   };
 
   // 임시 API 시뮬레이션 함수 (추후 제거 예정 - 현재는 API 라우트 사용)
@@ -200,7 +337,7 @@ AI 상담원은 다음과 같은 도움을 드릴 수 있습니다:
 
   // Enter 키 처리
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === 'Enter' && !e.shiftKey && isChatStarted) {
       e.preventDefault();
       sendMessage();
     }
@@ -208,6 +345,8 @@ AI 상담원은 다음과 같은 도움을 드릴 수 있습니다:
 
   // 입력 자동 크기 조절
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (!isChatStarted) return;
+    
     setInputValue(e.target.value);
     
     // 자동 높이 조절
@@ -231,17 +370,31 @@ AI 상담원은 다음과 같은 도움을 드릴 수 있습니다:
                 ? '답변 작성 중...' 
                 : useAI 
                   ? '맞춤형 AI 상담 연결됨' 
-                  : '언제든 문의해 주세요'
+                  : isChatStarted
+                    ? '언제든 문의해 주세요'
+                    : '채팅 상담을 시작해보세요'
               }
             </p>
           </div>
-          <button
-            className={styles.closeButton}
-            onClick={() => setIsOpen(false)}
-            aria-label="채팅 닫기"
-          >
-            ×
-          </button>
+          <div className={styles.headerButtons}>
+            {isChatStarted && (
+              <button
+                className={styles.resetButton}
+                onClick={resetChat}
+                aria-label="채팅 처음부터 시작"
+                title="새로 시작"
+              >
+                🔄
+              </button>
+            )}
+            <button
+              className={styles.closeButton}
+              onClick={closeChatWindow}
+              aria-label="채팅 닫기"
+            >
+              ×
+            </button>
+          </div>
         </div>
 
         {/* 메시지 영역 */}
@@ -250,56 +403,110 @@ AI 상담원은 다음과 같은 도움을 드릴 수 있습니다:
           ref={chatMessagesRef}
           onScroll={handleScroll}
         >
-          {messages.map((message) => (
-            <div 
-              key={message.id} 
-              className={`${styles.message} ${styles[message.sender]}`}
-            >
-              <div className={styles.messageBubble}>
-                <MessageText text={message.text} />
-              </div>
-            </div>
-          ))}
-          
-          {/* 타이핑 인디케이터 */}
-          {isTyping && (
-            <div className={`${styles.message} ${styles.bot}`}>
-              <div className={styles.typingIndicator}>
-                <div className={styles.typingDots}>
-                  <div className={styles.typingDot}></div>
-                  <div className={styles.typingDot}></div>
-                  <div className={styles.typingDot}></div>
+          {!isChatStarted ? (
+            // 채팅 시작 전 화면
+            <div className={styles.chatStart}>
+              <div className={styles.welcomeMessage}>
+                <h3>🎉 HEBIMALL 고객상담</h3>
+                <p>안녕하세요! 무엇을 도와드릴까요?</p>
+                <div className={styles.chatFeatures}>
+                  <div className={styles.feature}>
+                    <span className={styles.featureIcon}>📞</span>
+                    <span>실시간 상담 지원</span>
+                  </div>
+                  <div className={styles.feature}>
+                    <span className={styles.featureIcon}>🤖</span>
+                    <span>AI 맞춤 상담</span>
+                  </div>
+                  <div className={styles.feature}>
+                    <span className={styles.featureIcon}>⚡</span>
+                    <span>빠른 문제 해결</span>
+                  </div>
                 </div>
+                <button 
+                  className={styles.startChatButton}
+                  onClick={startChat}
+                >
+                  채팅 상담 시작하기
+                </button>
               </div>
             </div>
+          ) : (
+            // 채팅 메시지 영역
+            <>
+              {messages.map((message) => (
+                <div 
+                  key={message.id} 
+                  className={`${styles.message} ${styles[message.sender]}`}
+                >
+                  <div className={styles.messageBubble}>
+                    <MessageText text={message.text} />
+                  </div>
+                </div>
+              ))}
+              
+              {/* 타이핑 인디케이터 */}
+              {isTyping && (
+                <div className={`${styles.message} ${styles.bot}`}>
+                  <div className={styles.typingIndicator}>
+                    <div className={styles.typingDots}>
+                      <div className={styles.typingDot}></div>
+                      <div className={styles.typingDot}></div>
+                      <div className={styles.typingDot}></div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>
           )}
           
           <div ref={messagesEndRef} />
         </div>
 
         {/* 빠른 선택 버튼 */}
-        {!useAI && (
+        {isChatStarted && !useAI && (
           <div className={styles.quickButtons}>
             <button 
               className={styles.quickButton}
-              onClick={() => handleQuickButton('1')}
+              onClick={() => handleQuickButton('1. 주문/배송')}
               disabled={isLoading}
             >
               1️⃣ 주문/배송
             </button>
             <button 
               className={styles.quickButton}
-              onClick={() => handleQuickButton('2')}
+              onClick={() => handleQuickButton('2. 반품/교환')}
               disabled={isLoading}
             >
               2️⃣ 반품/교환
             </button>
             <button 
               className={styles.quickButton}
-              onClick={() => handleQuickButton('3')}
+              onClick={() => handleQuickButton('3. 쿠폰/할인')}
               disabled={isLoading}
             >
               3️⃣ 쿠폰/할인
+            </button>
+            <button 
+              className={styles.quickButton}
+              onClick={() => handleQuickButton('4. 사이즈 가이드')}
+              disabled={isLoading}
+            >
+              4️⃣ 사이즈 가이드
+            </button>
+            <button 
+              className={styles.quickButton}
+              onClick={() => handleQuickButton('5. 결제 방법 안내')}
+              disabled={isLoading}
+            >
+              5️⃣ 결제 방법 안내
+            </button>
+            <button 
+              className={styles.quickButton}
+              onClick={() => handleQuickButton('6. 회원 혜택 정보')}
+              disabled={isLoading}
+            >
+              6️⃣ 회원 혜택 정보
             </button>
             <button 
               className={`${styles.quickButton} ${styles.ai}`}
@@ -312,28 +519,30 @@ AI 상담원은 다음과 같은 도움을 드릴 수 있습니다:
         )}
 
         {/* 입력 영역 */}
-        <div className={styles.chatInput}>
-          <div className={styles.inputGroup}>
-            <textarea
-              ref={inputRef}
-              className={styles.messageInput}
-              value={inputValue}
-              onChange={handleInputChange}
-              onKeyPress={handleKeyPress}
-              placeholder="메시지를 입력하세요..."
-              disabled={isLoading}
-              rows={1}
-            />
-            <button
-              className={styles.sendButton}
-              onClick={sendMessage}
-              disabled={!inputValue.trim() || isLoading}
-              aria-label="메시지 전송"
-            >
-              ➤
-            </button>
+        {isChatStarted && (
+          <div className={styles.chatInput}>
+            <div className={styles.inputGroup}>
+              <textarea
+                ref={inputRef}
+                className={styles.messageInput}
+                value={inputValue}
+                onChange={handleInputChange}
+                onKeyPress={handleKeyPress}
+                placeholder={isChatStarted ? "메시지를 입력하세요..." : "먼저 채팅 상담을 시작해주세요"}
+                disabled={isLoading || !isChatStarted}
+                rows={1}
+              />
+              <button
+                className={styles.sendButton}
+                onClick={sendMessage}
+                disabled={!inputValue.trim() || isLoading || !isChatStarted}
+                aria-label="메시지 전송"
+              >
+                ➤
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* 채팅 토글 버튼 */}

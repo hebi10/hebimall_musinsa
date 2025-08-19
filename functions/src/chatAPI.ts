@@ -1,53 +1,68 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { onRequest } from "firebase-functions/v2/https";
+import fetch from 'node-fetch';
 
 // GPT API 연결을 위한 인터페이스 정의
 interface ChatRequest {
   message: string;
-  useAI?: boolean; // AI 상담원 연결 여부
+  useAI?: boolean;
   conversationHistory?: Array<{
     role: 'user' | 'assistant';
     content: string;
   }>;
 }
 
-interface ChatResponse {
-  response: string;
-  error?: string;
-}
+export const chatAPI = onRequest({
+  cors: [
+    "http://localhost:3000",
+    "http://localhost:3001", 
+    "https://hebimall.firebaseapp.com",
+    "https://hebimall.web.app"
+  ],
+  region: 'us-central1'
+}, async (req, res) => {
+  // CORS 헤더 설정
+  res.set('Access-Control-Allow-Origin', '*');
+  res.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
-export async function POST(request: NextRequest) {
+  if (req.method === 'OPTIONS') {
+    res.status(204).send('');
+    return;
+  }
+
+  if (req.method !== 'POST') {
+    res.status(405).json({ error: 'Method not allowed' });
+    return;
+  }
+
+  console.log('=== Chat API 호출됨 ===');
+
   try {
-    const { message, useAI = false, conversationHistory = [] }: ChatRequest = await request.json();
+    const { message, useAI = false, conversationHistory = [] }: ChatRequest = req.body;
+    console.log('요청 데이터:', { message, useAI, historyLength: conversationHistory.length });
 
     if (!message?.trim()) {
-      return NextResponse.json(
-        { error: '메시지가 비어있습니다.' },
-        { status: 400 }
-      );
+      console.log('메시지가 비어있음');
+      res.status(400).json({ error: '메시지가 비어있습니다.' });
+      return;
     }
 
-    console.log('로컬 API - Chat 요청:', { message, useAI });
-
-    // AI 상담원 연결을 원하지 않는 경우 일반 응답
-    if (!useAI) {
-      return NextResponse.json({
-        response: getTemporaryResponse(message)
-      });
-    }
-
-    // AI 상담원 연결 요청인 경우 실제 OpenAI API 사용
+    // OpenAI API 키 가져오기 (환경변수에서)
     const apiKey = process.env.OPENAI_API_KEY;
-    
-    if (!apiKey) {
-      console.log('OpenAI API 키가 없어서 개발용 응답 사용');
-      return NextResponse.json({
-        response: getAIDevResponse(message)
+
+    // AI 상담원 연결을 원하지 않거나 API 키가 없는 경우 일반 응답
+    if (!useAI || !apiKey) {
+      console.log('일반 응답 모드 - AI 사용 안함 또는 API 키 없음', { useAI, hasApiKey: !!apiKey });
+      const response = getTemporaryResponse(message);
+      console.log('getTemporaryResponse 결과:', response);
+      res.json({
+        response: response
       });
+      return;
     }
 
-    // 실제 OpenAI API 호출
-    try {
-      const systemPrompt = `당신은 HEBIMALL 온라인 패션 쇼핑몰의 전문 고객지원 AI입니다.
+    // GPT API 호출 설정
+    const systemPrompt = `당신은 HEBIMALL 온라인 패션 쇼핑몰의 전문 고객지원 AI입니다.
 
 === 회사 정보 ===
 • 회사명: HEBIMALL (무신사 스타일 패션 플랫폼)
@@ -80,90 +95,60 @@ export async function POST(request: NextRequest) {
 **결제 방법:**
 • 신용카드, 무통장입금, 간편결제 지원
 
+**답변 방법:**
+• 쇼핑몰 관련 문의에 특화된 답변 제공
+• 쇼핑몰 관련 문의에 벗어나면 벗어났다고 안내, 관련 문의 하도록 권유
+
 고객의 문의를 정확히 파악하고, 친절하고 전문적으로 답변해주세요.`;
 
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'gpt-3.5-turbo',
-          messages: [
-            { role: 'system', content: systemPrompt },
-            ...conversationHistory.slice(-10),
-            { role: 'user', content: message }
-          ],
-          max_tokens: 500,
-          temperature: 0.7,
-        }),
-      });
+    // OpenAI API 호출
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-3.5-turbo',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          ...conversationHistory.slice(-10),
+          { role: 'user', content: message }
+        ],
+        max_tokens: 500,
+        temperature: 0.7,
+      }),
+    });
 
-      if (!response.ok) {
-        throw new Error(`OpenAI API error: ${response.status}`);
-      }
-
-      const data = await response.json();
-      const aiResponse = data.choices[0]?.message?.content || '죄송합니다. 응답을 생성할 수 없습니다.';
-
-      return NextResponse.json({
-        response: aiResponse
-      });
-
-    } catch (openaiError) {
-      console.error('OpenAI API 오류:', openaiError);
-      // OpenAI API 오류 시 대체 응답
-      return NextResponse.json({
-        response: '죄송합니다. AI 상담원 연결 중 문제가 발생했습니다. 잠시 후 다시 시도해 주시거나 고객센터(1588-0000)로 연락해 주세요.\n\n기본 상담 서비스는 계속 이용하실 수 있습니다.'
-      });
+    if (!response.ok) {
+      throw new Error(`OpenAI API error: ${response.status}`);
     }
 
+    const data: any = await response.json();
+    const aiResponse = data.choices[0]?.message?.content || '죄송합니다. 응답을 생성할 수 없습니다.';
+
+    res.json({
+      response: aiResponse
+    });
+
   } catch (error) {
-    console.error('Chat API error:', error);
+    console.error('=== Chat API 오류 ===');
+    console.error('Error:', error);
     
-    return NextResponse.json(
-      { 
-        error: '서버 오류가 발생했습니다.',
-        response: '죄송합니다. 일시적인 문제가 발생했습니다. 잠시 후 다시 시도해 주시거나 고객센터(1588-0000)로 연락해 주세요.\n\n기본 상담 서비스는 계속 이용하실 수 있습니다. 아래 번호를 선택해 주세요:\n\n1️⃣ 주문/배송 2️⃣ 반품/교환 3️⃣ 쿠폰/할인'
-      },
-      { status: 500 }
-    );
+    res.status(500).json({
+      error: '서버 오류가 발생했습니다.',
+      response: '죄송합니다. AI 상담원 연결 중 문제가 발생했습니다. 잠시 후 다시 시도해 주시거나 고객센터(1588-0000)로 연락해 주세요.\n\n기본 상담 서비스는 계속 이용하실 수 있습니다. 아래 번호를 선택해 주세요:\n\n1️⃣ 주문/배송 2️⃣ 반품/교환 3️⃣ 쿠폰/할인'
+    });
   }
-}
+});
 
-// AI 상담원 개발 환경 응답 함수
-function getAIDevResponse(message: string): string {
-  const lowerMessage = message.toLowerCase();
-
-  // 일반적인 AI 상담원 응답
-  return `🤖 AI 상담원: "${message}"에 대한 문의를 받았습니다.
-
-개발 환경에서는 실제 AI 기능이 제한적이지만, 프로덕션에서는 더욱 정확하고 개인화된 답변을 제공할 수 있습니다.
-
-현재 도움드릴 수 있는 내용:
-• 📦 주문/배송 관련 문의
-• 🔄 반품/교환 절차
-• 🎫 쿠폰/할인 혜택
-• 👕 사이즈 가이드
-• 💳 결제 방법
-
-구체적인 질문을 해주시면 더 자세히 안내해드리겠습니다! 😊`;
-}
-
-// 임시 응답 함수 (선택지 기반 응답)
+// 임시 응답 함수
 function getTemporaryResponse(message: string): string {
   const lowerMessage = message.toLowerCase();
   
-  // 특별 명령어 처리 - AI 상담원 연결
+  // 특별 명령어 처리
   if (lowerMessage === '상담원연결' || lowerMessage === '상담원 연결') {
-    return `개발 환경에서는 AI 상담원 기능이 제한됩니다. 
-    
-프로덕션 환경에서는 실제 AI 상담원과 연결됩니다! 🤖
-
-현재는 기본 상담 서비스를 이용해 주세요:
-
-1️⃣ 주문/배송 2️⃣ 반품/교환 3️⃣ 쿠폰/할인`;
+    return `상담원 연결을 위해 노력중이니 잠시만 기다려주세요. 고객센터 상담원이 곧 연결될 예정입니다. 📞✨`;
   }
   
   // 초기 선택지 제공 (숫자 입력은 제외)
@@ -180,7 +165,7 @@ function getTemporaryResponse(message: string): string {
 5️⃣ 결제 방법 안내
 6️⃣ 회원 혜택 정보
 
-🤖 상담원연결 - AI 상담원과 1:1 맞춤 상담 (프로덕션 환경에서 사용 가능)
+🤖 상담원연결 - AI 상담원과 1:1 맞춤 상담
 
 번호를 입력하시거나 궁금한 점을 직접 말씀해 주세요!`;
   }
@@ -193,7 +178,6 @@ function getTemporaryResponse(message: string): string {
 • 배송 시간: 평일 오후 2시 이전 주문시 당일발송
 • 배송비: 3,000원 (5만원 이상 무료배송)
 • 배송 기간: 1-3일 (도서/산간 지역 제외)
-• 제주/도서산간: 추가 배송비 3,000원
 
 📞 배송 관련 문의: 고객센터 1588-0000
 
@@ -206,15 +190,8 @@ function getTemporaryResponse(message: string): string {
 • 기간: 상품 수령 후 7일 이내
 • 조건: 상품 태그 및 포장 상태 유지
 • 방법: 마이페이지에서 신청 또는 고객센터 연락
-• 비용: 단순 변심시 왕복 배송비 고객 부담
 
-✅ 교환/반품 불가 상품
-- 속옷, 양말 등 위생용품
-- 커스텀 제작 상품
-
-📞 고객센터: 1588-0000
-
-다른 도움이 필요하시면 상담원연결을 입력해 주세요!`;
+📞 고객센터: 1588-0000`;
   }
 
   if (lowerMessage === '3' || lowerMessage.includes('쿠폰') || lowerMessage.includes('할인')) {
@@ -226,10 +203,7 @@ function getTemporaryResponse(message: string): string {
 • 5만원 이상 무료배송
 • 구매금액 1% 적립금 지급
 
-📱 쿠폰 확인: 마이페이지 > 쿠폰함
-🎁 등급별 혜택: 실버/골드/플래티넘 등급별 추가 할인
-
-더 자세한 혜택 정보는 상담원연결을 통해 문의해 주세요!`;
+📱 쿠폰 확인: 마이페이지 > 쿠폰함`;
   }
 
   if (lowerMessage === '4' || lowerMessage.includes('사이즈') || lowerMessage.includes('크기')) {
@@ -296,7 +270,7 @@ function getTemporaryResponse(message: string): string {
 1️⃣ 주문/배송 2️⃣ 반품/교환 3️⃣ 쿠폰/할인
 4️⃣ 사이즈 가이드 5️⃣ 결제 방법 6️⃣ 회원 혜택
 
-🤖 상담원연결 - AI 상담원과 1:1 맞춤 상담 (프로덕션 환경)
+🤖 상담원연결 - AI 상담원과 1:1 맞춤 상담
 
 📞 고객센터: 1588-0000 (평일 9시-18시)`;
 }

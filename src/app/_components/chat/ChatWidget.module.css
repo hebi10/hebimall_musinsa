@@ -38,8 +38,7 @@
   position: absolute;
   bottom: 80px;
   right: 0;
-  width: 350px;
-  height: 520px;
+  width: 420px;
   background: white;
   border-radius: 16px;
   box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15);
@@ -77,6 +76,29 @@
   margin: 0;
 }
 
+.headerButtons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.resetButton {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+  opacity: 0.8;
+}
+
+.resetButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  opacity: 1;
+}
+
 .closeButton {
   background: none;
   border: none;
@@ -94,7 +116,7 @@
 
 /* 채팅 메시지 영역 */
 .chatMessages {
-  height: 360px;
+  height: 440px;
   overflow-y: auto;
   padding: 20px 16px;
   background: #f8f9fa;
@@ -110,6 +132,81 @@
 .chatMessages::-webkit-scrollbar-thumb {
   background: #ccc;
   border-radius: 2px;
+}
+
+/* 채팅 시작 화면 */
+.chatStart {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 20px;
+}
+
+.welcomeMessage {
+  text-align: center;
+  max-width: 300px;
+}
+
+.welcomeMessage h3 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 12px 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.welcomeMessage p {
+  font-size: 14px;
+  color: #666;
+  margin: 0 0 24px 0;
+  line-height: 1.5;
+}
+
+.chatFeatures {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.feature {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #555;
+}
+
+.featureIcon {
+  font-size: 16px;
+  width: 20px;
+  text-align: center;
+}
+
+.startChatButton {
+  width: 100%;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 25px;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.startChatButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.startChatButton:active {
+  transform: translateY(0);
 }
 
 /* 메시지 스타일 */
@@ -306,14 +403,14 @@
 @media (max-width: 480px) {
   .chatWindow {
     width: calc(100vw - 40px);
-    height: 450px;
+    height: 550px;
     bottom: 80px;
     right: 20px;
     left: 20px;
   }
   
   .chatMessages {
-    height: 310px;
+    height: 400px;
   }
   
   .chatWidget {
@@ -323,6 +420,15 @@
   .quickButton {
     font-size: 10px;
     padding: 5px 8px;
+  }
+
+  .welcomeMessage h3 {
+    font-size: 18px;
+  }
+
+  .startChatButton {
+    padding: 10px 20px;
+    font-size: 13px;
   }
 }
 

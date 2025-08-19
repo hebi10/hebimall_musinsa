@@ -21,7 +21,16 @@
     ],
     "headers": [
       {
-        "source": "**/*.@(woff|woff2|ttf|otf)",
+        "source": "/favicon.ico",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=86400"
+          }
+        ]
+      },
+      {
+        "source": "/_next/static/**",
         "headers": [
           {
             "key": "Cache-Control",
@@ -30,7 +39,7 @@
         ]
       },
       {
-        "source": "**/*.@(js|css)",
+        "source": "**/*.@(woff|woff2|ttf|otf)",
         "headers": [
           {
             "key": "Cache-Control",

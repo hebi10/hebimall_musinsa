@@ -1,5 +1,5 @@
 import { onCall, CallableRequest } from "firebase-functions/v2/https";
-import { getEnvironmentConfig, getFirebaseConfig } from "./config/environment";
+import { getEnvironmentConfig, getFirebaseConfig, secrets } from "./config/environment";
 
 // 클라이언트용 환경변수 제공 함수
 export const getClientConfig = onCall({
@@ -73,7 +73,8 @@ export const getOpenAIKey = onCall({
     "https://hebimall.firebaseapp.com",
     "https://hebimall.web.app"
   ],
-  region: 'us-central1'
+  region: 'us-central1',
+  secrets: [secrets.OPENAI_API_KEY] // OpenAI Secret만 사용
 }, async (request: CallableRequest) => {
   // 인증된 사용자만 접근 가능 (옵션)
   if (!request.auth) {

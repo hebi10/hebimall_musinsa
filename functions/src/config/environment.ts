@@ -1,24 +1,9 @@
 import { defineSecret } from "firebase-functions/params";
 
-// Firebase Functions secrets/params 정의
+// Firebase Functions secrets/params 정의 - OpenAI API Key만 Secret으로 관리
 export const secrets = {
-  // Firebase 설정 (public)
-  FIREBASE_API_KEY: defineSecret("FIREBASE_API_KEY"),
-  FIREBASE_AUTH_DOMAIN: defineSecret("FIREBASE_AUTH_DOMAIN"),
-  FIREBASE_PROJECT_ID: defineSecret("FIREBASE_PROJECT_ID"),
-  FIREBASE_STORAGE_BUCKET: defineSecret("FIREBASE_STORAGE_BUCKET"),
-  FIREBASE_MESSAGING_SENDER_ID: defineSecret("FIREBASE_MESSAGING_SENDER_ID"),
-  FIREBASE_APP_ID: defineSecret("FIREBASE_APP_ID"),
-  
-  // OpenAI API
+  // OpenAI API (민감한 정보)
   OPENAI_API_KEY: defineSecret("OPENAI_API_KEY"),
-  
-  // 기타 API Keys
-  NEXT_PUBLIC_API_URL: defineSecret("NEXT_PUBLIC_API_URL"),
-  
-  // 개발 환경 설정
-  NODE_ENV: defineSecret("NODE_ENV"),
-  NEXT_PUBLIC_USE_FIREBASE_EMULATOR: defineSecret("NEXT_PUBLIC_USE_FIREBASE_EMULATOR"),
 };
 
 // 환경변수 타입 정의
@@ -47,22 +32,22 @@ export interface EnvironmentConfig {
 export function getEnvironmentConfig(): EnvironmentConfig {
   return {
     firebase: {
-      apiKey: secrets.FIREBASE_API_KEY.value(),
-      authDomain: secrets.FIREBASE_AUTH_DOMAIN.value(),
-      projectId: secrets.FIREBASE_PROJECT_ID.value(),
-      storageBucket: secrets.FIREBASE_STORAGE_BUCKET.value(),
-      messagingSenderId: secrets.FIREBASE_MESSAGING_SENDER_ID.value(),
-      appId: secrets.FIREBASE_APP_ID.value(),
+      apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || '',
+      authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || '',
+      projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || '',
+      storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || '',
+      messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || '',
+      appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || '',
     },
     openai: {
       apiKey: secrets.OPENAI_API_KEY.value(),
     },
     api: {
-      baseUrl: secrets.NEXT_PUBLIC_API_URL.value(),
+      baseUrl: process.env.NEXT_PUBLIC_API_URL || '',
     },
     development: {
-      nodeEnv: secrets.NODE_ENV.value(),
-      useFirebaseEmulator: secrets.NEXT_PUBLIC_USE_FIREBASE_EMULATOR.value() === 'true',
+      nodeEnv: process.env.NODE_ENV || 'development',
+      useFirebaseEmulator: process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === 'true',
     },
   };
 }

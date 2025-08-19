@@ -14,7 +14,10 @@
     "deploy:firebase": "npm run build && cp -r .next functions/ && firebase deploy",
     "deploy:prep": "npm run build && cp -r .next functions/ && cp -r node_modules functions/",
     "deploy:functions": "firebase deploy --only functions",
-    "deploy:hosting": "firebase deploy --only hosting"
+    "deploy:hosting": "firebase deploy --only hosting",
+    "setup:env": "node scripts/setup-firebase-secrets.js",
+    "functions:build": "cd functions && npm run build",
+    "functions:deploy": "npm run functions:build && firebase deploy --only functions"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.84.1",
@@ -30,6 +33,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "terser-webpack-plugin": "^5.3.14",
     "ts-node": "^10.9.2",
     "typescript": "^5"
   }
