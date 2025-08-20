@@ -28,8 +28,8 @@ export interface EnvironmentConfig {
   };
 }
 
-// 환경변수 가져오기 함수
-export function getEnvironmentConfig(): EnvironmentConfig {
+// 환경변수 가져오기 함수 (OpenAI Key는 제외)
+export function getEnvironmentConfig(): Omit<EnvironmentConfig, 'openai'> {
   return {
     firebase: {
       apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || '',
@@ -38,9 +38,6 @@ export function getEnvironmentConfig(): EnvironmentConfig {
       storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || '',
       messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || '',
       appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || '',
-    },
-    openai: {
-      apiKey: secrets.OPENAI_API_KEY.value(),
     },
     api: {
       baseUrl: process.env.NEXT_PUBLIC_API_URL || '',

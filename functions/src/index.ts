@@ -61,6 +61,7 @@ export * from './couponFunctions';
 export * from './environmentFunctions';
 
 // 채팅 API 함수 export
+export * from './chatAPI';
 export * from './chatAPI-standalone';
 
 // 포인트 타입 정의

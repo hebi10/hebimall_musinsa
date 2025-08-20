@@ -86,11 +86,12 @@ export const getOpenAIKey = onCall({
   }
 
   try {
-    const config = getEnvironmentConfig();
+    // Secret에서 직접 OpenAI API 키 가져오기
+    const apiKey = secrets.OPENAI_API_KEY.value();
     
     return {
       success: true,
-      apiKey: config.openai.apiKey
+      apiKey: apiKey
     };
   } catch (error: any) {
     console.error("OpenAI API Key 조회 실패:", error);

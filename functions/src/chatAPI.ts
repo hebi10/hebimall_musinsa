@@ -40,6 +40,8 @@ export const chatAPI = onRequest({
   try {
     const { message, useAI = false, conversationHistory = [] }: ChatRequest = req.body;
     console.log('요청 데이터:', { message, useAI, historyLength: conversationHistory.length });
+    console.log('Raw message:', JSON.stringify(message));
+    console.log('Message type:', typeof message);
 
     if (!message?.trim()) {
       console.log('메시지가 비어있음');
@@ -49,6 +51,7 @@ export const chatAPI = onRequest({
 
     // OpenAI API 키 가져오기 (환경변수에서)
     const apiKey = process.env.OPENAI_API_KEY;
+    console.log('API Key 존재 여부:', !!apiKey);
 
     // AI 상담원 연결을 원하지 않거나 API 키가 없는 경우 일반 응답
     if (!useAI || !apiKey) {
@@ -144,34 +147,18 @@ export const chatAPI = onRequest({
 
 // 임시 응답 함수
 function getTemporaryResponse(message: string): string {
-  const lowerMessage = message.toLowerCase();
+  const lowerMessage = message.toLowerCase().trim();
+  console.log('getTemporaryResponse 호출:', { originalMessage: message, lowerMessage });
   
   // 특별 명령어 처리
   if (lowerMessage === '상담원연결' || lowerMessage === '상담원 연결') {
+    console.log('상담원연결 감지');
     return `상담원 연결을 위해 노력중이니 잠시만 기다려주세요. 고객센터 상담원이 곧 연결될 예정입니다. 📞✨`;
   }
   
-  // 초기 선택지 제공 (숫자 입력은 제외)
-  if (lowerMessage.includes('안녕') || lowerMessage.includes('도움') || lowerMessage.includes('문의') || 
-      (message.length < 10 && !lowerMessage.match(/^[1-6]$/) && !lowerMessage.includes('주문') && !lowerMessage.includes('배송') && !lowerMessage.includes('반품') && !lowerMessage.includes('교환') && !lowerMessage.includes('쿠폰') && !lowerMessage.includes('할인'))) {
-    return `안녕하세요! HEBIMALL 고객지원팀입니다. 😊
-
-어떤 도움이 필요하신가요? 아래 번호를 선택하거나 직접 문의해 주세요:
-
-1️⃣ 주문/배송 문의
-2️⃣ 반품/교환 안내  
-3️⃣ 쿠폰/할인 혜택
-4️⃣ 사이즈 가이드
-5️⃣ 결제 방법 안내
-6️⃣ 회원 혜택 정보
-
-🤖 상담원연결 - AI 상담원과 1:1 맞춤 상담
-
-번호를 입력하시거나 궁금한 점을 직접 말씀해 주세요!`;
-  }
-
-  // 숫자 선택지 처리
-  if (lowerMessage === '1' || lowerMessage.includes('주문') || lowerMessage.includes('배송')) {
+  // 숫자 선택지 처리 (우선순위를 높게)
+  if (lowerMessage === '1' || lowerMessage.includes('1. 주문/배송') || lowerMessage.includes('주문') || lowerMessage.includes('배송')) {
+    console.log('주문/배송 감지');
     return `📦 주문/배송 안내
 
 • 주문 확인: 마이페이지 > 주문내역에서 확인 가능
@@ -184,7 +171,8 @@ function getTemporaryResponse(message: string): string {
 다른 궁금한 점이 있으시면 번호를 선택하시거나 상담원연결을 입력해 주세요!`;
   }
   
-  if (lowerMessage === '2' || lowerMessage.includes('반품') || lowerMessage.includes('교환')) {
+  if (lowerMessage === '2' || lowerMessage.includes('2. 반품/교환') || lowerMessage.includes('반품') || lowerMessage.includes('교환')) {
+    console.log('반품/교환 감지');
     return `🔄 반품/교환 안내
 
 • 기간: 상품 수령 후 7일 이내
@@ -194,7 +182,8 @@ function getTemporaryResponse(message: string): string {
 📞 고객센터: 1588-0000`;
   }
 
-  if (lowerMessage === '3' || lowerMessage.includes('쿠폰') || lowerMessage.includes('할인')) {
+  if (lowerMessage === '3' || lowerMessage.includes('3. 쿠폰/할인') || lowerMessage.includes('쿠폰') || lowerMessage.includes('할인')) {
+    console.log('쿠폰/할인 감지');
     return `🎫 쿠폰/할인 혜택
 
 💝 현재 진행중인 혜택:
@@ -206,7 +195,8 @@ function getTemporaryResponse(message: string): string {
 📱 쿠폰 확인: 마이페이지 > 쿠폰함`;
   }
 
-  if (lowerMessage === '4' || lowerMessage.includes('사이즈') || lowerMessage.includes('크기')) {
+  if (lowerMessage === '4' || lowerMessage.includes('4. 사이즈') || lowerMessage.includes('사이즈') || lowerMessage.includes('크기')) {
+    console.log('사이즈 가이드 감지');
     return `📏 사이즈 가이드
 
 👕 의류 사이즈:
@@ -225,7 +215,8 @@ function getTemporaryResponse(message: string): string {
 사이즈 고민이 있으시면 상담원연결로 1:1 맞춤 상담 받아보세요!`;
   }
 
-  if (lowerMessage === '5' || lowerMessage.includes('결제') || lowerMessage.includes('카드')) {
+  if (lowerMessage === '5' || lowerMessage.includes('5. 결제') || lowerMessage.includes('결제') || lowerMessage.includes('카드')) {
+    console.log('결제 방법 감지');
     return `💳 결제 방법 안내
 
 💰 지원 결제수단:
@@ -243,7 +234,8 @@ function getTemporaryResponse(message: string): string {
 ❗ 결제 오류시 고객센터(1588-0000) 또는 상담원연결로 문의해 주세요!`;
   }
 
-  if (lowerMessage === '6' || lowerMessage.includes('회원') || lowerMessage.includes('가입')) {
+  if (lowerMessage === '6' || lowerMessage.includes('6. 회원') || lowerMessage.includes('회원') || lowerMessage.includes('가입')) {
+    console.log('회원 혜택 감지');
     return `👑 회원 혜택 정보
 
 🎁 신규 회원 혜택:
@@ -261,8 +253,28 @@ function getTemporaryResponse(message: string): string {
 
 더 자세한 혜택은 상담원연결을 통해 확인해 보세요!`;
   }
+  
+  // 초기 선택지 제공 (다른 조건에 맞지 않는 경우)
+  if (lowerMessage.includes('안녕') || lowerMessage.includes('도움') || lowerMessage.includes('문의') || message.length < 5) {
+    console.log('초기 선택지 감지');
+    return `안녕하세요! HEBIMALL 고객지원팀입니다. 😊
+
+어떤 도움이 필요하신가요? 아래 번호를 선택하거나 직접 문의해 주세요:
+
+1️⃣ 주문/배송 문의
+2️⃣ 반품/교환 안내  
+3️⃣ 쿠폰/할인 혜택
+4️⃣ 사이즈 가이드
+5️⃣ 결제 방법 안내
+6️⃣ 회원 혜택 정보
+
+🤖 상담원연결 - AI 상담원과 1:1 맞춤 상담
+
+번호를 입력하시거나 궁금한 점을 직접 말씀해 주세요!`;
+  }
 
   // 기본 응답
+  console.log('기본 응답 반환');
   return `감사합니다. 고객님의 문의사항을 확인했습니다.
 
 빠른 답변을 원하시면 아래 번호를 선택해 주세요:

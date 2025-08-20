@@ -146,28 +146,34 @@ const ChatWidget: React.FC = () => {
       const isLocalhost = typeof window !== 'undefined' && window.location.hostname === 'localhost';
       const apiUrl = isLocalhost
         ? '/api/chat'  // 로컬 개발 서버
-        : 'https://us-central1-hebimall.cloudfunctions.net/chatAPI';  // Firebase Functions
+        : 'https://chatapi-66prmh3i3q-uc.a.run.app';  // Firebase Functions
       
       console.log('Chat API 호출:', { 
         apiUrl, 
         shouldUseAI, 
         isLocalhost,
-        hostname: typeof window !== 'undefined' ? window.location.hostname : 'server'
+        hostname: typeof window !== 'undefined' ? window.location.hostname : 'server',
+        messageText,
+        useAI: shouldUseAI
       });
+      
+      const requestBody = {
+        message: messageText,
+        useAI: shouldUseAI,
+        conversationHistory: messages.slice(-10).map(msg => ({
+          role: msg.sender === 'user' ? 'user' : 'assistant',
+          content: msg.text
+        }))
+      };
+      
+      console.log('Request Body:', requestBody);
       
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          message: messageText,
-          useAI: shouldUseAI,
-          conversationHistory: messages.slice(-10).map(msg => ({
-            role: msg.sender === 'user' ? 'user' : 'assistant',
-            content: msg.text
-          }))
-        })
+        body: JSON.stringify(requestBody)
       });
 
       if (!response.ok) {
@@ -251,7 +257,7 @@ AI 상담원은 다음과 같은 도움을 드릴 수 있습니다:
       const isLocalhost = typeof window !== 'undefined' && window.location.hostname === 'localhost';
       const apiUrl = isLocalhost
         ? '/api/chat'  // 로컬 개발 서버
-        : 'https://us-central1-hebimall.cloudfunctions.net/chatAPI';  // Firebase Functions
+        : 'https://chatapi-66prmh3i3q-uc.a.run.app';  // Firebase Functions
       
       console.log('Quick Button - Chat API 호출:', { 
         apiUrl, 
