@@ -122,11 +122,18 @@ export default function CheckoutPage() {
 
       // 적립금 사용 처리
       if (usePoints > 0) {
-        await usePointAction({
-          amount: usePoints,
-          description: "상품 구매",
-          orderId: orderResult.orderId
-        });
+        try {
+          await usePointAction({
+            amount: usePoints,
+            description: "상품 구매",
+            orderId: orderResult.orderId
+          });
+          console.log('포인트 사용 성공:', usePoints);
+        } catch (pointError) {
+          console.error('포인트 사용 실패:', pointError);
+          // 포인트 사용 실패 시에도 주문은 진행하되, 사용자에게 알림
+          alert(`주문은 완료되었지만 포인트 사용에 실패했습니다: ${pointError instanceof Error ? pointError.message : '알 수 없는 오류'}`);
+        }
       }
 
       // 세션 스토리지 정리
@@ -330,8 +337,8 @@ export default function CheckoutPage() {
                   <span>주문 내용을 확인했으며, 정보 제공 등에 동의합니다.</span>
                 </label>
                 <div className={styles.termsLinks}>
-                  <Link href="/support/terms" className={styles.termsLink}>이용약관</Link>
-                  <Link href="/support/privacy" className={styles.termsLink}>개인정보처리방침</Link>
+                  <Link href="/legal/terms" className={styles.termsLink}>이용약관</Link>
+                  <Link href="/legal/privacy" className={styles.termsLink}>개인정보처리방침</Link>
                 </div>
               </div>
 

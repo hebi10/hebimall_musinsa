@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation';
 import { useProduct } from '@/context/productProvider';
 import { useAuth } from '@/context/authProvider';
 import { Product } from '@/shared/types/product';
+import EditProductForm from '../../_components/EditProductForm';
 import styles from './page.module.css';
-import EditProductForm from '@/app/admin/dashboard/products/_components/EditProductForm';
 
 interface ProductEditPageProps {
   params: Promise<{

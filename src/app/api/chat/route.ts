@@ -10,11 +10,6 @@ interface ChatRequest {
   }>;
 }
 
-interface ChatResponse {
-  response: string;
-  error?: string;
-}
-
 export async function POST(request: NextRequest) {
   try {
     const { message, useAI = false, conversationHistory = [] }: ChatRequest = await request.json();
@@ -25,8 +20,6 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-
-    console.log('로컬 API - Chat 요청:', { message, useAI });
 
     // AI 상담원 연결을 원하지 않는 경우 일반 응답
     if (!useAI) {

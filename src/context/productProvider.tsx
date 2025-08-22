@@ -91,10 +91,19 @@ export function ProductProvider({ children }: { children: ReactNode }) {
 
   // 상품 데이터 정규화 (mainImage가 없으면 첫 번째 이미지로 설정)
   const normalizeProduct = useCallback((product: Product): Product => {
+    let mainImage = product.mainImage;
+    
+    // mainImage가 없거나 images 배열에 없으면 첫 번째 이미지를 사용
+    if (!mainImage || !product.images?.includes(mainImage)) {
+      mainImage = product.images && product.images.length > 0 ? product.images[0] : undefined;
+    }
+    
     const normalizedProduct = {
       ...product,
-      mainImage: product.mainImage || (product.images && product.images.length > 0 ? product.images[0] : undefined)
+      mainImage,
+      images: product.images || [] // images 배열이 없으면 빈 배열
     };
+    
     return normalizedProduct;
   }, []);
 
@@ -409,6 +418,11 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     }
   }, [currentProduct]);
 
+  // 관리자용 전체 상품 로드 (캐시 무시하고 강제 로드)
+  const getAllProducts = useCallback(async () => {
+    return loadProducts(true);
+  }, [loadProducts]);
+
   // 초기 데이터 로드 (한번만 실행)
   useEffect(() => {
     loadProducts(true); // 초기 로드는 강제로 실행
@@ -441,7 +455,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     
     // 액션
     loadProducts,
-    getAllProducts: () => loadProducts(true), // admin 페이지에서는 강제 새로고침
+    getAllProducts,
     getProductById,
     loadProductById,
     searchProducts,

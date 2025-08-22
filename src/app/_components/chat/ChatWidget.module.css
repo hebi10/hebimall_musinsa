@@ -47,11 +47,13 @@
   opacity: 0;
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   border: 1px solid #e1e5e9;
+  pointer-events: none;
 }
 
 .chatWindow.open {
   transform: scale(1) translateY(0);
   opacity: 1;
+  pointer-events: auto;
 }
 
 /* 채팅 헤더 */

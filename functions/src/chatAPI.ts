@@ -1,5 +1,6 @@
 import { onRequest } from "firebase-functions/v2/https";
 import fetch from 'node-fetch';
+import { secrets } from "./config/environment";
 
 // GPT API 연결을 위한 인터페이스 정의
 interface ChatRequest {
@@ -18,7 +19,8 @@ export const chatAPI = onRequest({
     "https://hebimall.firebaseapp.com",
     "https://hebimall.web.app"
   ],
-  region: 'us-central1'
+  region: 'us-central1',
+  secrets: [secrets.OPENAI_API_KEY] // Secret 추가
 }, async (req, res) => {
   // CORS 헤더 설정
   res.set('Access-Control-Allow-Origin', '*');
@@ -49,8 +51,8 @@ export const chatAPI = onRequest({
       return;
     }
 
-    // OpenAI API 키 가져오기 (환경변수에서)
-    const apiKey = process.env.OPENAI_API_KEY;
+    // OpenAI API 키 가져오기 (Firebase Functions v2 secrets에서)
+    const apiKey = secrets.OPENAI_API_KEY.value();
     console.log('API Key 존재 여부:', !!apiKey);
 
     // AI 상담원 연결을 원하지 않거나 API 키가 없는 경우 일반 응답

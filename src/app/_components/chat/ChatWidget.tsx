@@ -142,19 +142,16 @@ const ChatWidget: React.FC = () => {
     }
 
     try {
-      // 개발 환경에서는 로컬 API route 사용, 프로덕션에서는 Firebase Functions 사용
-      const isLocalhost = typeof window !== 'undefined' && window.location.hostname === 'localhost';
-      const apiUrl = isLocalhost
-        ? '/api/chat'  // 로컬 개발 서버
-        : 'https://chatapi-66prmh3i3q-uc.a.run.app';  // Firebase Functions
+      // Firebase Functions URL 직접 사용 (로컬/프로덕션 관계없이)
+      const apiUrl = process.env.NEXT_PUBLIC_CHAT_API_URL || 'https://chatapi-66prmh3i3q-uc.a.run.app';
       
       console.log('Chat API 호출:', { 
         apiUrl, 
         shouldUseAI, 
-        isLocalhost,
         hostname: typeof window !== 'undefined' ? window.location.hostname : 'server',
         messageText,
-        useAI: shouldUseAI
+        useAI: shouldUseAI,
+        environment: process.env.NODE_ENV
       });
       
       const requestBody = {
@@ -253,18 +250,15 @@ AI 상담원은 다음과 같은 도움을 드릴 수 있습니다:
     }
 
     try {
-      // 개발 환경에서는 로컬 API route 사용, 프로덕션에서는 Firebase Functions 사용
-      const isLocalhost = typeof window !== 'undefined' && window.location.hostname === 'localhost';
-      const apiUrl = isLocalhost
-        ? '/api/chat'  // 로컬 개발 서버
-        : 'https://chatapi-66prmh3i3q-uc.a.run.app';  // Firebase Functions
+      // Firebase Functions URL 직접 사용 (로컬/프로덕션 관계없이)
+      const apiUrl = process.env.NEXT_PUBLIC_CHAT_API_URL || 'https://chatapi-66prmh3i3q-uc.a.run.app';
       
       console.log('Quick Button - Chat API 호출:', { 
         apiUrl, 
         text,
         shouldUseAI, 
-        isLocalhost,
-        hostname: typeof window !== 'undefined' ? window.location.hostname : 'server'
+        hostname: typeof window !== 'undefined' ? window.location.hostname : 'server',
+        environment: process.env.NODE_ENV
       });
       
       const response = await fetch(apiUrl, {

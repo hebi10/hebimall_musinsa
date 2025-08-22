@@ -15,8 +15,8 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
-// Firebase Functions 초기화
-const functions = getFunctions(app);
+// Firebase Functions 초기화 - 지역 명시적 설정
+const functions = getFunctions(app, 'us-central1');
 
 // 개발 환경에서만 Functions 에뮬레이터 사용 (환경변수로 제어)
 if (process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === 'true') {

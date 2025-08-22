@@ -71,12 +71,6 @@ interface AddPointData {
   orderId?: string; // 주문 관련 포인트일 경우
 }
 
-interface UsePointData {
-  amount: number;
-  description: string;
-  orderId: string; // 주문 ID 필수
-}
-
 interface RefundPointData {
   amount: number;
   description: string;
@@ -90,12 +84,7 @@ interface PointHistoryRequest {
 
 // 1. 포인트 적립 함수
 export const addPoint = onCall({
-  cors: [
-    "http://localhost:3000",
-    "http://localhost:3001",
-    "https://hebimall.firebaseapp.com",
-    "https://hebimall.web.app"
-  ],
+  cors: true,
   region: 'us-central1'
 }, async (request: CallableRequest<AddPointData>) => {
   // 인증 확인
@@ -138,7 +127,13 @@ export const addPoint = onCall({
       }
 
       const userData = userSnap.data();
-      const currentBalance = userData?.pointBalance || 0;
+      let currentBalance = userData?.pointBalance;
+      
+      // 포인트 잔액이 설정되지 않은 경우 0으로 초기화
+      if (currentBalance === undefined || currentBalance === null) {
+        currentBalance = 0;
+      }
+      
       const newBalance = currentBalance + amount;
 
       // 사용자 포인트 잔액 업데이트
@@ -170,17 +165,18 @@ export const addPoint = onCall({
   }
 });
 
-// 2. 포인트 사용 함수
+// 2. 포인트 사용 함수 - Callable Functions로 복원
 export const usePoint = onCall({
-  cors: [
-    "http://localhost:3000",
-    "http://localhost:3001",
-    "https://hebimall.firebaseapp.com",
-    "https://hebimall.web.app"
-  ],
-  region: 'us-central1'
-}, async (request: CallableRequest<UsePointData>) => {
+  region: 'us-central1',
+  timeoutSeconds: 60,
+  memory: '256MiB'
+}, async (request: CallableRequest<any>) => {
+  console.log('=== usePoint 함수 시작 ===');
+  console.log('Request auth:', !!request.auth);
+  console.log('Request data:', request.data);
+  
   if (!request.auth) {
+    console.log('인증 실패: 로그인이 필요합니다');
     throw new functions.https.HttpsError(
       "unauthenticated",
       "로그인이 필요합니다."
@@ -190,8 +186,11 @@ export const usePoint = onCall({
   const userId = request.auth.uid;
   const { amount, description, orderId } = request.data;
 
+  console.log('포인트 사용 요청:', { userId, amount, description, orderId });
+
   // 데이터 검증
   if (!amount || amount <= 0) {
+    console.log('데이터 검증 실패: 포인트 금액이 잘못됨');
     throw new functions.https.HttpsError(
       "invalid-argument",
       "사용할 포인트는 0보다 커야 합니다."
@@ -199,6 +198,7 @@ export const usePoint = onCall({
   }
 
   if (!orderId) {
+    console.log('데이터 검증 실패: 주문 ID가 없음');
     throw new functions.https.HttpsError(
       "invalid-argument",
       "주문 ID가 필요합니다."
@@ -206,9 +206,12 @@ export const usePoint = onCall({
   }
 
   try {
+    console.log('트랜잭션 시작');
     const result = await admin.firestore().runTransaction(async (transaction) => {
       const userRef = admin.firestore().collection("users").doc(userId);
       const userSnap = await transaction.get(userRef);
+
+      console.log('사용자 문서 존재 여부:', userSnap.exists);
 
       if (!userSnap.exists) {
         throw new functions.https.HttpsError(
@@ -218,7 +221,17 @@ export const usePoint = onCall({
       }
 
       const userData = userSnap.data();
-      const currentBalance = userData?.pointBalance || 0;
+      let currentBalance = userData?.pointBalance;
+      
+      // 포인트 잔액이 설정되지 않은 경우 0으로 초기화
+      if (currentBalance === undefined || currentBalance === null) {
+        console.log('포인트 잔액이 설정되지 않아 0으로 초기화');
+        currentBalance = 0;
+        // 사용자 문서에 포인트 잔액 필드 추가
+        transaction.update(userRef, { pointBalance: 0 });
+      }
+
+      console.log('현재 포인트 잔액:', currentBalance);
 
       if (currentBalance < amount) {
         throw new functions.https.HttpsError(
@@ -243,24 +256,34 @@ export const usePoint = onCall({
         balanceAfter: newBalance,
       });
 
+      console.log('트랜잭션 완료, 새 잔액:', newBalance);
       return { success: true, newBalance, usedAmount: amount };
     });
 
+    console.log('포인트 사용 완료:', result);
     return result;
   } catch (error: any) {
     console.error("포인트 사용 실패:", error);
-    throw error;
+    console.error("에러 타입:", typeof error);
+    console.error("에러 메시지:", error.message);
+    
+    // 이미 HttpsError인 경우 그대로 throw
+    if (error.code && error.code.startsWith('functions/')) {
+      throw error;
+    }
+    
+    // 그 외의 경우 internal error로 변환
+    throw new functions.https.HttpsError(
+      "internal",
+      `포인트 사용 중 오류가 발생했습니다: ${error.message || error}`,
+      error
+    );
   }
 });
 
 // 3. 포인트 환불 함수 (주문 취소/환불 시)
 export const refundPoint = onCall({
-  cors: [
-    "http://localhost:3000",
-    "http://localhost:3001",
-    "https://hebimall.firebaseapp.com",
-    "https://hebimall.web.app"
-  ],
+  cors: true,
   region: 'us-central1'
 }, async (request: CallableRequest<RefundPointData>) => {
   if (!request.auth) {
@@ -334,12 +357,7 @@ export const refundPoint = onCall({
 
 // 4. 포인트 내역 조회 함수
 export const getPointHistory = onCall({
-  cors: [
-    "http://localhost:3000",
-    "http://localhost:3001",
-    "https://hebimall.firebaseapp.com",
-    "https://hebimall.web.app"
-  ],
+  cors: true,
   region: 'us-central1'
 }, async (request: CallableRequest<PointHistoryRequest>) => {
   if (!request.auth) {
@@ -390,12 +408,7 @@ export const getPointHistory = onCall({
 
 // 5. 포인트 잔액 조회 함수
 export const getPointBalance = onCall({
-  cors: [
-    "http://localhost:3000",
-    "http://localhost:3001",
-    "https://hebimall.firebaseapp.com",
-    "https://hebimall.web.app"
-  ],
+  cors: true,
   region: 'us-central1'
 }, async (request: CallableRequest<any>) => {
   if (!request.auth) {

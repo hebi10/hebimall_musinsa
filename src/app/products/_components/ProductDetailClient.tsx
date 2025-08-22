@@ -44,17 +44,26 @@ export default function ProductDetailClient({ product }: Props) {
     console.error('이미지 로드 실패:', product.images[index]);
   };
 
-  // 유효한 이미지들만 필터링
-  const validImages = product.images.filter((_, index) => !imageErrors[index]);
-  const currentImageSrc = validImages[selectedImageIndex] || product.images[0] || '/placeholder-image.svg';
-
-  // 대표 이미지가 있으면 해당 인덱스를 찾아서 기본값으로 설정
-  useEffect(() => {
+  // 대표 이미지 우선 표시를 위한 이미지 배열 재정렬
+  const reorderedImages = (() => {
     if (product.mainImage && product.images.includes(product.mainImage)) {
+      // 대표 이미지를 첫 번째로 이동
       const mainImageIndex = product.images.indexOf(product.mainImage);
-      setSelectedImageIndex(mainImageIndex);
+      const images = [...product.images];
+      const [mainImage] = images.splice(mainImageIndex, 1);
+      return [mainImage, ...images];
     }
-  }, [product.mainImage, product.images]);
+    return product.images;
+  })();
+
+  // 유효한 이미지들만 필터링 (재정렬된 배열 기준)
+  const validImages = reorderedImages.filter((_, index) => !imageErrors[index]);
+  const currentImageSrc = validImages[selectedImageIndex] || reorderedImages[0] || '/placeholder-image.svg';
+
+  // 컴포넌트 마운트 시 대표 이미지가 첫 번째로 보이도록 설정
+  useEffect(() => {
+    setSelectedImageIndex(0); // 대표 이미지를 첫 번째로 재정렬했으므로 0번 인덱스
+  }, [product.id]);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<'detail' | 'size' | 'review' | 'qna'>('detail');
   const [isAddingToCart, setIsAddingToCart] = useState(false);
@@ -247,7 +256,7 @@ export default function ProductDetailClient({ product }: Props) {
             )}
           </div>
           <div className={styles.thumbnails}>
-            {product.images && product.images.map((image, index) => (
+            {reorderedImages && reorderedImages.map((image, index) => (
               !imageErrors[index] && (
                 <button
                   key={index}

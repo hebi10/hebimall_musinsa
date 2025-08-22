@@ -7,6 +7,7 @@ import useInputs from '@/shared/hooks/useInput';
 import { Product } from '@/shared/types/product';
 import { generateId } from '@/shared/utils/common';
 import { useProduct } from '@/context/productProvider';
+import { useAuth } from '@/context/authProvider';
 import { 
   uploadProductImages, 
   validateImageFiles,
@@ -16,16 +17,43 @@ import {
 
 export default function AddProductModal() {
   const router = useRouter();
+  const { user, isAdmin, loading: authLoading } = useAuth();
   const { createProduct } = useProduct();
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({});
   
+  // 인증 및 권한 체크
+  useEffect(() => {
+    if (!authLoading) {
+      if (!user) {
+        alert('로그인이 필요합니다.');
+        router.push('/auth/login');
+        return;
+      }
+      
+      if (!isAdmin) {
+        alert('관리자 권한이 필요합니다.');
+        router.push('/');
+        return;
+      }
+    }
+  }, [user, isAdmin, authLoading, router]);
+
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     return () => {
       document.body.style.overflow = 'unset';
     };
   }, []);
+
+  // 로딩 중이거나 권한이 없으면 표시하지 않음
+  if (authLoading || !user || !isAdmin) {
+    return (
+      <div className={styles.loading}>
+        권한을 확인하는 중...
+      </div>
+    );
+  }
 
   // useInputs로 기본 필드들 관리
   const [basicFields, onChangeBasic] = useInputs({

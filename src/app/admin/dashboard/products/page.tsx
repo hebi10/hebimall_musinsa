@@ -1,16 +1,20 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import styles from './page.module.css';
 import { useProduct } from '@/context/productProvider';
+import { useAuth } from '@/context/authProvider';
 import { Product } from '@/shared/types/product';
 
 export default function AdminProductsPage() {
+  const router = useRouter();
+  const { user, isAdmin, loading: authLoading } = useAuth();
   const { 
     products, 
     loading, 
-    getAllProducts,
+    loadProducts,
     updateProduct,
     deleteProduct
   } = useProduct();
@@ -20,10 +24,47 @@ export default function AdminProductsPage() {
   const [statusFilter, setStatusFilter] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+  const hasLoadedRef = useRef(false);
 
+  // 인증 및 권한 체크 + 초기 데이터 로드
   useEffect(() => {
-    getAllProducts();
-  }, [getAllProducts]);
+    // 로딩 중이면 대기
+    if (authLoading) return;
+    
+    // 로그인하지 않았으면 로그인 페이지로
+    if (!user) {
+      alert('로그인이 필요합니다.');
+      window.location.href = '/auth/login';
+      return;
+    }
+    
+    // 관리자가 아니면 홈으로
+    if (!isAdmin) {
+      alert('관리자 권한이 필요합니다.');
+      window.location.href = '/';
+      return;
+    }
+    
+    // 인증 완료 후 한 번만 데이터 로드
+    if (!hasLoadedRef.current) {
+      console.log('✅ 관리자 권한 확인됨 - 상품 데이터 로드 중...');
+      loadProducts(true);
+      hasLoadedRef.current = true;
+    }
+  }, [user, isAdmin, authLoading]); // router와 loadProducts 제거
+
+  // 로딩 중이거나 권한이 없으면 표시하지 않음
+  if (authLoading) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.loading}>권한을 확인하는 중...</div>
+      </div>
+    );
+  }
+
+  if (!user || !isAdmin) {
+    return null; // 리다이렉트 중이므로 아무것도 렌더링하지 않음
+  }
 
   // 검색 및 필터링 적용
   let filteredProducts = [...products];
@@ -59,7 +100,7 @@ export default function AdminProductsPage() {
       console.log('관리자 페이지 상품 수정 완료, 목록 새로고침 중...');
       
       // 상품 목록 새로고침
-      getAllProducts();
+      loadProducts(true);
     } catch (error) {
       console.error('관리자 페이지 상품 수정 실패:', error);
       alert('상품 수정에 실패했습니다.');
@@ -70,7 +111,7 @@ export default function AdminProductsPage() {
     if (confirm('정말로 이 상품을 삭제하시겠습니까?')) {
       try {
         await deleteProduct(productId);
-        getAllProducts();
+        loadProducts(true); // 강제 새로고침
       } catch (error) {
         console.error('상품 삭제 실패:', error);
         alert('상품 삭제에 실패했습니다.');
@@ -87,7 +128,7 @@ export default function AdminProductsPage() {
       
       console.log('상태 변경 완료, 목록 새로고침 중...');
       
-      getAllProducts();
+      loadProducts(true); // 강제 새로고침
     } catch (error) {
       console.error('상품 상태 변경 실패:', error);
       alert('상품 상태 변경에 실패했습니다.');
