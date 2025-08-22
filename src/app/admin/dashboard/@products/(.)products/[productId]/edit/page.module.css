@@ -1,28 +1,5 @@
-.container {
-  max-width: 1200px;
-  width: 95vw;
-  max-height: 90vh;
-  margin: 0 auto;
-  padding: 0;
-  background: #ffffff;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1000;
-  border-radius: 16px;
-  box-shadow: 
-    0 25px 50px -12px rgba(0, 0, 0, 0.25),
-    0 0 0 1px rgba(0, 0, 0, 0.05);
-  overflow: hidden;
-  box-sizing: border-box;
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-/* 팝업 뒤의 오버레이 */
-.container::before {
-  content: '';
+/* 페이지 전체 오버레이 */
+.overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -30,18 +7,65 @@
   bottom: 0;
   background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(4px);
-  z-index: -1;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+  animation: fadeIn 0.3s ease-out;
 }
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.container {
+  max-width: 1200px;
+  width: 95vw;
+  max-height: 90vh;
+  margin: 0 auto;
+  padding: 0;
+  background: #ffffff;
+  position: relative;
+  border-radius: 16px;
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  animation: slideInScale 0.3s ease-out;
+}
+
+@keyframes slideInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* 팝업 뒤의 오버레이 제거 (이제 .overlay에서 처리) */
 
 .header {
   margin: 0;
-  padding: 24px 32px 20px;
+  padding: 24px 60px 20px 32px; /* 오른쪽에 닫기 버튼 공간 확보 */
   border-bottom: 1px solid #f1f3f4;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   position: sticky;
   top: 0;
   z-index: 10;
+  position: relative;
 }
 
 .title {
@@ -159,6 +183,10 @@
 }
 
 @media (max-width: 768px) {
+  .overlay {
+    padding: 10px;
+  }
+  
   .container {
     width: 98vw;
     max-height: 95vh;
@@ -166,7 +194,7 @@
   }
   
   .header {
-    padding: 20px 24px 16px;
+    padding: 20px 50px 16px 24px;
   }
   
   .title {
@@ -181,25 +209,35 @@
     padding: 24px 20px;
     max-height: calc(95vh - 100px);
   }
+  
+  .closeButton {
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
+    top: 16px;
+    right: 20px;
+  }
 }
 
-/* 닫기 버튼 스타일 추가 */
+/* 닫기 버튼 스타일 */
 .closeButton {
   position: absolute;
   top: 20px;
   right: 24px;
   background: rgba(255, 255, 255, 0.2);
   border: none;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  font-size: 18px;
+  font-size: 20px;
+  font-weight: bold;
   transition: all 0.2s ease;
+  z-index: 20;
 }
 
 .closeButton:hover {
@@ -207,18 +245,23 @@
   transform: scale(1.1);
 }
 
+.closeButton:active {
+  transform: scale(0.95);
+}
+
 /* 애니메이션 효과 */
 @keyframes fadeInScale {
   from {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0.9);
+    transform: scale(0.9);
   }
   to {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
+    transform: scale(1);
   }
 }
 
-.container {
-  animation: fadeInScale 0.3s ease-out;
+/* body 스크롤 방지 클래스 */
+.noScroll {
+  overflow: hidden;
 }

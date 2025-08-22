@@ -18,6 +18,7 @@
   box-sizing: border-box;
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.2);
+  z-index: 1000;
 }
 
 /* 팝업 뒤의 오버레이 */

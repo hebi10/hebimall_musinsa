@@ -7,7 +7,7 @@ import { useAuth } from "@/context/authProvider";
 import styles from "./page.module.css";
 import AdminNav from "../../_components/adminNav";
 import AuthChecking from "@/app/admin/_components/AuthChecking";
-import { AdminUserService, AdminUserData, UserStats, UserFilter } from "@/shared/services/adminUserService";
+import { AdminUserService, AdminUserData, UserStats, UserFilter, PointOperation } from "@/shared/services/adminUserService";
 
 export default function AdminUsersPage() {
   const router = useRouter();
@@ -18,9 +18,16 @@ export default function AdminUsersPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [users, setUsers] = useState<AdminUserData[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<AdminUserData[]>([]);
-  const [stats, setStats] = useState<UserStats>({ total: 0, active: 0, admin: 0, newUsers: 0 });
+  const [stats, setStats] = useState<UserStats>({ total: 0, active: 0, admin: 0, newUsers: 0, totalPoints: 0 });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showPointModal, setShowPointModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<AdminUserData | null>(null);
+  const [pointAmount, setPointAmount] = useState<number>(0);
+  const [pointDescription, setPointDescription] = useState<string>('');
+  const [pointOperation, setPointOperation] = useState<'add' | 'subtract'>('add');
+  const [showUserDetail, setShowUserDetail] = useState(false);
+  const [userPointHistory, setUserPointHistory] = useState<any[]>([]);
 
   useEffect(() => {
     if (!isUserDataLoading && !loading) {
@@ -168,6 +175,73 @@ export default function AdminUsersPage() {
     }
   };
 
+  const handlePointManagement = (user: AdminUserData) => {
+    setSelectedUser(user);
+    setShowPointModal(true);
+    setPointAmount(0);
+    setPointDescription('');
+    setPointOperation('add');
+  };
+
+  const handlePointUpdate = async () => {
+    if (!selectedUser || pointAmount <= 0) {
+      alert('올바른 포인트 금액을 입력해주세요.');
+      return;
+    }
+
+    if (!pointDescription.trim()) {
+      alert('포인트 적립/차감 사유를 입력해주세요.');
+      return;
+    }
+
+    try {
+      const operation: PointOperation = {
+        userId: selectedUser.id,
+        amount: pointAmount,
+        description: pointDescription,
+        type: pointOperation
+      };
+
+      await AdminUserService.updateUserPoints(operation);
+      alert(`포인트가 성공적으로 ${pointOperation === 'add' ? '적립' : '차감'}되었습니다.`);
+      setShowPointModal(false);
+      await loadUsers(); // 데이터 새로고침
+    } catch (error) {
+      console.error('Error updating points:', error);
+      alert('포인트 업데이트에 실패했습니다.');
+    }
+  };
+
+  const handleUserDetail = async (user: AdminUserData) => {
+    try {
+      setSelectedUser(user);
+      const pointHistory = await AdminUserService.getUserPointHistory(user.id);
+      setUserPointHistory(pointHistory);
+      setShowUserDetail(true);
+    } catch (error) {
+      console.error('Error loading user detail:', error);
+      alert('사용자 상세 정보를 불러오는데 실패했습니다.');
+    }
+  };
+
+  const handleBulkPointGift = async () => {
+    const amount = prompt('모든 활성 사용자에게 지급할 포인트 금액을 입력하세요:');
+    const description = prompt('포인트 지급 사유를 입력하세요:');
+    
+    if (amount && description && !isNaN(Number(amount))) {
+      if (confirm(`모든 활성 사용자에게 ${amount}포인트를 지급하시겠습니까?`)) {
+        try {
+          const successCount = await AdminUserService.givePointsToAllUsers(Number(amount), description);
+          alert(`${successCount}명의 사용자에게 포인트가 지급되었습니다.`);
+          await loadUsers();
+        } catch (error) {
+          console.error('Error giving bulk points:', error);
+          alert('일괄 포인트 지급에 실패했습니다.');
+        }
+      }
+    }
+  };
+
   // 페이지네이션
   const itemsPerPage = 10;
   const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
@@ -223,6 +297,10 @@ export default function AdminUsersPage() {
             <div className={styles.statsValue}>{stats.newUsers}</div>
             <div className={styles.statsLabel}>신규 가입</div>
           </div>
+          <div className={`${styles.statsCard} ${styles.points}`}>
+            <div className={styles.statsValue}>{formatCurrency(stats.totalPoints)}</div>
+            <div className={styles.statsLabel}>총 포인트</div>
+          </div>
         </div>
 
         {/* 컨트롤 섹션 */}
@@ -264,6 +342,10 @@ export default function AdminUsersPage() {
               ➕ 사용자 추가
             </button>
 
+            <button onClick={handleBulkPointGift} className={styles.pointButton}>
+              💰 일괄 포인트 지급
+            </button>
+
             <button onClick={handleExport} className={styles.exportButton}>
               📊 CSV 내보내기
             </button>
@@ -303,6 +385,7 @@ export default function AdminUsersPage() {
                 <th>마지막 로그인</th>
                 <th>주문수</th>
                 <th>총 구매액</th>
+                <th>포인트 잔액</th>
                 <th>관리</th>
               </tr>
             </thead>
@@ -335,8 +418,22 @@ export default function AdminUsersPage() {
                   <td>{userData.orders}건</td>
                   <td><strong>{formatCurrency(userData.totalSpent)}</strong></td>
                   <td>
-                    <button className={`${styles.actionButton} ${styles.primary}`}>
+                    <span className={styles.pointBalance}>
+                      {formatCurrency(userData.pointBalance || 0)}
+                    </span>
+                  </td>
+                  <td>
+                    <button 
+                      className={`${styles.actionButton} ${styles.primary}`}
+                      onClick={() => handleUserDetail(userData)}
+                    >
                       상세
+                    </button>
+                    <button 
+                      className={`${styles.actionButton} ${styles.point}`}
+                      onClick={() => handlePointManagement(userData)}
+                    >
+                      포인트
                     </button>
                     {userData.status === "active" ? (
                       <button 
@@ -388,6 +485,161 @@ export default function AdminUsersPage() {
           </table>
           )}
         </div>
+
+        {/* 포인트 관리 모달 */}
+        {showPointModal && selectedUser && (
+          <div className={styles.modal}>
+            <div className={styles.modalContent}>
+              <div className={styles.modalHeader}>
+                <h3>포인트 관리 - {selectedUser.name}</h3>
+                <button 
+                  className={styles.closeButton}
+                  onClick={() => setShowPointModal(false)}
+                >
+                  ✕
+                </button>
+              </div>
+              <div className={styles.modalBody}>
+                <p>현재 포인트 잔액: <strong>{formatCurrency(selectedUser.pointBalance || 0)}</strong></p>
+                
+                <div className={styles.pointOperationSelect}>
+                  <label>
+                    <input
+                      type="radio"
+                      value="add"
+                      checked={pointOperation === 'add'}
+                      onChange={(e) => setPointOperation(e.target.value as 'add')}
+                    />
+                    포인트 적립
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      value="subtract"
+                      checked={pointOperation === 'subtract'}
+                      onChange={(e) => setPointOperation(e.target.value as 'subtract')}
+                    />
+                    포인트 차감
+                  </label>
+                </div>
+
+                <div className={styles.inputGroup}>
+                  <label>포인트 금액</label>
+                  <input
+                    type="number"
+                    value={pointAmount}
+                    onChange={(e) => setPointAmount(Number(e.target.value))}
+                    placeholder="포인트 금액을 입력하세요"
+                    min="1"
+                  />
+                </div>
+
+                <div className={styles.inputGroup}>
+                  <label>적립/차감 사유</label>
+                  <textarea
+                    value={pointDescription}
+                    onChange={(e) => setPointDescription(e.target.value)}
+                    placeholder="포인트 적립/차감 사유를 입력하세요"
+                    rows={3}
+                  />
+                </div>
+              </div>
+              <div className={styles.modalFooter}>
+                <button 
+                  className={styles.cancelButton}
+                  onClick={() => setShowPointModal(false)}
+                >
+                  취소
+                </button>
+                <button 
+                  className={styles.confirmButton}
+                  onClick={handlePointUpdate}
+                >
+                  {pointOperation === 'add' ? '포인트 적립' : '포인트 차감'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 사용자 상세 모달 */}
+        {showUserDetail && selectedUser && (
+          <div className={styles.modal}>
+            <div className={styles.modalContent}>
+              <div className={styles.modalHeader}>
+                <h3>사용자 상세 정보 - {selectedUser.name}</h3>
+                <button 
+                  className={styles.closeButton}
+                  onClick={() => setShowUserDetail(false)}
+                >
+                  ✕
+                </button>
+              </div>
+              <div className={styles.modalBody}>
+                <div className={styles.userDetailInfo}>
+                  <div className={styles.detailSection}>
+                    <h4>기본 정보</h4>
+                    <p><strong>이름:</strong> {selectedUser.name}</p>
+                    <p><strong>이메일:</strong> {selectedUser.email}</p>
+                    <p><strong>전화번호:</strong> {selectedUser.phone || '미입력'}</p>
+                    <p><strong>역할:</strong> {getRoleText(selectedUser.role)}</p>
+                    <p><strong>상태:</strong> {getStatusText(selectedUser.status)}</p>
+                    <p><strong>가입일:</strong> {selectedUser.joinDate}</p>
+                  </div>
+                  
+                  <div className={styles.detailSection}>
+                    <h4>활동 정보</h4>
+                    <p><strong>총 주문수:</strong> {selectedUser.orders}건</p>
+                    <p><strong>총 구매액:</strong> {formatCurrency(selectedUser.totalSpent)}</p>
+                    <p><strong>포인트 잔액:</strong> {formatCurrency(selectedUser.pointBalance || 0)}</p>
+                    <p><strong>등급:</strong> {selectedUser.grade || 'bronze'}</p>
+                    <p><strong>마지막 로그인:</strong> {formatDate(selectedUser.lastLogin)}</p>
+                  </div>
+                </div>
+
+                <div className={styles.pointHistorySection}>
+                  <h4>포인트 히스토리</h4>
+                  <div className={styles.pointHistoryList}>
+                    {userPointHistory.length === 0 ? (
+                      <p>포인트 히스토리가 없습니다.</p>
+                    ) : (
+                      userPointHistory.slice(0, 10).map((history, index) => (
+                        <div key={index} className={styles.pointHistoryItem}>
+                          <div className={styles.historyInfo}>
+                            <span className={`${styles.historyType} ${styles[history.type]}`}>
+                              {history.type === 'earn' ? '적립' : 
+                               history.type === 'use' ? '사용' : 
+                               history.type === 'expire' ? '만료' : history.type}
+                            </span>
+                            <span className={styles.historyDescription}>
+                              {history.description}
+                            </span>
+                          </div>
+                          <div className={styles.historyAmount}>
+                            <span className={history.type === 'earn' ? styles.positive : styles.negative}>
+                              {history.type === 'earn' ? '+' : '-'}{formatCurrency(history.amount)}
+                            </span>
+                            <span className={styles.historyDate}>
+                              {formatDate(history.date)}
+                            </span>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className={styles.modalFooter}>
+                <button 
+                  className={styles.cancelButton}
+                  onClick={() => setShowUserDetail(false)}
+                >
+                  닫기
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* 페이지네이션 */}
         {totalPages > 1 && (

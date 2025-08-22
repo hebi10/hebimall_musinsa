@@ -1,6 +1,8 @@
 .adminNav {
   display: flex;
-  gap: 25px;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  padding: 10px 0;
 }
 
 aside .adminNav{

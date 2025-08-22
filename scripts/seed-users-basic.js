@@ -1,9 +1,9 @@
-// 사용자 시드 데이터 생성 스크립트
+// 기본 사용자 시드 데이터 생성 스크립트
 const { initializeApp } = require('firebase/app');
-const { getFirestore, collection, addDoc, serverTimestamp, Timestamp } = require('firebase/firestore');
+const { getFirestore, collection, addDoc, serverTimestamp } = require('firebase/firestore');
 
 // 환경변수에서 Firebase 설정 읽기
-require('dotenv').config({ path: '../.env.local' });
+require('dotenv').config({ path: '.env.local' });
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -17,7 +17,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// 사용자 시드 데이터
+// 간단한 사용자 시드 데이터
 const usersData = [
   {
     name: '김헤비',
@@ -34,17 +34,6 @@ const usersData = [
     lastLogin: serverTimestamp(),
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
-    birthDate: Timestamp.fromDate(new Date('1990-05-15')),
-    gender: 'male',
-    addresses: [],
-    preferences: {
-      favoriteCategories: ['상의', '아우터'],
-      favoriteBrands: ['Nike', 'Adidas'],
-      sizes: { top: 'L', bottom: '32', shoes: '270' },
-      newsletter: true,
-      smsMarketing: false,
-    },
-    point: 12500,
   },
   {
     name: '이쇼핑',
@@ -61,17 +50,6 @@ const usersData = [
     lastLogin: serverTimestamp(),
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
-    birthDate: Timestamp.fromDate(new Date('1992-08-20')),
-    gender: 'female',
-    addresses: [],
-    preferences: {
-      favoriteCategories: ['하의', '신발'],
-      favoriteBrands: ['Zara', 'H&M'],
-      sizes: { top: 'M', bottom: '28', shoes: '245' },
-      newsletter: true,
-      smsMarketing: true,
-    },
-    point: 7500,
   },
   {
     name: '박구매',
@@ -88,17 +66,6 @@ const usersData = [
     lastLogin: serverTimestamp(),
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
-    birthDate: Timestamp.fromDate(new Date('1988-12-03')),
-    gender: 'male',
-    addresses: [],
-    preferences: {
-      favoriteCategories: ['스포츠', '액세서리'],
-      favoriteBrands: ['Nike', 'Puma'],
-      sizes: { top: 'XL', bottom: '34', shoes: '280' },
-      newsletter: false,
-      smsMarketing: false,
-    },
-    point: 3200,
   },
   {
     name: '최고객',
@@ -115,17 +82,6 @@ const usersData = [
     lastLogin: serverTimestamp(),
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
-    birthDate: Timestamp.fromDate(new Date('1985-07-10')),
-    gender: 'female',
-    addresses: [],
-    preferences: {
-      favoriteCategories: ['상의', '아우터', '가방'],
-      favoriteBrands: ['Chanel', 'Louis Vuitton'],
-      sizes: { top: 'S', bottom: '26', shoes: '235' },
-      newsletter: true,
-      smsMarketing: true,
-    },
-    point: 18000,
   },
   {
     name: '정단골',
@@ -142,17 +98,6 @@ const usersData = [
     lastLogin: serverTimestamp(),
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
-    birthDate: Timestamp.fromDate(new Date('1993-03-25')),
-    gender: 'male',
-    addresses: [],
-    preferences: {
-      favoriteCategories: ['아우터', '신발'],
-      favoriteBrands: ['Supreme', 'Off-White'],
-      sizes: { top: 'L', bottom: '32', shoes: '275' },
-      newsletter: true,
-      smsMarketing: false,
-    },
-    point: 21500,
   },
   {
     name: '한신규',
@@ -169,17 +114,6 @@ const usersData = [
     lastLogin: serverTimestamp(),
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
-    birthDate: Timestamp.fromDate(new Date('1995-01-08')),
-    gender: 'female',
-    addresses: [],
-    preferences: {
-      favoriteCategories: ['상의'],
-      favoriteBrands: ['Uniqlo'],
-      sizes: { top: 'M', bottom: '27', shoes: '240' },
-      newsletter: false,
-      smsMarketing: false,
-    },
-    point: 5890,
   },
   {
     name: '조휴면',
@@ -196,17 +130,6 @@ const usersData = [
     lastLogin: serverTimestamp(),
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
-    birthDate: Timestamp.fromDate(new Date('1987-11-30')),
-    gender: 'male',
-    addresses: [],
-    preferences: {
-      favoriteCategories: ['하의'],
-      favoriteBrands: ['Levi\'s'],
-      sizes: { top: 'L', bottom: '31', shoes: '265' },
-      newsletter: false,
-      smsMarketing: false,
-    },
-    point: 1800,
   },
   {
     name: '문제유저',
@@ -223,77 +146,12 @@ const usersData = [
     lastLogin: serverTimestamp(),
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
-    birthDate: Timestamp.fromDate(new Date('1990-09-12')),
-    gender: 'male',
-    addresses: [],
-    preferences: {
-      favoriteCategories: [],
-      favoriteBrands: [],
-      sizes: {},
-      newsletter: false,
-      smsMarketing: false,
-    },
-    point: 0,
-  },
-  {
-    name: '관리자2',
-    email: 'admin2@test.com',
-    phone: '010-9999-9999',
-    role: 'admin',
-    status: 'active',
-    orders: 0,
-    totalSpent: 0,
-    pointBalance: 50000,
-    grade: 'platinum',
-    isAdmin: true,
-    joinDate: '2024-01-01',
-    lastLogin: serverTimestamp(),
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp(),
-    birthDate: Timestamp.fromDate(new Date('1980-04-20')),
-    gender: 'female',
-    addresses: [],
-    preferences: {
-      favoriteCategories: [],
-      favoriteBrands: [],
-      sizes: {},
-      newsletter: false,
-      smsMarketing: false,
-    },
-    point: 50000,
-  },
-  {
-    name: '김신입',
-    email: 'newbie@test.com',
-    phone: '010-0000-0000',
-    role: 'user',
-    status: 'active',
-    orders: 1,
-    totalSpent: 45000,
-    pointBalance: 5450,
-    grade: 'bronze',
-    isAdmin: false,
-    joinDate: '2024-08-12',
-    lastLogin: serverTimestamp(),
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp(),
-    birthDate: Timestamp.fromDate(new Date('1998-06-14')),
-    gender: 'male',
-    addresses: [],
-    preferences: {
-      favoriteCategories: ['스포츠'],
-      favoriteBrands: ['Nike'],
-      sizes: { top: 'M', bottom: '30', shoes: '270' },
-      newsletter: true,
-      smsMarketing: true,
-    },
-    point: 5450,
   }
 ];
 
 async function seedUsers() {
   try {
-    console.log('🚀 사용자 시드 데이터 생성 시작...');
+    console.log('🚀 기본 사용자 시드 데이터 생성 시작...');
     
     const usersCollection = collection(db, 'users');
     
@@ -325,9 +183,10 @@ async function seedUsers() {
           await addDoc(pointHistoryCollection, {
             type: 'earn',
             amount: additionalPoints,
-            description: `주문 완료 적립 (총 주문 금액: ${userData.totalSpent.toLocaleString()}원)`,
+            description: `주문 완료 적립`,
             date: serverTimestamp(),
             balanceAfter: userData.pointBalance,
+            orderId: `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
           });
         }
 
