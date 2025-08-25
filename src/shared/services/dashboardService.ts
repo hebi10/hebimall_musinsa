@@ -1,6 +1,6 @@
-import { ProductService } from './productService';
 import { CouponService } from './couponService';
 import { EventService } from './eventService';
+import { FirebaseProductService as ProductService } from './productService';
 import { UserService } from './userService';
 import { orders } from '@/mocks/order';
 import { Order } from '@/shared/types/order';

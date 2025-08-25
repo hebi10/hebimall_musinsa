@@ -412,7 +412,7 @@
   font-size: 0.85rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-right: 8px;
+  margin: 0 8px 8px 0;
 }
 
 .actionButton:hover {
