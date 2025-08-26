@@ -29,6 +29,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
+      <head> 
+        <link rel="icon" href="/images/favicon.ico" />
+        <link rel="shortcut icon" href="/images/favicon.ico" />
+        <link rel="apple-touch-icon" href="/images/favicon.ico" />
+      </head>
       <body className={`${inter.variable}`}>
         <RootProviders>
           <Header />
