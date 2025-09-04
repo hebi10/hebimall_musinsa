@@ -289,6 +289,71 @@ function DashboardContent() {
         </div>
       )}
 
+      {/* 관리 메뉴 섹션 */}
+      <div className={styles.managementSection}>
+        <h2>관리 메뉴</h2>
+        <div className={styles.managementGrid}>
+          <a href="/admin/qna" className={styles.managementCard}>
+            <div className={styles.managementIcon}>💬</div>
+            <div className={styles.managementContent}>
+              <h3>QnA 관리</h3>
+              <p>상품 문의 및 Q&A 관리</p>
+              {!qnaLoading && qnaStats.waiting > 0 && (
+                <span className={styles.badge}>{qnaStats.waiting}</span>
+              )}
+            </div>
+          </a>
+          
+          <a href="/admin/inquiries" className={styles.managementCard}>
+            <div className={styles.managementIcon}>📩</div>
+            <div className={styles.managementContent}>
+              <h3>1:1 문의 관리</h3>
+              <p>고객 1:1 문의 관리</p>
+            </div>
+          </a>
+          
+          <a href="/admin/users" className={styles.managementCard}>
+            <div className={styles.managementIcon}>👥</div>
+            <div className={styles.managementContent}>
+              <h3>사용자 관리</h3>
+              <p>회원 정보 및 권한 관리</p>
+            </div>
+          </a>
+          
+          <a href="/admin/products" className={styles.managementCard}>
+            <div className={styles.managementIcon}>📦</div>
+            <div className={styles.managementContent}>
+              <h3>상품 관리</h3>
+              <p>상품 등록 및 재고 관리</p>
+            </div>
+          </a>
+          
+          <a href="/admin/orders" className={styles.managementCard}>
+            <div className={styles.managementIcon}>📋</div>
+            <div className={styles.managementContent}>
+              <h3>주문 관리</h3>
+              <p>주문 내역 및 배송 관리</p>
+            </div>
+          </a>
+          
+          <a href="/admin/coupons" className={styles.managementCard}>
+            <div className={styles.managementIcon}>🎫</div>
+            <div className={styles.managementContent}>
+              <h3>쿠폰 관리</h3>
+              <p>쿠폰 발급 및 관리</p>
+            </div>
+          </a>
+          
+          <a href="/admin/recommendations" className={styles.managementCard}>
+            <div className={styles.managementIcon}>⭐</div>
+            <div className={styles.managementContent}>
+              <h3>추천 상품 관리</h3>
+              <p>추천 알고리즘 및 설정 관리</p>
+            </div>
+          </a>
+        </div>
+      </div>
+
       {/* 추가 정보 섹션 */}
       <div className={styles.infoGrid}>
         {/* 최근 활동 - 항상 표시 (Mock 데이터라도) */}

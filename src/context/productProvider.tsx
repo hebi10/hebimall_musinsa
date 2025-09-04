@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
-import { CategoryBasedProductService } from "@/shared/services/categoryBasedProductService";
+import { CategoryOnlyProductService } from "@/shared/services/hybridProductService";
 import { Product, ProductFilter, ProductSort } from "@/shared/types/product";
 
 interface ProductContextType {
@@ -34,6 +34,7 @@ interface ProductContextType {
   getAllProducts: () => Promise<void>; // admin 페이지에서 사용
   getProductById: (productId: string) => Promise<Product | null>; // 단일 상품 반환
   loadProductById: (productId: string) => Promise<void>;
+  getProductsByCategory: (categoryId: string) => Promise<Product[]>; // 카테고리별 상품 조회
   searchProducts: (query: string) => Promise<void>;
   clearSearch: () => void;
   filterProducts: (filter: ProductFilter) => Promise<void>;
@@ -123,9 +124,9 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       setError(null);
 
       const [allProducts, categories, brands] = await Promise.all([
-        CategoryBasedProductService.getAllProducts(),
-        CategoryBasedProductService.getCategories(),
-        CategoryBasedProductService.getBrands()
+        CategoryOnlyProductService.getAllProducts(),
+        CategoryOnlyProductService.getCategories(),
+        CategoryOnlyProductService.getBrands()
       ]);
       
       // 상품 정규화
@@ -137,7 +138,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       setBrands(brands);
       
       // 가격 범위 설정
-      const range = CategoryBasedProductService.getPriceRange(allProducts);
+      const range = CategoryOnlyProductService.getPriceRange(allProducts);
       setPriceRange(range);
       
       // 마지막 fetch 시간 업데이트
@@ -160,7 +161,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       setError(null);
 
       // 모든 카테고리에서 상품을 찾아야 하므로 getAllProducts에서 필터링
-      const allProducts = await CategoryBasedProductService.getAllProducts();
+      const allProducts = await CategoryOnlyProductService.getAllProducts();
       const product = allProducts.find((p: Product) => p.id === productId);
       
       setCurrentProduct(product ? normalizeProduct(product) : null);
@@ -184,8 +185,8 @@ export function ProductProvider({ children }: { children: ReactNode }) {
         return normalizeProduct(existingProduct);
       }
       
-      // 새로운 findProductById 메서드 사용
-      const product = await CategoryBasedProductService.findProductById(productId);
+      // 새로운 getProductById 메서드 사용
+      const product = await CategoryOnlyProductService.getProductById(productId);
       
       if (product) {
         return normalizeProduct(product);
@@ -199,6 +200,17 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       return null;
     }
   }, [products, normalizeProduct]);
+
+  // 카테고리별 상품 조회
+  const getProductsByCategory = useCallback(async (categoryId: string): Promise<Product[]> => {
+    try {
+      const products = await CategoryOnlyProductService.getProductsByCategory(categoryId);
+      return products.map(normalizeProduct);
+    } catch (err) {
+      console.error('카테고리별 상품 조회 실패:', err);
+      return [];
+    }
+  }, [normalizeProduct]);
 
   // 상품 검색
   const searchProducts = useCallback(async (query: string) => {
@@ -214,7 +226,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       setLoading(true);
       setError(null);
 
-      const searchResults = await CategoryBasedProductService.searchProducts(query);
+      const searchResults = await CategoryOnlyProductService.searchProducts(query);
       setSearchResults(searchResults);
       setFilteredProducts(searchResults);
 
@@ -240,7 +252,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       setLoading(true);
       setError(null);
 
-      const filtered = await CategoryBasedProductService.getFilteredProducts(filter);
+      const filtered = await CategoryOnlyProductService.getFilteredProducts(filter);
       setFilteredProducts(filtered);
       setCurrentFilter(filter);
 
@@ -259,7 +271,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       setLoading(true);
       setError(null);
 
-      const sorted = await CategoryBasedProductService.getSortedProducts(filteredProducts, sort);
+      const sorted = await CategoryOnlyProductService.getSortedProducts(filteredProducts, sort);
       setSortedProducts(sorted);
       setCurrentSort(sort);
 
@@ -286,7 +298,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     try {
       setError(null);
 
-      const related = await CategoryBasedProductService.getRelatedProducts(productId, limit);
+      const related = await CategoryOnlyProductService.getRelatedProducts(productId, limit);
       setRelatedProducts(related);
 
     } catch (err) {
@@ -303,12 +315,12 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       setError(null);
 
       const [recommendedProducts, newProducts, saleProducts, bestSellerProducts, categories, brands] = await Promise.all([
-        CategoryBasedProductService.getRecommendedProducts(),
-        CategoryBasedProductService.getNewProducts(),
-        CategoryBasedProductService.getSaleProducts(),
-        CategoryBasedProductService.getBestSellerProducts(),
-        CategoryBasedProductService.getCategories(),
-        CategoryBasedProductService.getBrands()
+        CategoryOnlyProductService.getRecommendedProducts(),
+        CategoryOnlyProductService.getNewProducts(),
+        CategoryOnlyProductService.getSaleProducts(),
+        CategoryOnlyProductService.getBestSellerProducts(),
+        CategoryOnlyProductService.getCategories(),
+        CategoryOnlyProductService.getBrands()
       ]);
 
       setRecommendedProducts(recommendedProducts);
@@ -329,15 +341,18 @@ export function ProductProvider({ children }: { children: ReactNode }) {
 
   // 헬퍼 함수들
   const calculateDiscountPrice = useCallback((price: number, saleRate?: number) => {
-    return CategoryBasedProductService.calculateDiscountPrice(price, saleRate);
+    if (!saleRate) return price;
+    return Math.round(price * (1 - saleRate / 100));
   }, []);
 
   const isInStock = useCallback((product: Product) => {
-    return CategoryBasedProductService.isInStock(product);
+    return product.stock > 0;
   }, []);
 
   const calculateAverageRating = useCallback((products: Product[]) => {
-    return CategoryBasedProductService.calculateAverageRating(products);
+    if (products.length === 0) return 0;
+    const total = products.reduce((sum, product) => sum + product.rating, 0);
+    return Math.round((total / products.length) * 10) / 10;
   }, []);
 
   // 관리자 액션들
@@ -346,7 +361,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       setLoading(true);
       setError(null);
 
-      const newProduct = await CategoryBasedProductService.createProduct(product);
+      const newProduct = await CategoryOnlyProductService.createProduct(product);
       
       // 상품 목록 업데이트
       setProducts(prev => [...prev, newProduct]);
@@ -369,7 +384,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       setLoading(true);
       setError(null);
 
-      const updatedProduct = await CategoryBasedProductService.updateProduct(productId, updates);
+      const updatedProduct = await CategoryOnlyProductService.updateProduct(productId, updates);
 
       // 상품 목록 업데이트
       setProducts(prev => prev.map(p => p.id === productId ? updatedProduct : p));
@@ -397,7 +412,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       setLoading(true);
       setError(null);
 
-      await CategoryBasedProductService.deleteProduct(productId);
+      await CategoryOnlyProductService.deleteProduct(productId);
 
       // 상품 목록에서 제거
       setProducts(prev => prev.filter(p => p.id !== productId));
@@ -458,6 +473,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     getAllProducts,
     getProductById,
     loadProductById,
+    getProductsByCategory,
     searchProducts,
     clearSearch,
     filterProducts,

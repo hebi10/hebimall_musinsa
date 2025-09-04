@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import PageHeader from "../_components/PageHeader";
 import styles from "./layout.module.css";
 import { usePathname } from "next/navigation";
@@ -16,6 +16,27 @@ export default function MyPageLayout({ children }: MyPageLayoutProps) {
   const [activeTab, setActiveTab] = useState('orders');
   const pathname = usePathname();
   const { userData, logout } = useAuth();
+
+  // 스크롤 복원 방지 (useLayoutEffect로 더 빠르게 실행)
+  useLayoutEffect(() => {
+    if (typeof window !== 'undefined') {
+      // 브라우저의 스크롤 복원 기능 비활성화
+      if ('scrollRestoration' in window.history) {
+        window.history.scrollRestoration = 'manual';
+      }
+      // 페이지 로드 시 스크롤을 맨 위로
+      window.scrollTo(0, 0);
+    }
+  }, []);
+
+  // 경로 변경 시 추가 스크롤 제어
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      window.scrollTo(0, 0);
+    }, 50);
+
+    return () => clearTimeout(timer);
+  }, [pathname]);
 
   const userInfo = {
     name: userData?.name || "로딩중...",

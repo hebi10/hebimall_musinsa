@@ -494,19 +494,19 @@ export default function ProductDetailClient({ product }: Props) {
               <div className={styles.productDetails}>
                 <div className={styles.detailItem}>
                   <span className={styles.detailLabel}>소재</span>
-                  <span className={styles.detailValue}>{product.details.material}</span>
+                  <span className={styles.detailValue}>{product.details?.material || '정보 없음'}</span>
                 </div>
                 <div className={styles.detailItem}>
                   <span className={styles.detailLabel}>원산지</span>
-                  <span className={styles.detailValue}>{product.details.origin}</span>
+                  <span className={styles.detailValue}>{product.details?.origin || '정보 없음'}</span>
                 </div>
                 <div className={styles.detailItem}>
                   <span className={styles.detailLabel}>제조사</span>
-                  <span className={styles.detailValue}>{product.details.manufacturer}</span>
+                  <span className={styles.detailValue}>{product.details?.manufacturer || '정보 없음'}</span>
                 </div>
                 <div className={styles.detailItem}>
                   <span className={styles.detailLabel}>취급주의사항</span>
-                  <span className={styles.detailValue}>{product.details.precautions}</span>
+                  <span className={styles.detailValue}>{product.details?.precautions || '정보 없음'}</span>
                 </div>
               </div>
             </div>

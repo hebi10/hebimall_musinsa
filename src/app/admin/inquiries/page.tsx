@@ -1,109 +1,118 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { SimpleQnAService } from '@/shared/services/simpleQnAService';
-import { QnA } from '@/shared/types/qna';
+import { InquiryService } from '@/shared/services/inquiryService';
+import { Inquiry } from '@/shared/types/inquiry';
 import styles from './page.module.css';
 
-export default function AdminQnAPage() {
-  const [qnas, setQnas] = useState<QnA[]>([]);
+export default function AdminInquiriesPage() {
+  const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedFilter, setSelectedFilter] = useState<string>('all');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [showAnswerModal, setShowAnswerModal] = useState(false);
-  const [selectedQnA, setSelectedQnA] = useState<QnA | null>(null);
+  const [selectedInquiry, setSelectedInquiry] = useState<Inquiry | null>(null);
   const [answerContent, setAnswerContent] = useState('');
 
   const statusOptions = [
     { value: 'all', label: '전체' },
     { value: 'waiting', label: '답변대기' },
     { value: 'answered', label: '답변완료' },
-    { value: 'closed', label: '종료' },
+    { value: 'closed', label: '처리완료' },
   ];
 
   const categoryOptions = [
     { value: 'all', label: '전체' },
+    { value: 'order', label: '주문/결제' },
+    { value: 'delivery', label: '배송' },
+    { value: 'exchange', label: '교환/반품' },
     { value: 'product', label: '상품문의' },
-    { value: 'delivery', label: '배송문의' },
-    { value: 'payment', label: '결제문의' },
-    { value: 'general', label: '일반문의' },
+    { value: 'account', label: '회원정보' },
+    { value: 'other', label: '기타' },
   ];
 
-  // QnA 목록 로드
-  const loadQnAs = async () => {
+  // 문의 목록 로드
+  const loadInquiries = async () => {
     try {
       setLoading(true);
-      const allQnAs = await SimpleQnAService.getAllQnAs(100);
+      const allInquiries = await InquiryService.getAllInquiries(100);
       
       // 필터링
-      let filteredQnAs = allQnAs;
+      let filteredInquiries = allInquiries;
       
       if (selectedFilter !== 'all') {
-        filteredQnAs = filteredQnAs.filter(qna => qna.status === selectedFilter);
+        filteredInquiries = filteredInquiries.filter(inquiry => inquiry.status === selectedFilter);
       }
       
       if (selectedCategory !== 'all') {
-        filteredQnAs = filteredQnAs.filter(qna => qna.category === selectedCategory);
+        filteredInquiries = filteredInquiries.filter(inquiry => inquiry.category === selectedCategory);
       }
       
       if (searchTerm) {
         const searchLower = searchTerm.toLowerCase();
-        filteredQnAs = filteredQnAs.filter(qna =>
-          qna.title.toLowerCase().includes(searchLower) ||
-          qna.content.toLowerCase().includes(searchLower) ||
-          qna.userName.toLowerCase().includes(searchLower)
+        filteredInquiries = filteredInquiries.filter(inquiry =>
+          inquiry.title.toLowerCase().includes(searchLower) ||
+          inquiry.content.toLowerCase().includes(searchLower) ||
+          inquiry.userName.toLowerCase().includes(searchLower)
         );
       }
       
-      setQnas(filteredQnAs);
+      setInquiries(filteredInquiries);
     } catch (err) {
-      setError('QnA 목록을 불러오는데 실패했습니다.');
-      console.error('Error loading QnAs:', err);
+      setError('문의 목록을 불러오는데 실패했습니다.');
+      console.error('Error loading inquiries:', err);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    loadQnAs();
+    loadInquiries();
   }, [selectedFilter, selectedCategory]);
 
   // 검색 처리
   const handleSearch = () => {
-    loadQnAs();
+    loadInquiries();
   };
 
   // 답변 모달 열기
-  const openAnswerModal = (qna: QnA) => {
-    setSelectedQnA(qna);
-    setAnswerContent(qna.answer?.content || '');
+  const openAnswerModal = (inquiry: Inquiry) => {
+    setSelectedInquiry(inquiry);
+    setAnswerContent(inquiry.answer?.content || '');
     setShowAnswerModal(true);
   };
 
   // 답변 저장
   const handleAnswerSubmit = async () => {
-    if (!selectedQnA || !answerContent.trim()) return;
+    if (!selectedInquiry || !answerContent.trim()) return;
 
     try {
-      // QnAService를 import하여 실제 답변 저장
-      const { QnAService } = await import('@/shared/services/qnaService');
-      
-      await QnAService.answerQnA(selectedQnA.id, {
+      await InquiryService.answerInquiry(selectedInquiry.id, {
         content: answerContent,
         answeredBy: 'Admin', // 실제 관리자 정보로 대체 가능
-        isAdmin: true,
       });
 
       alert('답변이 저장되었습니다.');
       setShowAnswerModal(false);
-      setSelectedQnA(null);
+      setSelectedInquiry(null);
       setAnswerContent('');
-      loadQnAs();
+      loadInquiries();
     } catch (err) {
       alert('답변 저장에 실패했습니다.');
       console.error('Error saving answer:', err);
+    }
+  };
+
+  // 상태 변경
+  const handleStatusChange = async (inquiryId: string, newStatus: Inquiry['status']) => {
+    try {
+      await InquiryService.updateInquiryStatus(inquiryId, newStatus);
+      loadInquiries();
+    } catch (err) {
+      alert('상태 변경에 실패했습니다.');
+      console.error('Error updating status:', err);
     }
   };
 
@@ -132,10 +141,10 @@ export default function AdminQnAPage() {
 
   // 통계 계산
   const stats = {
-    total: qnas.length,
-    waiting: qnas.filter(q => q.status === 'waiting').length,
-    answered: qnas.filter(q => q.status === 'answered').length,
-    closed: qnas.filter(q => q.status === 'closed').length,
+    total: inquiries.length,
+    waiting: inquiries.filter(i => i.status === 'waiting').length,
+    answered: inquiries.filter(i => i.status === 'answered').length,
+    closed: inquiries.filter(i => i.status === 'closed').length,
   };
 
   if (loading) {
@@ -143,7 +152,7 @@ export default function AdminQnAPage() {
       <div className={styles.container}>
         <div className={styles.loading}>
           <div className={styles.spinner}></div>
-          <p>QnA 목록을 불러오는 중...</p>
+          <p>문의 목록을 불러오는 중...</p>
         </div>
       </div>
     );
@@ -153,14 +162,14 @@ export default function AdminQnAPage() {
     <div className={styles.container}>
       {/* 헤더 */}
       <div className={styles.header}>
-        <h1 className={styles.title}>QnA 관리</h1>
+        <h1 className={styles.title}>1:1 문의 관리</h1>
         <p className={styles.subtitle}>고객 문의를 관리하고 답변할 수 있습니다</p>
       </div>
 
       {/* 통계 카드 */}
       <div className={styles.statsGrid}>
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>💬</div>
+          <div className={styles.statIcon}>📝</div>
           <div className={styles.statContent}>
             <h3>전체 문의</h3>
             <span className={styles.statNumber}>{stats.total}</span>
@@ -183,7 +192,7 @@ export default function AdminQnAPage() {
         <div className={styles.statCard}>
           <div className={styles.statIcon}>🔒</div>
           <div className={styles.statContent}>
-            <h3>종료</h3>
+            <h3>처리 완료</h3>
             <span className={`${styles.statNumber} ${styles.closed}`}>{stats.closed}</span>
           </div>
         </div>
@@ -238,92 +247,92 @@ export default function AdminQnAPage() {
         </div>
       </div>
 
-      {/* QnA 목록 */}
-      <div className={styles.qnaList}>
+      {/* 문의 목록 */}
+      <div className={styles.inquiryList}>
         {error && (
           <div className={styles.error}>
             <p>{error}</p>
-            <button onClick={loadQnAs} className={styles.retryButton}>
+            <button onClick={loadInquiries} className={styles.retryButton}>
               다시 시도
             </button>
           </div>
         )}
 
-        {qnas.length === 0 && !error && (
+        {inquiries.length === 0 && !error && (
           <div className={styles.empty}>
-            <div className={styles.emptyIcon}>💬</div>
-            <h3>조건에 맞는 QnA가 없습니다</h3>
+            <div className={styles.emptyIcon}>📝</div>
+            <h3>조건에 맞는 문의가 없습니다</h3>
             <p>필터를 조정해보세요.</p>
           </div>
         )}
 
-        {qnas.map((qna) => (
-          <div key={qna.id} className={styles.qnaCard}>
-            <div className={styles.qnaHeader}>
-              <div className={styles.qnaInfo}>
-                <span className={`${styles.category} ${styles[qna.category]}`}>
-                  {getCategoryLabel(qna.category)}
+        {inquiries.map((inquiry) => (
+          <div key={inquiry.id} className={styles.inquiryCard}>
+            <div className={styles.inquiryHeader}>
+              <div className={styles.inquiryInfo}>
+                <span className={`${styles.category} ${styles[inquiry.category]}`}>
+                  {getCategoryLabel(inquiry.category)}
                 </span>
-                <span className={`${styles.status} ${styles[qna.status]}`}>
-                  {getStatusLabel(qna.status)}
+                <span className={`${styles.status} ${styles[inquiry.status]}`}>
+                  {getStatusLabel(inquiry.status)}
                 </span>
-                {qna.isSecret && (
-                  <span className={styles.secretBadge}>🔒 비밀글</span>
+                {inquiry.status === 'waiting' && (
+                  <span className={styles.priority}>🚨 처리필요</span>
                 )}
-                <span className={styles.priority}>
-                  {qna.status === 'waiting' && '🚨 처리필요'}
-                </span>
               </div>
-              <div className={styles.qnaStats}>
-                <span className={styles.views}>👁 {qna.views}</span>
-                <span className={styles.date}>{formatDate(qna.createdAt)}</span>
+              <div className={styles.inquiryStats}>
+                <span className={styles.date}>{formatDate(inquiry.createdAt)}</span>
               </div>
             </div>
 
-            <div className={styles.qnaContent}>
-              <h3 className={styles.qnaTitle}>{qna.title}</h3>
-              <div className={styles.qnaDetails}>
-                <span className={styles.author}>작성자: {qna.userName}</span>
-                <span className={styles.email}>({qna.userEmail})</span>
-                {qna.productName && (
-                  <span className={styles.product}>관련상품: {qna.productName}</span>
-                )}
+            <div className={styles.inquiryContent}>
+              <h3 className={styles.inquiryTitle}>{inquiry.title}</h3>
+              <div className={styles.inquiryDetails}>
+                <span className={styles.author}>작성자: {inquiry.userName}</span>
+                <span className={styles.email}>({inquiry.userEmail})</span>
               </div>
-              <div className={styles.qnaQuestion}>
+              <div className={styles.inquiryQuestion}>
                 <strong>문의내용:</strong>
-                <p>{qna.content}</p>
+                <p>{inquiry.content}</p>
               </div>
 
-              {qna.answer && (
-                <div className={styles.qnaAnswer}>
+              {inquiry.answer && (
+                <div className={styles.inquiryAnswer}>
                   <div className={styles.answerHeader}>
                     <strong>답변:</strong>
                     <span className={styles.answeredBy}>
-                      {qna.answer.answeredBy} | {formatDate(qna.answer.answeredAt)}
+                      {inquiry.answer.answeredBy} | {formatDate(inquiry.answer.answeredAt)}
                     </span>
                   </div>
-                  <p>{qna.answer.content}</p>
+                  <p>{inquiry.answer.content}</p>
                 </div>
               )}
             </div>
 
-            <div className={styles.qnaActions}>
+            <div className={styles.inquiryActions}>
               <button
-                onClick={() => openAnswerModal(qna)}
+                onClick={() => openAnswerModal(inquiry)}
                 className={styles.answerButton}
               >
-                {qna.answer ? '답변 수정' : '답변하기'}
+                {inquiry.answer ? '답변 수정' : '답변하기'}
               </button>
-              <button className={styles.viewButton}>
-                상세보기
-              </button>
+              
+              <select
+                value={inquiry.status}
+                onChange={(e) => handleStatusChange(inquiry.id, e.target.value as Inquiry['status'])}
+                className={styles.statusSelect}
+              >
+                <option value="waiting">답변대기</option>
+                <option value="answered">답변완료</option>
+                <option value="closed">처리완료</option>
+              </select>
             </div>
           </div>
         ))}
       </div>
 
       {/* 답변 모달 */}
-      {showAnswerModal && selectedQnA && (
+      {showAnswerModal && selectedInquiry && (
         <div className={styles.modalOverlay}>
           <div className={styles.modal}>
             <div className={styles.modalHeader}>
@@ -338,9 +347,9 @@ export default function AdminQnAPage() {
             <div className={styles.modalContent}>
               <div className={styles.originalQuestion}>
                 <h4>원본 문의</h4>
-                <p><strong>제목:</strong> {selectedQnA.title}</p>
-                <p><strong>내용:</strong> {selectedQnA.content}</p>
-                <p><strong>작성자:</strong> {selectedQnA.userName}</p>
+                <p><strong>제목:</strong> {selectedInquiry.title}</p>
+                <p><strong>내용:</strong> {selectedInquiry.content}</p>
+                <p><strong>작성자:</strong> {selectedInquiry.userName}</p>
               </div>
               <div className={styles.answerForm}>
                 <label htmlFor="answer">답변 내용</label>

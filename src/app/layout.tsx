@@ -6,6 +6,7 @@ import Header from "./_components/header/Header";
 import Footer from "./_components/footer/Footer";
 import RootProviders from "./_components/providers/RootProviders";
 import ChatWidget from "./_components/chat/ChatWidget";
+import { ScrollToTop } from "./_components/ScrollToTop";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -36,6 +37,7 @@ export default function RootLayout({
       </head>
       <body className={`${inter.variable}`}>
         <RootProviders>
+          <ScrollToTop />
           <Header />
           <main style={{ minHeight: '100vh' }}>
             {children}

@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useLayoutEffect } from 'react';
 import { useAuth } from '@/context/authProvider';
 import { useUserActivity } from '@/context/userActivityProvider';
 import RecentProducts from './_components/RecentProducts';
@@ -11,6 +11,20 @@ import styles from './page.module.css';
 export default function MyPage() {
   const { user } = useAuth();
   const { recentProducts, wishlistItems } = useUserActivity();
+
+  // 마이페이지 접속 시 스크롤을 맨 위로 이동 (useLayoutEffect로 더 빠르게)
+  useLayoutEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  // 추가적인 스크롤 제어
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      window.scrollTo(0, 0);
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   if (!user) {
     return (

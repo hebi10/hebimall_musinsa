@@ -213,13 +213,13 @@ export default function Chart({ data, type, title, height = 200, width = 400 }: 
 
   const renderPieChart = () => {
     const centerX = width / 2;
-    const centerY = height / 2;
-    const radius = Math.min(width, height) / 2 - 40;
+    const centerY = height / 2 - 20; // 범례 공간을 위해 조금 위로 이동
+    const radius = Math.min(width, height) / 2 - 60; // 범례와 여백을 위해 반지름 축소
 
     let currentAngle = -90; // 12시 방향부터 시작
 
     return (
-      <div className={styles.chartContainer} style={{ height, width }}>
+      <div className={styles.chartContainer} style={{ height: height + 100, width }}> {/* 범례를 위한 추가 높이 */}
         <svg width={width} height={height} className={styles.chart}>
           {validData.map((item, index) => {
             const percentage = total > 0 ? item.value / total : 0;

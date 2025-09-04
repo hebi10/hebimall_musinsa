@@ -15,6 +15,9 @@
   flex-direction: column;
   align-items: center;
   position: relative;
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
 }
 
 .chart {
@@ -86,6 +89,10 @@
   gap: 0.5rem;
   width: 100%;
   max-width: 300px;
+  padding: 1rem;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
 }
 
 .legendItem {

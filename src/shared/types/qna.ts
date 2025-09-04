@@ -3,7 +3,7 @@ export interface QnA {
   userId: string;
   userEmail: string;
   userName: string;
-  category: 'product' | 'size' | 'delivery' | 'return' | 'payment' | 'general';
+  category: 'product' | 'size' | 'delivery' | 'return' | 'payment' | 'general' | 'other';
   title: string;
   content: string;
   images?: string[];

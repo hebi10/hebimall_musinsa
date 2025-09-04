@@ -156,7 +156,9 @@ export class QnAService {
     const qnaRef = doc(db, COLLECTION_NAME, qnaId);
     await updateDoc(qnaRef, {
       answer: {
-        ...answer,
+        content: answer.content,
+        answeredBy: answer.answeredBy,
+        isAdmin: answer.isAdmin,
         answeredAt: serverTimestamp(),
       },
       status: 'answered',

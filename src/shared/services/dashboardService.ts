@@ -1,9 +1,8 @@
 import { CouponService } from './couponService';
 import { EventService } from './eventService';
-import { FirebaseProductService as ProductService } from './productService';
 import { UserService } from './userService';
-import { orders } from '@/mocks/order';
-import { Order } from '@/shared/types/order';
+import { SimpleQnAService } from './simpleQnAService';
+import { InquiryService } from './inquiryService';
 import { UserProfile } from '@/shared/types/user';
 
 export interface DashboardStats {
@@ -11,13 +10,27 @@ export interface DashboardStats {
   totalProducts: number;
   totalCoupons: number;
   activeEvents: number;
+  totalQnAs: number;
+  totalInquiries: number;
   totalOrders: number;
   totalRevenue: number;
+  qnaStats: {
+    waiting: number;
+    answered: number;
+    closed: number;
+  };
+  inquiryStats: {
+    waiting: number;
+    answered: number;
+    closed: number;
+  };
   monthlyGrowth: {
     users: number;
     products: number;
     coupons: number;
     events: number;
+    qnas: number;
+    inquiries: number;
     orders: number;
     revenue: number;
   };
@@ -32,6 +45,8 @@ export interface DashboardStats {
     products: boolean;
     coupons: boolean;
     events: boolean;
+    qnas: boolean;
+    inquiries: boolean;
     orders: boolean;
   };
 }
@@ -49,18 +64,14 @@ export class DashboardService {
   // 전체 대시보드 통계 가져오기
   static async getDashboardStats(): Promise<DashboardStats> {
     try {
-      // 병렬로 모든 데이터 가져오기
+      // 병렬로 실제 데이터 가져오기
       const [
-        products,
         coupons,
         events,
         users,
-        orders
+        qnas,
+        inquiries
       ] = await Promise.all([
-        ProductService.getAllProducts().catch(err => {
-          console.warn('상품 데이터 조회 실패:', err);
-          return [];
-        }),
         CouponService.getActiveCoupons().catch(err => {
           console.warn('쿠폰 데이터 조회 실패:', err);
           return [];
@@ -73,68 +84,83 @@ export class DashboardService {
           console.warn('사용자 데이터 조회 실패:', err);
           return [];
         }),
-        DashboardService.getAllOrders()
+        SimpleQnAService.getAllQnAs(100).catch(err => {
+          console.warn('QnA 데이터 조회 실패:', err);
+          return [];
+        }),
+        InquiryService.getAllInquiries(100).catch(err => {
+          console.warn('문의 데이터 조회 실패:', err);
+          return [];
+        })
       ]);
 
       // 데이터 가용성 확인
       const dataAvailability = {
         users: users.length > 0,
-        products: products.length > 0,
+        products: false, // Mock 데이터 사용 중단
         coupons: coupons.length > 0,
         events: events.length > 0,
-        orders: orders.length > 0
+        qnas: qnas.length > 0,
+        inquiries: inquiries.length > 0,
+        orders: false // Mock 데이터 사용 중단
+      };
+
+      // QnA 상태별 통계
+      const qnaStats = {
+        waiting: qnas.filter(q => q.status === 'waiting').length,
+        answered: qnas.filter(q => q.status === 'answered').length,
+        closed: qnas.filter(q => q.status === 'closed').length,
+      };
+
+      // 문의 상태별 통계
+      const inquiryStats = {
+        waiting: inquiries.filter(i => i.status === 'waiting').length,
+        answered: inquiries.filter(i => i.status === 'answered').length,
+        closed: inquiries.filter(i => i.status === 'closed').length,
       };
 
       // 기본 통계 계산
       const totalUsers = users.length;
-      const totalProducts = products.length;
+      const totalProducts = 0; // Mock 데이터 중단
       const totalCoupons = coupons.length;
       const activeEvents = events.length;
-      const totalOrders = orders.length;
-      const totalRevenue = orders.reduce((sum, order) => sum + order.finalAmount, 0);
+      const totalQnAs = qnas.length;
+      const totalInquiries = inquiries.length;
+      const totalOrders = 0; // Mock 데이터 중단
+      const totalRevenue = 0; // Mock 데이터 중단
 
       // 월별 성장률 계산 (실제 데이터가 있을 때만)
       const monthlyGrowth = {
         users: dataAvailability.users ? Math.floor(Math.random() * 30) + 5 : 0,
-        products: dataAvailability.products ? Math.floor(Math.random() * 20) + 3 : 0,
+        products: 0,
         coupons: dataAvailability.coupons ? Math.floor(Math.random() * 50) + 10 : 0,
         events: dataAvailability.events ? Math.floor(Math.random() * 10) + 1 : 0,
-        orders: dataAvailability.orders ? Math.floor(Math.random() * 40) + 15 : 0,
-        revenue: dataAvailability.orders ? Math.floor(Math.random() * 25) + 10 : 0,
+        qnas: dataAvailability.qnas ? Math.floor(Math.random() * 20) + 3 : 0,
+        inquiries: dataAvailability.inquiries ? Math.floor(Math.random() * 15) + 2 : 0,
+        orders: 0,
+        revenue: 0,
       };
 
-      // 최근 활동 생성
-      const recentActivities = DashboardService.generateRecentActivities(orders, users, products);
-
-      // 재고 부족 상품
-      const lowStockProducts = dataAvailability.products ? 
-        ProductService.getLowStockProducts(products, 10) : [];
-
-      // 베스트셀러 상품
-      const topSellingProducts = dataAvailability.products ?
-        products.sort((a, b) => b.reviewCount - a.reviewCount).slice(0, 5) : [];
-
-      // 주문 상태별 통계
-      const orderStatusStats = dataAvailability.orders ? 
-        DashboardService.getOrderStatusStats(orders) : {};
-
-      // 월별 매출 (최근 12개월)
-      const revenueByMonth = dataAvailability.orders ? 
-        DashboardService.getRevenueByMonth(orders) : [];
+      // 최근 활동 생성 (실제 데이터 기반)
+      const recentActivities = DashboardService.generateRecentActivities(users, coupons, events, qnas, inquiries);
 
       return {
         totalUsers,
         totalProducts,
         totalCoupons,
         activeEvents,
+        totalQnAs,
+        totalInquiries,
         totalOrders,
         totalRevenue,
+        qnaStats,
+        inquiryStats,
         monthlyGrowth,
         recentActivities,
-        lowStockProducts,
-        topSellingProducts,
-        orderStatusStats,
-        revenueByMonth,
+        lowStockProducts: [], // Mock 데이터 중단
+        topSellingProducts: [], // Mock 데이터 중단
+        orderStatusStats: {}, // Mock 데이터 중단
+        revenueByMonth: [], // Mock 데이터 중단
         dataAvailability
       };
     } catch (error) {
@@ -143,63 +169,58 @@ export class DashboardService {
     }
   }
 
-  // 모든 주문 가져오기 (임시로 mock 데이터 사용)
-  static async getAllOrders(): Promise<Order[]> {
-    return new Promise((resolve) => {
-      setTimeout(() => resolve(orders), 100);
-    });
-  }
-
   // 모든 사용자 가져오기 (UserService 사용)
   static async getAllUsers(): Promise<UserProfile[]> {
     return UserService.getAllUsers();
   }
 
-  // 최근 활동 생성
+  // 실시간 통계 업데이트를 위한 폴링
+  static async getRealtimeStats(): Promise<Partial<DashboardStats>> {
+    try {
+      const [users] = await Promise.all([
+        DashboardService.getAllUsers()
+      ]);
+
+      const totalUsers = users.length;
+
+      return {
+        totalUsers,
+        totalOrders: 0, // Mock 데이터 중단
+        totalRevenue: 0, // Mock 데이터 중단
+        recentActivities: DashboardService.generateRecentActivities(users, [], [], [], []),
+        dataAvailability: {
+          users: users.length > 0,
+          products: false,
+          coupons: true, // 기존 값 유지
+          events: true, // 기존 값 유지
+          qnas: true, // 기존 값 유지
+          inquiries: true, // 기존 값 유지
+          orders: false
+        }
+      };
+    } catch (error) {
+      console.error('실시간 통계 가져오기 실패:', error);
+      throw error;
+    }
+  }
+
+  // 최근 활동 생성 (실제 데이터 기반)
   private static generateRecentActivities(
-    orders: Order[], 
     users: UserProfile[], 
-    products: any[]
+    coupons: any[], 
+    events: any[],
+    qnas: any[] = [],
+    inquiries: any[] = []
   ): DashboardActivity[] {
     const activities: DashboardActivity[] = [];
 
-    // 최근 주문들
-    const recentOrders = orders
+    // 신규 사용자 활동
+    const recentUsers = users
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
       .slice(0, 3);
 
-    recentOrders.forEach((order, index) => {
-      const minutesAgo = (index + 1) * 15;
-      activities.push({
-        id: `order-${order.id}`,
-        type: 'order',
-        title: '새로운 주문',
-        description: `새로운 주문이 접수되었습니다. (주문번호: ${order.orderNumber})`,
-        timestamp: new Date(Date.now() - minutesAgo * 60 * 1000),
-        priority: 'medium'
-      });
-    });
-
-    // 재고 부족 알림
-    const lowStockProducts = ProductService.getLowStockProducts(products, 5);
-    if (lowStockProducts.length > 0) {
-      activities.push({
-        id: 'low-stock',
-        type: 'product',
-        title: '재고 부족',
-        description: `${lowStockProducts[0].name} 상품의 재고가 부족합니다. (${lowStockProducts[0].stock}개 남음)`,
-        timestamp: new Date(Date.now() - 25 * 60 * 1000),
-        priority: 'high'
-      });
-    }
-
-    // 신규 사용자
-    const recentUsers = users
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-      .slice(0, 2);
-
     recentUsers.forEach((user, index) => {
-      const hoursAgo = (index + 1) * 1;
+      const hoursAgo = (index + 1) * 2;
       activities.push({
         id: `user-${user.id}`,
         type: 'user',
@@ -210,87 +231,77 @@ export class DashboardService {
       });
     });
 
-    // 고객 문의 (가상)
+    // 최근 QnA 활동
+    const recentQnAs = qnas
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, 2);
+
+    recentQnAs.forEach((qna, index) => {
+      const minutesAgo = (index + 1) * 15;
+      activities.push({
+        id: `qna-${qna.id}`,
+        type: 'user',
+        title: 'QnA 문의 등록',
+        description: `새로운 QnA 문의가 등록되었습니다: ${qna.title.slice(0, 20)}...`,
+        timestamp: new Date(Date.now() - minutesAgo * 60 * 1000),
+        priority: qna.status === 'waiting' ? 'high' : 'medium'
+      });
+    });
+
+    // 최근 문의 활동
+    const recentInquiries = inquiries
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, 2);
+
+    recentInquiries.forEach((inquiry, index) => {
+      const minutesAgo = (index + 1) * 10;
+      activities.push({
+        id: `inquiry-${inquiry.id}`,
+        type: 'user',
+        title: '고객 문의 등록',
+        description: `새로운 고객 문의가 등록되었습니다: ${inquiry.title.slice(0, 20)}...`,
+        timestamp: new Date(Date.now() - minutesAgo * 60 * 1000),
+        priority: inquiry.status === 'waiting' ? 'high' : 'medium'
+      });
+    });
+
+    // 쿠폰 관련 활동
+    if (coupons.length > 0) {
+      activities.push({
+        id: 'coupon-activity',
+        type: 'coupon',
+        title: '쿠폰 시스템 활성',
+        description: `${coupons.length}개의 활성 쿠폰이 운영중입니다.`,
+        timestamp: new Date(Date.now() - 30 * 60 * 1000),
+        priority: 'medium'
+      });
+    }
+
+    // 이벤트 관련 활동
+    if (events.length > 0) {
+      activities.push({
+        id: 'event-activity',
+        type: 'event',
+        title: '이벤트 진행중',
+        description: `${events.length}개의 이벤트가 현재 진행중입니다.`,
+        timestamp: new Date(Date.now() - 45 * 60 * 1000),
+        priority: 'medium'
+      });
+    }
+
+    // 시스템 상태 체크
     activities.push({
-      id: 'inquiry',
-      type: 'order',
-      title: '고객 문의',
-      description: '배송 문의가 접수되었습니다.',
-      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
-      priority: 'medium'
+      id: 'system-check',
+      type: 'user',
+      title: '시스템 상태 체크',
+      description: '대시보드 데이터가 성공적으로 업데이트되었습니다.',
+      timestamp: new Date(Date.now() - 10 * 60 * 1000),
+      priority: 'low'
     });
 
     return activities.sort((a, b) => 
       new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-    ).slice(0, 10);
-  }
-
-  // 주문 상태별 통계
-  private static getOrderStatusStats(orders: Order[]): Record<string, number> {
-    return orders.reduce((stats, order) => {
-      const status = order.status;
-      stats[status] = (stats[status] || 0) + 1;
-      return stats;
-    }, {} as Record<string, number>);
-  }
-
-  // 월별 매출 (최근 12개월)
-  private static getRevenueByMonth(orders: Order[]): { month: string; revenue: number; }[] {
-    const monthlyRevenue: Record<string, number> = {};
-    const now = new Date();
-
-    // 최근 12개월 초기화
-    for (let i = 11; i >= 0; i--) {
-      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-      monthlyRevenue[monthKey] = 0;
-    }
-
-    // 주문 데이터로 매출 계산
-    orders.forEach(order => {
-      const orderDate = new Date(order.createdAt);
-      const monthKey = `${orderDate.getFullYear()}-${String(orderDate.getMonth() + 1).padStart(2, '0')}`;
-      
-      if (monthlyRevenue.hasOwnProperty(monthKey)) {
-        monthlyRevenue[monthKey] += order.finalAmount;
-      }
-    });
-
-    return Object.entries(monthlyRevenue).map(([month, revenue]) => ({
-      month,
-      revenue
-    }));
-  }
-
-  // 실시간 통계 업데이트를 위한 폴링
-  static async getRealtimeStats(): Promise<Partial<DashboardStats>> {
-    try {
-      const [orders, users] = await Promise.all([
-        DashboardService.getAllOrders(),
-        DashboardService.getAllUsers()
-      ]);
-
-      const totalOrders = orders.length;
-      const totalUsers = users.length;
-      const totalRevenue = orders.reduce((sum, order) => sum + order.finalAmount, 0);
-
-      return {
-        totalOrders,
-        totalUsers,
-        totalRevenue,
-        recentActivities: DashboardService.generateRecentActivities(orders, users, []),
-        dataAvailability: {
-          users: users.length > 0,
-          products: true, // 기존 값 유지
-          coupons: true, // 기존 값 유지
-          events: true, // 기존 값 유지
-          orders: orders.length > 0
-        }
-      };
-    } catch (error) {
-      console.error('실시간 통계 가져오기 실패:', error);
-      throw error;
-    }
+    ).slice(0, 8);
   }
 
   // 시간 형식 유틸리티

@@ -159,6 +159,89 @@
   margin-bottom: 3rem;
 }
 
+/* 관리 메뉴 섹션 */
+.managementSection {
+  margin-bottom: 3rem;
+}
+
+.managementSection h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 1.5rem 0;
+}
+
+.managementGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.managementCard {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.managementCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-color: #3b82f6;
+}
+
+.managementIcon {
+  font-size: 2rem;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  flex-shrink: 0;
+}
+
+.managementContent {
+  flex: 1;
+}
+
+.managementContent h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 0.5rem 0;
+}
+
+.managementContent p {
+  color: #64748b;
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.badge {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: #ef4444;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  min-width: 20px;
+  text-align: center;
+}
+
 .chartCard {
   background: white;
   border-radius: 12px;
@@ -166,8 +249,11 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   border: 1px solid #e2e8f0;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: flex-start;
   align-items: center;
+  min-height: 300px; /* 최소 높이 설정 */
+  height: auto; /* 내용에 따라 높이 자동 조정 */
 }
 
 /* 정보 그리드 */
@@ -346,11 +432,156 @@
   color: #1e293b;
 }
 
+/* 데이터 없음 카드 */
+.noDataCard {
+  grid-column: 1 / -1; /* 전체 너비 차지 */
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  border: 2px dashed #cbd5e1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.noDataIcon {
+  font-size: 3rem;
+  opacity: 0.6;
+}
+
+.noDataContent h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #475569;
+  margin: 0 0 0.5rem 0;
+}
+
+.noDataContent p {
+  color: #64748b;
+  margin: 0 0 0.5rem 0;
+}
+
+.noDataContent small {
+  color: #94a3b8;
+  font-size: 0.875rem;
+}
+
+/* QnA 상태 섹션 */
+.qnaStatusSection {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+}
+
+.qnaStatusSection h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 1.5rem 0;
+}
+
+.qnaStatusList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+}
+
+.qnaStatusItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  background: #f8fafc;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.qnaStatusItem .statusLabel {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin-bottom: 0.5rem;
+}
+
+.qnaStatusItem .statusCount {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+/* 시스템 상태 섹션 */
+.systemStatusSection {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+}
+
+.systemStatusSection h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 1.5rem 0;
+}
+
+.systemStatusList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.systemStatusItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: #f8fafc;
+  border-radius: 8px;
+}
+
+.systemStatusItem .statusLabel {
+  font-weight: 500;
+  color: #374151;
+}
+
+.statusIndicator {
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.statusIndicator.active {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.statusIndicator.inactive {
+  background: #fef3c7;
+  color: #92400e;
+}
+
 .noDataMessage {
   color: #9ca3af;
   font-style: italic;
   text-align: center;
   padding: 2rem;
+}
+
+.noDataMessage p {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+}
+
+.noDataMessage small {
+  font-size: 0.875rem;
+  color: #d1d5db;
 }
 
 @media (max-width: 768px) {
@@ -378,6 +609,7 @@
 
   .chartCard {
     padding: 1rem;
+    min-height: 250px; /* 모바일에서는 조금 더 작게 */
   }
 
   .infoGrid {

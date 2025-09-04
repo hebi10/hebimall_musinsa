@@ -63,9 +63,9 @@ const ChatWidget: React.FC = () => {
     };
     setMessages([initialMessage]);
     
-    // 입력창에 포커스
+    // 입력창에 포커스 (채팅이 열려있고 시작된 경우에만)
     setTimeout(() => {
-      if (inputRef.current) {
+      if (inputRef.current && isOpen) {
         inputRef.current.focus();
       }
     }, 100);
