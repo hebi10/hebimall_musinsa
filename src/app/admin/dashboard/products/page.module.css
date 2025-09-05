@@ -24,6 +24,32 @@
   margin: 0;
 }
 
+.headerActions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.refreshButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  background-color: #6b7280;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.refreshButton:hover {
+  background-color: #4b5563;
+  transform: translateY(-1px);
+}
+
 .addButton {
   display: inline-flex;
   align-items: center;

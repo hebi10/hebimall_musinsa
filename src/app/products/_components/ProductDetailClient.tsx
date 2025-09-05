@@ -46,6 +46,11 @@ export default function ProductDetailClient({ product }: Props) {
 
   // 대표 이미지 우선 표시를 위한 이미지 배열 재정렬
   const reorderedImages = (() => {
+    // images 배열이 없으면 빈 배열 반환
+    if (!product.images || !Array.isArray(product.images)) {
+      return [];
+    }
+    
     if (product.mainImage && product.images.includes(product.mainImage)) {
       // 대표 이미지를 첫 번째로 이동
       const mainImageIndex = product.images.indexOf(product.mainImage);
@@ -293,7 +298,7 @@ export default function ProductDetailClient({ product }: Props) {
           </div>
 
           <div className={styles.tags}>
-            {product.tags.map((tag, index) => (
+            {(product.tags || []).map((tag, index) => (
               <span key={index} className={styles.tag}>{tag}</span>
             ))}
           </div>
@@ -326,7 +331,7 @@ export default function ProductDetailClient({ product }: Props) {
             <div className={styles.optionGroup}>
               <label className={styles.optionLabel}>사이즈</label>
               <div className={styles.sizeOptions}>
-                {product.sizes.map((size) => (
+                {(product.sizes || []).map((size) => (
                   <button
                     key={size}
                     className={`${styles.sizeButton} ${selectedSize === size ? styles.selected : ''}`}
@@ -342,7 +347,7 @@ export default function ProductDetailClient({ product }: Props) {
             <div className={styles.optionGroup}>
               <label className={styles.optionLabel}>색상</label>
               <div className={styles.colorOptions}>
-                {product.colors.map((color) => (
+                {(product.colors || []).map((color) => (
                   <button
                     key={color}
                     className={`${styles.colorButton} ${selectedColor === color ? styles.selected : ''} ${styles[color]}`}

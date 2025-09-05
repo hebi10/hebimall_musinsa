@@ -34,7 +34,7 @@ export class CategoryOnlyProductService {
         const categoryId = categoryDoc.id;
         
         try {
-          // 각 카테고리별 상품 조회
+          // 각 카테고리별 상품 조회 (순차적으로 실행)
           const categoryProductsSnapshot = await getDocs(
             collection(db, 'categories', categoryId, 'products')
           );
@@ -44,13 +44,20 @@ export class CategoryOnlyProductService {
             allProducts.push({
               id: productDoc.id,
               ...productData,
+              images: productData.images || [], // images 배열이 없으면 빈 배열
+              sizes: productData.sizes || [], // sizes 배열이 없으면 빈 배열
+              colors: productData.colors || [], // colors 배열이 없으면 빈 배열
+              tags: productData.tags || [], // tags 배열이 없으면 빈 배열
               createdAt: productData.createdAt?.toDate() || new Date(),
               updatedAt: productData.updatedAt?.toDate() || new Date()
             } as Product);
           });
           
+          // 각 카테고리 조회 사이에 짧은 지연 추가 (Firestore 안정화)
+          await new Promise(resolve => setTimeout(resolve, 50));
+          
         } catch (error) {
-          console.warn(`카테고리 ${categoryId} 상품 조회 실패:`, error);
+          console.warn(`⚠️ 카테고리 ${categoryId} 상품 조회 실패:`, error);
         }
       }
       
@@ -72,12 +79,23 @@ export class CategoryOnlyProductService {
       const categoryProductsRef = collection(db, 'categories', product.category, 'products');
       const categoryProductRef = doc(categoryProductsRef);
       
-      const productData = {
+      // undefined 값을 제거하는 함수
+      const cleanObject = (obj: any) => {
+        const cleaned: any = {};
+        Object.keys(obj).forEach(key => {
+          if (obj[key] !== undefined) {
+            cleaned[key] = obj[key];
+          }
+        });
+        return cleaned;
+      };
+      
+      const productData = cleanObject({
         ...product,
         createdAt: now,
         updatedAt: now,
         status: product.status || 'active'
-      };
+      });
 
       await setDoc(categoryProductRef, productData);
 
@@ -122,10 +140,23 @@ export class CategoryOnlyProductService {
 
         // 새 카테고리에 추가
         const newCategoryProductRef = doc(db, 'categories', updates.category, 'products', productId);
-        const newProductData = {
+        
+        // undefined 값을 제거하는 함수
+        const cleanObject = (obj: any) => {
+          const cleaned: any = {};
+          Object.keys(obj).forEach(key => {
+            if (obj[key] !== undefined) {
+              cleaned[key] = obj[key];
+            }
+          });
+          return cleaned;
+        };
+        
+        const newProductData = cleanObject({
           ...existingProduct,
           ...updateData
-        };
+        });
+        
         await setDoc(newCategoryProductRef, newProductData);
         
         console.log(`✅ 상품 카테고리 변경: ${existingProduct.category} → ${updates.category}`);
@@ -171,7 +202,9 @@ export class CategoryOnlyProductService {
   // 상품 상세 조회 (모든 카테고리에서 검색)
   static async getProductById(productId: string): Promise<Product | null> {
     try {
-      // 모든 카테고리에서 상품 검색
+      console.log(`🔍 상품 조회: ${productId}`);
+      
+      // 모든 카테고리에서 상품 검색 (순차적으로 실행)
       const categoriesSnapshot = await getDocs(collection(db, 'categories'));
       
       for (const categoryDoc of categoriesSnapshot.docs) {
@@ -183,19 +216,29 @@ export class CategoryOnlyProductService {
           
           if (snapshot.exists()) {
             const data = snapshot.data();
+            console.log(`✅ 상품 찾음: categories/${categoryId}/products/${productId}`);
             return {
               id: snapshot.id,
               ...data,
+              images: data.images || [], // images 배열이 없으면 빈 배열
+              sizes: data.sizes || [], // sizes 배열이 없으면 빈 배열
+              colors: data.colors || [], // colors 배열이 없으면 빈 배열
+              tags: data.tags || [], // tags 배열이 없으면 빈 배열
               createdAt: data.createdAt?.toDate() || new Date(),
               updatedAt: data.updatedAt?.toDate() || new Date()
             } as Product;
           }
         } catch (error) {
           // 해당 카테고리에서 찾지 못한 경우 계속 진행
+          console.log(`⚠️ ${categoryId}에서 검색 실패, 다음 카테고리로 진행...`);
           continue;
         }
+        
+        // 각 카테고리 검색 사이에 짧은 지연 추가 (Firestore 내부 상태 안정화)
+        await new Promise(resolve => setTimeout(resolve, 10));
       }
       
+      console.log(`❌ 상품을 찾을 수 없음: ${productId}`);
       return null;
     } catch (error) {
       console.error('상품 상세 조회 실패:', error);

@@ -4,8 +4,6 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "@/context/authProvider";
 import { useCartItemCount } from "@/shared/hooks/useCart";
-import { CategoryBasedProductService } from "@/shared/services/categoryBasedProductService";
-import { Category } from "@/shared/types/category";
 import styles from "./Header.module.css";
 import { useCategories } from '@/context/categoryProvider';
 
@@ -15,6 +13,15 @@ export default function Header() {
   const { categories, loading: categoriesLoading } = useCategories();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  // 컴포넌트 마운트 확인
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // SSR 안전한 장바구니 카운트 표시
+  const safeCartItemCount = isMounted ? cartItemCount : 0;
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -65,14 +72,16 @@ export default function Header() {
                 {isCategoryOpen && !categoriesLoading && categories.length > 0 && (
                   <div className={styles.dropdownMenu}>
                     {categories.map((category) => (
-                      <Link
-                        key={category.id}
-                        href={category.path}
-                        className={styles.dropdownItem}
-                      >
-                        {category.icon && <span className={styles.categoryIcon}>{category.icon}</span>}
-                        {category.name}
-                      </Link>
+                      category?.id ? (
+                        <Link
+                          key={category.id}
+                          href={`/categories/${category.id}`}
+                          className={styles.dropdownItem}
+                        >
+                          {category.icon && <span className={styles.categoryIcon}>{category.icon}</span>}
+                          {category.name}
+                        </Link>
+                      ) : null
                     ))}
                   </div>
                 )}
@@ -105,8 +114,8 @@ export default function Header() {
             </Link>
             <Link href="/orders/cart" className={styles.userLink}>
               장바구니
-              {cartItemCount > 0 && (
-                <span className={styles.cartBadge}>{cartItemCount}</span>
+              {safeCartItemCount > 0 && (
+                <span className={styles.cartBadge}>{safeCartItemCount}</span>
               )}
             </Link>
             {user && (
@@ -129,15 +138,17 @@ export default function Header() {
               <h3 className={styles.mobileCategoryTitle}>카테고리</h3>
               <div className={styles.mobileCategoryList}>
                 {!categoriesLoading && categories.length > 0 && categories.map((category) => (
-                  <Link
-                    key={category.id}
-                    href={category.path}
-                    className={styles.mobileCategoryItem}
-                    onClick={closeMobileMenu}
-                  >
-                    {category.icon && <span className={styles.categoryIcon}>{category.icon}</span>}
-                    {category.name}
-                  </Link>
+                  category?.id ? (
+                    <Link
+                      key={category.id}
+                      href={`/categories/${category.id}`}
+                      className={styles.mobileCategoryItem}
+                      onClick={closeMobileMenu}
+                    >
+                      {category.icon && <span className={styles.categoryIcon}>{category.icon}</span>}
+                      {category.name}
+                    </Link>
+                  ) : null
                 ))}
                 {categoriesLoading && (
                   <div className={styles.loadingText}>카테고리 로딩 중...</div>
@@ -183,8 +194,8 @@ export default function Header() {
               </Link>
               <Link href="/orders/cart" className={styles.mobileUserLink} onClick={closeMobileMenu}>
                 장바구니
-                {cartItemCount > 0 && (
-                  <span className={styles.cartBadge}>{cartItemCount}</span>
+                {safeCartItemCount > 0 && (
+                  <span className={styles.cartBadge}>{safeCartItemCount}</span>
                 )}
               </Link>
               {user && (

@@ -21,6 +21,7 @@ interface EditProductFormProps {
 export default function EditProductForm({ product, onSave, onCancel }: EditProductFormProps) {
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({});
+  const [isSaving, setIsSaving] = useState(false);
 
   // useInputs로 기본 필드들 관리
   const [basicFields, onChangeBasic] = useInputs({
@@ -244,12 +245,31 @@ export default function EditProductForm({ product, onSave, onCancel }: EditProdu
     }));
   };
 
-  // 저장 처리
+  // 저장 처리 (중복 요청 방지)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // 이미 저장 중이거나 업로드 중이면 무시
+    if (isSaving || uploading) {
+      console.log('⏳ 이미 처리 중입니다. 중복 요청을 무시합니다.');
+      return;
+    }
+
     try {
-      const updatedProduct: Product = {
+      setIsSaving(true);
+
+      // undefined 값을 제거하는 함수
+      const cleanObject = (obj: any) => {
+        const cleaned: any = {};
+        Object.keys(obj).forEach(key => {
+          if (obj[key] !== undefined) {
+            cleaned[key] = obj[key];
+          }
+        });
+        return cleaned;
+      };
+
+      const productData = {
         ...product,
         name: basicFields.name,
         description: basicFields.description,
@@ -281,10 +301,15 @@ export default function EditProductForm({ product, onSave, onCancel }: EditProdu
         updatedAt: new Date()
       };
 
+      // undefined 값 제거
+      const updatedProduct: Product = cleanObject(productData);
+
       await onSave(updatedProduct);
     } catch (error) {
       console.error('상품 저장 실패:', error);
       alert('상품 저장에 실패했습니다.');
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -589,9 +614,9 @@ export default function EditProductForm({ product, onSave, onCancel }: EditProdu
         <button
           type="submit"
           className={styles.saveButton}
-          disabled={uploading}
+          disabled={uploading || isSaving}
         >
-          {uploading ? '저장 중...' : '저장'}
+          {uploading ? '업로드 중...' : isSaving ? '저장 중...' : '저장'}
         </button>
       </div>
     </form>

@@ -5,6 +5,7 @@ import { useReview } from '@/context/reviewProvider';
 import { useProduct } from '@/context/productProvider';
 import Link from 'next/link';
 import Button from '@/app/_components/Button';
+import { formatDate } from '@/shared/utils/dateFormat';
 import styles from './ReviewList.module.css';
 
 export default function ReviewList() {
@@ -163,7 +164,7 @@ export default function ReviewList() {
                     )}
                   </div>
                   <span className={styles.reviewDate}>
-                    {review.createdAt.toLocaleDateString()}
+                    {formatDate(review.createdAt)}
                   </span>
                 </div>
 

@@ -74,10 +74,9 @@
 }
 
 .navList {
-  margin-left: 2.5rem;
   display: flex;
   align-items: baseline;
-  gap: 2rem;
+  gap: 1rem;
 }
 
 .navLink {

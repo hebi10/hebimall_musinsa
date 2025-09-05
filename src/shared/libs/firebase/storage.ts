@@ -128,8 +128,6 @@ export const deleteProductImage = async (imageUrl: string): Promise<void> => {
     // URL 디코딩
     const filePath = decodeURIComponent(cleanEncodedPath);
     
-    console.log('📂 파일 경로:', filePath);
-    
     const imageRef = ref(storage, filePath);
     
     await deleteObject(imageRef);

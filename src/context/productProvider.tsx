@@ -89,6 +89,9 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [lastFetchTime, setLastFetchTime] = useState<number>(0);
+  const [isLoadingRef, setIsLoadingRef] = useState<React.MutableRefObject<boolean>>(
+    { current: false } as React.MutableRefObject<boolean>
+  );
 
   // 상품 데이터 정규화 (mainImage가 없으면 첫 번째 이미지로 설정)
   const normalizeProduct = useCallback((product: Product): Product => {
@@ -108,10 +111,16 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     return normalizedProduct;
   }, []);
 
-  // 모든 상품 로드 (10초 디바운스 적용)
+  // 모든 상품 로드 (10초 디바운스 적용 + 중복 요청 방지)
   const loadProducts = useCallback(async (forceReload: boolean = false) => {
     const now = Date.now();
     const CACHE_DURATION = 10000; // 10초
+    
+    // 이미 로딩 중이면 무시
+    if (isLoadingRef.current) {
+      console.log('⏳ 이미 로딩 중입니다. 중복 요청을 무시합니다.');
+      return;
+    }
     
     // 강제 새로고침이 아니고 캐시 기간 내라면 로딩하지 않음
     if (!forceReload && now - lastFetchTime < CACHE_DURATION) {
@@ -120,9 +129,10 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     }
 
     try {
+      isLoadingRef.current = true;
       setLoading(true);
       setError(null);
-
+      
       const [allProducts, categories, brands] = await Promise.all([
         CategoryOnlyProductService.getAllProducts(),
         CategoryOnlyProductService.getCategories(),
@@ -150,6 +160,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       setError(errorMessage);
       console.error('상품 조회 실패:', err);
     } finally {
+      isLoadingRef.current = false;
       setLoading(false);
     }
   }, [normalizeProduct, lastFetchTime]);

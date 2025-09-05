@@ -11,6 +11,7 @@ import { UserActivityProvider } from "@/context/userActivityProvider";
 import { useState } from "react";
 import { CouponProvider } from "@/context/couponProvider";
 import { EventProvider } from "@/context/eventProvider";
+import { ScrollToTop } from "../ScrollToTop";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient({
@@ -32,6 +33,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
                 <ReviewProvider>
                   <EventProvider>
                     <CouponProvider>
+                      <ScrollToTop />
                       {children}
                     </CouponProvider>
                   </EventProvider>

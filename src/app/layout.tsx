@@ -6,11 +6,12 @@ import Header from "./_components/header/Header";
 import Footer from "./_components/footer/Footer";
 import RootProviders from "./_components/providers/RootProviders";
 import ChatWidget from "./_components/chat/ChatWidget";
-import { ScrollToTop } from "./_components/ScrollToTop";
 
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+  display: 'swap', // 폰트 로딩 최적화
+  preload: true,  // 폰트 프리로드
 });
 
 export const metadata: Metadata = {
@@ -37,7 +38,6 @@ export default function RootLayout({
       </head>
       <body className={`${inter.variable}`}>
         <RootProviders>
-          <ScrollToTop />
           <Header />
           <main style={{ minHeight: '100vh' }}>
             {children}

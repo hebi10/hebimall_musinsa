@@ -37,28 +37,19 @@ export default function CategoriesPage() {
         {categories.map((category) => (
           <Link
             key={category.id}
-            href={category.path}
+            href={`/categories/${category.id}`}
             className={styles.categoryCard}
           >
             <div className={styles.categoryImage}>
-              {category.imageUrl ? (
-                <img src={category.imageUrl} alt={category.name} />
-              ) : (
-                <div className={styles.imagePlaceholder}>
-                  <span className={styles.categoryIcon}>
-                    {category.icon || '📦'}
-                  </span>
-                </div>
-              )}
+              <div className={styles.imagePlaceholder}>
+                <span className={styles.categoryIcon}>
+                  {category.icon || '📦'}
+                </span>
+              </div>
             </div>
             <div className={styles.categoryContent}>
               <h3 className={styles.categoryName}>{category.name}</h3>
               <p className={styles.categoryDescription}>{category.description}</p>
-              {category.productCount > 0 && (
-                <span className={styles.productCount}>
-                  {category.productCount}개 상품
-                </span>
-              )}
             </div>
           </Link>
         ))}
@@ -71,7 +62,7 @@ export default function CategoriesPage() {
             {featuredCategories.map((category, index) => (
               <Link 
                 key={category.id} 
-                href={category.path} 
+                href={`/categories/${category.id}`} 
                 className={`${styles.featuredCard} ${styles[`featured${index + 1}`]}`}
               >
                 <div className={styles.featuredContent}>

@@ -41,8 +41,6 @@ async function testHybridStructure() {
           collection(db, 'categories', categorySlug, 'products')
         );
         
-        console.log(`   📂 categories/${categorySlug}/products/: ${categoryProductsSnapshot.size}개`);
-        
         categoryProductsSnapshot.docs.slice(0, 2).forEach(doc => {
           const data = doc.data();
           console.log(`      - ${doc.id}: ${data.name} (₩${data.price?.toLocaleString()})`);

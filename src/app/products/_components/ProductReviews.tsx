@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useReview } from '@/context/reviewProvider';
 import { useAuth } from '@/context/authProvider';
 import { Review } from '@/shared/types/review';
+import { formatDate } from '@/shared/utils/dateFormat';
 import styles from './ProductReviews.module.css';
 
 interface ProductReviewsProps {
@@ -243,7 +244,7 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
                   </div>
                   <div className={styles.reviewMeta}>
                     <span className={styles.date}>
-                      {review.createdAt.toLocaleDateString()}
+                      {formatDate(review.createdAt)}
                     </span>
                     {user?.uid === review.userId && (
                       <button 

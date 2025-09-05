@@ -1,185 +1,150 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Category, CreateCategoryRequest, UpdateCategoryRequest } from '@/shared/types/category';
-import { CategoryService } from '@/shared/services/categoryService';
+import { collection, getDocs, doc, updateDoc, addDoc, deleteDoc } from 'firebase/firestore';
+import { db } from '@/shared/libs/firebase/firebase';
 import styles from './page.module.css';
+
+interface Category {
+  id: string;
+  name: string;
+  description: string;
+  order: number;
+  isActive: boolean;
+  icon: string;
+  color: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 export default function AdminCategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
-  const [formData, setFormData] = useState<CreateCategoryRequest>({
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newCategory, setNewCategory] = useState({
+    id: '',
     name: '',
-    slug: '',
-    path: '',
     description: '',
-    icon: '',
-    order: 0,
+    order: 1,
+    isActive: true,
+    icon: '📦',
+    color: '#007bff'
   });
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [uploading, setUploading] = useState(false);
 
-  const fetchCategories = async () => {
+  useEffect(() => {
+    loadCategories();
+  }, []);
+
+  const loadCategories = async () => {
     try {
       setLoading(true);
-      const fetchedCategories = await CategoryService.getAllCategories();
-      setCategories(fetchedCategories);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '카테고리를 불러오는데 실패했습니다.');
+      const snapshot = await getDocs(collection(db, 'categories'));
+      const categoryList = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        createdAt: doc.data().createdAt?.toDate() || new Date(),
+        updatedAt: doc.data().updatedAt?.toDate() || new Date(),
+      })) as Category[];
+      
+      // order로 정렬
+      categoryList.sort((a, b) => a.order - b.order);
+      setCategories(categoryList);
+    } catch (error) {
+      console.error('카테고리 로드 실패:', error);
+      alert('카테고리를 불러오는데 실패했습니다.');
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  const openModal = (category?: Category) => {
-    if (category) {
-      setEditingCategory(category);
-      setFormData({
-        name: category.name,
-        slug: category.slug,
-        path: category.path,
-        description: category.description || '',
-        icon: category.icon || '',
-        order: category.order,
-      });
-    } else {
-      setEditingCategory(null);
-      setFormData({
-        name: '',
-        slug: '',
-        path: '',
-        description: '',
-        icon: '',
-        order: categories.length,
-      });
-    }
-    setImageFile(null);
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setEditingCategory(null);
-    setFormData({
-      name: '',
-      slug: '',
-      path: '',
-      description: '',
-      icon: '',
-      order: 0,
-    });
-    setImageFile(null);
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-
-    // 이름이 변경되면 자동으로 slug와 path 생성
-    if (name === 'name') {
-      const slug = value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-      setFormData(prev => ({
-        ...prev,
-        slug,
-        path: `/categories/${slug}`
-      }));
-    }
-  };
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setImageFile(file);
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setUploading(true);
-
+  const handleSaveCategory = async (category: Category) => {
     try {
-      let imageUrl = editingCategory?.imageUrl;
-
-      // 이미지 업로드
-      if (imageFile) {
-        const tempId = editingCategory?.id || `temp_${Date.now()}`;
-        imageUrl = await CategoryService.uploadCategoryImage(imageFile, tempId);
-      }
-
-      const categoryData = {
-        ...formData,
-        imageUrl,
-      };
-
-      if (editingCategory) {
-        // 수정
-        const updateData: UpdateCategoryRequest = {
-          id: editingCategory.id,
-          ...categoryData,
-        };
-        await CategoryService.updateCategory(updateData);
-      } else {
-        // 생성
-        await CategoryService.createCategory(categoryData);
-      }
-
-      await fetchCategories();
-      closeModal();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '카테고리 저장에 실패했습니다.');
-    } finally {
-      setUploading(false);
+      await updateDoc(doc(db, 'categories', category.id), {
+        name: category.name,
+        description: category.description,
+        order: category.order,
+        isActive: category.isActive,
+        icon: category.icon,
+        color: category.color,
+        updatedAt: new Date()
+      });
+      
+      await loadCategories();
+      setEditingCategory(null);
+      alert('카테고리가 수정되었습니다.');
+    } catch (error) {
+      console.error('카테고리 수정 실패:', error);
+      alert('카테고리 수정에 실패했습니다.');
     }
   };
 
-  const handleDelete = async (category: Category) => {
-    if (!confirm(`'${category.name}' 카테고리를 삭제하시겠습니까?`)) {
+  const handleAddCategory = async () => {
+    try {
+      if (!newCategory.id || !newCategory.name) {
+        alert('ID와 이름은 필수입니다.');
+        return;
+      }
+
+      await addDoc(collection(db, 'categories'), {
+        ...newCategory,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      });
+
+      await loadCategories();
+      setShowAddForm(false);
+      setNewCategory({
+        id: '',
+        name: '',
+        description: '',
+        order: 1,
+        isActive: true,
+        icon: '📦',
+        color: '#007bff'
+      });
+      alert('새 카테고리가 추가되었습니다.');
+    } catch (error) {
+      console.error('카테고리 추가 실패:', error);
+      alert('카테고리 추가에 실패했습니다.');
+    }
+  };
+
+  const handleDeleteCategory = async (categoryId: string) => {
+    if (!confirm('정말로 이 카테고리를 삭제하시겠습니까?')) {
       return;
     }
 
     try {
-      await CategoryService.deleteCategory(category.id);
-      await fetchCategories();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '카테고리 삭제에 실패했습니다.');
+      await deleteDoc(doc(db, 'categories', categoryId));
+      await loadCategories();
+      alert('카테고리가 삭제되었습니다.');
+    } catch (error) {
+      console.error('카테고리 삭제 실패:', error);
+      alert('카테고리 삭제에 실패했습니다.');
     }
   };
 
-  const handleOrderChange = async (categoryId: string, newOrder: number) => {
+  const toggleCategoryStatus = async (category: Category) => {
     try {
-      const updatedCategories = categories.map(cat => {
-        if (cat.id === categoryId) {
-          return { ...cat, order: newOrder };
-        }
-        return cat;
+      await updateDoc(doc(db, 'categories', category.id), {
+        isActive: !category.isActive,
+        updatedAt: new Date()
       });
-
-      const orderUpdates = updatedCategories.map(cat => ({
-        id: cat.id,
-        order: cat.order
-      }));
-
-      await CategoryService.updateCategoryOrder(orderUpdates);
-      await fetchCategories();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '순서 변경에 실패했습니다.');
+      await loadCategories();
+    } catch (error) {
+      console.error('카테고리 상태 변경 실패:', error);
+      alert('카테고리 상태 변경에 실패했습니다.');
     }
   };
 
   if (loading) {
     return (
       <div className={styles.container}>
-        <div className={styles.loading}>카테고리를 불러오는 중...</div>
+        <div className={styles.loading}>
+          <div className={styles.spinner}></div>
+          <p>카테고리를 불러오는 중...</p>
+        </div>
       </div>
     );
   }
@@ -188,56 +153,122 @@ export default function AdminCategoriesPage() {
     <div className={styles.container}>
       <div className={styles.header}>
         <h1 className={styles.title}>카테고리 관리</h1>
-        <button className={styles.addButton} onClick={() => openModal()}>
-          새 카테고리 추가
+        <p className={styles.subtitle}>쇼핑몰의 카테고리를 관리하고 수정할 수 있습니다.</p>
+        <button 
+          className={styles.addButton}
+          onClick={() => setShowAddForm(true)}
+        >
+          + 새 카테고리 추가
         </button>
       </div>
 
-      {error && (
-        <div className={styles.error}>
-          {error}
-          <button onClick={() => setError(null)} className={styles.errorClose}>
-            ×
-          </button>
+      {showAddForm && (
+        <div className={styles.addForm}>
+          <h3>새 카테고리 추가</h3>
+          <div className={styles.formGroup}>
+            <label>카테고리 ID:</label>
+            <input
+              type="text"
+              value={newCategory.id}
+              onChange={(e) => setNewCategory({...newCategory, id: e.target.value})}
+              placeholder="예: electronics"
+            />
+          </div>
+          <div className={styles.formGroup}>
+            <label>카테고리 이름:</label>
+            <input
+              type="text"
+              value={newCategory.name}
+              onChange={(e) => setNewCategory({...newCategory, name: e.target.value})}
+              placeholder="예: 전자제품"
+            />
+          </div>
+          <div className={styles.formGroup}>
+            <label>설명:</label>
+            <textarea
+              value={newCategory.description}
+              onChange={(e) => setNewCategory({...newCategory, description: e.target.value})}
+              placeholder="카테고리 설명을 입력하세요"
+            />
+          </div>
+          <div className={styles.formGroup}>
+            <label>순서:</label>
+            <input
+              type="number"
+              value={newCategory.order}
+              onChange={(e) => setNewCategory({...newCategory, order: parseInt(e.target.value)})}
+            />
+          </div>
+          <div className={styles.formGroup}>
+            <label>아이콘:</label>
+            <input
+              type="text"
+              value={newCategory.icon}
+              onChange={(e) => setNewCategory({...newCategory, icon: e.target.value})}
+              placeholder="📦"
+            />
+          </div>
+          <div className={styles.formGroup}>
+            <label>색상:</label>
+            <input
+              type="color"
+              value={newCategory.color}
+              onChange={(e) => setNewCategory({...newCategory, color: e.target.value})}
+            />
+          </div>
+          <div className={styles.formActions}>
+            <button className={styles.saveButton} onClick={handleAddCategory}>
+              추가
+            </button>
+            <button className={styles.cancelButton} onClick={() => setShowAddForm(false)}>
+              취소
+            </button>
+          </div>
         </div>
       )}
 
       <div className={styles.categoriesGrid}>
         {categories.map((category) => (
           <div key={category.id} className={styles.categoryCard}>
-            <div className={styles.categoryImage}>
-              {category.imageUrl ? (
-                <img src={category.imageUrl} alt={category.name} />
-              ) : category.icon ? (
-                <span className={styles.categoryIcon}>{category.icon}</span>
-              ) : (
-                <span className={styles.placeholder}>📦</span>
-              )}
-            </div>
-            
-            <div className={styles.categoryInfo}>
-              <h3 className={styles.categoryName}>{category.name}</h3>
-              <p className={styles.categoryPath}>{category.path}</p>
-              <p className={styles.categoryDescription}>{category.description}</p>
-              
-              <div className={styles.categoryMeta}>
-                <span className={`${styles.status} ${category.isActive ? styles.active : styles.inactive}`}>
+            <div className={styles.categoryHeader}>
+              <div className={styles.categoryIcon} style={{ backgroundColor: category.color }}>
+                {category.icon}
+              </div>
+              <div className={styles.categoryInfo}>
+                <h3 className={styles.categoryName}>{category.name}</h3>
+                <p className={styles.categoryId}>ID: {category.id}</p>
+              </div>
+              <div className={styles.categoryStatus}>
+                <span className={`${styles.statusBadge} ${category.isActive ? styles.active : styles.inactive}`}>
                   {category.isActive ? '활성' : '비활성'}
                 </span>
-                <span className={styles.order}>순서: {category.order}</span>
+              </div>
+            </div>
+
+            <div className={styles.categoryContent}>
+              <p className={styles.categoryDescription}>{category.description}</p>
+              <div className={styles.categoryMeta}>
+                <span>순서: {category.order}</span>
+                <span>색상: {category.color}</span>
               </div>
             </div>
 
             <div className={styles.categoryActions}>
               <button 
                 className={styles.editButton}
-                onClick={() => openModal(category)}
+                onClick={() => setEditingCategory(category)}
               >
                 수정
               </button>
               <button 
+                className={`${styles.toggleButton} ${category.isActive ? styles.deactivate : styles.activate}`}
+                onClick={() => toggleCategoryStatus(category)}
+              >
+                {category.isActive ? '비활성화' : '활성화'}
+              </button>
+              <button 
                 className={styles.deleteButton}
-                onClick={() => handleDelete(category)}
+                onClick={() => handleDeleteCategory(category.id)}
               >
                 삭제
               </button>
@@ -246,115 +277,84 @@ export default function AdminCategoriesPage() {
         ))}
       </div>
 
-      {/* 모달 */}
-      {isModalOpen && (
-        <div className={styles.modalOverlay} onClick={closeModal}>
-          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-            <h2 className={styles.modalTitle}>
-              {editingCategory ? '카테고리 수정' : '새 카테고리 추가'}
-            </h2>
-
-            <form onSubmit={handleSubmit} className={styles.form}>
-              <div className={styles.formGroup}>
-                <label htmlFor="name">카테고리 이름*</label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-
-              <div className={styles.formGroup}>
-                <label htmlFor="slug">슬러그*</label>
-                <input
-                  type="text"
-                  id="slug"
-                  name="slug"
-                  value={formData.slug}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-
-              <div className={styles.formGroup}>
-                <label htmlFor="path">경로*</label>
-                <input
-                  type="text"
-                  id="path"
-                  name="path"
-                  value={formData.path}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-
-              <div className={styles.formGroup}>
-                <label htmlFor="description">설명</label>
-                <textarea
-                  id="description"
-                  name="description"
-                  value={formData.description}
-                  onChange={handleInputChange}
-                  rows={3}
-                />
-              </div>
-
-              <div className={styles.formGroup}>
-                <label htmlFor="icon">아이콘 (이모지)</label>
-                <input
-                  type="text"
-                  id="icon"
-                  name="icon"
-                  value={formData.icon}
-                  onChange={handleInputChange}
-                  placeholder="📦"
-                />
-              </div>
-
-              <div className={styles.formGroup}>
-                <label htmlFor="order">순서*</label>
-                <input
-                  type="number"
-                  id="order"
-                  name="order"
-                  value={formData.order}
-                  onChange={handleInputChange}
-                  required
-                  min="0"
-                />
-              </div>
-
-              <div className={styles.formGroup}>
-                <label htmlFor="image">카테고리 이미지</label>
-                <input
-                  type="file"
-                  id="image"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                />
-                {editingCategory?.imageUrl && (
-                  <div className={styles.currentImage}>
-                    <p>현재 이미지:</p>
-                    <img src={editingCategory.imageUrl} alt="현재 이미지" />
-                  </div>
-                )}
-              </div>
-
-              <div className={styles.formActions}>
-                <button type="button" onClick={closeModal} className={styles.cancelButton}>
-                  취소
-                </button>
-                <button type="submit" disabled={uploading} className={styles.submitButton}>
-                  {uploading ? '저장 중...' : editingCategory ? '수정' : '추가'}
-                </button>
-              </div>
-            </form>
+      {editingCategory && (
+        <div className={styles.modal}>
+          <div className={styles.modalContent}>
+            <h3>카테고리 수정</h3>
+            <div className={styles.formGroup}>
+              <label>카테고리 이름:</label>
+              <input
+                type="text"
+                value={editingCategory.name}
+                onChange={(e) => setEditingCategory({...editingCategory, name: e.target.value})}
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <label>설명:</label>
+              <textarea
+                value={editingCategory.description}
+                onChange={(e) => setEditingCategory({...editingCategory, description: e.target.value})}
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <label>순서:</label>
+              <input
+                type="number"
+                value={editingCategory.order}
+                onChange={(e) => setEditingCategory({...editingCategory, order: parseInt(e.target.value)})}
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <label>아이콘:</label>
+              <input
+                type="text"
+                value={editingCategory.icon}
+                onChange={(e) => setEditingCategory({...editingCategory, icon: e.target.value})}
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <label>색상:</label>
+              <input
+                type="color"
+                value={editingCategory.color}
+                onChange={(e) => setEditingCategory({...editingCategory, color: e.target.value})}
+              />
+            </div>
+            <div className={styles.modalActions}>
+              <button 
+                className={styles.saveButton}
+                onClick={() => handleSaveCategory(editingCategory)}
+              >
+                저장
+              </button>
+              <button 
+                className={styles.cancelButton}
+                onClick={() => setEditingCategory(null)}
+              >
+                취소
+              </button>
+            </div>
           </div>
         </div>
       )}
+
+      <div className={styles.summary}>
+        <h3>카테고리 통계</h3>
+        <div className={styles.stats}>
+          <div className={styles.stat}>
+            <span className={styles.statNumber}>{categories.length}</span>
+            <span className={styles.statLabel}>총 카테고리</span>
+          </div>
+          <div className={styles.stat}>
+            <span className={styles.statNumber}>{categories.filter(c => c.isActive).length}</span>
+            <span className={styles.statLabel}>활성 카테고리</span>
+          </div>
+          <div className={styles.stat}>
+            <span className={styles.statNumber}>{categories.filter(c => !c.isActive).length}</span>
+            <span className={styles.statLabel}>비활성 카테고리</span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

@@ -10,7 +10,7 @@ import { Product } from '@/shared/types/product';
 
 export default function AdminProductsPage() {
   const router = useRouter();
-  const { user, isAdmin, loading: authLoading } = useAuth();
+  const { user, isAdmin, loading: authLoading, isUserDataLoading } = useAuth();
   const { 
     products, 
     loading, 
@@ -25,45 +25,78 @@ export default function AdminProductsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const hasLoadedRef = useRef(false);
+  const isLoadingRef = useRef(false);
 
-  // 인증 및 권한 체크 + 초기 데이터 로드
+  // 초기 데이터 로드 (권한은 이미 layout에서 체크됨)
   useEffect(() => {
-    // 로딩 중이면 대기
-    if (authLoading) return;
-    
-    // 로그인하지 않았으면 로그인 페이지로
-    if (!user) {
-      alert('로그인이 필요합니다.');
-      window.location.href = '/auth/login';
+    // 아직 인증이나 사용자 데이터가 로딩 중이면 대기
+    if (authLoading || isUserDataLoading || !user || !isAdmin) {
       return;
     }
     
-    // 관리자가 아니면 홈으로
-    if (!isAdmin) {
-      alert('관리자 권한이 필요합니다.');
-      window.location.href = '/';
-      return;
-    }
-    
-    // 인증 완료 후 한 번만 데이터 로드
-    if (!hasLoadedRef.current) {
+    // 인증 완료 후 한 번만 데이터 로드 (중복 방지)
+    if (!hasLoadedRef.current && !isLoadingRef.current) {
       console.log('✅ 관리자 권한 확인됨 - 상품 데이터 로드 중...');
-      loadProducts(true);
+      isLoadingRef.current = true;
+      loadProducts(true).finally(() => {
+        isLoadingRef.current = false;
+      });
       hasLoadedRef.current = true;
     }
-  }, [user, isAdmin, authLoading]); // router와 loadProducts 제거
+  }, [user, isAdmin, authLoading, isUserDataLoading, loadProducts]);
 
-  // 로딩 중이거나 권한이 없으면 표시하지 않음
-  if (authLoading) {
+  // 강제 새로고침 함수
+  const handleForceRefresh = useCallback(() => {
+    // 이미 로딩 중이면 무시
+    if (isLoadingRef.current) {
+      console.log('⏳ 이미 로딩 중입니다. 새로고침을 무시합니다.');
+      return;
+    }
+
+    console.log('🔄 관리자 페이지 - 강제 새로고침 시작...');
+    setCurrentPage(1); // 페이지를 첫 페이지로 리셋
+    hasLoadedRef.current = false; // 로드 플래그 리셋
+    isLoadingRef.current = true;
+    
+    loadProducts(true).finally(() => {
+      isLoadingRef.current = false;
+      hasLoadedRef.current = true;
+    });
+  }, [loadProducts]);
+
+  // 상품 삭제 처리 (중복 방지)
+  const handleDeleteProduct = useCallback(async (productId: string) => {
+    if (isLoadingRef.current) {
+      console.log('⏳ 로딩 중에는 삭제할 수 없습니다.');
+      return;
+    }
+
+    if (!confirm('정말로 이 상품을 삭제하시겠습니까?')) return;
+
+    try {
+      isLoadingRef.current = true;
+      await deleteProduct(productId);
+      
+      // 성공 후 잠시 기다렸다가 새로고침
+      setTimeout(() => {
+        loadProducts(true).finally(() => {
+          isLoadingRef.current = false;
+        });
+      }, 500);
+    } catch (error) {
+      isLoadingRef.current = false;
+      console.error('상품 삭제 실패:', error);
+      alert('상품 삭제에 실패했습니다.');
+    }
+  }, [deleteProduct, loadProducts]);
+
+  // 로딩 중이거나 권한이 없으면 표시하지 않음 (layout에서 처리됨)
+  if (authLoading || isUserDataLoading || !user || !isAdmin) {
     return (
       <div className={styles.container}>
-        <div className={styles.loading}>권한을 확인하는 중...</div>
+        <div className={styles.loading}>데이터 로딩 중...</div>
       </div>
     );
-  }
-
-  if (!user || !isAdmin) {
-    return null; // 리다이렉트 중이므로 아무것도 렌더링하지 않음
   }
 
   // 검색 및 필터링 적용
@@ -165,9 +198,18 @@ export default function AdminProductsPage() {
     <div className={styles.container}>
       <div className={styles.header}>
         <h1 className={styles.title}>상품 관리</h1>
-        <Link href="/admin/dashboard/products/add" className={styles.addButton}>
-          상품 추가
-        </Link>
+        <div className={styles.headerActions}>
+          <button 
+            onClick={handleForceRefresh}
+            className={styles.refreshButton}
+            title="데이터 새로고침"
+          >
+            🔄 새로고침
+          </button>
+          <Link href="/admin/dashboard/products/add" className={styles.addButton}>
+            상품 추가
+          </Link>
+        </div>
       </div>
 
       {/* 검색 및 필터 */}

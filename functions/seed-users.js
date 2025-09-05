@@ -123,7 +123,6 @@ const seedUsers = async () => {
     });
 
     await batch.commit();
-    console.log(`✅ ${mockUsers.length}명의 사용자가 성공적으로 추가되었습니다.`);
   } catch (error) {
     console.error('❌ 사용자 추가 중 오류 발생:', error);
     throw error;

@@ -33,11 +33,35 @@ const ChatWidget: React.FC = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [useAI, setUseAI] = useState(false); // AI 상담원 연결 상태
+  const [isMounted, setIsMounted] = useState(false); // 클라이언트 마운트 상태
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const chatMessagesRef = useRef<HTMLDivElement>(null);
   const [isUserScrolling, setIsUserScrolling] = useState(false);
+
+  // 컴포넌트 마운트 확인
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // SSR 안전한 subtitle 텍스트 생성
+  const getSubtitleText = () => {
+    if (!isMounted) {
+      return '채팅 상담을 시작해보세요'; // 서버 렌더링 시 고정값
+    }
+    
+    if (isLoading) {
+      return '답변 작성 중...';
+    }
+    if (useAI) {
+      return '맞춤형 AI 상담 연결됨';
+    }
+    if (isChatStarted) {
+      return '언제든 문의해 주세요';
+    }
+    return '채팅 상담을 시작해보세요';
+  };
 
   // 채팅 상담 시작 함수
   const startChat = () => {
@@ -142,8 +166,8 @@ const ChatWidget: React.FC = () => {
     }
 
     try {
-      // Firebase Functions URL 직접 사용 (로컬/프로덕션 관계없이)
-      const apiUrl = process.env.NEXT_PUBLIC_CHAT_API_URL || 'https://chatapi-66prmh3i3q-uc.a.run.app';
+      // 로컬 API 라우트 사용 (Firebase Functions 대신)
+      const apiUrl = '/api/chat';
       
       console.log('Chat API 호출:', { 
         apiUrl, 
@@ -250,8 +274,8 @@ AI 상담원은 다음과 같은 도움을 드릴 수 있습니다:
     }
 
     try {
-      // Firebase Functions URL 직접 사용 (로컬/프로덕션 관계없이)
-      const apiUrl = process.env.NEXT_PUBLIC_CHAT_API_URL || 'https://chatapi-66prmh3i3q-uc.a.run.app';
+      // 로컬 API 라우트 사용 (Firebase Functions 대신)
+      const apiUrl = '/api/chat';
       
       console.log('Quick Button - Chat API 호출:', { 
         apiUrl, 
@@ -366,14 +390,7 @@ AI 상담원은 다음과 같은 도움을 드릴 수 있습니다:
               {useAI ? '🤖 AI 상담원' : '고객상담'}
             </h3>
             <p className={styles.chatSubtitle}>
-              {isLoading 
-                ? '답변 작성 중...' 
-                : useAI 
-                  ? '맞춤형 AI 상담 연결됨' 
-                  : isChatStarted
-                    ? '언제든 문의해 주세요'
-                    : '채팅 상담을 시작해보세요'
-              }
+              {isMounted ? getSubtitleText() : '채팅 상담을 시작해보세요'}
             </p>
           </div>
           <div className={styles.headerButtons}>

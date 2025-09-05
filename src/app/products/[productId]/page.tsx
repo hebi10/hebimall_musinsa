@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import ProductDetailClient from '../_components/ProductDetailClient';
-import { CategoryBasedProductService } from '@/shared/services/categoryBasedProductService';
+import { CategoryOnlyProductService } from '@/shared/services/hybridProductService';
 import { notFound } from 'next/navigation';
 
 interface ProductPageProps {
@@ -13,7 +13,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   const { productId } = await params;
   
   try {
-    const product = await CategoryBasedProductService.findProductById(productId);
+    const product = await CategoryOnlyProductService.getProductById(productId);
     
     if (!product) {
       return {
@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
       openGraph: {
         title: product.name,
         description: product.description,
-        images: product.images.length > 0 ? [product.images[0]] : []
+        images: product.images && product.images.length > 0 ? [product.images[0]] : []
       }
     };
   } catch (error) {
@@ -42,7 +42,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const { productId } = await params;
   
   try {
-    const product = await CategoryBasedProductService.findProductById(productId);
+    const product = await CategoryOnlyProductService.getProductById(productId);
     
     if (!product) {
       notFound();

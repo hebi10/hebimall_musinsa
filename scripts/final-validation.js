@@ -39,7 +39,6 @@ async function finalValidation() {
       const categoryDoc = await getDoc(doc(db, 'categories', categoryId));
       if (categoryDoc.exists()) {
         const categoryData = categoryDoc.data();
-        console.log(`   📂 /categories/${categoryId} → ${categoryData.name}`);
         
         // 해당 카테고리의 상품들 확인
         const productsSnapshot = await getDocs(collection(db, 'categories', categoryId, 'products'));

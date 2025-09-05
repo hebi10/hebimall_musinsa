@@ -91,15 +91,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [user, loading, pathname, router]);
 
-  // 관리자일 경우
+  // 관리자 권한 체크
   useEffect(() => {
-    if (userData?.role === 'admin') {
-      setIsAdmin(true);
-    } else {
-      setIsAdmin(false);
+    if (user && userData !== undefined) { // userData가 로드 완료되었을 때만
+      if (userData?.role === 'admin') {
+        setIsAdmin(true);
+      } else {
+        console.log('❌ 일반 사용자:', userData?.email || 'Unknown');
+        setIsAdmin(false);
+      }
+    } else if (!user) {
+      setIsAdmin(false); // 로그아웃 시 권한 리셋
     }
+    
     setIsUserDataLoading(userDataLoading || loading);
-  }, [userData, userDataLoading, loading]);
+  }, [user, userData, userDataLoading, loading]);
 
   return (
     <AuthContext.Provider value={{ user, login, logout, signUp, userData, loading, isUserDataLoading, isAdmin, error, clearError }}>
