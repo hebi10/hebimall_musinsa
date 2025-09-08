@@ -3,9 +3,8 @@
   background-color: #ffffff;
 }
 
-/* Hero Section */
 .heroSection {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
   padding: 3rem 1rem;
   text-align: center;
   color: white;
@@ -43,10 +42,40 @@
   line-height: 1.6;
 }
 
-.content {
+.contentSection {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 4rem 1rem;
+}
+
+.productsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.loadingCard {
+  background: white;
+  border-radius: 1rem;
+  padding: 3rem 2rem;
+  text-align: center;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border: 1px solid #f3f4f6;
+  grid-column: 1 / -1;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.loadingIcon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  opacity: 0.8;
+}
+
+.loadingText {
+  color: #6b7280;
+  font-size: 1.125rem;
+  font-weight: 500;
 }
 
 /* ========== Mobile First Media Queries ========== */
@@ -58,6 +87,10 @@
 
   .heroSubtitle {
     font-size: 1rem;
+  }
+
+  .contentSection {
+    padding: 2rem 1rem;
   }
 }
 
@@ -72,7 +105,7 @@
 }
 
 @media (min-width: 1024px) {
-  .content {
-    padding: 0 2rem;
+  .contentSection {
+    padding: 4rem 2rem;
   }
 }
