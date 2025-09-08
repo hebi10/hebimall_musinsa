@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/authProvider";
 import styles from "./page.module.css";
 import AdminNav from "../../_components/adminNav";
-import AuthChecking from "@/app/admin/_components/AuthChecking";
 import { AdminUserService, AdminUserData, UserStats, UserFilter, PointOperation } from "@/shared/services/adminUserService";
 
 export default function AdminUsersPage() {
@@ -28,14 +27,6 @@ export default function AdminUsersPage() {
   const [pointOperation, setPointOperation] = useState<'add' | 'subtract'>('add');
   const [showUserDetail, setShowUserDetail] = useState(false);
   const [userPointHistory, setUserPointHistory] = useState<any[]>([]);
-
-  useEffect(() => {
-    if (!isUserDataLoading && !loading) {
-      if (!user || !isAdmin) {
-        router.push('/auth/login');
-      }
-    }
-  }, [user, isUserDataLoading, isAdmin, router, loading]);
 
   // 사용자 데이터 로드
   const loadUsers = async () => {
@@ -73,9 +64,58 @@ export default function AdminUsersPage() {
     setFilteredUsers(users);
   }, [users]);
 
-  // 권한 체크 로딩
-  if (!isAdmin && !isUserDataLoading) {
-    return <AuthChecking />;
+  // 권한 체크 및 로딩 상태
+  if (loading || isUserDataLoading) {
+    return (
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100vh',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        color: 'white',
+        fontSize: '1.2rem'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '3rem', marginBottom: '20px' }}>🔐</div>
+          <p>권한을 확인하는 중...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // 로그인하지 않았거나 관리자가 아닌 경우
+  if (!user || !isAdmin) {
+    return (
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100vh',
+        background: '#f8f9fa',
+        color: '#dc3545',
+        fontSize: '1.1rem'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '3rem', marginBottom: '20px' }}>🚫</div>
+          <p>관리자 권한이 필요합니다.</p>
+          <button 
+            onClick={() => router.push('/auth/login')}
+            style={{
+              marginTop: '20px',
+              padding: '10px 20px',
+              backgroundColor: '#007bff',
+              color: 'white',
+              border: 'none',
+              borderRadius: '5px',
+              cursor: 'pointer'
+            }}
+          >
+            로그인하기
+          </button>
+        </div>
+      </div>
+    );
   }
 
   const handleStatusChange = async (userId: string, newStatus: 'active' | 'inactive' | 'banned') => {
