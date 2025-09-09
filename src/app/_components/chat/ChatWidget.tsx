@@ -28,6 +28,7 @@ const MessageText: React.FC<{ text: string }> = ({ text }) => {
 const ChatWidget: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isChatStarted, setIsChatStarted] = useState(false); // 채팅 시작 여부
+  const [isAgentConnected, setIsAgentConnected] = useState(false); // 상담원 연결 여부
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -57,7 +58,10 @@ const ChatWidget: React.FC = () => {
     if (useAI) {
       return '맞춤형 AI 상담 연결됨';
     }
-    if (isChatStarted) {
+    if (isChatStarted && !isAgentConnected) {
+      return '상담원 연결을 위해 "🤖 상담원연결" 버튼을 클릭해주세요';
+    }
+    if (isChatStarted && isAgentConnected) {
       return '언제든 문의해 주세요';
     }
     return '채팅 상담을 시작해보세요';
@@ -134,6 +138,7 @@ const ChatWidget: React.FC = () => {
   // 채팅 리셋 함수 (완전히 새로 시작하고 싶을 때)
   const resetChat = () => {
     setIsChatStarted(false);
+    setIsAgentConnected(false);
     setMessages([]);
     setUseAI(false);
     setInputValue('');
@@ -143,7 +148,7 @@ const ChatWidget: React.FC = () => {
 
   // 메시지 전송 함수
   const sendMessage = async () => {
-    if (!inputValue.trim() || isLoading || !isChatStarted) return;
+    if (!inputValue.trim() || isLoading || !isChatStarted || !isAgentConnected) return;
 
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
@@ -163,10 +168,11 @@ const ChatWidget: React.FC = () => {
     
     if (messageText.toLowerCase() === '상담원연결' || messageText.toLowerCase() === '상담원 연결') {
       setUseAI(true);
+      setIsAgentConnected(true);
     }
 
     try {
-      // 로컬 API 라우트 사용 (Firebase Functions 대신)
+      // 모든 환경에서 동일하게 /api/chat 사용 (Firebase Hosting에서 rewrite 처리)
       const apiUrl = '/api/chat';
       
       console.log('Chat API 호출:', { 
@@ -211,9 +217,9 @@ const ChatWidget: React.FC = () => {
         
         // AI 상담원 연결 시 특별 처리
         if ((messageText.toLowerCase() === '상담원연결' || messageText.toLowerCase() === '상담원 연결') && shouldUseAI) {
-          responseText = `AI 상담원과 연결됩니다. 이제 더 자세하고 개인화된 상담을 받으실 수 있습니다! 
+          responseText = `AI 상담원과 연결되었습니다! 이제 더 자세하고 개인화된 상담을 받으실 수 있습니다. 😊
 
-무엇을 도와드릴까요? 😊
+무엇을 도와드릴까요?
 
 AI 상담원은 다음과 같은 도움을 드릴 수 있습니다:
 • 맞춤형 상품 추천
@@ -241,7 +247,7 @@ AI 상담원은 다음과 같은 도움을 드릴 수 있습니다:
       
       const errorMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
-        text: '죄송합니다. 네트워크 문제가 발생했습니다. 잠시 후 다시 시도해 주시거나 고객센터(1588-0000)로 연락해 주세요.',
+        text: '죄송합니다. 일시적인 문제가 발생했습니다. 잠시 후 다시 시도해 주시거나 고객센터(1588-0000)로 연락해 주세요.\n\n기본 상담은 "🤖 상담원연결" 버튼을 클릭하신 후 이용 가능합니다.',
         sender: 'bot',
         timestamp: new Date()
       };
@@ -253,6 +259,12 @@ AI 상담원은 다음과 같은 도움을 드릴 수 있습니다:
   // 빠른 선택 버튼 클릭 처리
   const handleQuickButton = async (text: string) => {
     if (!isChatStarted) return;
+    
+    // "상담원연결" 버튼을 클릭하면 상담원 연결 상태로 변경
+    if (text.toLowerCase() === '상담원연결' || text.toLowerCase() === '상담원 연결') {
+      setUseAI(true);
+      setIsAgentConnected(true);
+    }
     
     // 직접 메시지 전송 (inputValue 상태를 거치지 않음)
     const userMessage: ChatMessage = {
@@ -268,13 +280,9 @@ AI 상담원은 다음과 같은 도움을 드릴 수 있습니다:
 
     // "상담원연결" 명령어 감지
     const shouldUseAI = text.toLowerCase() === '상담원연결' || text.toLowerCase() === '상담원 연결' || useAI;
-    
-    if (text.toLowerCase() === '상담원연결' || text.toLowerCase() === '상담원 연결') {
-      setUseAI(true);
-    }
 
     try {
-      // 로컬 API 라우트 사용 (Firebase Functions 대신)
+      // 모든 환경에서 동일하게 /api/chat 사용 (Firebase Hosting에서 rewrite 처리)
       const apiUrl = '/api/chat';
       
       console.log('Quick Button - Chat API 호출:', { 
@@ -314,15 +322,17 @@ AI 상담원은 다음과 같은 도움을 드릴 수 있습니다:
         
         // AI 상담원 연결 시 특별 처리
         if ((text.toLowerCase() === '상담원연결' || text.toLowerCase() === '상담원 연결') && shouldUseAI) {
-          responseText = `AI 상담원과 연결됩니다. 이제 더 자세하고 개인화된 상담을 받으실 수 있습니다! 
+          responseText = `AI 상담원과 연결되었습니다! 이제 더 자세하고 개인화된 상담을 받으실 수 있습니다. 😊
 
-무엇을 도와드릴까요? 😊
+무엇을 도와드릴까요?
 
 AI 상담원은 다음과 같은 도움을 드릴 수 있습니다:
 • 맞춤형 상품 추천
 • 상세한 주문/배송 안내  
 • 개인화된 고객 지원
-• 실시간 문제 해결`;
+• 실시간 문제 해결
+
+이제 채팅창에서 자유롭게 메시지를 입력하실 수 있습니다!`;
         }
         
         const botMessage: ChatMessage = {
@@ -344,7 +354,7 @@ AI 상담원은 다음과 같은 도움을 드릴 수 있습니다:
       
       const errorMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
-        text: '죄송합니다. 네트워크 문제가 발생했습니다. 잠시 후 다시 시도해 주시거나 고객센터(1588-0000)로 연락해 주세요.',
+        text: '죄송합니다. 일시적인 문제가 발생했습니다. 잠시 후 다시 시도해 주시거나 고객센터(1588-0000)로 연락해 주세요.\n\n기본 상담은 "🤖 상담원연결" 버튼을 클릭하신 후 이용 가능합니다.',
         sender: 'bot',
         timestamp: new Date()
       };
@@ -361,7 +371,7 @@ AI 상담원은 다음과 같은 도움을 드릴 수 있습니다:
 
   // Enter 키 처리
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey && isChatStarted) {
+    if (e.key === 'Enter' && !e.shiftKey && isChatStarted && isAgentConnected) {
       e.preventDefault();
       sendMessage();
     }
@@ -369,7 +379,7 @@ AI 상담원은 다음과 같은 도움을 드릴 수 있습니다:
 
   // 입력 자동 크기 조절
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (!isChatStarted) return;
+    if (!isChatStarted || !isAgentConnected) return;
     
     setInputValue(e.target.value);
     
@@ -481,7 +491,7 @@ AI 상담원은 다음과 같은 도움을 드릴 수 있습니다:
         </div>
 
         {/* 빠른 선택 버튼 */}
-        {isChatStarted && !useAI && (
+        {isChatStarted && !isAgentConnected && (
           <div className={styles.quickButtons}>
             <button 
               className={styles.quickButton}
@@ -545,14 +555,18 @@ AI 상담원은 다음과 같은 도움을 드릴 수 있습니다:
                 value={inputValue}
                 onChange={handleInputChange}
                 onKeyPress={handleKeyPress}
-                placeholder={isChatStarted ? "메시지를 입력하세요..." : "먼저 채팅 상담을 시작해주세요"}
-                disabled={isLoading || !isChatStarted}
+                placeholder={
+                  isAgentConnected 
+                    ? "메시지를 입력하세요..." 
+                    : "상담원 연결 후 이용 가능합니다"
+                }
+                disabled={isLoading || !isChatStarted || !isAgentConnected}
                 rows={1}
               />
               <button
                 className={styles.sendButton}
                 onClick={sendMessage}
-                disabled={!inputValue.trim() || isLoading || !isChatStarted}
+                disabled={!inputValue.trim() || isLoading || !isChatStarted || !isAgentConnected}
                 aria-label="메시지 전송"
               >
                 ➤

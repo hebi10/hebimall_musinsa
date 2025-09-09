@@ -15,6 +15,10 @@
     ],
     "rewrites": [
       {
+        "source": "/api/chat",
+        "function": "chatAPI"
+      },
+      {
         "source": "**",
         "function": "nextjsServer"
       }
