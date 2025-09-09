@@ -225,51 +225,144 @@
   line-height: 1.5;
 }
 
-/* 액션 버튼들 */
+/* 로딩 및 처리 중 화면 */
+.loadingContainer,
+.processingContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 50vh;
+  padding: 3rem 2rem;
+  text-align: center;
+}
+
+.loadingSpinner {
+  width: 3rem;
+  height: 3rem;
+  border: 4px solid #e5e7eb;
+  border-top: 4px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 1rem 0;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.processingTitle {
+  font-size: 1.75rem;
+  font-weight: bold;
+  color: #10b981;
+  margin: 1rem 0 0.5rem 0;
+}
+
+.processingMessage {
+  font-size: 1.125rem;
+  color: #374151;
+  margin: 0 0 2rem 0;
+}
+
+.processingMessage strong {
+  background-color: #f3f4f6;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  color: #111827;
+}
+
+.processingNote {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 1rem 0 0 0;
+}
+
+/* 개선된 액션 버튼들 */
 .actionButtons {
+  padding: 2.5rem 2rem;
+  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+  border-top: 3px solid #e2e8f0;
+  text-align: center;
+}
+
+.actionMessage {
+  margin-bottom: 2rem;
+}
+
+.actionMessage h3 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #10b981;
+  margin: 0 0 0.5rem 0;
+}
+
+.actionMessage p {
+  font-size: 1rem;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.buttonGroup {
   display: flex;
   gap: 1rem;
-  padding: 2rem;
+  justify-content: center;
+  margin-bottom: 1.5rem;
 }
 
 @media (max-width: 640px) {
-  .actionButtons {
+  .buttonGroup {
     flex-direction: column;
+    align-items: center;
   }
 }
 
+.actionNote {
+  font-size: 0.875rem;
+  color: #9ca3af;
+  font-style: italic;
+  margin: 0;
+}
+
 .primaryButton {
-  flex: 1;
-  background-color: #111827;
+  min-width: 200px;
+  background: linear-gradient(135deg, #10b981, #059669);
   color: white;
-  padding: 1rem;
-  border-radius: 0.5rem;
+  padding: 1rem 1.5rem;
+  border-radius: 0.75rem;
   font-weight: 600;
   text-decoration: none;
-  text-align: center;
-  transition: background-color 0.2s;
+  display: inline-block;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
 }
 
 .primaryButton:hover {
-  background-color: #374151;
+  background: linear-gradient(135deg, #059669, #047857);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(16, 185, 129, 0.3);
 }
 
 .secondaryButton {
-  flex: 1;
+  min-width: 200px;
   background-color: white;
   color: #374151;
-  padding: 1rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.5rem;
+  padding: 1rem 1.5rem;
+  border: 2px solid #d1d5db;
+  border-radius: 0.75rem;
   font-weight: 500;
   text-decoration: none;
-  text-align: center;
-  transition: all 0.2s;
+  display: inline-block;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .secondaryButton:hover {
   background-color: #f9fafb;
   border-color: #9ca3af;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* 안내 사항 */

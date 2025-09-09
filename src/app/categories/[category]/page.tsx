@@ -6,6 +6,7 @@ import { collection, getDocs } from 'firebase/firestore';
 import { db } from '@/shared/libs/firebase/firebase';
 import { CategoryOnlyProductService } from '@/shared/services/hybridProductService';
 import { Product } from '@/shared/types/product';
+import { getCategoryName } from '@/shared/utils/categoryUtils';
 import styles from './page.module.css';
 
 interface CategoryPageProps {
@@ -25,7 +26,16 @@ export default function DynamicCategoryPage({ params }: CategoryPageProps) {
   useEffect(() => {
     const loadParams = async () => {
       const resolvedParams = await params;
-      setCategory(resolvedParams.category);
+      let categoryParam = resolvedParams.category;
+      
+      // clothing을 tops로 리다이렉트
+      if (categoryParam === 'clothing') {
+        categoryParam = 'tops';
+        // URL도 변경
+        window.history.replaceState(null, '', `/categories/tops`);
+      }
+      
+      setCategory(categoryParam);
     };
     loadParams();
   }, [params]);
@@ -39,42 +49,17 @@ export default function DynamicCategoryPage({ params }: CategoryPageProps) {
   ];
 
   // 카테고리명 매핑 - Firebase에서 가져오기
-  const [categoryData, setCategoryData] = useState<{name: string, description: string} | null>(null);
+  const [categoryDisplayName, setCategoryDisplayName] = useState<string>('');
 
   useEffect(() => {
-    const loadCategoryData = async () => {
+    const loadCategoryName = async () => {
       if (!category) return;
       
-      try {
-        // Firebase에서 카테고리 정보 가져오기
-        const categoryDoc = await getDocs(collection(db, 'categories'));
-        const foundCategory = categoryDoc.docs.find(doc => doc.id === category);
-        
-        if (foundCategory) {
-          const data = foundCategory.data();
-          setCategoryData({
-            name: data.name,
-            description: data.description
-          });
-        } else {
-          // 기본값 설정 (한국어 이름)
-          const defaultNames: Record<string, {name: string, description: string}> = {
-            'clothing': {name: '상의', description: '트렌디하고 편안한 상의로 완성하는 나만의 스타일'},
-            'accessories': {name: '액세서리', description: '포인트가 되는 액세서리로 스타일 완성'},
-            'bags': {name: '가방', description: '실용성과 스타일을 겸비한 가방 컬렉션'},
-            'bottoms': {name: '하의', description: '편안하고 스타일리시한 하의 컬렉션'},
-            'shoes': {name: '신발', description: '편안하고 스타일리시한 신발로 완벽한 발걸음을'},
-            'tops': {name: '상의', description: '다양한 스타일의 상의로 완성하는 코디'}
-          };
-          setCategoryData(defaultNames[category] || {name: category, description: '다양한 상품을 만나보세요'});
-        }
-      } catch (error) {
-        console.error('카테고리 데이터 로드 실패:', error);
-        setCategoryData({name: category, description: '다양한 상품을 만나보세요'});
-      }
+      const displayName = await getCategoryName(category);
+      setCategoryDisplayName(displayName);
     };
 
-    loadCategoryData();
+    loadCategoryName();
   }, [category]);
 
   useEffect(() => {
@@ -155,8 +140,6 @@ export default function DynamicCategoryPage({ params }: CategoryPageProps) {
     );
   }
 
-  const categoryDisplayName = categoryData?.name || category;
-
   return (
     <div className={styles.container}>
       <div className={styles.breadcrumb}>
@@ -170,7 +153,7 @@ export default function DynamicCategoryPage({ params }: CategoryPageProps) {
       <div className={styles.header}>
         <h1 className={styles.title}>{categoryDisplayName}</h1>
         <p className={styles.subtitle}>
-          {categoryData?.description || '다양한 상품을 만나보세요'}
+          다양한 상품을 만나보세요
         </p>
       </div>
 
@@ -192,9 +175,6 @@ export default function DynamicCategoryPage({ params }: CategoryPageProps) {
 
       <div className={styles.resultsInfo}>
         <span className={styles.resultCount}>총 {products.length}개 상품</span>
-        <span className={styles.categoryPath}>
-          📁 categories/{category}/products/
-        </span>
       </div>
 
       {products.length === 0 ? (
@@ -282,15 +262,6 @@ export default function DynamicCategoryPage({ params }: CategoryPageProps) {
           ))}
         </div>
       )}
-
-      <div className={styles.loadMoreSection}>
-        <p className={styles.loadInfo}>
-          ✅ 하이브리드 구조로 업데이트됨
-        </p>
-        <p className={styles.loadInfo}>
-          🔄 categories/{category}/products/ 에서 로드됨
-        </p>
-      </div>
     </div>
   );
 }

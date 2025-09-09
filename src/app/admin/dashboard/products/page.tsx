@@ -7,6 +7,8 @@ import styles from './page.module.css';
 import { useProduct } from '@/context/productProvider';
 import { useAuth } from '@/context/authProvider';
 import { Product } from '@/shared/types/product';
+import { CategoryOnlyProductService } from '@/shared/services/hybridProductService';
+import { getCategoryNames } from '@/shared/utils/categoryUtils';
 
 export default function AdminProductsPage() {
   const router = useRouter();
@@ -23,9 +25,35 @@ export default function AdminProductsPage() {
   const [categoryFilter, setCategoryFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
   const itemsPerPage = 10;
   const hasLoadedRef = useRef(false);
   const isLoadingRef = useRef(false);
+
+  // 카테고리 목록 로드
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const categoriesData = await getCategoryNames();
+        setCategories(Object.entries(categoriesData).map(([id, name]) => ({ id, name })));
+      } catch (error) {
+        console.error('❌ 카테고리 목록 로드 실패:', error);
+        // 기본 카테고리 설정 (fallback)
+        setCategories([
+          { id: 'tops', name: '상의' },
+          { id: 'bottoms', name: '하의' },
+          { id: 'shoes', name: '신발' },
+          { id: 'bags', name: '가방' },
+          { id: 'accessories', name: '액세서리' },
+          { id: 'jewelry', name: '주얼리' },
+          { id: 'outdoor', name: '아웃도어' },
+          { id: 'sports', name: '스포츠' }
+        ]);
+      }
+    };
+
+    loadCategories();
+  }, []);
 
   // 초기 데이터 로드 (권한은 이미 layout에서 체크됨)
   useEffect(() => {
@@ -168,6 +196,12 @@ export default function AdminProductsPage() {
     }
   };
 
+  // 카테고리 ID를 한국어 이름으로 변환하는 함수
+  const getCategoryName = (categoryId: string) => {
+    const category = categories.find(cat => cat.id === categoryId);
+    return category ? category.name : categoryId;
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active': return '#10B981'; // 초록색
@@ -231,11 +265,11 @@ export default function AdminProductsPage() {
             className={styles.filterSelect}
           >
             <option value="">전체 카테고리</option>
-            <option value="상의">상의</option>
-            <option value="하의">하의</option>
-            <option value="신발">신발</option>
-            <option value="액세서리">액세서리</option>
-            <option value="가방">가방</option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
           </select>
           
           <select
@@ -281,7 +315,7 @@ export default function AdminProductsPage() {
                 </td>
                 <td className={styles.productName}>{product.name}</td>
                 <td>{product.brand}</td>
-                <td>{product.category}</td>
+                <td>{getCategoryName(product.category)}</td>
                 <td className={styles.price}>
                   {product.price.toLocaleString()}원
                 </td>

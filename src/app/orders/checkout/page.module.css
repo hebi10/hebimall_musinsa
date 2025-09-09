@@ -3,6 +3,21 @@
   background-color: #f9fafb;
 }
 
+/* 처리 중 스피너 */
+.processingSpinner {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 .content {
   max-width: 1280px;
   margin: 0 auto;

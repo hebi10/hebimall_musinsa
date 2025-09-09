@@ -25,7 +25,7 @@
 /* 통계 카드 그리드 */
 .statsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(2, minmax(200px, 1fr));
   gap: 20px;
   margin-bottom: 40px;
 }
@@ -197,7 +197,7 @@
 /* 태블릿 반응형 */
 @media (max-width: 1024px) {
   .statsGrid {
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    grid-template-columns: repeat(2, minmax(180px, 1fr));
     gap: 16px;
     margin-bottom: 32px;
   }

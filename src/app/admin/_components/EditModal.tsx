@@ -11,6 +11,7 @@ import {
   createPreviewUrl,
   revokePreviewUrl 
 } from '@/shared/libs/firebase/storage';
+import { getCategoryNames } from '@/shared/utils/categoryUtils';
 
 interface EditProductModalProps {
   product: Product;
@@ -21,6 +22,29 @@ interface EditProductModalProps {
 export default function EditProductModal({ product, onSave, onClose }: EditProductModalProps) {
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({});
+  const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
+
+  // 카테고리 목록 로드
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const categoriesData = await getCategoryNames();
+        setCategories(Object.entries(categoriesData).map(([id, name]) => ({ id, name })));
+      } catch (error) {
+        console.error('❌ 카테고리 목록 로드 실패:', error);
+        // 기본 카테고리 설정 (fallback)
+        setCategories([
+          { id: 'tops', name: '상의' },
+          { id: 'bottoms', name: '하의' },
+          { id: 'shoes', name: '신발' },
+          { id: 'accessories', name: '액세서리' },
+          { id: 'bags', name: '가방' }
+        ]);
+      }
+    };
+
+    loadCategories();
+  }, []);
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -385,11 +409,11 @@ export default function EditProductModal({ product, onSave, onClose }: EditProdu
                 required
               >
                 <option value="">카테고리를 선택하세요</option>
-                <option value="상의">상의</option>
-                <option value="하의">하의</option>
-                <option value="신발">신발</option>
-                <option value="액세서리">액세서리</option>
-                <option value="가방">가방</option>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
               </select>
             </div>
 

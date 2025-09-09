@@ -268,18 +268,6 @@
   font-weight: 500;
 }
 
-.loadMoreSection {
-  text-align: center;
-  padding: 2rem;
-  border-top: 1px solid #e5e7eb;
-}
-
-.loadInfo {
-  font-size: 0.875rem;
-  color: #6b7280;
-  margin-bottom: 0.5rem;
-}
-
 .emptyMessage {
   text-align: center;
   padding: 4rem 2rem;

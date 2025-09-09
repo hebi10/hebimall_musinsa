@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Product } from '@/shared/types/product';
+import { useCategories } from '@/context/categoryProvider';
 import useInputs from '@/shared/hooks/useInput';
 import { 
   uploadProductImages, 
@@ -19,6 +20,7 @@ interface EditProductFormProps {
 }
 
 export default function EditProductForm({ product, onSave, onCancel }: EditProductFormProps) {
+  const { categories, loading: categoriesLoading } = useCategories();
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({});
   const [isSaving, setIsSaving] = useState(false);
@@ -352,14 +354,20 @@ export default function EditProductForm({ product, onSave, onCancel }: EditProdu
               onChange={onChangeBasic}
               className={styles.select}
               required
+              disabled={categoriesLoading}
             >
-              <option value="">카테고리 선택</option>
-              <option value="상의">상의</option>
-              <option value="하의">하의</option>
-              <option value="신발">신발</option>
-              <option value="액세서리">액세서리</option>
-              <option value="가방">가방</option>
+              <option value="">
+                {categoriesLoading ? '카테고리 불러오는 중...' : '카테고리 선택'}
+              </option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name} ({category.id})
+                </option>
+              ))}
             </select>
+            {categoriesLoading && (
+              <div className={styles.loadingText}>카테고리를 불러오는 중...</div>
+            )}
           </div>
         </div>
 

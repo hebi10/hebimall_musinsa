@@ -7,6 +7,7 @@ import { QnA } from '@/shared/types/qna';
 import Chart from './_components/Chart';
 import ErrorBoundary from './_components/ErrorBoundary';
 import LoadingSpinner from './_components/LoadingSpinner';
+import { getCategoryNames } from '@/shared/utils/categoryUtils';
 import styles from './page.module.css';
 
 export default function AdminDashboard() {
@@ -20,6 +21,7 @@ export default function AdminDashboard() {
 function DashboardContent() {
   const { stats, loading, error, lastUpdated, refresh, isRefreshing } = useDashboardData();
   const { formatNumber, formatCurrency, formatTimeAgo, getGrowthColor, getGrowthIcon } = useDashboardFormatters();
+  const [categoryChartData, setCategoryChartData] = useState<Array<{label: string; value: number}>>([]);
   
   // QnA 데이터 상태
   const [qnaStats, setQnaStats] = useState({
@@ -29,6 +31,31 @@ function DashboardContent() {
     closed: 0,
   });
   const [qnaLoading, setQnaLoading] = useState(true);
+
+  // 카테고리 차트 데이터 로드
+  useEffect(() => {
+    const loadCategoryData = async () => {
+      try {
+        const categoryNames = await getCategoryNames();
+        const chartData = Object.entries(categoryNames).slice(0, 5).map(([id, name]) => ({
+          label: name,
+          value: Math.floor(Math.random() * 500) + 50 // 임시 랜덤 데이터
+        }));
+        setCategoryChartData(chartData);
+      } catch (error) {
+        console.error('카테고리 데이터 로드 실패:', error);
+        // 기본값 설정
+        setCategoryChartData([
+          { label: '상의', value: Math.floor(Math.random() * 500) + 200 },
+          { label: '하의', value: Math.floor(Math.random() * 400) + 150 },
+          { label: '신발', value: Math.floor(Math.random() * 300) + 100 },
+          { label: '액세서리', value: Math.floor(Math.random() * 200) + 50 }
+        ]);
+      }
+    };
+
+    loadCategoryData();
+  }, []);
 
   // QnA 통계 로드
   useEffect(() => {
@@ -97,14 +124,6 @@ function DashboardContent() {
     label: getStatusText(status),
     value: count
   }));
-
-  const categoryChartData = [
-    { label: '상의', value: Math.floor(Math.random() * 500) + 200 },
-    { label: '하의', value: Math.floor(Math.random() * 400) + 150 },
-    { label: '신발', value: Math.floor(Math.random() * 300) + 100 },
-    { label: '아우터', value: Math.floor(Math.random() * 250) + 80 },
-    { label: '액세서리', value: Math.floor(Math.random() * 200) + 50 }
-  ];
 
   return (
     <div className={styles.dashboard}>

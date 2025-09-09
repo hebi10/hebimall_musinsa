@@ -58,45 +58,35 @@ export class AdminUserService {
     limitCount: number = 10
   ): Promise<{ users: AdminUserData[]; totalCount: number }> {
     try {
+      console.log('🔍 AdminUserService.getUsers 호출됨', { filters, page, limitCount });
+      
+      // 복합 인덱스 문제를 피하기 위해 간단한 쿼리 사용
       let q = query(collection(db, COLLECTION_NAME));
 
-      // 필터 적용
+      // 단일 필터만 적용 (인덱스 문제 방지)
       if (filters.role && filters.role !== 'all') {
         q = query(q, where('role', '==', filters.role));
-      }
-      if (filters.status && filters.status !== 'all') {
+      } else if (filters.status && filters.status !== 'all') {
         q = query(q, where('status', '==', filters.status));
       }
 
-      // 정렬
-      q = query(q, orderBy('createdAt', 'desc'));
+      console.log('📊 Firestore 쿼리 실행 중...');
+      const querySnapshot = await getDocs(q);
+      console.log(`📊 조회된 문서 수: ${querySnapshot.size}`);
+      
+      let users = querySnapshot.docs.map(doc => {
+        console.log(`👤 사용자 문서: ${doc.id}`, doc.data());
+        return this.convertDocToUser(doc);
+      });
 
-      // 전체 개수 조회
-      const countSnapshot = await getCountFromServer(q);
-      const totalCount = countSnapshot.data().count;
-
-      // 페이지네이션 적용
-      if (page > 1) {
-        const prevPageQuery = query(
-          collection(db, COLLECTION_NAME),
-          orderBy('createdAt', 'desc'),
-          limit((page - 1) * limitCount)
+      // 클라이언트 사이드 필터링
+      if (filters.role && filters.role !== 'all' && filters.status && filters.status !== 'all') {
+        // 두 조건 모두 적용
+        users = users.filter(user => 
+          user.role === filters.role && user.status === filters.status
         );
-        const prevPageSnapshot = await getDocs(prevPageQuery);
-        if (prevPageSnapshot.docs.length > 0) {
-          const lastDoc = prevPageSnapshot.docs[prevPageSnapshot.docs.length - 1];
-          q = query(q, startAfter(lastDoc), limit(limitCount));
-        } else {
-          q = query(q, limit(limitCount));
-        }
-      } else {
-        q = query(q, limit(limitCount));
       }
 
-      const querySnapshot = await getDocs(q);
-      let users = querySnapshot.docs.map(doc => this.convertDocToUser(doc));
-
-      // 클라이언트 사이드 검색 필터링
       if (filters.searchTerm) {
         const searchLower = filters.searchTerm.toLowerCase();
         users = users.filter(user =>
@@ -105,21 +95,43 @@ export class AdminUserService {
         );
       }
 
-      return { users, totalCount };
+      // 클라이언트 사이드 정렬 (createdAt이 있는 경우)
+      users.sort((a, b) => {
+        const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        return dateB - dateA; // 최신 순
+      });
+
+      // 클라이언트 사이드 페이지네이션
+      const totalCount = users.length;
+      const startIndex = (page - 1) * limitCount;
+      const paginatedUsers = users.slice(startIndex, startIndex + limitCount);
+
+      console.log(`✅ 최종 반환: ${paginatedUsers.length}명 (전체 ${totalCount}명)`);
+      return { users: paginatedUsers, totalCount };
     } catch (error) {
-      console.error('Error fetching users:', error);
+      console.error('❌ Error fetching users:', error);
       throw error;
     }
   }
 
-  // 모든 사용자 조회 (통계용)
-  static async getAllUsers(): Promise<AdminUserData[]> {
+  // 모든 사용자 조회 (간단한 쿼리, 인덱스 불필요)
+  static async getAllUsersSimple(): Promise<AdminUserData[]> {
     try {
-      const q = query(collection(db, COLLECTION_NAME), orderBy('createdAt', 'desc'));
+      console.log('🔍 모든 사용자 조회 (간단한 쿼리)...');
+      const q = query(collection(db, COLLECTION_NAME));
       const querySnapshot = await getDocs(q);
-      return querySnapshot.docs.map(doc => this.convertDocToUser(doc));
+      
+      console.log(`📊 조회된 사용자 수: ${querySnapshot.size}`);
+      
+      const users = querySnapshot.docs.map(doc => {
+        console.log(`👤 사용자: ${doc.id}`, doc.data());
+        return this.convertDocToUser(doc);
+      });
+      
+      return users;
     } catch (error) {
-      console.error('Error fetching all users:', error);
+      console.error('❌ Error fetching all users (simple):', error);
       throw error;
     }
   }
@@ -127,18 +139,18 @@ export class AdminUserService {
   // 사용자 통계 조회
   static async getUserStats(): Promise<UserStats> {
     try {
-      const users = await this.getAllUsers();
+      const users = await this.getAllUsersSimple();
       
       const weekAgo = new Date();
       weekAgo.setDate(weekAgo.getDate() - 7);
 
-      const totalPoints = users.reduce((sum, user) => sum + (user.pointBalance || 0), 0);
+      const totalPoints = users.reduce((sum: number, user: AdminUserData) => sum + (user.pointBalance || 0), 0);
 
       return {
         total: users.length,
-        active: users.filter(user => user.status === 'active').length,
-        admin: users.filter(user => user.role === 'admin').length,
-        newUsers: users.filter(user => {
+        active: users.filter((user: AdminUserData) => user.status === 'active').length,
+        admin: users.filter((user: AdminUserData) => user.role === 'admin').length,
+        newUsers: users.filter((user: AdminUserData) => {
           const joinDate = new Date(user.joinDate || user.createdAt);
           return joinDate >= weekAgo;
         }).length,
@@ -207,22 +219,40 @@ export class AdminUserService {
     status?: 'active' | 'inactive';
   }): Promise<string> {
     try {
+      console.log('👤 사용자 생성 시작:', userData);
+      
       const newUser = {
-        ...userData,
+        name: userData.name.trim(),
+        email: userData.email.trim().toLowerCase(),
         role: userData.role || 'user',
         status: userData.status || 'active',
         orders: 0,
         totalSpent: 0,
-        lastLogin: serverTimestamp(),
+        pointBalance: 0,
+        isAdmin: (userData.role || 'user') === 'admin',
         joinDate: new Date().toISOString().split('T')[0],
+        lastLogin: serverTimestamp(),
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
+        phone: '',
+        gender: 'male',
+        grade: 'bronze',
+        addresses: [],
+        preferences: {
+          favoriteCategories: [],
+          favoriteBrands: [],
+          sizes: {},
+          newsletter: false,
+          smsMarketing: false,
+        }
       };
 
+      console.log('💾 Firestore에 저장할 데이터:', newUser);
       const docRef = await addDoc(collection(db, COLLECTION_NAME), newUser);
+      console.log('✅ 사용자 생성 완료, ID:', docRef.id);
       return docRef.id;
     } catch (error) {
-      console.error('Error creating user:', error);
+      console.error('❌ Error creating user:', error);
       throw error;
     }
   }
@@ -230,7 +260,7 @@ export class AdminUserService {
   // 사용자 데이터 내보내기 (CSV)
   static async exportUsersToCSV(): Promise<string> {
     try {
-      const users = await this.getAllUsers();
+      const users = await this.getAllUsersSimple();
       
       const headers = [
         'ID', '이름', '이메일', '역할', '상태', '가입일', 
@@ -239,7 +269,7 @@ export class AdminUserService {
       
       const csvContent = [
         headers.join(','),
-        ...users.map(user => [
+        ...users.map((user: AdminUserData) => [
           user.id,
           user.name,
           user.email,
@@ -342,7 +372,7 @@ export class AdminUserService {
   // 포인트 일괄 지급
   static async givePointsToAllUsers(amount: number, description: string): Promise<number> {
     try {
-      const users = await this.getAllUsers();
+      const users = await this.getAllUsersSimple();
       let successCount = 0;
 
       for (const user of users) {
@@ -371,22 +401,24 @@ export class AdminUserService {
   // Firestore 문서를 사용자 객체로 변환
   private static convertDocToUser(doc: any): AdminUserData {
     const data = doc.data();
-    return {
+    
+    // 기본값과 null 체크 강화
+    const user: AdminUserData = {
       id: doc.id,
-      name: data.name || data.displayName || '이름 없음',
+      name: data.name || data.displayName || data.username || '이름 없음',
       email: data.email || '',
-      phone: data.phone || '',
+      phone: data.phone || data.phoneNumber || '',
       role: data.role || 'user',
       status: data.status || 'active',
-      joinDate: data.joinDate || data.createdAt?.toDate()?.toISOString().split('T')[0] || new Date().toISOString().split('T')[0],
-      orders: data.orders || 0,
-      totalSpent: data.totalSpent || 0,
-      pointBalance: data.pointBalance || 0,
-      isAdmin: data.role === 'admin',
-      lastLogin: data.lastLogin?.toDate() || new Date(),
-      createdAt: data.createdAt?.toDate() || new Date(),
-      updatedAt: data.updatedAt?.toDate() || new Date(),
-      birthDate: data.birthDate?.toDate() || new Date(),
+      joinDate: data.joinDate || (data.createdAt?.toDate ? data.createdAt.toDate().toISOString().split('T')[0] : new Date().toISOString().split('T')[0]),
+      orders: data.orders || data.orderCount || 0,
+      totalSpent: data.totalSpent || data.totalPurchase || 0,
+      pointBalance: data.pointBalance || data.point || data.points || 0,
+      isAdmin: data.role === 'admin' || data.isAdmin || false,
+      lastLogin: data.lastLogin?.toDate ? data.lastLogin.toDate() : (data.lastLoginAt?.toDate ? data.lastLoginAt.toDate() : new Date()),
+      createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : new Date(),
+      updatedAt: data.updatedAt?.toDate ? data.updatedAt.toDate() : new Date(),
+      birthDate: data.birthDate?.toDate ? data.birthDate.toDate() : undefined,
       gender: data.gender || 'male',
       addresses: data.addresses || [],
       preferences: data.preferences || {
@@ -396,8 +428,11 @@ export class AdminUserService {
         newsletter: false,
         smsMarketing: false,
       },
-      point: data.pointBalance || 0,
-      grade: data.grade || 'bronze',
-    } as AdminUserData;
+      point: data.pointBalance || data.point || data.points || 0,
+      grade: data.grade || data.tier || 'bronze',
+    };
+
+    console.log(`🔄 변환된 사용자: ${user.id} - ${user.name} (${user.role})`);
+    return user;
   }
 }

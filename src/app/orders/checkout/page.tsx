@@ -7,6 +7,9 @@ import PageHeader from "../../_components/PageHeader";
 import Button from "../../_components/Button";
 import { useAuth } from "@/context/authProvider";
 import { usePoint } from "@/context/pointProvider";
+import { CartService } from "@/shared/services/cartService";
+import { OrderService } from "@/shared/services/orderService";
+import { PaymentMethod } from "@/shared/types/order";
 import styles from "./page.module.css";
 
 interface OrderData {
@@ -109,11 +112,64 @@ export default function CheckoutPage() {
     setIsProcessing(true);
 
     try {
-      // 주문 생성 로직 (실제로는 API 호출)
+      // 결제 처리 시뮬레이션 (실제로는 결제 API 호출)
+      await new Promise(resolve => setTimeout(resolve, 2000)); // 2초 대기
+
+      // 주문 번호 생성
+      const orderNumber = `ORD-${new Date().getFullYear()}${String(new Date().getMonth() + 1).padStart(2, '0')}${String(new Date().getDate()).padStart(2, '0')}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
+
+      // 결제 수단 텍스트 변환
+      const getPaymentMethodText = (method: string): PaymentMethod => {
+        switch (method) {
+          case "card": return "카드결제";
+          case "bank": return "계좌이체";
+          case "virtual": return "무통장입금";
+          case "phone": return "phone";
+          default: return "기타";
+        }
+      };
+
+      // Firebase에 주문 저장
+      const newOrderData = {
+        userId: user.uid,
+        orderNumber,
+        products: orderData!.items.map((item: any) => ({
+          id: `${item.productId}-${item.size}-${item.color}`,
+          productId: item.productId,
+          productName: item.productName,
+          productImage: item.productImage,
+          size: item.size,
+          color: item.color,
+          quantity: item.quantity,
+          price: item.price,
+          discountAmount: 0,
+          brand: item.brand,
+        })),
+        totalAmount: orderData!.finalAmount,
+        discountAmount: orderData!.couponDiscount || 0,
+        deliveryFee: orderData!.deliveryFee || 0,
+        finalAmount: finalPaymentAmount,
+        status: 'pending' as const,
+        paymentMethod: getPaymentMethodText(paymentMethod),
+        deliveryAddress: {
+          id: selectedAddress.id,
+          name: selectedAddress.name,
+          recipient: selectedAddress.recipient,
+          phone: selectedAddress.phone,
+          address: selectedAddress.address,
+          detailAddress: selectedAddress.detailAddress,
+          zipCode: selectedAddress.zipCode,
+          isDefault: selectedAddress.isDefault
+        }
+      };
+
+      const orderId = await OrderService.createOrder(newOrderData);
+
+      // 주문 결과 객체 생성
       const orderResult = {
-        orderId: `ORD-${Date.now()}`,
-        orderNumber: `ORD-${new Date().getFullYear()}${String(new Date().getMonth() + 1).padStart(2, '0')}${String(new Date().getDate()).padStart(2, '0')}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`,
-        items: orderData.items,
+        orderId,
+        orderNumber,
+        items: orderData!.items,
         totalAmount: finalPaymentAmount,
         deliveryAddress: selectedAddress,
         paymentMethod,
@@ -128,7 +184,6 @@ export default function CheckoutPage() {
             description: "상품 구매",
             orderId: orderResult.orderId
           });
-          console.log('포인트 사용 성공:', usePoints);
         } catch (pointError) {
           console.error('포인트 사용 실패:', pointError);
           // 포인트 사용 실패 시에도 주문은 진행하되, 사용자에게 알림
@@ -136,11 +191,26 @@ export default function CheckoutPage() {
         }
       }
 
+      // 장바구니 비우기 (주문 완료 후)
+      if (user?.uid) {
+        try {
+          await CartService.clearCart(user.uid);
+        } catch (cartError) {
+          console.error('장바구니 비우기 실패:', cartError);
+        }
+      }
+
+      // 추가 처리 시간 (사용자에게 완료 메시지 표시)
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
       // 세션 스토리지 정리
       sessionStorage.removeItem("orderData");
       
       // 주문 완료 페이지로 이동
       sessionStorage.setItem("orderResult", JSON.stringify(orderResult));
+      
+      // 사용자에게 완료 알림 후 페이지 이동
+      alert("🎉 결제가 성공적으로 완료되었습니다!\n주문 상세 정보 페이지로 이동합니다.");
       router.push("/orders/complete");
 
     } catch (error) {
@@ -346,8 +416,19 @@ export default function CheckoutPage() {
                 className={styles.checkoutButton}
                 onClick={handleCompleteOrder}
                 disabled={!agreeTerms || isProcessing}
+                style={{
+                  opacity: isProcessing ? 0.7 : 1,
+                  cursor: isProcessing ? 'not-allowed' : 'pointer'
+                }}
               >
-                {isProcessing ? "처리 중..." : `${finalPaymentAmount.toLocaleString()}원 결제하기`}
+                {isProcessing ? (
+                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                    <span className={styles.processingSpinner}></span>
+                    결제 처리 중...
+                  </span>
+                ) : (
+                  `${finalPaymentAmount.toLocaleString()}원 결제하기`
+                )}
               </button>
               
               <Link href="/orders/cart" className={styles.backButton}>

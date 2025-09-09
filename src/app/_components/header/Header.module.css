@@ -80,6 +80,7 @@
 }
 
 .navLink {
+  display: block;
   color: #111827;
   text-decoration: none;
   padding: 0.5rem 0.75rem;

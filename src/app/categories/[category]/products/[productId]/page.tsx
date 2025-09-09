@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { CategoryOnlyProductService } from '@/shared/services/hybridProductService';
 import { Product } from '@/shared/types/product';
+import { getCategoryName } from '@/shared/utils/categoryUtils';
 import styles from './ProductDetail.module.css';
 
 interface ProductDetailPageProps {
@@ -23,25 +24,35 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
   const [quantity, setQuantity] = useState(1);
   const [category, setCategory] = useState<string>('');
   const [productId, setProductId] = useState<string>('');
+  const [categoryDisplayName, setCategoryDisplayName] = useState<string>('');
 
   // params 비동기 처리
   useEffect(() => {
     const loadParams = async () => {
       const resolvedParams = await params;
-      setCategory(resolvedParams.category);
+      let categoryParam = resolvedParams.category;
+      
+      // clothing을 tops로 리다이렉트
+      if (categoryParam === 'clothing') {
+        categoryParam = 'tops';
+        // URL도 변경
+        window.history.replaceState(null, '', `/categories/tops/products/${resolvedParams.productId}`);
+      }
+      
+      setCategory(categoryParam);
       setProductId(resolvedParams.productId);
+
+      // 카테고리 표시 이름 가져오기
+      try {
+        const displayName = await getCategoryName(categoryParam);
+        setCategoryDisplayName(displayName);
+      } catch (error) {
+        console.error('카테고리 이름 가져오기 실패:', error);
+        setCategoryDisplayName(categoryParam);
+      }
     };
     loadParams();
   }, [params]);
-
-  // 카테고리명 매핑
-  const categoryNames: Record<string, string> = {
-    'accessories': '액세서리',
-    'bags': '가방',
-    'bottoms': '하의', 
-    'shoes': '신발',
-    'tops': '상의'
-  };
 
   useEffect(() => {
     const loadProductData = async () => {
@@ -141,7 +152,6 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
     );
   }
 
-  const categoryDisplayName = categoryNames[category] || category;
   const discountPrice = product.originalPrice && product.originalPrice > product.price 
     ? product.originalPrice - product.price 
     : 0;
@@ -154,7 +164,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
         <Link href="/categories" className={styles.breadcrumbLink}>카테고리</Link>
         <span className={styles.breadcrumbSeparator}>{'>'}</span>
         <Link href={`/categories/${category}`} className={styles.breadcrumbLink}>
-          {categoryDisplayName}
+          {categoryDisplayName || category}
         </Link>
         <span className={styles.breadcrumbSeparator}>{'>'}</span>
         <span className={styles.breadcrumbCurrent}>{product.name}</span>
@@ -292,11 +302,6 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
             >
               바로 구매
             </button>
-          </div>
-
-          <div className={styles.productPath}>
-            <p>📁 products/{product.id}</p>
-            <p>🔗 categories/{category}/products/{product.id}</p>
           </div>
         </div>
       </div>

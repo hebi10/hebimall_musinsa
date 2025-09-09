@@ -34,10 +34,10 @@ export default function FirebaseTestPage() {
       // 시드 데이터 실행을 위한 서버리스 함수 호출 또는 직접 생성
       const categories = [
         {
-          name: '의류',
-          slug: 'clothing',
-          path: '/categories/clothing',
-          description: '티셔츠, 셔츠, 후드, 니트 등 다양한 의류',
+          name: '상의',
+          slug: 'tops',
+          path: '/categories/tops',
+          description: '티셔츠, 셔츠, 후드, 니트 등 다양한 상의',
           icon: '👕',
           order: 0,
         },

@@ -7,6 +7,7 @@ import useInputs from '@/shared/hooks/useInput';
 import { Product } from '@/shared/types/product';
 import { generateId } from '@/shared/utils/common';
 import { useProduct } from '@/context/productProvider';
+import { useCategories } from '@/context/categoryProvider';
 import { useAuth } from '@/context/authProvider';
 import { 
   uploadProductImages, 
@@ -18,6 +19,7 @@ import {
 export default function AddProductModal() {
   const router = useRouter();
   const { user, isAdmin, loading: authLoading } = useAuth();
+  const { categories, loading: categoriesLoading } = useCategories();
   const { createProduct } = useProduct();
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({});
@@ -394,14 +396,20 @@ export default function AddProductModal() {
                 value={basicFields.category}
                 onChange={onChangeBasic}
                 required
+                disabled={categoriesLoading}
               >
-                <option value="">카테고리를 선택하세요</option>
-                <option value="상의">상의</option>
-                <option value="하의">하의</option>
-                <option value="신발">신발</option>
-                <option value="액세서리">액세서리</option>
-                <option value="가방">가방</option>
+                <option value="">
+                  {categoriesLoading ? '카테고리 불러오는 중...' : '카테고리를 선택하세요'}
+                </option>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name} ({category.id})
+                  </option>
+                ))}
               </select>
+              {categoriesLoading && (
+                <div className={styles.loadingText}>카테고리를 불러오는 중...</div>
+              )}
             </div>
 
             <div className={styles.formGroup}>

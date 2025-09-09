@@ -20,6 +20,7 @@ interface OrderResult {
 export default function OrderCompletePage() {
   const router = useRouter();
   const [orderResult, setOrderResult] = useState<OrderResult | null>(null);
+  const [showFullContent, setShowFullContent] = useState(false);
 
   useEffect(() => {
     // 세션 스토리지에서 주문 결과 가져오기
@@ -28,14 +29,55 @@ export default function OrderCompletePage() {
       setOrderResult(JSON.parse(savedOrderResult));
       // 주문 완료 후 세션 스토리지 정리
       sessionStorage.removeItem("orderResult");
+      
+      // 2초 후에 전체 내용 표시 (로딩 효과)
+      setTimeout(() => {
+        setShowFullContent(true);
+      }, 1000);
     } else {
       // 주문 결과가 없으면 홈으로 리다이렉트
       router.push("/");
     }
+
+    // 브라우저 뒤로가기 방지
+    const handlePopState = (e: PopStateEvent) => {
+      e.preventDefault();
+      window.history.pushState(null, "", window.location.href);
+    };
+
+    window.history.pushState(null, "", window.location.href);
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
   }, [router]);
 
   if (!orderResult) {
-    return <div>로딩 중...</div>;
+    return (
+      <div className={styles.container}>
+        <div className={styles.loadingContainer}>
+          <div className={styles.loadingSpinner}></div>
+          <p>주문 정보를 확인하고 있습니다...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!showFullContent) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.processingContainer}>
+          <div className={styles.successIcon}>✅</div>
+          <h2 className={styles.processingTitle}>주문이 완료되었습니다!</h2>
+          <p className={styles.processingMessage}>
+            주문번호: <strong>{orderResult.orderNumber}</strong>
+          </p>
+          <div className={styles.loadingSpinner}></div>
+          <p className={styles.processingNote}>주문 상세 정보를 준비하고 있습니다...</p>
+        </div>
+      </div>
+    );
   }
 
   const getPaymentMethodText = (method: string) => {
@@ -149,12 +191,21 @@ export default function OrderCompletePage() {
 
           {/* 액션 버튼들 */}
           <div className={styles.actionButtons}>
-            <Link href="/mypage/order-list" className={styles.primaryButton}>
-              주문 내역 보기
-            </Link>
-            <Link href="/" className={styles.secondaryButton}>
-              쇼핑 계속하기
-            </Link>
+            <div className={styles.actionMessage}>
+              <h3>🎉 주문이 성공적으로 완료되었습니다!</h3>
+              <p>주문 상세 정보를 확인하거나 쇼핑을 계속하실 수 있습니다.</p>
+            </div>
+            <div className={styles.buttonGroup}>
+              <Link href="/mypage/order-list" className={styles.primaryButton}>
+                📋 주문 내역 상세 보기
+              </Link>
+              <Link href="/" className={styles.secondaryButton}>
+                🛍️ 쇼핑 계속하기
+              </Link>
+            </div>
+            <div className={styles.actionNote}>
+              ※ 주문 상태 변경 및 배송 정보는 주문 내역에서 실시간으로 확인하실 수 있습니다.
+            </div>
           </div>
 
           {/* 안내 사항 */}

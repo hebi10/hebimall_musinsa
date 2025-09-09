@@ -31,6 +31,7 @@ export default function AdminUsersPage() {
   // 사용자 데이터 로드
   const loadUsers = async () => {
     try {
+      console.log('🔍 loadUsers 시작...');
       setIsLoading(true);
       setError(null);
       
@@ -40,14 +41,19 @@ export default function AdminUsersPage() {
         status: statusFilter !== 'all' ? statusFilter : undefined,
       };
 
+      console.log('📋 필터 설정:', filters);
       const { users: fetchedUsers } = await AdminUserService.getUsers(filters, currentPage, 10);
+      console.log('👥 사용자 데이터 조회 완료:', fetchedUsers);
+      
       const userStats = await AdminUserService.getUserStats();
+      console.log('📊 사용자 통계:', userStats);
       
       setUsers(fetchedUsers);
       setStats(userStats);
     } catch (err) {
-      console.error('Error loading users:', err);
-      setError('사용자 데이터를 불러오는데 실패했습니다.');
+      console.error('❌ Error loading users:', err);
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      setError(`사용자 데이터를 불러오는데 실패했습니다: ${errorMessage}`);
     } finally {
       setIsLoading(false);
     }
@@ -198,20 +204,24 @@ export default function AdminUsersPage() {
     }
   };
 
-  const handleAddUser = () => {
+  const handleAddUser = async () => {
     const name = prompt('사용자 이름을 입력하세요:');
-    const email = prompt('사용자 이메일을 입력하세요:');
+    if (!name) return;
     
-    if (name && email) {
-      AdminUserService.createUser({ name, email })
-        .then(() => {
-          alert('사용자가 성공적으로 추가되었습니다.');
-          loadUsers();
-        })
-        .catch(error => {
-          console.error('Error creating user:', error);
-          alert('사용자 추가에 실패했습니다.');
-        });
+    const email = prompt('사용자 이메일을 입력하세요:');
+    if (!email) return;
+    
+    const role = confirm('관리자 권한을 부여하시겠습니까?') ? 'admin' : 'user';
+    
+    try {
+      console.log('👤 새 사용자 생성 중:', { name, email, role });
+      await AdminUserService.createUser({ name, email, role });
+      alert('사용자가 성공적으로 추가되었습니다.');
+      await loadUsers();
+    } catch (error) {
+      console.error('Error creating user:', error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      alert(`사용자 추가에 실패했습니다: ${errorMessage}`);
     }
   };
 
@@ -412,7 +422,28 @@ export default function AdminUsersPage() {
             </div>
           ) : filteredUsers.length === 0 ? (
             <div className={styles.emptyState}>
-              <p>검색 조건에 맞는 사용자가 없습니다.</p>
+              <div style={{ textAlign: 'center', padding: '40px' }}>
+                <h3>👥 사용자가 없습니다</h3>
+                <p>아직 등록된 사용자가 없거나 검색 조건에 맞는 사용자가 없습니다.</p>
+                <div style={{ marginTop: '20px' }}>
+                  <button onClick={handleAddUser} className={styles.addButton}>
+                    ➕ 첫 번째 사용자 추가
+                  </button>
+                </div>
+                <div style={{ marginTop: '20px', fontSize: '14px', color: '#666' }}>
+                  <p>현재 검색 조건:</p>
+                  <p>검색어: {searchTerm || '없음'}</p>
+                  <p>역할: {roleFilter}</p>
+                  <p>상태: {statusFilter}</p>
+                </div>
+                <div style={{ marginTop: '20px', fontSize: '12px', color: '#999', border: '1px solid #eee', padding: '10px', borderRadius: '5px' }}>
+                  <h4>디버그 정보:</h4>
+                  <p>총 사용자 수: {users.length}</p>
+                  <p>필터된 사용자 수: {filteredUsers.length}</p>
+                  <p>로딩 상태: {isLoading ? '로딩 중' : '완료'}</p>
+                  <p>오류: {error || '없음'}</p>
+                </div>
+              </div>
             </div>
           ) : (
             <table className={styles.table}>

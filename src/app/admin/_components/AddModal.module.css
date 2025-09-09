@@ -82,6 +82,13 @@
   font-size: 14px;
 }
 
+.loadingText {
+  font-size: 12px;
+  color: #666;
+  margin-top: 5px;
+  font-style: italic;
+}
+
 .formGroup input,
 .formGroup select,
 .formGroup textarea {
