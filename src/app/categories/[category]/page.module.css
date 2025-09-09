@@ -147,9 +147,25 @@
   background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
 }
 
+.placeholderContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
 .productIcon {
   font-size: 3rem;
   opacity: 0.5;
+  margin-bottom: 0.5rem;
+}
+
+.placeholderText {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0;
+  font-weight: 500;
 }
 
 .discountBadge {

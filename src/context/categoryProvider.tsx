@@ -34,12 +34,12 @@ export function CategoryProvider({ children }: CategoryProviderProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fallback 카테고리 데이터
+  // Fallback 카테고리 데이터 (한국어 이름 보장 및 자연스러운 순서)
   const fallbackCategories: Category[] = [
     {
       id: 'clothing',
-      name: '의류',
-      description: '트렌디하고 편안한 의류로 완성하는 나만의 스타일',
+      name: '상의',
+      description: '트렌디하고 편안한 상의로 완성하는 나만의 스타일',
       icon: '👕',
       color: '#007bff',
       order: 1,
@@ -48,11 +48,11 @@ export function CategoryProvider({ children }: CategoryProviderProps) {
       updatedAt: new Date(),
     },
     {
-      id: 'accessories',
-      name: '액세서리',
-      description: '포인트가 되는 액세서리로 스타일 완성',
-      icon: '💍',
-      color: '#28a745',
+      id: 'shoes',
+      name: '신발',
+      description: '편안하고 스타일리시한 신발로 완벽한 발걸음을',
+      icon: '�',
+      color: '#6610f2',
       order: 2,
       isActive: true,
       createdAt: new Date(),
@@ -70,17 +70,32 @@ export function CategoryProvider({ children }: CategoryProviderProps) {
       updatedAt: new Date(),
     },
     {
-      id: 'shoes',
-      name: '신발',
-      description: '편안하고 스타일리시한 신발로 완벽한 발걸음을',
-      icon: '👟',
-      color: '#6610f2',
-      order: 5,
+      id: 'accessories',
+      name: '액세서리',
+      description: '포인트가 되는 액세서리로 스타일 완성',
+      icon: '�',
+      color: '#28a745',
+      order: 4,
       isActive: true,
       createdAt: new Date(),
       updatedAt: new Date(),
     },
   ];
+
+  // 한국어 이름 매핑 (Firebase 데이터가 영어인 경우 대비)
+  const koreanNameMap: { [key: string]: string } = {
+    'clothing': '상의',
+    'shoes': '신발', 
+    'bags': '가방',
+    'Bags': '가방',
+    'accessories': '액세서리',
+    'pants': '하의',
+    'bottoms': '하의',
+    'top': '상의',
+    'tops': '상의',
+    'bag': '가방',
+    'accessory': '액세서리'
+  };
 
   const fetchCategories = async () => {
     try {
@@ -91,9 +106,16 @@ export function CategoryProvider({ children }: CategoryProviderProps) {
       const snapshot = await getDocs(collection(db, 'categories'));
       const categoryList = snapshot.docs.map(doc => {
         const data = doc.data();
+        const rawName = data.name || '';
+        
+        // 한국어 이름 변환 (영어 이름인 경우 한국어로 매핑)
+        const koreanName = koreanNameMap[rawName.toLowerCase()] || 
+                          koreanNameMap[doc.id.toLowerCase()] || 
+                          rawName;
+        
         return {
           id: doc.id,
-          name: data.name || '',
+          name: koreanName,
           description: data.description || '',
           order: data.order || 0,
           isActive: data.isActive ?? true,
@@ -105,46 +127,33 @@ export function CategoryProvider({ children }: CategoryProviderProps) {
       }).filter(category => category.id && category.name); // id와 name이 있는 카테고리만 필터링
       
       if (categoryList && categoryList.length > 0) {
-        // 각 카테고리에 상품이 있는지 확인
-        const categoriesWithProducts: Category[] = [];
+        // 활성 카테고리만 필터링하고 order로 정렬
+        const activeCategories = categoryList
+          .filter(category => category.isActive)
+          .sort((a, b) => a.order - b.order);
         
-        for (const category of categoryList) {
-          if (!category.isActive) continue; // 비활성 카테고리 제외
-          
+        // 상품이 있는 카테고리와 없는 카테고리 모두 표시하되, 상품 수 정보 추가
+        const categoriesWithInfo: Category[] = [];
+        
+        for (const category of activeCategories) {
           try {
             // 해당 카테고리의 products 서브컬렉션 확인
             const productsSnapshot = await getDocs(collection(db, 'categories', category.id, 'products'));
-            
-            if (productsSnapshot.size > 0) {
-              console.log(`✅ ${category.name} (${category.id}): ${productsSnapshot.size}개 상품`);
-              categoriesWithProducts.push(category);
-            } else {
-              console.log(`❌ ${category.name} (${category.id}): 상품 없음`);
-            }
+            console.log(`📂 ${category.name} (${category.id}): ${productsSnapshot.size}개 상품`);
+            categoriesWithInfo.push(category);
           } catch (error) {
-            console.log(`❌ ${category.name} (${category.id}): 컬렉션 접근 실패`);
+            console.log(`📂 ${category.name} (${category.id}): 컬렉션 접근 중 - 표시함`);
+            // 에러가 있어도 카테고리는 표시
+            categoriesWithInfo.push(category);
           }
         }
         
-        // 상품이 있는 카테고리만 order로 정렬
-        const sortedCategories = categoriesWithProducts.sort((a, b) => a.order - b.order);
-        setCategories(sortedCategories);
-        
-        console.log(`🔄 헤더에 표시될 카테고리: ${sortedCategories.length}개`);
+        setCategories(categoriesWithInfo);
+        console.log(`🔄 헤더에 표시될 카테고리: ${categoriesWithInfo.length}개`);
       } else {
-        // 카테고리 컬렉션이 없는 경우 상품이 있는 fallback 카테고리만 표시
-        const categoriesWithProducts = [];
-        for (const category of fallbackCategories) {
-          try {
-            const productsSnapshot = await getDocs(collection(db, 'categories', category.id, 'products'));
-            if (productsSnapshot.size > 0) {
-              categoriesWithProducts.push(category);
-            }
-          } catch (error) {
-            // 무시
-          }
-        }
-        setCategories(categoriesWithProducts);
+        // 카테고리 컬렉션이 없는 경우 fallback 카테고리 표시
+        console.log('🔄 Firebase 카테고리 없음 - Fallback 사용');
+        setCategories(fallbackCategories);
       }
     } catch (err) {
       console.error('❌ 카테고리 불러오기 실패:', err);

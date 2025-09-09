@@ -57,9 +57,9 @@ export default function DynamicCategoryPage({ params }: CategoryPageProps) {
             description: data.description
           });
         } else {
-          // 기본값 설정
+          // 기본값 설정 (한국어 이름)
           const defaultNames: Record<string, {name: string, description: string}> = {
-            'clothing': {name: '의류', description: '트렌디하고 편안한 의류로 완성하는 나만의 스타일'},
+            'clothing': {name: '상의', description: '트렌디하고 편안한 상의로 완성하는 나만의 스타일'},
             'accessories': {name: '액세서리', description: '포인트가 되는 액세서리로 스타일 완성'},
             'bags': {name: '가방', description: '실용성과 스타일을 겸비한 가방 컬렉션'},
             'bottoms': {name: '하의', description: '편안하고 스타일리시한 하의 컬렉션'},
@@ -218,18 +218,30 @@ export default function DynamicCategoryPage({ params }: CategoryPageProps) {
                     src={product.mainImage} 
                     alt={product.name}
                     className={styles.productImg}
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                      const placeholder = target.nextElementSibling as HTMLElement;
+                      if (placeholder) {
+                        placeholder.style.display = 'flex';
+                      }
+                    }}
                   />
-                ) : (
-                  <div className={styles.imagePlaceholder}>
+                ) : null}
+                <div className={styles.imagePlaceholder} style={{ display: product.mainImage ? 'none' : 'flex' }}>
+                  <div className={styles.placeholderContent}>
                     <span className={styles.productIcon}>
-                      {category === 'accessories' && '�'}
+                      {category === 'accessories' && '💍'}
                       {category === 'bags' && '🎒'}
-                      {category === 'bottoms' && '�'}
+                      {category === 'bottoms' && '👖'}
                       {category === 'shoes' && '👟'}
                       {category === 'tops' && '👕'}
+                      {category === 'clothing' && '👕'}
+                      {!['accessories', 'bags', 'bottoms', 'shoes', 'tops', 'clothing'].includes(category) && '📦'}
                     </span>
+                    <p className={styles.placeholderText}>이미지 준비중</p>
                   </div>
-                )}
+                </div>
                 {product.isSale && product.saleRate && (
                   <div className={styles.discountBadge}>
                     {product.saleRate}%

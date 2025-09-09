@@ -54,9 +54,16 @@ export default function CategoriesPage() {
               className={styles.categoryCard}
             >
               <div className={styles.categoryImage}>
-                <span className={styles.categoryIcon}>
-                  {category.icon || '📦'}
-                </span>
+                {category.icon ? (
+                  <span className={styles.categoryIcon}>
+                    {category.icon}
+                  </span>
+                ) : (
+                  <div className={styles.iconPlaceholder}>
+                    <span className={styles.defaultIcon}>📦</span>
+                    <p className={styles.placeholderText}>이미지 준비중</p>
+                  </div>
+                )}
               </div>
               <div className={styles.categoryContent}>
                 <h3 className={styles.categoryName}>{category.name}</h3>
@@ -90,7 +97,14 @@ export default function CategoriesPage() {
                 >
                   <div className={styles.featuredCardContent}>
                     <div className={styles.featuredIcon}>
-                      {category.icon || '📦'}
+                      {category.icon ? (
+                        category.icon
+                      ) : (
+                        <div className={styles.iconPlaceholder}>
+                          <span className={styles.defaultIcon}>📦</span>
+                          <p className={styles.placeholderText}>이미지 준비중</p>
+                        </div>
+                      )}
                     </div>
                     <h3 className={styles.featuredName}>{category.name}</h3>
                     <p className={styles.featuredDescription}>{category.description}</p>
