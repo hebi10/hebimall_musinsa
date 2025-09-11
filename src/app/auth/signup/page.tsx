@@ -343,7 +343,7 @@ export default function SignupPage() {
                 <label className={`${styles.checkboxLabel} ${styles.required}`}>
                   이용약관에 동의합니다 (필수)
                 </label>
-                <Link href="/legal/terms" className={styles.linkButton}>
+                <Link href="/legal/terms" target="_blank" className={styles.linkButton}>
                   보기
                 </Link>
               </div>
@@ -357,7 +357,7 @@ export default function SignupPage() {
                 <label className={`${styles.checkboxLabel} ${styles.required}`}>
                   개인정보처리방침에 동의합니다 (필수)
                 </label>
-                <Link href="/legal/privacy" className={styles.linkButton}>
+                <Link href="/legal/privacy" target="_blank" className={styles.linkButton}>
                   보기
                 </Link>
               </div>

@@ -4,7 +4,10 @@ import {
   createUserWithEmailAndPassword, 
   setPersistence, 
   signInWithEmailAndPassword, 
-  signOut 
+  signOut,
+  sendPasswordResetEmail,
+  confirmPasswordReset,
+  verifyPasswordResetCode
 } from "firebase/auth";
 
 // 회원가입
@@ -27,4 +30,19 @@ export async function loginOneSession(email: string, password: string) {
 // 로그아웃
 export async function logout() {
   return signOut(auth);
+}
+
+// 비밀번호 재설정 이메일 전송
+export async function sendPasswordReset(email: string) {
+  return sendPasswordResetEmail(auth, email);
+}
+
+// 비밀번호 재설정 코드 확인
+export async function verifyResetCode(code: string) {
+  return verifyPasswordResetCode(auth, code);
+}
+
+// 비밀번호 재설정 완료
+export async function confirmPasswordResetWithCode(code: string, newPassword: string) {
+  return confirmPasswordReset(auth, code, newPassword);
 }

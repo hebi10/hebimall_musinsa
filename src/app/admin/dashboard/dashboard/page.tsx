@@ -35,7 +35,7 @@ interface ActivityData {
 
 export default function AdminDashboardPage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const [currentTime, setCurrentTime] = useState("");
 
   useEffect(() => {
@@ -86,6 +86,17 @@ export default function AdminDashboardPage() {
       </div>
     );
   }
+
+  // 로그아웃 핸들러
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Logout error:', error);
+      // 에러가 발생해도 로그인 페이지로 강제 이동
+      router.push('/auth/login');
+    }
+  };
 
   const stats: StatData[] = [
     { 
@@ -231,9 +242,12 @@ export default function AdminDashboardPage() {
               <div className={styles.userInfo}>
                 👨‍💼 관리자
               </div>
-              <Link href="/" className={styles.logoutButton}>
-                홈으로
-              </Link>
+              <button 
+                onClick={handleLogout} 
+                className={styles.logoutButton}
+              >
+                로그아웃
+              </button>
             </div>
           </div>
         </div>

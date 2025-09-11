@@ -10,7 +10,7 @@ import { AdminUserService, AdminUserData, UserStats, UserFilter, PointOperation 
 
 export default function AdminUsersPage() {
   const router = useRouter();
-  const { user, isUserDataLoading, loading, isAdmin } = useAuth();
+  const { user, isUserDataLoading, loading, isAdmin, logout } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -190,6 +190,17 @@ export default function AdminUsersPage() {
     }).format(amount);
   };
 
+  // 로그아웃 핸들러
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Logout error:', error);
+      // 에러가 발생해도 로그인 페이지로 강제 이동
+      router.push('/auth/login');
+    }
+  };
+
   const handleExport = async () => {
     try {
       const csvContent = await AdminUserService.exportUsersToCSV();
@@ -312,9 +323,12 @@ export default function AdminUsersPage() {
               <div className={styles.userInfo}>
                 👨‍💼 관리자
               </div>
-              <Link href="/" className={styles.logoutButton}>
-                홈으로
-              </Link>
+              <button 
+                onClick={handleLogout} 
+                className={styles.logoutButton}
+              >
+                로그아웃
+              </button>
             </div>
           </div>
         </div>

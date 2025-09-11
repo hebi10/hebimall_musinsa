@@ -10,11 +10,12 @@ import {
 } from "../shared/libs/firebase/auth";
 import { useUserData } from "../shared/hooks/useUserData";
 import { getErrorMessage } from "../shared/utils/authErrorMessages";
+import { db } from "../shared/libs/firebase/firebase";
 
 interface AuthContextType {
   user: any;
   login: (email: string, password: string, keepAlive: boolean) => Promise<any>;
-  logout: () => void;
+  logout: () => Promise<void>;
   signUp: (email: string, password: string) => Promise<any>;
   loading: boolean;
   userData: any;
@@ -27,7 +28,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType>({
   user: null,
   login: () => Promise.resolve(),
-  logout: () => {},
+  logout: () => Promise.resolve(),
   signUp: () => Promise.resolve(),
   loading: true,
   userData: null,
@@ -48,21 +49,67 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (email: string, password: string, keepAlive: boolean) => {
     try {
       setError(null);
+      let userCredential;
+      
       if (keepAlive) {
-        return await firebaseLoginKeepAlive(email, password);
+        userCredential = await firebaseLoginKeepAlive(email, password);
       } else {
-        return await firebaseSignIn(email, password);
+        userCredential = await firebaseSignIn(email, password);
       }
+      
+      // 로그인 성공 후 사용자 상태 확인
+      const userDoc = await import('firebase/firestore').then(module => 
+        module.getDoc(module.doc(db, 'users', userCredential.user.uid))
+      );
+      
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        
+        // 사용자 상태 확인
+        if (userData.status === 'inactive') {
+          // 비활성화된 사용자인 경우 로그아웃 처리
+          await firebaseLogout();
+          throw new Error('ACCOUNT_INACTIVE');
+        }
+        
+        if (userData.status === 'banned') {
+          // 정지된 사용자인 경우 로그아웃 처리
+          await firebaseLogout();
+          throw new Error('ACCOUNT_BANNED');
+        }
+      }
+      
+      return userCredential;
     } catch (err: any) {
-      const errorMessage = getErrorMessage(err.code);
+      let errorMessage;
+      
+      if (err.message === 'ACCOUNT_INACTIVE') {
+        errorMessage = '이용이 중지된 사용자입니다. 관리자에게 문의하세요.';
+      } else if (err.message === 'ACCOUNT_BANNED') {
+        errorMessage = '정지된 계정입니다. 관리자에게 문의하세요.';
+      } else {
+        errorMessage = getErrorMessage(err.code);
+      }
+      
       setError(errorMessage);
       throw err;
     }
   };
 
-  const logout = () => {
-    firebaseLogout();
-    router.replace("/auth/login");
+  const logout = async () => {
+    try {
+      await firebaseLogout();
+      // Next.js router 대신 window.location을 사용하여 강제 페이지 이동
+      if (typeof window !== 'undefined') {
+        window.location.href = "/auth/login";
+      }
+    } catch (error) {
+      console.error("Logout error:", error);
+      // 에러가 발생해도 로그인 페이지로 이동
+      if (typeof window !== 'undefined') {
+        window.location.href = "/auth/login";
+      }
+    }
   };
 
   const signUp = async (email: string, password: string) => {

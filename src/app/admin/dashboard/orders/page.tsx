@@ -21,7 +21,7 @@ interface OrderStats {
 
 export default function AdminOrdersPage() {
   const router = useRouter();
-  const { user, isAdmin, loading, isUserDataLoading } = useAuth();
+  const { user, isAdmin, loading, isUserDataLoading, logout } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
@@ -150,6 +150,17 @@ export default function AdminOrdersPage() {
     );
   }
 
+  // 로그아웃 핸들러
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Logout error:', error);
+      // 에러가 발생해도 로그인 페이지로 강제 이동
+      router.push('/auth/login');
+    }
+  };
+
   const handleStatusChange = async (orderId: string, newStatus: OrderStatus) => {
     try {
       await OrderService.updateOrderStatus(orderId, newStatus);
@@ -240,9 +251,12 @@ export default function AdminOrdersPage() {
               <div className={styles.userInfo}>
                 👨‍💼 관리자
               </div>
-              <Link href="/" className={styles.logoutButton}>
-                홈으로
-              </Link>
+              <button 
+                onClick={handleLogout} 
+                className={styles.logoutButton}
+              >
+                로그아웃
+              </button>
             </div>
           </div>
         </div>
