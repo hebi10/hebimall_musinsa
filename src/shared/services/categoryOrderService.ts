@@ -30,7 +30,6 @@ export class CategoryOrderService {
     '상의',
     '하의', 
     '신발',
-    '상의',
     '스포츠',
     '아웃도어',
     '가방',
@@ -40,10 +39,9 @@ export class CategoryOrderService {
 
   // 카테고리 ID와 이름 매핑
   private static categoryMapping: Record<string, string> = {
-    'tops': '상의',
+    'clothing': '상의',
     'bottoms': '하의',
     'shoes': '신발',
-    'clothing': '상의',
     'sports': '스포츠',
     'outdoor': '아웃도어',
     'bags': '가방',
@@ -113,7 +111,10 @@ export class CategoryOrderService {
     description?: string
   ): Promise<void> {
     try {
+      console.log('🔄 카테고리 순서 업데이트 시작:', { newOrder, configId, description });
+      
       const mappedOrder = newOrder.map(name => this.nameToIdMapping[name]).filter(Boolean);
+      console.log('📝 매핑된 순서:', mappedOrder);
       
       const orderData = {
         order: newOrder,
@@ -123,22 +124,36 @@ export class CategoryOrderService {
         updatedAt: Timestamp.now(),
       };
 
+      console.log('💾 저장할 데이터:', orderData);
+
       const docRef = doc(db, CATEGORY_ORDER_COLLECTION, configId);
+      console.log('📍 문서 참조:', docRef.path);
+      
       const existingDoc = await getDoc(docRef);
+      console.log('📄 기존 문서 존재:', existingDoc.exists());
 
       if (existingDoc.exists()) {
+        console.log('🔄 기존 문서 업데이트 중...');
         await updateDoc(docRef, orderData);
+        console.log('✅ 문서 업데이트 완료');
       } else {
+        console.log('🆕 새 문서 생성 중...');
         await setDoc(docRef, {
           ...orderData,
           createdAt: Timestamp.now(),
         });
+        console.log('✅ 새 문서 생성 완료');
       }
 
       console.log('✅ 카테고리 순서 업데이트 완료:', newOrder);
     } catch (error) {
-      console.error('카테고리 순서 업데이트 실패:', error);
-      throw new Error('카테고리 순서 업데이트에 실패했습니다.');
+      console.error('❌ 카테고리 순서 업데이트 실패:', error);
+      console.error('오류 상세:', {
+        name: error instanceof Error ? error.name : 'Unknown',
+        message: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined
+      });
+      throw new Error(`카테고리 순서 업데이트에 실패했습니다: ${error instanceof Error ? error.message : '알 수 없는 오류'}`);
     }
   }
 

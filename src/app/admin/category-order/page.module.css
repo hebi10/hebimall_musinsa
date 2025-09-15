@@ -11,11 +11,38 @@
   text-align: center;
 }
 
+.titleContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
 .title {
   font-size: 2.5rem;
   font-weight: 700;
   color: #1f2937;
-  margin-bottom: 1rem;
+  margin: 0;
+}
+
+.categoryManageButton {
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.categoryManageButton:hover {
+  background: #059669;
+  transform: translateY(-1px);
 }
 
 .description {
@@ -242,8 +269,18 @@
     padding: 1rem;
   }
   
+  .titleContainer {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
   .title {
     font-size: 2rem;
+  }
+  
+  .categoryManageButton {
+    width: auto;
+    align-self: center;
   }
   
   .controls {

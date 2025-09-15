@@ -14,6 +14,60 @@ import ProductCard from './ProductCard';
 // import ProductReviews from '@/features/product/components/ProductReviews';
 import styles from './ProductDetail.module.css';
 
+// 색상명을 CSS 색상값으로 변환하는 함수
+const getColorValue = (colorName: string): string => {
+  const colorMap: Record<string, string> = {
+    '검정': '#000000',
+    '검은색': '#000000',
+    '블랙': '#000000',
+    'black': '#000000',
+    '흰색': '#ffffff',
+    '화이트': '#ffffff',
+    'white': '#ffffff',
+    '빨간색': '#dc3545',
+    '빨강': '#dc3545',
+    '레드': '#dc3545',
+    'red': '#dc3545',
+    '파란색': '#007bff',
+    '파랑': '#007bff',
+    '블루': '#007bff',
+    'blue': '#007bff',
+    '초록색': '#28a745',
+    '초록': '#28a745',
+    '그린': '#28a745',
+    'green': '#28a745',
+    '노란색': '#ffc107',
+    '노랑': '#ffc107',
+    '옐로우': '#ffc107',
+    'yellow': '#ffc107',
+    '보라색': '#6f42c1',
+    '보라': '#6f42c1',
+    '퍼플': '#6f42c1',
+    'purple': '#6f42c1',
+    '분홍색': '#e83e8c',
+    '분홍': '#e83e8c',
+    '핑크': '#e83e8c',
+    'pink': '#e83e8c',
+    '주황색': '#fd7e14',
+    '주황': '#fd7e14',
+    '오렌지': '#fd7e14',
+    'orange': '#fd7e14',
+    '회색': '#6c757d',
+    '그레이': '#6c757d',
+    'gray': '#6c757d',
+    'grey': '#6c757d',
+    '네이비': '#1a1a2e',
+    'navy': '#1a1a2e',
+    '베이지': '#f5f5dc',
+    'beige': '#f5f5dc',
+    '갈색': '#8b4513',
+    '브라운': '#8b4513',
+    'brown': '#8b4513'
+  };
+  
+  return colorMap[colorName.toLowerCase()] || '#cccccc';
+};
+
 interface Props {
   product: Product;
 }
@@ -111,9 +165,17 @@ export default function ProductDetailClient({ product }: Props) {
       return;
     }
 
-    // 옵션 선택 확인
-    if (!selectedSize || !selectedColor) {
-      alert('사이즈와 색상을 선택해주세요.');
+    // 옵션 선택 확인 (사이즈나 색상이 있는 경우에만)
+    const hasSizes = product.sizes && product.sizes.length > 0;
+    const hasColors = product.colors && product.colors.length > 0;
+    
+    if (hasSizes && !selectedSize) {
+      alert('사이즈를 선택해주세요.');
+      return;
+    }
+    
+    if (hasColors && !selectedColor) {
+      alert('색상을 선택해주세요.');
       return;
     }
 
@@ -131,8 +193,8 @@ export default function ProductDetailClient({ product }: Props) {
         product,
         request: {
           productId: product.id,
-          size: selectedSize,
-          color: selectedColor,
+          size: selectedSize || '', // 사이즈가 없으면 빈 문자열
+          color: selectedColor || '', // 색상이 없으면 빈 문자열
           quantity
         }
       });
@@ -160,9 +222,17 @@ export default function ProductDetailClient({ product }: Props) {
       return;
     }
 
-    // 옵션 선택 확인
-    if (!selectedSize || !selectedColor) {
-      alert('사이즈와 색상을 선택해주세요.');
+    // 옵션 선택 확인 (사이즈나 색상이 있는 경우에만)
+    const hasSizes = product.sizes && product.sizes.length > 0;
+    const hasColors = product.colors && product.colors.length > 0;
+    
+    if (hasSizes && !selectedSize) {
+      alert('사이즈를 선택해주세요.');
+      return;
+    }
+    
+    if (hasColors && !selectedColor) {
+      alert('색상을 선택해주세요.');
       return;
     }
 
@@ -179,8 +249,8 @@ export default function ProductDetailClient({ product }: Props) {
         productName: product.name,
         productImage: product.images[0],
         brand: product.brand,
-        size: selectedSize,
-        color: selectedColor,
+        size: selectedSize || '', // 사이즈가 없으면 빈 문자열
+        color: selectedColor || '', // 색상이 없으면 빈 문자열
         quantity,
         price: displayPrice,
         discountAmount: product.saleRate ? 
@@ -328,36 +398,43 @@ export default function ProductDetailClient({ product }: Props) {
 
           {/* 옵션 선택 */}
           <div className={styles.options}>
-            <div className={styles.optionGroup}>
-              <label className={styles.optionLabel}>사이즈</label>
-              <div className={styles.sizeOptions}>
-                {(product.sizes || []).map((size) => (
-                  <button
-                    key={size}
-                    className={`${styles.sizeButton} ${selectedSize === size ? styles.selected : ''}`}
-                    onClick={() => setSelectedSize(size)}
-                    disabled={!inStock}
-                  >
-                    {size}
-                  </button>
-                ))}
+            {/* 사이즈 선택 - 사이즈가 있을 때만 표시 */}
+            {product.sizes && product.sizes.length > 0 && (
+              <div className={styles.optionGroup}>
+                <label className={styles.optionLabel}>사이즈</label>
+                <div className={styles.sizeOptions}>
+                  {product.sizes.map((size) => (
+                    <button
+                      key={size}
+                      className={`${styles.sizeButton} ${selectedSize === size ? styles.selected : ''}`}
+                      onClick={() => setSelectedSize(size)}
+                      disabled={!inStock}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
-            <div className={styles.optionGroup}>
-              <label className={styles.optionLabel}>색상</label>
-              <div className={styles.colorOptions}>
-                {(product.colors || []).map((color) => (
-                  <button
-                    key={color}
-                    className={`${styles.colorButton} ${selectedColor === color ? styles.selected : ''} ${styles[color]}`}
-                    onClick={() => setSelectedColor(color)}
-                    title={color}
-                    disabled={!inStock}
-                  />
-                ))}
+            {/* 색상 선택 - 색상이 있을 때만 표시 */}
+            {product.colors && product.colors.length > 0 && (
+              <div className={styles.optionGroup}>
+                <label className={styles.optionLabel}>색상</label>
+                <div className={styles.colorOptions}>
+                  {product.colors.map((color) => (
+                    <button
+                      key={color}
+                      className={`${styles.colorButton} ${selectedColor === color ? styles.selected : ''}`}
+                      onClick={() => setSelectedColor(color)}
+                      title={color}
+                      disabled={!inStock}
+                      style={{ backgroundColor: getColorValue(color) }}
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             <div className={styles.optionGroup}>
               <label className={styles.optionLabel}>수량</label>

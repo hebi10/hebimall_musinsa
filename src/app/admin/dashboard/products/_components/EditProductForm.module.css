@@ -232,6 +232,18 @@
   gap: 5px;
 }
 
+.colorItem {
+  gap: 8px;
+}
+
+.colorPreview {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1px solid #ddd;
+  flex-shrink: 0;
+}
+
 .removeButton {
   background: none;
   border: none;

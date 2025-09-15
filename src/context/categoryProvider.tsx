@@ -84,7 +84,7 @@ export function CategoryProvider({ children }: CategoryProviderProps) {
 
   // 한국어 이름 매핑 (Firebase 데이터가 영어인 경우 대비)
   const koreanNameMap: { [key: string]: string } = {
-    'clothing': '상의',
+    'clothing': '의류',
     'shoes': '신발', 
     'bags': '가방',
     'Bags': '가방',

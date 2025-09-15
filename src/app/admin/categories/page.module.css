@@ -30,10 +30,12 @@
 }
 
 .addButton {
+  display: inline-block;
   background: #212529;
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
+  margin-right: 1rem;
   border-radius: 4px;
   font-weight: 500;
   cursor: pointer;

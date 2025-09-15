@@ -13,6 +13,162 @@ import {
 } from '@/shared/libs/firebase/storage';
 import styles from './EditProductForm.module.css';
 
+// 색상명을 CSS 색상값으로 변환하는 함수
+const getColorValue = (colorName: string): string => {
+  const colorMap: Record<string, string> = {
+    '검정': '#000000',
+    '검은색': '#000000',
+    '블랙': '#000000',
+    'black': '#000000',
+    '흰색': '#ffffff',
+    '화이트': '#ffffff',
+    'white': '#ffffff',
+    '빨간색': '#dc3545',
+    '빨강': '#dc3545',
+    '레드': '#dc3545',
+    'red': '#dc3545',
+    '파란색': '#007bff',
+    '파랑': '#007bff',
+    '블루': '#007bff',
+    'blue': '#007bff',
+    '초록색': '#28a745',
+    '초록': '#28a745',
+    '그린': '#28a745',
+    'green': '#28a745',
+    '노란색': '#ffc107',
+    '노랑': '#ffc107',
+    '옐로우': '#ffc107',
+    'yellow': '#ffc107',
+    '보라색': '#6f42c1',
+    '보라': '#6f42c1',
+    '퍼플': '#6f42c1',
+    'purple': '#6f42c1',
+    '분홍색': '#e83e8c',
+    '분홍': '#e83e8c',
+    '핑크': '#e83e8c',
+    'pink': '#e83e8c',
+    '주황색': '#fd7e14',
+    '주황': '#fd7e14',
+    '오렌지': '#fd7e14',
+    'orange': '#fd7e14',
+    '회색': '#6c757d',
+    '그레이': '#6c757d',
+    'gray': '#6c757d',
+    'grey': '#6c757d',
+    '네이비': '#1a1a2e',
+    'navy': '#1a1a2e',
+    '베이지': '#f5f5dc',
+    'beige': '#f5f5dc',
+    '갈색': '#8b4513',
+    '브라운': '#8b4513',
+    'brown': '#8b4513'
+  };
+  
+  return colorMap[colorName.toLowerCase()] || '#cccccc';
+};
+
+// 입력 컴포넌트들
+interface InputProps {
+  onAdd: (value: string) => void;
+  disabled?: boolean;
+}
+
+const SizeInput = ({ onAdd, disabled }: InputProps) => {
+  const [value, setValue] = useState('');
+  
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (value.trim()) {
+      onAdd(value.trim());
+      setValue('');
+    }
+  };
+  
+  return (
+    <form onSubmit={handleSubmit} className={styles.addInput}>
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        placeholder="사이즈 입력 (예: S, M, L, XL)"
+        className={styles.input}
+        disabled={disabled}
+      />
+      <button
+        type="submit"
+        className={styles.addButton}
+        disabled={disabled || !value.trim()}
+      >
+        추가
+      </button>
+    </form>
+  );
+};
+
+const ColorInput = ({ onAdd, disabled }: InputProps) => {
+  const [value, setValue] = useState('');
+  
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (value.trim()) {
+      onAdd(value.trim());
+      setValue('');
+    }
+  };
+  
+  return (
+    <form onSubmit={handleSubmit} className={styles.addInput}>
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        placeholder="색상 입력 (예: 검정, 흰색, 네이비)"
+        className={styles.input}
+        disabled={disabled}
+      />
+      <button
+        type="submit"
+        className={styles.addButton}
+        disabled={disabled || !value.trim()}
+      >
+        추가
+      </button>
+    </form>
+  );
+};
+
+const TagInput = ({ onAdd, disabled }: InputProps) => {
+  const [value, setValue] = useState('');
+  
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (value.trim()) {
+      onAdd(value.trim());
+      setValue('');
+    }
+  };
+  
+  return (
+    <form onSubmit={handleSubmit} className={styles.addInput}>
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        placeholder="태그 입력 (예: 신상품, 베스트)"
+        className={styles.input}
+        disabled={disabled}
+      />
+      <button
+        type="submit"
+        className={styles.addButton}
+        disabled={disabled || !value.trim()}
+      >
+        추가
+      </button>
+    </form>
+  );
+};
+
 interface EditProductFormProps {
   product: Product;
   onSave: (updatedProduct: Product) => void;
@@ -470,6 +626,79 @@ export default function EditProductForm({ product, onSave, onCancel }: EditProdu
               <option value="draft">임시저장</option>
             </select>
           </div>
+        </div>
+      </div>
+
+      {/* 사이즈 및 색상 섹션 */}
+      <div className={styles.section}>
+        <h3 className={styles.sectionTitle}>사이즈 및 색상</h3>
+        
+        {/* 사이즈 관리 */}
+        <div className={styles.formGroup}>
+          <label className={styles.label}>사이즈</label>
+          <div className={styles.sizeList}>
+            {complexFields.sizes.map((size, index) => (
+              <div key={size} className={styles.sizeItem}>
+                <span>{size}</span>
+                <button
+                  type="button"
+                  onClick={() => handleRemoveSize(size)}
+                  className={styles.removeButton}
+                  disabled={uploading}
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+          <SizeInput onAdd={handleAddSize} disabled={uploading} />
+        </div>
+
+        {/* 색상 관리 */}
+        <div className={styles.formGroup}>
+          <label className={styles.label}>색상</label>
+          <div className={styles.colorList}>
+            {complexFields.colors.map((color, index) => (
+              <div key={color} className={styles.colorItem}>
+                <div 
+                  className={styles.colorPreview}
+                  style={{ backgroundColor: getColorValue(color) }}
+                  title={color}
+                />
+                <span>{color}</span>
+                <button
+                  type="button"
+                  onClick={() => handleRemoveColor(color)}
+                  className={styles.removeButton}
+                  disabled={uploading}
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+          <ColorInput onAdd={handleAddColor} disabled={uploading} />
+        </div>
+
+        {/* 태그 관리 */}
+        <div className={styles.formGroup}>
+          <label className={styles.label}>태그</label>
+          <div className={styles.tagList}>
+            {complexFields.tags.map((tag, index) => (
+              <div key={tag} className={styles.tag}>
+                <span>{tag}</span>
+                <button
+                  type="button"
+                  onClick={() => handleRemoveTag(tag)}
+                  className={styles.removeButton}
+                  disabled={uploading}
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+          <TagInput onAdd={handleAddTag} disabled={uploading} />
         </div>
       </div>
 

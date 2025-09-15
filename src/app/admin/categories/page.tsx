@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { collection, getDocs, doc, updateDoc, addDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '@/shared/libs/firebase/firebase';
 import styles from './page.module.css';
+import Link from 'next/link';
 
 interface Category {
   id: string;
@@ -160,6 +161,12 @@ export default function AdminCategoriesPage() {
         >
           + 새 카테고리 추가
         </button>
+        <Link 
+          className={styles.addButton}
+          href="/admin/category-order"
+        >
+          카테고리 순서 관리 &rarr;
+        </Link>
       </div>
 
       {showAddForm && (

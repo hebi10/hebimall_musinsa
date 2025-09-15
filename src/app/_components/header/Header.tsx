@@ -4,13 +4,21 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "@/context/authProvider";
 import { useCartItemCount } from "@/shared/hooks/useCart";
+import { CategoryOrderService } from "@/shared/services/categoryOrderService";
 import styles from "./Header.module.css";
-import { useCategories } from '@/context/categoryProvider';
+
+interface HeaderCategory {
+  id: string;
+  name: string;
+  href: string;
+  icon: string;
+}
 
 export default function Header() {
   const { user, isAdmin, logout } = useAuth();
   const { data: cartItemCount = 0 } = useCartItemCount(user?.uid || null);
-  const { categories, loading: categoriesLoading } = useCategories();
+  const [categories, setCategories] = useState<HeaderCategory[]>([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
@@ -19,6 +27,57 @@ export default function Header() {
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  // 카테고리 로딩 (새로운 순서 시스템 사용)
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        setCategoriesLoading(true);
+        const sortedCategories = await CategoryOrderService.getSortedCategories();
+        
+        // 헤더용 카테고리 데이터 변환
+        const headerCategories: HeaderCategory[] = sortedCategories.map(category => ({
+          id: category.id,
+          name: category.name,
+          href: `/categories/${category.id}`,
+          icon: getCategoryIcon(category.name)
+        }));
+        
+        setCategories(headerCategories);
+      } catch (error) {
+        console.error('헤더 카테고리 로딩 실패:', error);
+        
+        // 에러 시 기본 카테고리 설정
+        setCategories([
+          { id: 'clothing', name: '의류', href: '/categories/clothing', icon: '👕' },
+          { id: 'bags', name: '가방', href: '/categories/bags', icon: '👜' },
+          { id: 'accessories', name: '액세서리', href: '/categories/accessories', icon: '💍' },
+          { id: 'outdoor', name: '아웃도어', href: '/categories/outdoor', icon: '🏔️' }
+        ]);
+      } finally {
+        setCategoriesLoading(false);
+      }
+    };
+
+    loadCategories();
+  }, []);
+
+  // 카테고리별 아이콘 반환
+  const getCategoryIcon = (categoryName: string): string => {
+    const iconMap: Record<string, string> = {
+      '상의': '👔',
+      '하의': '👖',
+      '신발': '👟',
+      '스포츠': '⚽',
+      '아웃도어': '🏔️',
+      '가방': '👜',
+      '주얼리': '💎',
+      '액세서리': '💍',
+      '의류': '👕'
+    };
+    
+    return iconMap[categoryName] || '📦';
+  };
 
   // SSR 안전한 장바구니 카운트 표시
   const safeCartItemCount = isMounted ? cartItemCount : 0;
@@ -71,17 +130,15 @@ export default function Header() {
                 </Link>
                 {isCategoryOpen && !categoriesLoading && categories.length > 0 && (
                   <div className={styles.dropdownMenu}>
-                    {categories.map((category) => (
-                      category?.id ? (
-                        <Link
-                          key={category.id}
-                          href={`/categories/${category.id}`}
-                          className={styles.dropdownItem}
-                        >
-                          {category.icon && <span className={styles.categoryIcon}>{category.icon}</span>}
-                          {category.name}
-                        </Link>
-                      ) : null
+                    {categories.map((category, index) => (
+                      <Link
+                        key={`${category.id}-${index}`}
+                        href={category.href}
+                        className={styles.dropdownItem}
+                      >
+                        <span className={styles.categoryIcon}>{category.icon}</span>
+                        {category.name}
+                      </Link>
                     ))}
                   </div>
                 )}
@@ -137,18 +194,16 @@ export default function Header() {
             <div className={styles.mobileCategory}>
               <h3 className={styles.mobileCategoryTitle}>카테고리</h3>
               <div className={styles.mobileCategoryList}>
-                {!categoriesLoading && categories.length > 0 && categories.map((category) => (
-                  category?.id ? (
-                    <Link
-                      key={category.id}
-                      href={`/categories/${category.id}`}
-                      className={styles.mobileCategoryItem}
-                      onClick={closeMobileMenu}
-                    >
-                      {category.icon && <span className={styles.categoryIcon}>{category.icon}</span>}
-                      {category.name}
-                    </Link>
-                  ) : null
+                {!categoriesLoading && categories.length > 0 && categories.map((category, index) => (
+                  <Link
+                    key={`${category.id}-${index}`}
+                    href={category.href}
+                    className={styles.mobileCategoryItem}
+                    onClick={closeMobileMenu}
+                  >
+                    <span className={styles.categoryIcon}>{category.icon}</span>
+                    {category.name}
+                  </Link>
                 ))}
                 {categoriesLoading && (
                   <div className={styles.loadingText}>카테고리 로딩 중...</div>

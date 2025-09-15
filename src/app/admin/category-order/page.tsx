@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { CategoryOrderService } from '@/shared/services/categoryOrderService';
 import styles from './page.module.css';
 
@@ -11,6 +12,7 @@ interface CategoryOrderItem {
 }
 
 export default function CategoryOrderPage() {
+  const router = useRouter();
   const [categories, setCategories] = useState<CategoryOrderItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -73,34 +75,53 @@ export default function CategoryOrderPage() {
       setError(null);
       
       const newOrder = categories.map(cat => cat.name);
+      console.log('저장할 순서:', newOrder);
+      
       await CategoryOrderService.updateCategoryOrder(
         newOrder, 
         'mainPageOrder', 
         '관리자 페이지에서 설정된 카테고리 순서'
       );
       
+      console.log('저장 완료');
+      
+      // 저장 후 다시 로드하여 확인
+      await loadCategoryOrder();
+      
       setSuccess('카테고리 순서가 성공적으로 저장되었습니다!');
       setTimeout(() => setSuccess(null), 3000);
     } catch (err) {
       console.error('카테고리 순서 저장 실패:', err);
-      setError('카테고리 순서 저장에 실패했습니다.');
+      setError(`카테고리 순서 저장에 실패했습니다: ${err instanceof Error ? err.message : '알 수 없는 오류'}`);
     } finally {
       setSaving(false);
     }
   };
 
-  const resetToDefault = () => {
-    const defaultOrder = [
-      '상의', '하의', '신발', '상의', '스포츠', '아웃도어', '가방', '주얼리', '액세서리'
-    ];
-    
-    const resetCategories = defaultOrder.map((name, index) => ({
-      id: name.toLowerCase(),
-      name,
-      order: index
-    }));
-    
-    setCategories(resetCategories);
+  const resetToDefault = async () => {
+    try {
+      setLoading(true);
+      const defaultOrder = [
+        '상의', '하의', '신발', '스포츠', '아웃도어', '가방', '주얼리', '액세서리'
+      ];
+      
+      // Firebase에 기본 순서 저장
+      await CategoryOrderService.updateCategoryOrder(
+        defaultOrder,
+        'mainPageOrder',
+        '기본 카테고리 순서로 리셋'
+      );
+      
+      // 저장 후 다시 로드
+      await loadCategoryOrder();
+      setSuccess('기본 순서로 리셋되었습니다!');
+      setTimeout(() => setSuccess(null), 3000);
+    } catch (err) {
+      console.error('기본 순서 리셋 실패:', err);
+      setError('기본 순서 리셋에 실패했습니다.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (loading) {
@@ -117,7 +138,15 @@ export default function CategoryOrderPage() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1 className={styles.title}>카테고리 순서 관리</h1>
+        <div className={styles.titleContainer}>
+          <h1 className={styles.title}>카테고리 순서 관리</h1>
+          <button 
+            onClick={() => router.push('/admin/categories')} 
+            className={styles.categoryManageButton}
+          >
+            카테고리 관리로 이동
+          </button>
+        </div>
         <p className={styles.description}>
           화살표 버튼을 사용하여 메인 페이지에 표시될 카테고리 순서를 변경할 수 있습니다.
         </p>

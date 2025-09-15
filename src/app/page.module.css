@@ -85,7 +85,10 @@
 
 .retryButton:hover {
   background: #2563eb;
-}r {
+}
+
+/* 공통 섹션 컨테이너 */
+.sectionContainer {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1rem;
