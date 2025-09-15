@@ -9,12 +9,14 @@ interface ProductSectionProps {
   title: string;
   type: 'recommended' | 'new' | 'sale' | 'bestseller';
   showViewAllButton?: boolean;
+  maxItems?: number;
 }
 
 export default function ProductSection({ 
   title, 
   type, 
-  showViewAllButton = true 
+  showViewAllButton = true,
+  maxItems = 8
 }: ProductSectionProps) {
   const { 
     recommendedProducts, 
@@ -39,7 +41,7 @@ export default function ProductSection({
     }
   };
 
-  const products = getProducts().slice(0, 4); // 최대 4개만 표시
+  const products = getProducts().slice(0, maxItems);
 
   if (loading) {
     return (

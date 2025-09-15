@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, FormEvent } from "react";
+import { useState, useEffect, FormEvent, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import styles from "./page.module.css";
@@ -9,7 +9,7 @@ import { confirmPasswordReset, verifyPasswordResetCode } from "firebase/auth";
 import { auth } from "@/shared/libs/firebase/firebase";
 import { getErrorMessage } from "@/shared/utils/authErrorMessages";
 
-export default function ResetPasswordPage() {
+function ResetPasswordContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [values, onChange] = useInput({
@@ -220,5 +220,23 @@ export default function ResetPasswordPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={
+      <div className={styles.container}>
+        <div className={styles.formWrapper}>
+          <div className={styles.loadingContainer}>
+            <div className={styles.spinner}></div>
+            <h2 className={styles.loadingTitle}>로딩 중...</h2>
+            <p className={styles.loadingText}>페이지를 준비하고 있습니다.</p>
+          </div>
+        </div>
+      </div>
+    }>
+      <ResetPasswordContent />
+    </Suspense>
   );
 }

@@ -1,0 +1,362 @@
+.bannerSection {
+  position: relative;
+  width: 100%;
+  height: 70vh;
+  min-height: 500px;
+  max-height: 800px;
+  overflow: hidden;
+}
+
+.bannerSwiper {
+  width: 100%;
+  height: 100%;
+}
+
+.bannerSlide {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.bannerBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.bannerOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 0.6) 0%,
+    rgba(0, 0, 0, 0.3) 50%,
+    rgba(0, 0, 0, 0.8) 100%
+  );
+  z-index: 2;
+}
+
+.bannerContent {
+  position: relative;
+  z-index: 3;
+  max-width: 1200px;
+  width: 100%;
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.bannerText {
+  max-width: 600px;
+  animation: slideInLeft 1s ease-out;
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.bannerSubtitle {
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  opacity: 0.9;
+}
+
+.bannerTitle {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 900;
+  line-height: 1.1;
+  margin: 0 0 1.5rem 0;
+  letter-spacing: -0.02em;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.bannerDescription {
+  font-size: 1.2rem;
+  line-height: 1.6;
+  margin-bottom: 2.5rem;
+  opacity: 0.95;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.bannerButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 2.5rem;
+  background: linear-gradient(135deg, #000 0%, #333 100%);
+  color: white;
+  text-decoration: none;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.bannerButton:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+  background: linear-gradient(135deg, #333 0%, #555 100%);
+}
+
+.buttonArrow {
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
+}
+
+.bannerButton:hover .buttonArrow {
+  transform: translateX(5px);
+}
+
+/* 텍스트 색상 */
+.white {
+  color: white;
+}
+
+.black {
+  color: #333;
+}
+
+/* Navigation 버튼 */
+.swiperButtonPrev,
+.swiperButtonNext {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 50px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.3s ease;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+.swiperButtonPrev {
+  left: 2rem;
+}
+
+.swiperButtonNext {
+  right: 2rem;
+}
+
+.swiperButtonPrev:hover,
+.swiperButtonNext:hover {
+  background: white;
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.swiperButtonPrev svg,
+.swiperButtonNext svg {
+  width: 24px;
+  height: 24px;
+  color: #333;
+}
+
+/* Pagination */
+.swiperPagination {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.75rem;
+  z-index: 10;
+}
+
+.paginationBullet {
+  width: 12px;
+  height: 12px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.paginationBullet:hover {
+  background: rgba(255, 255, 255, 0.8);
+  transform: scale(1.2);
+}
+
+:global(.swiper-pagination-bullet-active).paginationBullet {
+  background: white;
+  transform: scale(1.3);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+}
+
+/* 반응형 */
+@media (max-width: 1024px) {
+  .bannerSection {
+    height: 60vh;
+    min-height: 450px;
+  }
+  
+  .bannerContent {
+    padding: 0 1.5rem;
+  }
+  
+  .bannerTitle {
+    font-size: clamp(2rem, 4vw, 3rem);
+  }
+  
+  .bannerDescription {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+  }
+  
+  .bannerButton {
+    padding: 0.9rem 2rem;
+    font-size: 1rem;
+  }
+  
+  .swiperButtonPrev,
+  .swiperButtonNext {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .swiperButtonPrev {
+    left: 1.5rem;
+  }
+  
+  .swiperButtonNext {
+    right: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .bannerSection {
+    height: 50vh;
+    min-height: 400px;
+  }
+  
+  .bannerContent {
+    padding: 0 1rem;
+  }
+  
+  .bannerText {
+    text-align: center;
+    max-width: 100%;
+  }
+  
+  .bannerTitle {
+    font-size: clamp(1.8rem, 6vw, 2.5rem);
+    margin-bottom: 1rem;
+  }
+  
+  .bannerDescription {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .bannerButton {
+    padding: 0.8rem 1.8rem;
+    font-size: 0.95rem;
+  }
+  
+  .swiperButtonPrev,
+  .swiperButtonNext {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .swiperButtonPrev {
+    left: 1rem;
+  }
+  
+  .swiperButtonNext {
+    right: 1rem;
+  }
+  
+  .swiperButtonPrev svg,
+  .swiperButtonNext svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .swiperPagination {
+    bottom: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .bannerSection {
+    height: 45vh;
+    min-height: 350px;
+  }
+  
+  .bannerSubtitle {
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .bannerTitle {
+    font-size: clamp(1.6rem, 7vw, 2.2rem);
+    margin-bottom: 0.75rem;
+  }
+  
+  .bannerDescription {
+    font-size: 0.95rem;
+    margin-bottom: 1.25rem;
+  }
+  
+  .bannerButton {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
+  }
+  
+  .swiperButtonPrev,
+  .swiperButtonNext {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .swiperButtonPrev {
+    left: 0.75rem;
+  }
+  
+  .swiperButtonNext {
+    right: 0.75rem;
+  }
+  
+  .paginationBullet {
+    width: 10px;
+    height: 10px;
+  }
+  
+  .swiperPagination {
+    gap: 0.5rem;
+    bottom: 1rem;
+  }
+}
