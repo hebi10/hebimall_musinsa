@@ -61,7 +61,6 @@ export class CategoryOnlyProductService {
         }
       }
       
-      console.log(`✅ 전체 상품 조회 완료: ${allProducts.length}개 (카테고리별 통합)`);
       return allProducts;
       
     } catch (error) {

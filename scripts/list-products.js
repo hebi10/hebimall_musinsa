@@ -33,7 +33,6 @@ async function listAllProducts() {
         
         productsSnapshot.docs.forEach((doc, index) => {
           const data = doc.data();
-          console.log(`   ${index + 1}. ${doc.id} - ${data.name} (${data.brand})`);
           allProducts.push({
             id: doc.id,
             name: data.name,

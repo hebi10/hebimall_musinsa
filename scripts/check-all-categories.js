@@ -32,7 +32,6 @@ async function listAllCategories() {
       try {
         const productsSnapshot = await getDocs(collection(db, 'categories', categoryId, 'products'));
         
-        console.log(`📂 "${categoryId}" (${productsSnapshot.size}개 상품)`);
         
         // 카테고리 데이터가 있으면 표시
         if (categoryData && Object.keys(categoryData).length > 0) {
@@ -44,7 +43,6 @@ async function listAllCategories() {
           const sampleProducts = productsSnapshot.docs.slice(0, 3);
           sampleProducts.forEach((doc, index) => {
             const data = doc.data();
-            console.log(`   ${index + 1}. ${data.name} (${data.brand}) - category: "${data.category}"`);
           });
           if (productsSnapshot.size > 3) {
             console.log(`   ... 외 ${productsSnapshot.size - 3}개`);

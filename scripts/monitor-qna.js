@@ -62,7 +62,6 @@ const unsubscribe = onSnapshot(q, (snapshot) => {
   console.log('\n--- 현재 QnA 목록 ---');
   snapshot.docs.forEach((doc, index) => {
     const data = doc.data();
-    console.log(`${index + 1}. ${data.title} (${data.userName}) - ${data.status}`);
   });
   console.log('----------------------\n');
 }, (error) => {

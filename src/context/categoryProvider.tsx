@@ -139,10 +139,8 @@ export function CategoryProvider({ children }: CategoryProviderProps) {
           try {
             // 해당 카테고리의 products 서브컬렉션 확인
             const productsSnapshot = await getDocs(collection(db, 'categories', category.id, 'products'));
-            console.log(`📂 ${category.name} (${category.id}): ${productsSnapshot.size}개 상품`);
             categoriesWithInfo.push(category);
           } catch (error) {
-            console.log(`📂 ${category.name} (${category.id}): 컬렉션 접근 중 - 표시함`);
             // 에러가 있어도 카테고리는 표시
             categoriesWithInfo.push(category);
           }

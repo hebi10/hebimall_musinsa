@@ -17,7 +17,6 @@ async function checkFirebaseStructure() {
     console.log('\n📦 Products 컬렉션:');
     productsSnapshot.forEach(doc => {
       const data = doc.data();
-      console.log(`  - ${doc.id}: ${data.name} (카테고리: ${data.category})`);
     });
     
     console.log('\n📊 현재 구조 분석:');

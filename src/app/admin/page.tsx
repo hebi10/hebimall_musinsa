@@ -363,6 +363,14 @@ function DashboardContent() {
             </div>
           </a>
           
+          <a href="/admin/featured-products" className={styles.managementCard}>
+            <div className={styles.managementIcon}>⭐</div>
+            <div className={styles.managementContent}>
+              <h3>메인 페이지 추천 상품</h3>
+              <p>이번 주 추천 상품 설정 관리</p>
+            </div>
+          </a>
+          
           <a href="/admin/recommendations" className={styles.managementCard}>
             <div className={styles.managementIcon}>⭐</div>
             <div className={styles.managementContent}>

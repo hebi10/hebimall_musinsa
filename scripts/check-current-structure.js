@@ -23,7 +23,6 @@ async function checkCurrentStructure() {
   const categoriesSnapshot = await getDocs(collection(db, 'categories'));
   categoriesSnapshot.docs.forEach(doc => {
     const data = doc.data();
-    console.log(`   ${doc.id}: ${data.name || 'N/A'}`);
   });
   
   // 2. 전체 상품

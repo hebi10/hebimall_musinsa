@@ -14,9 +14,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-async function checkUsersCollection() {
-  console.log('🔍 Firebase users 컬렉션을 확인합니다...');
-  
+async function checkUsersCollection() {  
   try {
     const usersSnapshot = await getDocs(collection(db, 'users'));
     

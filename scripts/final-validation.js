@@ -27,7 +27,6 @@ async function finalValidation() {
   categoriesSnapshot.docs.forEach(doc => {
     const data = doc.data();
     categories.push({ id: doc.id, name: data.name });
-    console.log(`   ✅ ${doc.id}: ${data.name}`);
   });
 
   // 2. URL 구조 확인

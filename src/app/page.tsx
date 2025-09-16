@@ -3,6 +3,7 @@ import Image from "next/image";
 import MainBanner from "./_components/MainBanner";
 import ProductSection from "./_components/ProductSection";
 import DynamicCategorySection from "./_components/DynamicCategorySection";
+import FeaturedProducts from "./_components/FeaturedProducts";
 import styles from "./page.module.css";
 
 export default function Home() {
@@ -26,6 +27,9 @@ export default function Home() {
         </div>
       </section>
 
+      {/* 추천 상품 섹션 */}
+      <FeaturedProducts />
+
       {/* 특가 할인 배너 */}
       <section className={styles.promoBanner}>
         <div className={styles.promoBannerContent}>
@@ -43,27 +47,21 @@ export default function Home() {
       {/* 상품 섹션들 */}
       <div className={styles.productSections}>
         <ProductSection 
-          title="MD 추천 상품" 
-          type="recommended"
-          maxItems={8}
-        />
-        
-        <ProductSection 
           title="신상품" 
           type="new"
-          maxItems={8}
+          maxItems={6}
         />
         
         <ProductSection 
           title="베스트셀러" 
           type="bestseller"
-          maxItems={8}
+          maxItems={6}
         />
         
         <ProductSection 
           title="특가 상품" 
           type="sale"
-          maxItems={8}
+          maxItems={6}
         />
       </div>
 

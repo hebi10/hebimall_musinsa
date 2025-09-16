@@ -40,7 +40,6 @@ async function checkKoreanCategories() {
       // 한국어 카테고리인지 확인
       if (Object.keys(categoryMapping).includes(categoryId)) {
         const productsSnapshot = await getDocs(collection(db, 'categories', categoryId, 'products'));
-        console.log(`📂 ${categoryId}: ${productsSnapshot.size}개 상품`);
         
         koreanCategories.push({
           koreanId: categoryId,

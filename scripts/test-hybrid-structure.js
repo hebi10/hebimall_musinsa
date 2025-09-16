@@ -27,7 +27,6 @@ async function testHybridStructure() {
     
     allProductsSnapshot.docs.slice(0, 3).forEach(doc => {
       const data = doc.data();
-      console.log(`   - ${doc.id}: ${data.name} (${data.category})`);
     });
 
     console.log('\n📁 2. 카테고리별 상품 조회 (categories/{id}/products/):');
@@ -43,7 +42,6 @@ async function testHybridStructure() {
         
         categoryProductsSnapshot.docs.slice(0, 2).forEach(doc => {
           const data = doc.data();
-          console.log(`      - ${doc.id}: ${data.name} (₩${data.price?.toLocaleString()})`);
         });
       } catch (error) {
         console.log(`   📂 categories/${categorySlug}/products/: 컬렉션 없음 또는 오류`);

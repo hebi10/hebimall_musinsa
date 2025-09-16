@@ -124,7 +124,6 @@ async function checkResults() {
     console.log('\n✅ 카테고리 이름 확인:');
     for (const doc of snapshot.docs) {
       const data = doc.data();
-      console.log(`   ${doc.id}: "${data.name}"`);
     }
     
     console.log('\n✅ 상품 카테고리 샘플 확인:');

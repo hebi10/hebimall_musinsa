@@ -117,7 +117,7 @@
 
 /* 카테고리 섹션 */
 .categorySection {
-  padding: 5rem 0;
+  padding: 5rem 0 3rem 0; /* 아래 패딩을 줄여서 추천 상품과 간격 조정 */
   background: white;
 }
 
@@ -235,7 +235,7 @@
 .promoBanner {
   background: linear-gradient(135deg, #000 0%, #333 100%);
   padding: 4rem 0;
-  margin: 3rem 0;
+  margin: 0 0 3rem;
 }
 
 .promoBannerContent {
@@ -303,6 +303,7 @@
 .productSections {
   padding: 3rem 0;
   background: white;
+  margin-top: 2rem; /* 추천 상품 섹션과의 간격 */
 }
 
 /* 브랜드 스토리 섹션 */

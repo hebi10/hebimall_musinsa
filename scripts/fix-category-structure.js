@@ -159,7 +159,6 @@ class CategoryMigrationService {
     console.log('📁 카테고리 목록:');
     categoriesSnapshot.docs.forEach(doc => {
       const data = doc.data();
-      console.log(`   ${doc.id}: ${data.name}`);
     });
 
     // 상품 분포 확인

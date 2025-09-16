@@ -452,6 +452,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   // 초기 데이터 로드 (한번만 실행)
   useEffect(() => {
     loadProducts(true); // 초기 로드는 강제로 실행
+    loadHomePageData(); // 홈페이지 데이터도 함께 로드
   }, []); // 빈 의존성 배열로 한번만 실행
 
   const value: ProductContextType = {

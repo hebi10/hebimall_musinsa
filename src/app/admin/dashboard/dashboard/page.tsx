@@ -116,12 +116,20 @@ export default function AdminDashboardPage() {
       icon: '📦'
     },
     { 
+      title: '추천 상품', 
+      value: '4', 
+      change: '활성화', 
+      isPositive: true, 
+      color: 'orange',
+      icon: '⭐'
+    },
+    { 
       title: '총 주문', 
       value: '2,345', 
       change: '+18%', 
       isPositive: true, 
       color: 'purple',
-      icon: '🛒'
+      icon: '�'
     },
     { 
       title: '매출액', 
@@ -130,14 +138,6 @@ export default function AdminDashboardPage() {
       isPositive: true, 
       color: 'red',
       icon: '💰'
-    },
-    { 
-      title: '신규 주문', 
-      value: '123', 
-      change: '+8%', 
-      isPositive: true, 
-      color: 'orange',
-      icon: '🆕'
     },
     { 
       title: '반품 요청', 
@@ -324,17 +324,20 @@ export default function AdminDashboardPage() {
               <Link href="/admin/dashboard/products/add" className={styles.actionButton}>
                 📦 새 상품 등록
               </Link>
+              <Link href="/admin/featured-products" className={styles.actionButton}>
+                ⭐ 추천 상품 관리
+              </Link>
+              <Link href="/admin/recommendations" className={`${styles.actionButton} ${styles.secondary}`}>
+                🤖 추천 알고리즘 설정
+              </Link>
               <Link href="/admin/dashboard/orders" className={`${styles.actionButton} ${styles.secondary}`}>
-                🛒 주문 관리
+                � 주문 관리
               </Link>
               <Link href="/admin/dashboard/users" className={`${styles.actionButton} ${styles.tertiary}`}>
-                👥 사용자 관리
+                � 사용자 관리
               </Link>
               <button className={styles.actionButton}>
-                📊 보고서 생성
-              </button>
-              <button className={`${styles.actionButton} ${styles.secondary}`}>
-                📧 공지사항 작성
+                � 보고서 생성
               </button>
             </div>
           </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useProduct } from '@/context/productProvider';
+import { CategoryOnlyProductService } from '@/shared/services/hybridProductService';
 import { Product } from '@/shared/types/product';
 import styles from './page.module.css';
 
@@ -22,7 +22,8 @@ interface RecommendSettings {
 }
 
 export default function RecommendationsAdminPage() {
-  const { products, loading, loadProducts } = useProduct();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [currentSettings, setCurrentSettings] = useState<RecommendSettings[]>([
     {
@@ -79,6 +80,18 @@ export default function RecommendationsAdminPage() {
   useEffect(() => {
     loadProducts();
   }, []);
+
+  const loadProducts = async () => {
+    try {
+      setLoading(true);
+      const productsData = await CategoryOnlyProductService.getAllProducts();
+      setProducts(productsData);
+    } catch (error) {
+      console.error('상품 로딩 실패:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // 설정에 따른 상품 필터링
   const getProductsBySettings = (settings: RecommendSettings): Product[] => {

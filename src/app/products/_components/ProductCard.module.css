@@ -53,8 +53,8 @@
 
 .badges {
   position: absolute;
-  top: var(--spacing-sm);
-  left: var(--spacing-sm);
+  top: 4rem;
+  left: 1rem;
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xs);

@@ -33,7 +33,7 @@ const bannerSlides: BannerSlide[] = [
     buttonText: "쇼핑하러 가기",
     buttonLink: "/products",
     backgroundImage: "/tshirt-1.jpg",
-    backgroundColor: "#000",
+    backgroundColor: "#718096",
     textColor: "white"
   },
   {
@@ -55,7 +55,7 @@ const bannerSlides: BannerSlide[] = [
     buttonText: "베스트 상품 보기",
     buttonLink: "/products?sort=bestseller",
     backgroundImage: "/product-placeholder.jpg",
-    backgroundColor: "#4a5568",
+    backgroundColor: "#a0aec0",
     textColor: "white"
   }
 ];
