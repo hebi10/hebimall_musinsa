@@ -128,7 +128,7 @@ export default function FeaturedProducts() {
             <h2 className={styles.title}>{config.title}</h2>
             <p className={styles.subtitle}>{config.subtitle}</p>
           </div>
-          <Link href="/products?filter=recommended" className={styles.viewAllButton}>
+          <Link href="/recommend" className={styles.viewAllButton}>
             더 많은 추천 상품 보기
             <span className={styles.arrow}>→</span>
           </Link>

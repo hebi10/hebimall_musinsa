@@ -15,6 +15,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NODE_ENV === 'production' ? 'https://hebimall.web.app' : 'http://localhost:3000'),
   title: "HEBIMALL - 깔끔한 스타일 쇼핑몰",
   description: "최신 패션 트렌드를 만나보세요",
   icons: {
@@ -29,7 +30,7 @@ export const metadata: Metadata = {
     siteName: "HEBIMALL",
     images: [
       {
-        url: "thum.png", // 카카오톡 썸네일로 쓰일 이미지 경로
+        url: "/thum.png", // 카카오톡 썸네일로 쓰일 이미지 경로
         width: 1200,
         height: 630,
         alt: "HEBIMALL 쇼핑몰",

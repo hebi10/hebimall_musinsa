@@ -2,12 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useProduct } from '@/context/productProvider';
+import { CategoryOnlyProductService } from '@/shared/services/hybridProductService';
 import { Product } from '@/shared/types/product';
 import styles from "./page.module.css";
 
 export default function RecommendPage() {
-  const { products, loading, error, loadProducts } = useProduct();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [recommendedProducts, setRecommendedProducts] = useState<Product[]>([]);
   const [filterType, setFilterType] = useState<'all' | 'rating' | 'review' | 'sale' | 'new'>('all');
 
@@ -29,48 +31,62 @@ export default function RecommendPage() {
     }
   }, [products, filterType]);
 
+  const loadProducts = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const allProducts = await CategoryOnlyProductService.getAllProducts();
+      setProducts(allProducts);
+    } catch (err) {
+      console.error('상품 로딩 실패:', err);
+      setError('상품을 불러오는데 실패했습니다.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const filterRecommendedProducts = () => {
     let filtered: Product[] = [];
     
     switch (filterType) {
       case 'all':
         filtered = products
-          .map(p => ({
+          .map((p: Product) => ({
             ...p,
             recommendScore: (p.rating * 0.4) + 
                           (Math.min(p.reviewCount / 10, 50) * 0.3) + 
                           ((p.saleRate || 0) * 0.2) + 
                           (p.isNew ? 10 : 0)
           }))
-          .sort((a, b) => (b as any).recommendScore - (a as any).recommendScore)
+          .sort((a: any, b: any) => b.recommendScore - a.recommendScore)
           .slice(0, 24);
         break;
         
       case 'rating':
         filtered = products
-          .filter(p => p.rating >= 4.3)
-          .sort((a, b) => b.rating - a.rating)
+          .filter((p: Product) => p.rating >= 4.3)
+          .sort((a: Product, b: Product) => b.rating - a.rating)
           .slice(0, 20);
         break;
         
       case 'review':
         filtered = products
-          .filter(p => p.reviewCount >= 80)
-          .sort((a, b) => b.reviewCount - a.reviewCount)
+          .filter((p: Product) => p.reviewCount >= 50)
+          .sort((a: Product, b: Product) => b.reviewCount - a.reviewCount)
           .slice(0, 20);
         break;
         
       case 'sale':
         filtered = products
-          .filter(p => p.isSale && p.saleRate && p.saleRate > 0)
-          .sort((a, b) => (b.saleRate || 0) - (a.saleRate || 0))
+          .filter((p: Product) => p.isSale && p.saleRate && p.saleRate > 0)
+          .sort((a: Product, b: Product) => (b.saleRate || 0) - (a.saleRate || 0))
           .slice(0, 20);
         break;
         
       case 'new':
         filtered = products
-          .filter(p => p.isNew)
-          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+          .filter((p: Product) => p.isNew)
+          .sort((a: Product, b: Product) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
           .slice(0, 20);
         break;
     }
@@ -94,7 +110,10 @@ export default function RecommendPage() {
       <div className={styles.container}>
         <div className={styles.errorWrapper}>
           <p>상품을 불러오는데 실패했습니다.</p>
-          <button onClick={() => loadProducts()} className={styles.retryButton}>
+          <button 
+            onClick={() => loadProducts()} 
+            className={styles.retryButton}
+          >
             다시 시도
           </button>
         </div>
@@ -161,7 +180,7 @@ export default function RecommendPage() {
             {recommendedProducts.map((product, index) => (
               <Link 
                 key={product.id} 
-                href={`/categories/${product.category}/products/${product.id}`}
+                href={`/products/${product.id}`}
                 className={styles.productCard}
               >
                 <div className={styles.productImageWrapper}>
@@ -183,7 +202,7 @@ export default function RecommendPage() {
                   <div className={styles.imagePlaceholder} style={{ display: product.mainImage ? 'none' : 'flex' }}>
                     <div className={styles.placeholderContent}>
                       <span className={styles.placeholderIcon}>
-                        {product.category === 'accessories' && '�'}
+                        {product.category === 'accessories' && '💍'}
                         {product.category === 'bags' && '🎒'}
                         {product.category === 'bottoms' && '👖'}
                         {product.category === 'shoes' && '👟'}

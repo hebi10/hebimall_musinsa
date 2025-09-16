@@ -66,7 +66,7 @@ export default function ProductSection({
       <div className={styles.header}>
         <h2 className={styles.title}>{title}</h2>
         {showViewAllButton && (
-          <Link href="/products" className={styles.viewAllLink}>
+          <Link href="/recommend" className={styles.viewAllLink}>
             전체보기 →
           </Link>
         )}
