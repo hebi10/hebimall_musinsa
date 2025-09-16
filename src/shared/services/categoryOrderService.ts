@@ -63,11 +63,18 @@ export class CategoryOrderService {
    */
   static async getCategoryOrderConfig(configId: string = 'mainPageOrder'): Promise<CategoryOrderConfig | null> {
     try {
+      console.log('🔍 카테고리 순서 설정 가져오기 시작:', configId);
+      console.log('📍 Firebase 프로젝트:', process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID);
+      
       const docRef = doc(db, CATEGORY_ORDER_COLLECTION, configId);
+      console.log('📄 문서 경로:', docRef.path);
+      
       const docSnap = await getDoc(docRef);
+      console.log('📋 문서 존재 여부:', docSnap.exists());
 
       if (docSnap.exists()) {
         const data = docSnap.data();
+        console.log('📊 문서 데이터:', data);
         return {
           id: docSnap.id,
           order: data.order || this.defaultCategoryOrder,
@@ -79,10 +86,11 @@ export class CategoryOrderService {
         };
       }
 
+      console.log('⚠️ 문서가 존재하지 않음, 기본값 반환');
       // 설정이 없으면 기본값 반환
       return this.createDefaultOrderConfig();
     } catch (error) {
-      console.error('카테고리 순서 설정 조회 실패:', error);
+      console.error('❌ 카테고리 순서 설정 조회 실패:', error);
       return this.createDefaultOrderConfig();
     }
   }
@@ -112,6 +120,17 @@ export class CategoryOrderService {
   ): Promise<void> {
     try {
       console.log('🔄 카테고리 순서 업데이트 시작:', { newOrder, configId, description });
+      console.log('🌍 Firebase 연결 상태 확인...');
+      
+      // Firebase 연결 상태 테스트
+      try {
+        const testDocRef = doc(db, 'test', 'connection');
+        await getDoc(testDocRef);
+        console.log('✅ Firebase 연결 정상');
+      } catch (connError) {
+        console.error('❌ Firebase 연결 실패:', connError);
+        throw new Error('Firebase 연결에 실패했습니다.');
+      }
       
       const mappedOrder = newOrder.map(name => this.nameToIdMapping[name]).filter(Boolean);
       console.log('📝 매핑된 순서:', mappedOrder);
@@ -134,6 +153,7 @@ export class CategoryOrderService {
 
       if (existingDoc.exists()) {
         console.log('🔄 기존 문서 업데이트 중...');
+        console.log('🔍 업데이트 전 데이터:', existingDoc.data());
         await updateDoc(docRef, orderData);
         console.log('✅ 문서 업데이트 완료');
       } else {
@@ -143,6 +163,16 @@ export class CategoryOrderService {
           createdAt: Timestamp.now(),
         });
         console.log('✅ 새 문서 생성 완료');
+      }
+
+      // 저장 확인
+      console.log('🔍 저장 결과 확인 중...');
+      const savedDoc = await getDoc(docRef);
+      if (savedDoc.exists()) {
+        console.log('✅ 저장 확인됨:', savedDoc.data());
+      } else {
+        console.error('❌ 저장 실패: 문서가 존재하지 않음');
+        throw new Error('문서 저장이 실패했습니다.');
       }
 
       console.log('✅ 카테고리 순서 업데이트 완료:', newOrder);
@@ -162,9 +192,14 @@ export class CategoryOrderService {
    */
   static async getSortedCategories(): Promise<{ id: string; name: string; order: number }[]> {
     try {
+      console.log('🔍 카테고리 순서 조회 시작');
+      
       // 카테고리 순서 설정 가져오기
       const orderConfig = await this.getCategoryOrderConfig();
+      console.log('📋 순서 설정:', orderConfig);
+      
       if (!orderConfig) {
+        console.warn('⚠️ 카테고리 순서 설정을 찾을 수 없습니다.');
         throw new Error('카테고리 순서 설정을 찾을 수 없습니다.');
       }
 
@@ -177,8 +212,10 @@ export class CategoryOrderService {
       const querySnapshot = await getDocs(categoriesQuery);
       const allCategories: { id: string; name: string }[] = [];
       
+      console.log('📦 Firebase에서 가져온 카테고리들:');
       querySnapshot.forEach((doc) => {
         const data = doc.data();
+        console.log(`  - ${doc.id}: ${JSON.stringify(data)}`);
         if (data.isActive === true) {
           allCategories.push({
             id: doc.id,
@@ -187,12 +224,16 @@ export class CategoryOrderService {
         }
       });
 
+      console.log('✅ 활성화된 카테고리들:', allCategories);
+
       // 설정된 순서에 따라 정렬
       const sortedCategories: { id: string; name: string; order: number }[] = [];
       
       orderConfig.order.forEach((categoryName, index) => {
         const categoryId = this.nameToIdMapping[categoryName];
         const category = allCategories.find(cat => cat.id === categoryId);
+        
+        console.log(`📍 순서 ${index}: ${categoryName} -> ${categoryId} -> ${category ? '존재' : '없음'}`);
         
         if (category) {
           sortedCategories.push({
@@ -206,6 +247,7 @@ export class CategoryOrderService {
       // 설정에 없는 카테고리들은 마지막에 추가
       allCategories.forEach(category => {
         if (!sortedCategories.find(sorted => sorted.id === category.id)) {
+          console.log(`➕ 설정에 없는 카테고리 추가: ${category.name}`);
           sortedCategories.push({
             id: category.id,
             name: category.name,
@@ -214,16 +256,20 @@ export class CategoryOrderService {
         }
       });
 
+      console.log('🎯 최종 정렬된 카테고리:', sortedCategories);
       return sortedCategories;
     } catch (error) {
-      console.error('정렬된 카테고리 조회 실패:', error);
+      console.error('❌ 정렬된 카테고리 조회 실패:', error);
       
       // 에러 시 기본 카테고리 반환
-      return this.defaultCategoryOrder.map((name, index) => ({
+      const fallbackCategories = this.defaultCategoryOrder.map((name, index) => ({
         id: this.nameToIdMapping[name] || name.toLowerCase(),
         name,
         order: index
       })).filter(cat => cat.id);
+      
+      console.log('🔄 기본 카테고리로 fallback:', fallbackCategories);
+      return fallbackCategories;
     }
   }
 

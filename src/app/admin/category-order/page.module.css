@@ -167,6 +167,8 @@
 .categoryItem:hover {
   background: #f3f4f6;
   border-color: #d1d5db;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .categoryNumber {
@@ -297,14 +299,25 @@
     flex-direction: column;
     align-items: stretch;
     gap: 1rem;
+    padding: 0.75rem;
   }
   
   .categoryNumber {
     align-self: flex-start;
+    width: 35px;
+    height: 35px;
+    font-size: 1rem;
   }
   
   .categoryControls {
     align-self: flex-end;
+    flex-wrap: wrap;
+  }
+  
+  .moveButton {
+    width: 35px;
+    height: 35px;
+    font-size: 1rem;
   }
   
   .previewList {
