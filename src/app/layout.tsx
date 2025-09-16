@@ -22,7 +22,24 @@ export const metadata: Metadata = {
     shortcut: '/favicon.ico',
     apple: '/favicon.ico',
   },
+  openGraph: {
+    title: "HEBIMALL - NEW SEASON",
+    description: "최신 패션 트렌드를 만나보세요",
+    url: "https://hebimall.web.app/",
+    siteName: "HEBIMALL",
+    images: [
+      {
+        url: "thum.png", // 카카오톡 썸네일로 쓰일 이미지 경로
+        width: 1200,
+        height: 630,
+        alt: "HEBIMALL 쇼핑몰",
+      },
+    ],
+    locale: "ko_KR",
+    type: "website",
+  },
 };
+
 
 export default function RootLayout({
   children,
