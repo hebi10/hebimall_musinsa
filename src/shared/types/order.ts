@@ -45,15 +45,23 @@ export interface Order {
   userId: string;
   orderNumber: string;
   products: OrderItem[];
-  totalAmount: number;
-  discountAmount: number;
-  deliveryFee: number;
+  totalAmount?: number;
+  discountAmount?: number;
+  deliveryFee?: number;
   finalAmount: number;
   status: OrderStatus;
-  paymentMethod: PaymentMethod;
-  deliveryAddress: Address;
+  paymentMethod?: PaymentMethod;
+  shippingAddress?: Address;  // deliveryAddress 대신 shippingAddress 사용
+  paymentInfo?: any;  // 결제 정보 (선택적)
   createdAt: Date;
   updatedAt: Date;
+  
+  // 추가 필드들 (선택적)
+  trackingNumber?: string;
+  deliveryCompany?: string;
+  estimatedDeliveryDate?: Date;
+  cancelReason?: string;
+  cancelledAt?: Date;
 }
 
 export interface OrderHistory {

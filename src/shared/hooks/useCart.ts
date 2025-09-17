@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CartService } from '../services/cartService';
-import { Cart, AddToCartRequest, UpdateCartItemRequest } from '../types/cart';
+import { AddToCartRequest, UpdateCartItemRequest } from '../types/cart';
 import { Product } from '../types/product';
 
 // Query Keys

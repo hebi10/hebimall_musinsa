@@ -83,7 +83,7 @@ export default function AdminOrdersPage() {
     if (searchTerm) {
       filtered = filtered.filter((order: Order) =>
         order.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        order.deliveryAddress.recipient.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (order.shippingAddress?.recipient || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
         order.userId.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
@@ -206,7 +206,7 @@ export default function AdminOrdersPage() {
       const headers = ['주문번호', '고객', '상품수량', '주문금액', '결제방법', '주문일', '상태'];
       const csvData = filteredOrders.map(order => [
         order.orderNumber,
-        order.deliveryAddress.recipient,
+        order.shippingAddress?.recipient || '',
         order.products.reduce((sum, product) => sum + product.quantity, 0),
         order.finalAmount,
         order.paymentMethod,
@@ -377,8 +377,8 @@ export default function AdminOrdersPage() {
                     </td>
                     <td>
                       <div>
-                        <strong>{order.deliveryAddress.recipient}</strong><br />
-                        <small style={{ color: '#999' }}>{order.deliveryAddress.phone}</small>
+                        <strong>{order.shippingAddress?.recipient || '정보 없음'}</strong><br />
+                        <small style={{ color: '#999' }}>{order.shippingAddress?.phone || ''}</small>
                       </div>
                     </td>
                     <td>{order.products.reduce((sum, product) => sum + product.quantity, 0)}개</td>

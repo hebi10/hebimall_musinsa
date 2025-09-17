@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styles from './SiteGuidePopup.module.css';
 import Link from 'next/link';
 
@@ -35,7 +35,7 @@ const SiteGuidePopup: React.FC<SiteGuidePopupProps> = ({
               <span className={styles.icon}>💻</span>
               <span>Github 바로가기</span>
             </Link>
-            <Link href="https://www.notion.so/hebi10/HEBI-MALL-24f8b702e1b8805db701c2316bcd42bf" target='_blank' className={styles.feature}>
+            <Link href="https://hebi10.notion.site/HEBI-MALL-24f8b702e1b8805db701c2316bcd42bf?pvs=74" target='_blank' className={styles.feature}>
               <span className={styles.icon}>📄</span>
               <span>노션 문서 바로가기</span>
             </Link>

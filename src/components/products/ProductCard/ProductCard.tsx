@@ -26,6 +26,52 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
     }).format(price);
   };
 
+  // 색상명을 실제 색상 값으로 변환하는 함수
+  const getColorValue = (colorName: string): string => {
+    const colorMap: { [key: string]: string } = {
+      '검정': '#000000',
+      '검은색': '#000000',
+      '블랙': '#000000',
+      'black': '#000000',
+      '흰색': '#ffffff',
+      '화이트': '#ffffff',
+      'white': '#ffffff',
+      '빨강': '#dc2626',
+      '빨간색': '#dc2626',
+      '레드': '#dc2626',
+      'red': '#dc2626',
+      '파랑': '#2563eb',
+      '파란색': '#2563eb',
+      '블루': '#2563eb',
+      'blue': '#2563eb',
+      '초록': '#16a34a',
+      '초록색': '#16a34a',
+      '그린': '#16a34a',
+      'green': '#16a34a',
+      '노랑': '#eab308',
+      '노란색': '#eab308',
+      '옐로우': '#eab308',
+      'yellow': '#eab308',
+      '네이비': '#1e3a8a',
+      'navy': '#1e3a8a',
+      '회색': '#6b7280',
+      '그레이': '#6b7280',
+      'gray': '#6b7280',
+      'grey': '#6b7280',
+      '보라': '#7c3aed',
+      '보라색': '#7c3aed',
+      '퍼플': '#7c3aed',
+      'purple': '#7c3aed',
+      '핑크': '#ec4899',
+      'pink': '#ec4899',
+      '갈색': '#8b4513',
+      '브라운': '#8b4513',
+      'brown': '#8b4513'
+    };
+    
+    return colorMap[colorName.toLowerCase()] || '#cccccc';
+  };
+
   const renderStars = (rating: number) => {
     const stars = [];
     const fullStars = Math.floor(rating);
@@ -126,7 +172,7 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
               <div
                 key={index}
                 className={styles.colorOption}
-                style={{ backgroundColor: color.toLowerCase() }}
+                style={{ backgroundColor: getColorValue(color) }}
                 title={color}
               />
             ))}

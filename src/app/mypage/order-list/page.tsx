@@ -14,21 +14,81 @@ export default function OrderListPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [cancellingOrderId, setCancellingOrderId] = useState<string | null>(null);
 
   // 주문 데이터 로드
   const loadOrders = async () => {
-    if (!user?.uid) return;
+    if (!user?.uid) {
+      console.log('❌ No user UID available');
+      return;
+    }
     
     try {
+      console.log('🔍 Loading orders for user:', user.uid);
       setIsLoading(true);
       setError(null);
       const userOrders = await OrderService.getUserOrders(user.uid, 50);
+      console.log('✅ Orders loaded successfully:', userOrders.length, 'orders');
+      console.log('📦 First order sample:', userOrders[0]);
       setOrders(userOrders);
-    } catch (err) {
-      console.error('주문 목록 로드 실패:', err);
-      setError('주문 목록을 불러오는데 실패했습니다.');
+    } catch (err: any) {
+      console.error('❌ 주문 목록 로드 실패:', err);
+      console.error('Error details:', {
+        message: err.message,
+        code: err.code,
+        stack: err.stack
+      });
+      
+      // 사용자 친화적인 에러 메시지 처리
+      let errorMessage = err.message || '주문 목록을 불러오는데 실패했습니다.';
+      
+      if (err.message?.includes('시스템 준비')) {
+        errorMessage = '🔧 시스템 업데이트 중입니다. 잠시 후 다시 시도해주세요. (약 2-3분 소요)';
+      } else if (err.message?.includes('index')) {
+        errorMessage = '📊 데이터베이스 최적화 중입니다. 잠시만 기다려주세요.';
+      }
+      
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // 주문 취소 함수
+  const handleCancelOrder = async (orderId: string, orderNumber: string, order: Order) => {
+    // 취소 불가능한 상태 체크
+    if (!['pending', 'confirmed'].includes(order.status)) {
+      alert('이미 배송이 시작된 주문은 취소할 수 없습니다.\n고객센터로 문의해주세요.');
+      return;
+    }
+
+    const confirmMessage = `주문번호: ${orderNumber}\n총 주문금액: ${formatCurrency(order.finalAmount)}\n\n주문을 취소하시겠습니까?\n\n※ 취소 시 결제금액은 2-3일 내 환불됩니다.\n※ 사용된 포인트와 쿠폰은 즉시 복원됩니다.`;
+    
+    if (!confirm(confirmMessage)) {
+      return;
+    }
+
+    try {
+      setCancellingOrderId(orderId);
+      await OrderService.cancelOrder(orderId, '고객 직접 취소');
+      
+      // 주문 목록 새로고침
+      await loadOrders();
+      
+      alert(`주문이 성공적으로 취소되었습니다.\n\n✅ 포인트/쿠폰이 복원되었습니다.\n✅ 결제금액은 2-3일 내 환불 예정입니다.`);
+    } catch (error: any) {
+      console.error('주문 취소 실패:', error);
+      
+      let errorMessage = '주문 취소에 실패했습니다.';
+      if (error.message?.includes('이미 취소')) {
+        errorMessage = '이미 취소된 주문입니다.';
+      } else if (error.message?.includes('배송')) {
+        errorMessage = '배송이 시작된 주문은 취소할 수 없습니다.\n고객센터로 문의해주세요.';
+      }
+      
+      alert(errorMessage);
+    } finally {
+      setCancellingOrderId(null);
     }
   };
 
@@ -65,7 +125,7 @@ export default function OrderListPage() {
     total: orders.length,
     shipped: orders.filter(o => o.status === 'shipped').length,
     delivered: orders.filter(o => o.status === 'delivered').length,
-    totalAmount: orders.reduce((sum, order) => sum + order.finalAmount, 0)
+    totalAmount: orders.reduce((sum, order) => sum + (order.finalAmount || 0), 0)
   };
 
   const getStatusText = (status: OrderStatus) => {
@@ -90,8 +150,9 @@ export default function OrderListPage() {
     }).format(new Date(date));
   };
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('ko-KR').format(amount) + '원';
+  const formatCurrency = (amount: number | string) => {
+    const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
+    return new Intl.NumberFormat('ko-KR').format(numAmount || 0) + '원';
   };
 
   return (
@@ -188,10 +249,26 @@ export default function OrderListPage() {
             </div>
           ) : error ? (
             <div className={styles.errorState}>
+              <div className={styles.errorIcon}>
+                {error.includes('시스템 준비') || error.includes('최적화') ? '🔧' : '❌'}
+              </div>
+              <h3>
+                {error.includes('시스템 준비') || error.includes('최적화') 
+                  ? '시스템 업데이트 중' 
+                  : '주문 목록 오류'
+                }
+              </h3>
               <p>{error}</p>
-              <button onClick={loadOrders} className={styles.retryButton}>
-                다시 시도
-              </button>
+              <div className={styles.errorActions}>
+                <button onClick={loadOrders} className={styles.retryButton}>
+                  🔄 다시 시도
+                </button>
+                {error.includes('시스템 준비') && (
+                  <p className={styles.waitingNote}>
+                    💡 시스템 최적화가 완료되면 자동으로 정상 작동됩니다.
+                  </p>
+                )}
+              </div>
             </div>
           ) : filteredOrders.length > 0 ? (
             filteredOrders.map((order) => (
@@ -211,7 +288,55 @@ export default function OrderListPage() {
                   {order.products.map((product) => (
                     <div key={product.id} className={styles.productItem}>
                       <div className={styles.productImage}>
-                        <img src={product.productImage} alt={product.productName} />
+                        <img 
+                          src={(() => {
+                            let imageUrl = product.productImage;
+                            
+                            // Firebase Storage URL 처리
+                            if (imageUrl && imageUrl.includes('firebasestorage.googleapis.com')) {
+                              // Firebase Storage URL에서 토큰 제거하고 alt=media 추가
+                              try {
+                                const url = new URL(imageUrl);
+                                // 기존 쿼리 파라미터 제거하고 alt=media만 추가
+                                url.search = 'alt=media';
+                                const cleanUrl = url.toString();
+                                console.log('Cleaned Firebase URL:', cleanUrl);
+                                return cleanUrl;
+                              } catch (e) {
+                                console.log('Firebase URL parsing failed, using fallback');
+                                return '/tshirt-1.jpg';
+                              }
+                            }
+                            
+                            // 로컬 이미지 경로 처리
+                            if (imageUrl && imageUrl.startsWith('/')) {
+                              return imageUrl;
+                            }
+                            
+                            // 빈 값이거나 유효하지 않은 경우 기본 이미지
+                            return '/tshirt-1.jpg';
+                          })()} 
+                          alt={product.productName || '상품 이미지'}
+                          className={styles.productImg}
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            console.log('Image load failed:', target.src);
+                            
+                            // 이미 폴백 이미지인 경우 추가 시도 안함
+                            if (target.src.includes('tshirt-1.jpg') || 
+                                target.src.includes('shirt-2.jpg') || 
+                                target.src.includes('product-placeholder.jpg')) {
+                              return;
+                            }
+                            
+                            // 폴백 순서: tshirt-1.jpg → shirt-2.jpg → product-placeholder.jpg
+                            target.src = '/tshirt-1.jpg';
+                          }}
+                          onLoad={() => {
+                            console.log('✅ Image loaded successfully:', product.productName);
+                          }}
+                          loading="lazy"
+                        />
                       </div>
                       <div className={styles.productInfo}>
                         <div className={styles.productBrand}>{product.brand}</div>
@@ -229,23 +354,39 @@ export default function OrderListPage() {
 
                 <div className={styles.orderFooter}>
                   <div className={styles.orderTotal}>
-                    총 주문금액: <strong>{formatCurrency(order.finalAmount)}</strong>
-                    {order.discountAmount > 0 && (
-                      <span className={styles.discountAmount}>
-                        (할인 {formatCurrency(order.discountAmount)})
-                      </span>
-                    )}
-                  </div>
+                  총 주문금액: <strong>{formatCurrency(order.finalAmount)}</strong>
+                  {!!(order.discountAmount && order.discountAmount > 0) && (
+                    <span className={styles.discountAmount}>
+                      (할인 {formatCurrency(order.discountAmount)})
+                    </span>
+                  )}
+                </div>
                   <div className={styles.orderActions}>
-                    <button className={styles.actionButton}>주문상세</button>
+                    <Link href={`/mypage/order-detail/${order.id}`} className={styles.actionButton}>
+                      주문상세
+                    </Link>
                     {(order.status === 'shipped' || order.status === 'delivered') && (
                       <button className={styles.actionButton}>배송조회</button>
                     )}
                     {order.status === 'delivered' && (
                       <button className={styles.actionButton}>리뷰작성</button>
                     )}
-                    {order.status === 'pending' && (
-                      <button className={`${styles.actionButton} ${styles.cancel}`}>주문취소</button>
+                    {(order.status === 'pending' || order.status === 'confirmed') && (
+                      <button 
+                        className={`${styles.actionButton} ${styles.cancel}`}
+                        onClick={() => handleCancelOrder(order.id, order.orderNumber, order)}
+                        disabled={cancellingOrderId === order.id}
+                      >
+                        {cancellingOrderId === order.id ? '취소 중...' : '주문취소'}
+                      </button>
+                    )}
+                    {(order.status === 'preparing' || order.status === 'shipped') && (
+                      <div className={styles.cancelNotice}>
+                        <span className={styles.noticeIcon}>ℹ️</span>
+                        <span className={styles.noticeText}>
+                          {order.status === 'preparing' ? '상품 준비중 - 고객센터 문의' : '배송중 - 취소 불가'}
+                        </span>
+                      </div>
                     )}
                   </div>
                 </div>

@@ -68,27 +68,62 @@ export class OrderService {
    */
   static async getUserOrders(userId: string, limitCount: number = 20): Promise<Order[]> {
     try {
+      console.log('🔍 OrderService.getUserOrders called with:', { userId, limitCount });
+      
       const ordersRef = collection(db, this.COLLECTION_NAME);
-      const q = query(
-        ordersRef,
-        where('userId', '==', userId),
-        orderBy('createdAt', 'desc'),
-        limit(limitCount)
-      );
+      
+      // 먼저 단순 쿼리로 시도 (인덱스 불필요)
+      try {
+        console.log('📋 Executing simple query without orderBy...');
+        const simpleQ = query(
+          ordersRef,
+          where('userId', '==', userId),
+          limit(limitCount)
+        );
 
-      const querySnapshot = await getDocs(q);
-      return querySnapshot.docs.map(doc => {
-        const data = doc.data();
-        return {
-          id: doc.id,
-          ...data,
-          createdAt: data.createdAt?.toDate() || new Date(),
-          updatedAt: data.updatedAt?.toDate() || new Date()
-        } as Order;
+        const querySnapshot = await getDocs(simpleQ);
+        console.log('✅ Simple query executed successfully, found', querySnapshot.size, 'documents');
+        
+        const orders = querySnapshot.docs.map(doc => {
+          const data = doc.data();
+          console.log('📦 Processing order document:', doc.id, data);
+          
+          return {
+            id: doc.id,
+            ...data,
+            createdAt: data.createdAt?.toDate() || new Date(),
+            updatedAt: data.updatedAt?.toDate() || new Date()
+          } as Order;
+        });
+        
+        // 클라이언트 사이드에서 생성일 기준으로 내림차순 정렬
+        orders.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+        
+        console.log('✅ Orders processed and sorted successfully:', orders.length);
+        return orders;
+        
+      } catch (simpleError: any) {
+        console.error('❌ Simple query also failed:', simpleError.message);
+        throw simpleError;
+      }
+      
+    } catch (error: any) {
+      console.error('❌ getUserOrders 완전 실패:', error);
+      console.error('Error details:', {
+        message: error.message,
+        code: error.code,
+        stack: error.stack
       });
-    } catch (error) {
-      console.error('사용자 주문 목록 조회 실패:', error);
-      throw error;
+      
+      // 사용자 친화적인 에러 메시지
+      let userMessage = '주문 목록을 불러오는데 실패했습니다.';
+      if (error.message?.includes('index')) {
+        userMessage = '시스템 준비 중입니다. 잠시 후 다시 시도해주세요.';
+      } else if (error.message?.includes('permission')) {
+        userMessage = '접근 권한이 없습니다. 로그인을 확인해주세요.';
+      }
+      
+      throw new Error(userMessage);
     }
   }
 

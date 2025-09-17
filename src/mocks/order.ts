@@ -52,7 +52,7 @@ export const orders: Order[] = [
     finalAmount: 298000,
     status: 'delivered',
     paymentMethod: '카드결제',
-    deliveryAddress: {
+    shippingAddress: {
       id: 'ADDR001',
       name: '우리집',
       recipient: '홍길동',
@@ -89,7 +89,7 @@ export const orders: Order[] = [
     finalAmount: 82000,
     status: 'shipped',
     paymentMethod: '계좌이체',
-    deliveryAddress: {
+    shippingAddress: {
       id: 'ADDR002',
       name: '회사',
       recipient: '김영희',
@@ -138,7 +138,7 @@ export const orders: Order[] = [
     finalAmount: 178000,
     status: 'pending',
     paymentMethod: '카드결제',
-    deliveryAddress: {
+    shippingAddress: {
       id: 'ADDR003',
       name: '집',
       recipient: '박민수',
@@ -175,7 +175,7 @@ export const orders: Order[] = [
     finalAmount: 209000,
     status: 'confirmed',
     paymentMethod: '무통장입금',
-    deliveryAddress: {
+    shippingAddress: {
       id: 'ADDR004',
       name: '학교',
       recipient: '이지은',
@@ -224,7 +224,7 @@ export const orders: Order[] = [
     finalAmount: 235700,
     status: 'cancelled',
     paymentMethod: '카드결제',
-    deliveryAddress: {
+    shippingAddress: {
       id: 'ADDR005',
       name: '본가',
       recipient: '최철수',
@@ -243,11 +243,11 @@ export const orders: Order[] = [
 export const adminOrders: OrderData[] = orders.map(order => ({
   id: order.id,
   orderNumber: order.orderNumber,
-  customer: order.deliveryAddress.recipient,
+  customer: order.shippingAddress?.recipient || '정보 없음',
   email: `user${order.userId.slice(-3)}@example.com`, // 임시 이메일
   items: order.products.reduce((sum, product) => sum + product.quantity, 0),
   amount: `${order.finalAmount.toLocaleString()}원`,
-  paymentMethod: order.paymentMethod,
+  paymentMethod: order.paymentMethod || '기타',
   date: order.createdAt.toLocaleDateString('ko-KR'),
   status: order.status as string,
   statusText: getStatusText(order.status as string)
