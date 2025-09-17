@@ -201,8 +201,6 @@ export class CategoryOnlyProductService {
   // 상품 상세 조회 (모든 카테고리에서 검색)
   static async getProductById(productId: string): Promise<Product | null> {
     try {
-      console.log(`🔍 상품 조회: ${productId}`);
-      
       // 모든 카테고리에서 상품 검색 (순차적으로 실행)
       const categoriesSnapshot = await getDocs(collection(db, 'categories'));
       
@@ -215,7 +213,6 @@ export class CategoryOnlyProductService {
           
           if (snapshot.exists()) {
             const data = snapshot.data();
-            console.log(`✅ 상품 찾음: categories/${categoryId}/products/${productId}`);
             return {
               id: snapshot.id,
               ...data,

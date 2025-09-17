@@ -6,6 +6,7 @@ import Header from "./_components/header/Header";
 import Footer from "./_components/footer/Footer";
 import RootProviders from "./_components/providers/RootProviders";
 import ChatWidget from "./_components/chat/ChatWidget";
+import SiteGuideManager from "./_components/popup/SiteGuideManager";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -62,6 +63,7 @@ export default function RootLayout({
           </main>
           <Footer />
           <ChatWidget />
+          <SiteGuideManager />
         </RootProviders>
       </body>
     </html>
