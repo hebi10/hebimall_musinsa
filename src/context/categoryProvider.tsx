@@ -147,7 +147,6 @@ export function CategoryProvider({ children }: CategoryProviderProps) {
         }
         
         setCategories(categoriesWithInfo);
-        console.log(`🔄 헤더에 표시될 카테고리: ${categoriesWithInfo.length}개`);
       } else {
         // 카테고리 컬렉션이 없는 경우 fallback 카테고리 표시
         console.log('🔄 Firebase 카테고리 없음 - Fallback 사용');

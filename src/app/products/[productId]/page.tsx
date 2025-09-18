@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import ProductDetailClient from '../_components/ProductDetailClient';
 import { CategoryOnlyProductService } from '@/shared/services/hybridProductService';
+import { serializeProduct } from '@/shared/utils/serialize';
 import { notFound } from 'next/navigation';
 
 interface ProductPageProps {
@@ -48,7 +49,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
       notFound();
     }
 
-    return <ProductDetailClient product={product} />;
+    // 직렬화하여 Timestamp 객체 문제 해결
+    const serializedProduct = serializeProduct(product);
+
+    return <ProductDetailClient product={serializedProduct} />;
     
   } catch (error) {
     console.error('상품 상세 페이지 로드 실패:', error);

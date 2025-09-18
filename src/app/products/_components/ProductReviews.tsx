@@ -39,7 +39,7 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
   useEffect(() => {
     loadProductReviews(productId);
     loadReviewSummary(productId);
-  }, [productId, loadProductReviews, loadReviewSummary]);
+  }, [productId]);
 
   const handleSubmitReview = async (e: React.FormEvent) => {
     e.preventDefault();

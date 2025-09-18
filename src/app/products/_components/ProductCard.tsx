@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useProduct } from '@/context/productProvider';
 import { useUserActivity } from '@/context/userActivityProvider';
+import CachedImage from '@/shared/components/CachedImage';
 import { getProductReviewStats } from '@/shared/utils/syncProductReviews';
 import styles from './ProductCard.module.css';
 
@@ -38,7 +39,6 @@ export default function ProductCard({
 }: ProductCardProps) {
   const { calculateDiscountPrice } = useProduct();
   const { wishlistItems, addToWishlist, removeFromWishlist } = useUserActivity();
-  const [imageError, setImageError] = useState(false);
   const [actualReviewStats, setActualReviewStats] = useState<{ reviewCount: number; rating: number } | null>(null);
 
   // 찜하기 상태는 실제 데이터에서 가져오기
@@ -88,25 +88,19 @@ export default function ProductCard({
     }
   };
 
-  const handleImageError = () => {
-    setImageError(true);
-  };
-
   return (
     <Link href={`/products/${id}`} className={styles.card}>
       <div className={styles.imageContainer}>
-        {image && !imageError ? (
-          <img
-            src={image}
-            alt={name}
-            className={styles.image}
-            onError={handleImageError}
-          />
-        ) : (
-          <div className={styles.placeholder}>
-            <span>이미지 준비중</span>
-          </div>
-        )}
+        <CachedImage
+          src={image}
+          alt={name}
+          className={styles.image}
+          fallback={
+            <div className={styles.placeholder}>
+              <span>이미지 준비중</span>
+            </div>
+          }
+        />
         
         {/* 배지들 */}
         <div className={styles.badges}>

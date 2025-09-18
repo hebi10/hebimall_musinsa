@@ -204,7 +204,6 @@ export class CategoryOrderService {
       const querySnapshot = await getDocs(categoriesQuery);
       const allCategories: { id: string; name: string }[] = [];
       
-      console.log('📦 Firebase에서 가져온 카테고리들:');
       querySnapshot.forEach((doc) => {
         const data = doc.data();
         if (data.isActive === true) {

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useCallback, ReactNode } from "react";
+import React, { createContext, useContext, useState, useCallback, useRef, ReactNode } from "react";
 import { ReviewService } from "@/shared/services/reviewService";
 import { Review, ReviewSummary } from "@/shared/types/review";
 import { QueryDocumentSnapshot, DocumentData } from 'firebase/firestore';
@@ -19,6 +19,13 @@ interface ReviewContextType {
   currentPage: number;
   totalPages: number;
   totalCount: number;
+  
+  // 전체 통계
+  reviewStatistics: {
+    totalCount: number;
+    averageRating: number;
+    recommendationRate: number;
+  };
   
   // UI 상태
   loading: boolean;
@@ -61,6 +68,18 @@ export function ReviewProvider({ children }: { children: ReactNode }) {
   const [totalPages, setTotalPages] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
   
+  // 로딩 상태를 ref로 관리하여 클로저 문제 방지
+  const isLoadingRef = useRef(false);
+  const hasMoreReviewsRef = useRef(false);
+  const lastDocRef = useRef<QueryDocumentSnapshot<DocumentData> | undefined>(undefined);
+  
+  // 전체 통계
+  const [reviewStatistics, setReviewStatistics] = useState({
+    totalCount: 0,
+    averageRating: 0,
+    recommendationRate: 0
+  });
+  
   // UI 상태
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -68,6 +87,7 @@ export function ReviewProvider({ children }: { children: ReactNode }) {
   // 상품별 리뷰 로드
   const loadProductReviews = useCallback(async (productId: string, reset: boolean = true) => {
     try {
+      isLoadingRef.current = true;
       setLoading(true);
       setError(null);
 
@@ -79,28 +99,69 @@ export function ReviewProvider({ children }: { children: ReactNode }) {
 
       if (reset) {
         setProductReviews(reviews);
+        setLastDoc(newLastDoc);
+        lastDocRef.current = newLastDoc;
       } else {
         setProductReviews(prev => [...prev, ...reviews]);
+        setLastDoc(newLastDoc);
+        lastDocRef.current = newLastDoc;
       }
       
       setHasMoreReviews(hasMore);
-      setLastDoc(newLastDoc);
+      hasMoreReviewsRef.current = hasMore;
 
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '리뷰를 불러오는데 실패했습니다.';
       setError(errorMessage);
       console.error('상품 리뷰 로드 실패:', err);
     } finally {
+      isLoadingRef.current = false;
       setLoading(false);
     }
-  }, [lastDoc]);
+  }, []);
 
   // 더 많은 상품 리뷰 로드
   const loadMoreProductReviews = useCallback(async (productId: string) => {
-    if (!hasMoreReviews || loading) return;
+    // 이미 로딩 중이면 무시
+    if (isLoadingRef.current) {
+      console.log('🚫 이미 로딩 중이므로 요청 무시');
+      return;
+    }
     
-    await loadProductReviews(productId, false);
-  }, [hasMoreReviews, loading, loadProductReviews]);
+    // 더 이상 로드할 리뷰가 없으면 무시
+    if (!hasMoreReviewsRef.current) {
+      console.log('🚫 더 이상 로드할 리뷰가 없음');
+      return;
+    }
+    
+    try {
+      isLoadingRef.current = true;
+      setLoading(true);
+      setError(null);
+
+      const { reviews, hasMore, lastDoc: newLastDoc } = await ReviewService.getProductReviews(
+        productId, 
+        10, 
+        lastDocRef.current
+      );
+
+      setProductReviews(prev => [...prev, ...reviews]);
+      setHasMoreReviews(hasMore);
+      setLastDoc(newLastDoc);
+      
+      // ref도 업데이트
+      hasMoreReviewsRef.current = hasMore;
+      lastDocRef.current = newLastDoc;
+
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : '더 많은 리뷰를 불러오는데 실패했습니다.';
+      setError(errorMessage);
+      console.error('더 많은 상품 리뷰 로드 실패:', err);
+    } finally {
+      isLoadingRef.current = false;
+      setLoading(false);
+    }
+  }, []);
 
   // 모든 리뷰 로드
   const loadAllReviews = useCallback(async (
@@ -113,18 +174,25 @@ export function ReviewProvider({ children }: { children: ReactNode }) {
       setLoading(true);
       setError(null);
 
-      const result = await ReviewService.getAllReviews(page, 10, rating, sortBy);
+      // 병렬로 리뷰 데이터와 통계 로드
+      const [result, statistics] = await Promise.all([
+        ReviewService.getAllReviews(page, 10, rating, sortBy),
+        ReviewService.getReviewStatistics(rating)
+      ]);
+
       console.log('✅ ReviewProvider - 리뷰 로드 완료:', result.reviews.length, '개');
       console.log('📊 페이지 정보:', { 
         currentPage: result.currentPage, 
         totalPages: result.totalPages, 
         totalCount: result.totalCount 
       });
+      console.log('📈 통계 정보:', statistics);
       
       setAllReviews(result.reviews);
       setCurrentPage(result.currentPage);
       setTotalPages(result.totalPages);
       setTotalCount(result.totalCount);
+      setReviewStatistics(statistics);
 
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '리뷰를 불러오는데 실패했습니다.';
@@ -263,6 +331,11 @@ export function ReviewProvider({ children }: { children: ReactNode }) {
     setCurrentPage(1);
     setTotalPages(0);
     setTotalCount(0);
+    setReviewStatistics({
+      totalCount: 0,
+      averageRating: 0,
+      recommendationRate: 0
+    });
     setError(null);
   }, []);
 
@@ -280,6 +353,9 @@ export function ReviewProvider({ children }: { children: ReactNode }) {
     currentPage,
     totalPages,
     totalCount,
+    
+    // 전체 통계
+    reviewStatistics,
     
     // UI 상태
     loading,

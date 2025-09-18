@@ -108,6 +108,52 @@ export class ReviewService {
     }
   }
 
+  // 전체 리뷰 통계 조회
+  static async getReviewStatistics(rating?: number): Promise<{
+    totalCount: number;
+    averageRating: number;
+    recommendationRate: number;
+  }> {
+    try {
+      console.log('🔄 ReviewService.getReviewStatistics 시작:', { rating });
+      
+      const reviewsCollection = collection(db, 'reviews');
+      let reviewQuery = query(reviewsCollection);
+      
+      // 평점 필터 (통계에도 적용)
+      if (rating) {
+        reviewQuery = query(reviewQuery, where('rating', '==', rating));
+      }
+
+      const snapshot = await getDocs(reviewQuery);
+      const reviews = snapshot.docs.map(doc => doc.data());
+      
+      const totalCount = reviews.length;
+      const averageRating = totalCount > 0 
+        ? reviews.reduce((sum, review) => sum + (review.rating || 0), 0) / totalCount
+        : 0;
+      const recommendationRate = totalCount > 0 
+        ? (reviews.filter(review => review.isRecommended).length / totalCount) * 100
+        : 0;
+
+      console.log('✅ ReviewService.getReviewStatistics 완료:', { totalCount, averageRating, recommendationRate });
+      
+      return {
+        totalCount,
+        averageRating: Math.round(averageRating * 10) / 10, // 소수점 첫째자리까지
+        recommendationRate: Math.round(recommendationRate)
+      };
+
+    } catch (error) {
+      console.error('❌ ReviewService.getReviewStatistics 실패:', error);
+      return {
+        totalCount: 0,
+        averageRating: 0,
+        recommendationRate: 0
+      };
+    }
+  }
+
   // 전체 리뷰 개수 조회
   static async getTotalReviewsCount(rating?: number): Promise<number> {
     try {

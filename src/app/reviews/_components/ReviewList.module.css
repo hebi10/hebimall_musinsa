@@ -138,10 +138,6 @@
   color: var(--color-text-secondary);
 }
 
-.reviewContent {
-  margin-bottom: var(--spacing-lg);
-}
-
 .reviewTitle {
   font-size: 1.125rem;
   font-weight: 600;
@@ -539,7 +535,7 @@
 /* Large Devices (1024px and up) */
 @media (min-width: 1024px) {
   .container {
-    max-width: 1200px;
+    width: 100%;
     margin: 0 auto;
     padding: 0 var(--spacing-lg);
   }

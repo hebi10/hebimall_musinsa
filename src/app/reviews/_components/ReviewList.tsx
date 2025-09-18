@@ -16,6 +16,7 @@ export default function ReviewList() {
     currentPage,
     totalPages,
     totalCount,
+    reviewStatistics,
     loadAllReviews 
   } = useReview();
   
@@ -139,21 +140,21 @@ export default function ReviewList() {
   return (
     <div className={styles.container}>
       {/* 통계 정보 */}
-      {allReviews.length > 0 && (
+      {reviewStatistics.totalCount > 0 && (
         <div className={styles.stats}>
           <div className={styles.statItem}>
-            <div className={styles.statNumber}>{allReviews.length}</div>
+            <div className={styles.statNumber}>{reviewStatistics.totalCount}</div>
             <div className={styles.statLabel}>전체 리뷰</div>
           </div>
           <div className={styles.statItem}>
             <div className={styles.statNumber}>
-              {(allReviews.reduce((sum, review) => sum + review.rating, 0) / allReviews.length).toFixed(1)}
+              {reviewStatistics.averageRating.toFixed(1)}
             </div>
             <div className={styles.statLabel}>평균 평점</div>
           </div>
           <div className={styles.statItem}>
             <div className={styles.statNumber}>
-              {Math.round((allReviews.filter(r => r.isRecommended).length / allReviews.length) * 100)}%
+              {reviewStatistics.recommendationRate}%
             </div>
             <div className={styles.statLabel}>추천율</div>
           </div>

@@ -11,6 +11,11 @@ const nextConfig: NextConfig = {
   images: {
     // 호스팅 환경에서 안정성을 위해 이미지 최적화 비활성화
     unoptimized: true,
+    // 이미지 캐시 설정 (2분)
+    minimumCacheTTL: 120,
+    // 이미지 크기 제한
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     remotePatterns: [
       {
         protocol: 'https',

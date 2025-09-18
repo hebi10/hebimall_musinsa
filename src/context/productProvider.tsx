@@ -153,7 +153,6 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       
       // 마지막 fetch 시간 업데이트
       setLastFetchTime(now);
-      console.log('✅ 상품 데이터 로드 완료 - 다음 새로고침까지:', CACHE_DURATION / 1000, '초');
 
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '상품을 불러오는데 실패했습니다.';

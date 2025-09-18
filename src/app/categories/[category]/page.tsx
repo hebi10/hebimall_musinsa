@@ -189,7 +189,7 @@ export default function DynamicCategoryPage({ params }: CategoryPageProps) {
           {products.map((product) => (
             <Link 
               key={product.id} 
-              href={`/categories/${category}/products/${product.id}`}
+              href={`/products/${product.id}`}
               className={styles.productCard}
             >
               <div className={styles.productImage}>
