@@ -20,7 +20,7 @@ const detailsTemplates = {
   tops: {
     material: '면 100%',
     origin: '한국',
-    manufacturer: '헤비몰',
+    manufacturer: '스티나몰',
     precautions: '30도 이하 찬물 세탁, 드라이클리닝 가능',
     size: 'S, M, L, XL',
     fit: '레귤러핏',
@@ -30,7 +30,7 @@ const detailsTemplates = {
   bottoms: {
     material: '면 98%, 스판덱스 2%',
     origin: '한국',
-    manufacturer: '헤비몰',
+    manufacturer: '스티나몰',
     precautions: '30도 이하 찬물 세탁, 표백제 사용 금지',
     size: 'S, M, L, XL',
     fit: '슬림핏',
@@ -40,7 +40,7 @@ const detailsTemplates = {
   shoes: {
     material: '천연가죽, 고무',
     origin: '베트남',
-    manufacturer: '헤비몰',
+    manufacturer: '스티나몰',
     precautions: '직사광선 피해 보관, 습기 주의',
     size: '230-280mm',
     heelHeight: '2-3cm',
@@ -50,7 +50,7 @@ const detailsTemplates = {
   bags: {
     material: '천연가죽, 면',
     origin: '한국',
-    manufacturer: '헤비몰',
+    manufacturer: '스티나몰',
     precautions: '직사광선 피해 보관, 물기 주의',
     size: '가로 30cm x 세로 25cm x 폭 10cm',
     weight: '약 500g',
@@ -60,7 +60,7 @@ const detailsTemplates = {
   accessories: {
     material: '스테인리스 스틸, 가죽',
     origin: '한국',
-    manufacturer: '헤비몰',
+    manufacturer: '스티나몰',
     precautions: '습기 주의, 화학물질 접촉 금지',
     size: '프리사이즈',
     adjustment: '조절 가능',

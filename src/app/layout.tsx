@@ -17,12 +17,12 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NODE_ENV === 'production' ? 'https://hebimall.web.app' : 'http://localhost:3000'),
-  title: "HEBIMALL - 깔끔한 스타일 쇼핑몰",
-  description: "최신 패션 트렌드를 만나보세요. 티셔츠, 바지, 아우터, 액세서리까지 다양한 스타일을 HEBIMALL에서 만나보세요.",
-  keywords: ["쇼핑몰", "패션", "온라인쇼핑", "의류", "HEBIMALL", "무신사", "스타일"],
-  authors: [{ name: "HEBIMALL" }],
-  creator: "HEBIMALL",
-  publisher: "HEBIMALL",
+  title: "STYNA - 깔끔한 스타일 쇼핑몰",
+  description: "최신 패션 트렌드를 만나보세요. 티셔츠, 바지, 아우터, 액세서리까지 다양한 스타일을 STYNA에서 만나보세요.",
+  keywords: ["쇼핑몰", "패션", "온라인쇼핑", "의류", "STYNA", "무신사", "스타일"],
+  authors: [{ name: "STYNA" }],
+  creator: "STYNA",
+  publisher: "STYNA",
   robots: {
     index: true,
     follow: true,
@@ -45,16 +45,16 @@ export const metadata: Metadata = {
     ],
   },
   openGraph: {
-    title: "HEBIMALL - 깔끔한 스타일 쇼핑몰",
-    description: "최신 패션 트렌드를 만나보세요. 티셔츠, 바지, 아우터, 액세서리까지 다양한 스타일을 HEBIMALL에서!",
+    title: "STYNA - 깔끔한 스타일 쇼핑몰",
+    description: "최신 패션 트렌드를 만나보세요. 티셔츠, 바지, 아우터, 액세서리까지 다양한 스타일을 STYNA에서!",
     url: "https://hebimall.web.app",
-    siteName: "HEBIMALL",
+    siteName: "STYNA",
     images: [
       {
         url: "/thum.png",
         width: 1200,
         height: 630,
-        alt: "HEBIMALL 쇼핑몰 - 최신 패션 트렌드",
+        alt: "STYNA 쇼핑몰 - 최신 패션 트렌드",
         type: "image/png",
       },
     ],
@@ -63,10 +63,10 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "HEBIMALL - 깔끔한 스타일 쇼핑몰",
+    title: "STYNA - 깔끔한 스타일 쇼핑몰",
     description: "최신 패션 트렌드를 만나보세요",
     images: ["/thum.png"],
-    creator: "@HEBIMALL",
+    creator: "@STYNA",
   },
   verification: {
     google: "", // 필요시 Google Search Console 인증 코드
@@ -109,11 +109,11 @@ export default function RootLayout({
         {/* iOS 웹앱 설정 */}
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="apple-mobile-web-app-title" content="HEBIMALL" />
+        <meta name="apple-mobile-web-app-title" content="STYNA" />
         
         {/* 기타 모바일 최적화 */}
         <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="application-name" content="HEBIMALL" />
+        <meta name="application-name" content="STYNA" />
       </head>
       <body className={`${inter.variable}`}>
         <RootProviders>

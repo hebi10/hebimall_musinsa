@@ -1,7 +1,7 @@
 {
-  "name": "HEBIMALL - 깔끔한 스타일 쇼핑몰",
-  "short_name": "HEBIMALL",
-  "description": "최신 패션 트렌드를 만나보세요. 티셔츠, 바지, 아우터, 액세서리까지 다양한 스타일을 HEBIMALL에서!",
+  "name": "STYNA - 깔끔한 스타일 쇼핑몰",
+  "short_name": "STYNA",
+  "description": "최신 패션 트렌드를 만나보세요. 티셔츠, 바지, 아우터, 액세서리까지 다양한 스타일을 STYNA에서!",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

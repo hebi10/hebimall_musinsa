@@ -20,7 +20,7 @@ const db = getFirestore(app);
 // 간단한 사용자 시드 데이터
 const usersData = [
   {
-    name: '김헤비',
+    name: '김스티나',
     email: 'hebi1@test.com',
     phone: '010-1111-1111',
     role: 'admin',

@@ -20,7 +20,7 @@ const SiteGuidePopup: React.FC<SiteGuidePopupProps> = ({
   const slides = [
     {
       id: 1,
-      title: "HEBIMALL에 오신 것을 환영합니다! 🎉",
+      title: "STYNA에 오신 것을 환영합니다! 🎉",
       content: (
         <div className={styles.slideContent}>
           <div className={styles.heroSection}>
@@ -158,7 +158,7 @@ const SiteGuidePopup: React.FC<SiteGuidePopupProps> = ({
         {/* 헤더 */}
         <div className={styles.header}>
           <div className={styles.logoSection}>
-            <h2>HEBIMALL</h2>
+            <h2>STYNA</h2>
             <span className={styles.subtitle}>사이트 가이드</span>
           </div>
           <button className={styles.closeButton} onClick={onClose}>

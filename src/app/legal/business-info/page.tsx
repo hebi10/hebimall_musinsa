@@ -8,10 +8,10 @@ export default function BusinessInfoPage() {
         
         <div className={styles.infoGrid}>
           <div className={styles.infoLabel}>회사명</div>
-          <div className={styles.infoValue}>㈜헤비몰</div>
+          <div className={styles.infoValue}>㈜스티나몰</div>
           
           <div className={styles.infoLabel}>대표자</div>
-          <div className={styles.infoValue}>김헤비</div>
+          <div className={styles.infoValue}>김스티나</div>
           
           <div className={styles.infoLabel}>사업자등록번호</div>
           <div className={styles.infoValue}>123-45-67890</div>
@@ -28,7 +28,7 @@ export default function BusinessInfoPage() {
         <div className={styles.infoGrid}>
           <div className={styles.infoLabel}>주소</div>
           <div className={styles.infoValue}>
-            서울특별시 강남구 테헤란로 123, 헤비타워 10층
+            서울특별시 강남구 테헤란로 123, 스티나타워 10층
             <br />
             (우편번호: 06234)
           </div>
@@ -87,7 +87,7 @@ export default function BusinessInfoPage() {
           <div className={styles.infoValue}>
             경기도 고양시 덕양구 권율대로 570
             <br />
-            헤비몰 물류센터 (우편번호: 10326)
+            스티나몰 물류센터 (우편번호: 10326)
           </div>
         </div>
 

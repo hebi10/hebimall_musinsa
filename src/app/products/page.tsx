@@ -7,7 +7,7 @@ export default function ProductsPage() {
     <div className={styles.container}>
       <PageHeader
         title="전체 상품"
-        description="HEBIMALL의 다양한 상품을 만나보세요"
+        description="STYNA의 다양한 상품을 만나보세요"
         breadcrumb={[
           { label: '홈', href: '/' },
           { label: '전체 상품' }

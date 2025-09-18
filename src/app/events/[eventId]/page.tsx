@@ -21,13 +21,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     
     if (!event) {
       return {
-        title: '이벤트를 찾을 수 없습니다 - HEBIMALL',
+        title: '이벤트를 찾을 수 없습니다 - STYNA',
         description: '요청하신 이벤트를 찾을 수 없습니다.'
       };
     }
 
     return {
-      title: `${event.title} - HEBIMALL`,
+      title: `${event.title} - STYNA`,
       description: event.description,
       openGraph: {
         title: event.title,
@@ -38,8 +38,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   } catch (error) {
     console.error('Error loading event for metadata:', error);
     return {
-      title: '이벤트 - HEBIMALL',
-      description: 'HEBIMALL 이벤트 페이지'
+      title: '이벤트 - STYNA',
+      description: 'STYNA 이벤트 페이지'
     };
   }
 }

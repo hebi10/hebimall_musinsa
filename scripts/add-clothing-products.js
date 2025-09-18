@@ -20,7 +20,7 @@ const clothingProducts = [
     name: "프리미엄 울 코트",
     price: 320000,
     discountPrice: 280000,
-    brand: "HEBIMALL PREMIUM",
+    brand: "STYNA PREMIUM",
     description: "최고급 울 소재로 제작된 겨울 코트입니다. 따뜻하면서도 세련된 디자인으로 어떤 스타일에도 잘 어울립니다.",
     image: "/tshirt-1.jpg",
     category: "clothing",
@@ -33,7 +33,7 @@ const clothingProducts = [
     details: {
       material: "울 90%, 캐시미어 10%",
       origin: "이탈리아",
-      manufacturer: "헤비몰 프리미엄",
+      manufacturer: "스티나몰 프리미엄",
       precautions: "드라이클리닝 전용",
       size: "S, M, L, XL",
       color: "블랙, 네이비, 베이지",

@@ -27,7 +27,7 @@ export const mockUsers: UserProfile[] = [
     ],
     preferences: {
       favoriteCategories: ['상의', '신발'],
-      favoriteBrands: ['HEBIMALL', 'Nike'],
+      favoriteBrands: ['STYNA', 'Nike'],
       sizes: { top: 'M', bottom: '28', shoes: '245' },
       newsletter: true,
       smsMarketing: false,
@@ -135,7 +135,7 @@ export const mockUsers: UserProfile[] = [
     ],
     preferences: {
       favoriteCategories: ['상의', '아우터'],
-      favoriteBrands: ['HEBIMALL'],
+      favoriteBrands: ['STYNA'],
       sizes: { top: 'XL', bottom: '34', shoes: '275' },
       newsletter: false,
       smsMarketing: true,

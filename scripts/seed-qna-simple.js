@@ -22,7 +22,7 @@ const qnaData = [
   {
     userId: 'test-user-1',
     userEmail: 'user1@test.com',
-    userName: '김헤비',
+    userName: '김스티나',
     category: 'product',
     title: '프리미엄 코튼 티셔츠 사이즈 문의',
     content: '안녕하세요. 프리미엄 코튼 티셔츠 구매를 고려하고 있는데, 평소 M사이즈를 입는데 이 제품도 M사이즈로 주문하면 될까요? 핏이 어떤지 궁금합니다.',
@@ -52,7 +52,7 @@ const qnaData = [
     images: [],
     answer: {
       content: '안녕하세요. 고객님의 주문 건을 확인해드렸습니다. 주말 및 공휴일로 인해 배송이 지연되었으며, 내일(월요일) 오전 중 발송 예정입니다. 불편을 드려 죄송합니다.',
-      answeredBy: '헤비몰 고객센터',
+      answeredBy: '스티나몰 고객센터',
       answeredAt: serverTimestamp(),
     },
     createdAt: serverTimestamp(),
@@ -77,7 +77,7 @@ const qnaData = [
   {
     userId: 'test-user-1',
     userEmail: 'user1@test.com',
-    userName: '김헤비',
+    userName: '김스티나',
     category: 'general',
     title: '회원등급 혜택 문의',
     content: 'VIP 회원 혜택으로 무료배송이 적용된다고 하는데, 주문 시 배송비가 청구되고 있습니다. 확인 부탁드립니다.',
@@ -89,7 +89,7 @@ const qnaData = [
     images: [],
     answer: {
       content: '안녕하세요. 확인 결과 시스템 오류로 VIP 혜택이 정상 적용되지 않았습니다. 해당 주문건의 배송비는 환불 처리해드렸으며, 앞으로는 정상적으로 적용될 예정입니다.',
-      answeredBy: '헤비몰 고객센터',
+      answeredBy: '스티나몰 고객센터',
       answeredAt: serverTimestamp(),
     },
     createdAt: serverTimestamp(),
@@ -130,7 +130,7 @@ const qnaData = [
     images: [],
     answer: {
       content: '안녕하세요. 해당 제품은 이탈리아산 천연가죽 100%로 제작되어 품질이 매우 우수합니다. 실제 고객 후기도 품질에 대해 매우 만족스러워하고 계십니다. 궁금한 점이 더 있으시면 언제든 문의해주세요.',
-      answeredBy: '헤비몰 상품팀',
+      answeredBy: '스티나몰 상품팀',
       answeredAt: serverTimestamp(),
     },
     createdAt: serverTimestamp(),

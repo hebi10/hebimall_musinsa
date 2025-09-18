@@ -11,7 +11,7 @@ export default function CartPage() {
     {
       id: 1,
       name: "오버사이즈 후드티",
-      brand: "HEBIMALL",
+      brand: "STYNA",
       price: 89000,
       originalPrice: 129000,
       quantity: 1,

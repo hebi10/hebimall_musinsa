@@ -8,17 +8,17 @@ export default function TermsPage() {
       </div>
 
       <div className={styles.section}>
-        <h1 className={styles.title}>HEBIMALL 이용약관</h1>
+        <h1 className={styles.title}>STYNA 이용약관</h1>
         
         <div className={styles.important}>
-          <strong>중요:</strong> 본 약관은 HEBIMALL 서비스 이용에 관한 중요한 법적 문서입니다. 
+          <strong>중요:</strong> 본 약관은 STYNA 서비스 이용에 관한 중요한 법적 문서입니다. 
           서비스를 이용하기 전에 반드시 전체 내용을 숙지하시기 바랍니다.
         </div>
 
         <div className={styles.article}>
           <div className={styles.articleNumber}>제1조 (목적)</div>
           <div className={styles.content}>
-            본 약관은 ㈜헤비몰(이하 "회사")이 운영하는 HEBIMALL 웹사이트 및 모바일 애플리케이션(이하 "서비스")을 
+            본 약관은 ㈜스티나몰(이하 "회사")이 운영하는 STYNA 웹사이트 및 모바일 애플리케이션(이하 "서비스")을 
             이용함에 있어 회사와 이용자의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다.
           </div>
         </div>
@@ -30,7 +30,7 @@ export default function TermsPage() {
           </div>
           <ul className={styles.list}>
             <li className={styles.listItem}>
-              <span className={styles.highlight}>"서비스"</span>란 회사가 제공하는 HEBIMALL 전자상거래 플랫폼을 의미합니다.
+              <span className={styles.highlight}>"서비스"</span>란 회사가 제공하는 STYNA 전자상거래 플랫폼을 의미합니다.
             </li>
             <li className={styles.listItem}>
               <span className={styles.highlight}>"이용자"</span>란 본 약관에 따라 회사가 제공하는 서비스를 받는 회원 및 비회원을 의미합니다.

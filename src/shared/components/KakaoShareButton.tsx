@@ -18,7 +18,7 @@ interface KakaoShareButtonProps {
 }
 
 export default function KakaoShareButton({
-  title = 'HEBIMALL - 깔끔한 스타일 쇼핑몰',
+  title = 'STYNA - 깔끔한 스타일 쇼핑몰',
   description = '최신 패션 트렌드를 만나보세요',
   imageUrl = '/thum.png',
   webUrl = window?.location?.href || 'https://hebimall.web.app',

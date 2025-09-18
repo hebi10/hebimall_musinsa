@@ -72,7 +72,7 @@ const ChatWidget: React.FC = () => {
     setIsChatStarted(true);
     const initialMessage: ChatMessage = {
       id: '1',
-      text: `안녕하세요! HEBIMALL 고객지원팀입니다. 😊
+      text: `안녕하세요! STYNA 고객지원팀입니다. 😊
 
 어떤 도움이 필요하신가요? 아래 번호를 선택하거나 직접 문의해 주세요:
 
@@ -434,7 +434,7 @@ AI 상담원은 다음과 같은 도움을 드릴 수 있습니다:
             // 채팅 시작 전 화면
             <div className={styles.chatStart}>
               <div className={styles.welcomeMessage}>
-                <h3>🎉 HEBIMALL 고객상담</h3>
+                <h3>🎉 STYNA 고객상담</h3>
                 <p>안녕하세요! 무엇을 도와드릴까요?</p>
                 <div className={styles.chatFeatures}>
                   <div className={styles.feature}>

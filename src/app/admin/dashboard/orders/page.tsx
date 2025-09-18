@@ -244,7 +244,7 @@ export default function AdminOrdersPage() {
         <div className={styles.headerContainer}>
           <div className={styles.headerContent}>
             <div className={styles.headerLeft}>
-              <h1 className={styles.adminTitle}>HEBIMALL Admin</h1>
+              <h1 className={styles.adminTitle}>STYNA Admin</h1>
               <AdminNav />
             </div>
             <div className={styles.headerRight}>

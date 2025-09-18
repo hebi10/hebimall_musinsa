@@ -36,7 +36,7 @@ async function completeAccessoriesDetails() {
       const details = {
         material: '스테인리스 스틸, 가죽',
         origin: '한국',
-        manufacturer: '헤비몰',
+        manufacturer: '스티나몰',
         precautions: '습기 주의, 화학물질 접촉 금지',
         size: '프리사이즈',
         adjustment: '조절 가능',

@@ -66,7 +66,7 @@ export default function Footer() {
         </div>
 
         <div className={styles.copyright}>
-          <p>© 2025 HEBIMALL. All rights reserved.</p>
+          <p>© 2025 STYNA. All rights reserved.</p>
         </div>
       </div>
     </footer>

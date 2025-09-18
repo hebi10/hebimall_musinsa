@@ -97,7 +97,7 @@ export default function Header() {
           {/* 로고 */}
           <div className={styles.logo}>
             <Link href="/" className={styles.logoLink}>
-              HEBIMALL
+              STYNA
             </Link>
           </div>
 

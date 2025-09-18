@@ -7,7 +7,7 @@ export const mockProducts: Product[] = [
     description: '부드러운 코튼 소재로 제작된 프리미엄 티셔츠입니다.',
     price: 29900,
     originalPrice: 39900,
-    brand: 'HEBIMALL',
+    brand: 'STYNA',
     category: '상의',
     images: [
       '/images/products/tshirt-1.jpg',
@@ -31,7 +31,7 @@ export const mockProducts: Product[] = [
     details: {
       material: '코튼 100%',
       origin: '한국',
-      manufacturer: 'HEBIMALL',
+      manufacturer: 'STYNA',
       precautions: '찬물 세탁, 건조기 사용 금지',
       sizes: {
         S: { chest: 50, length: 67, shoulder: 44 },
@@ -126,7 +126,7 @@ export const mockProducts: Product[] = [
     description: '도시적이고 미니멀한 디자인의 가죽 백팩으로 일상과 비즈니스 모두에 적합합니다.',
     price: 159900,
     originalPrice: 199900,
-    brand: 'HEBIMALL',
+    brand: 'STYNA',
     category: '액세서리',
     images: [
       '/images/products/backpack-1.jpg',
@@ -149,7 +149,7 @@ export const mockProducts: Product[] = [
     details: {
       material: '천연가죽 100%',
       origin: '이탈리아',
-      manufacturer: 'HEBIMALL',
+      manufacturer: 'STYNA',
       precautions: '가죽 전용 클리너 사용, 직사광선 피해서 보관',
       sizes: {
         'ONE SIZE': { length: 30, width: 20, height: 40 }
@@ -162,7 +162,7 @@ export const mockProducts: Product[] = [
     description: '트렌디한 오버핏과 편안한 착용감을 제공하는 후드 집업입니다.',
     price: 59900,
     originalPrice: 79900,
-    brand: 'HEBIMALL',
+    brand: 'STYNA',
     category: '상의',
     images: [
       '/images/products/hoodie-1.jpg',
@@ -185,7 +185,7 @@ export const mockProducts: Product[] = [
     details: {
       material: '코튼 80%, 폴리에스터 20%',
       origin: '한국',
-      manufacturer: 'HEBIMALL',
+      manufacturer: 'STYNA',
       precautions: '중성세제 사용, 다림질 시 낮은 온도',
       sizes: {
         M: { chest: 58, length: 72, shoulder: 50 },
@@ -200,7 +200,7 @@ export const mockProducts: Product[] = [
     name: '와이드 코튼 팬츠',
     description: '여유로운 핏과 자연스러운 실루엣의 와이드 코튼 팬츠입니다.',
     price: 69900,
-    brand: 'HEBIMALL',
+    brand: 'STYNA',
     category: '하의',
     images: [
       '/images/products/pants-1.jpg',
@@ -222,7 +222,7 @@ export const mockProducts: Product[] = [
     details: {
       material: '코튼 100%',
       origin: '한국',
-      manufacturer: 'HEBIMALL',
+      manufacturer: 'STYNA',
       precautions: '찬물 세탁, 자연건조',
       sizes: {
         S: { waist: 68, thigh: 30, length: 100 },
@@ -243,7 +243,7 @@ export const mockCategories = [
 ];
 
 export const mockBrands = [
-  { id: 'hebimall', name: 'HEBIMALL', productCount: 450 },
+  { id: 'hebimall', name: 'STYNA', productCount: 450 },
   { id: 'denim-brand', name: 'DENIM BRAND', productCount: 230 },
   { id: 'shoe-brand', name: 'SHOE BRAND', productCount: 180 },
 ];

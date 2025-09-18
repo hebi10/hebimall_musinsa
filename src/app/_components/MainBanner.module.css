@@ -1,7 +1,7 @@
 .bannerSection {
   position: relative;
   width: 100%;
-  height: 70vh;
+  height: 65vh;
   min-height: 500px;
   max-height: 800px;
   overflow: hidden;
@@ -52,20 +52,84 @@
   max-width: 1200px;
   width: 100%;
   padding: 0 2rem;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   align-items: center;
   height: 100%;
+  gap: 4rem;
+}
+
+.bannerTextSection {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 .bannerText {
-  max-width: 600px;
+  max-width: 100%;
   animation: slideInLeft 1s ease-out;
+}
+
+.bannerModelSection {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+}
+
+.bannerModelImage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  max-height: 500px;
+  animation: slideInRight 1s ease-out;
+}
+
+.mobileButtonWrapper {
+  display: none;
+  margin-top: 2rem;
+}
+
+.bannerButtonMobile {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 2.5rem;
+  background: linear-gradient(135deg, #000 0%, #333 100%);
+  color: white;
+  text-decoration: none;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.bannerButtonMobile:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+  background: linear-gradient(135deg, #333 0%, #555 100%);
 }
 
 @keyframes slideInLeft {
   from {
     opacity: 0;
     transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
   }
   to {
     opacity: 1;
@@ -224,6 +288,7 @@
   
   .bannerContent {
     padding: 0 1.5rem;
+    gap: 3rem;
   }
   
   .bannerTitle {
@@ -263,24 +328,35 @@
   
   .bannerContent {
     padding: 0 1rem;
+    grid-template-columns: 1fr;
+    gap: 0;
+    justify-items: center;
   }
   
-  .bannerText {
-    text-align: center;
-    max-width: 100%;
+  .bannerTextSection {
+    display: none;
   }
   
-  .bannerTitle {
-    font-size: clamp(1.8rem, 6vw, 2.5rem);
-    margin-bottom: 1rem;
+  .bannerModelSection {
+    height: 100%;
+    justify-content: space-between;
+    padding: 2rem 0;
   }
   
-  .bannerDescription {
-    font-size: 1rem;
-    margin-bottom: 1.5rem;
+  .bannerModelImage {
+    height: 70%;
+    max-height: 300px;
+  }
+  
+  .mobileButtonWrapper {
+    display: block;
   }
   
   .bannerButton {
+    display: none;
+  }
+  
+  .bannerButtonMobile {
     padding: 0.8rem 1.8rem;
     font-size: 0.95rem;
   }
@@ -316,22 +392,20 @@
     min-height: 350px;
   }
   
-  .bannerSubtitle {
-    font-size: 0.9rem;
-    margin-bottom: 0.75rem;
+  .bannerModelSection {
+    padding: 1.5rem 0;
   }
   
-  .bannerTitle {
-    font-size: clamp(1.6rem, 7vw, 2.2rem);
-    margin-bottom: 0.75rem;
+  .bannerModelImage {
+    height: 65%;
+    max-height: 250px;
   }
   
-  .bannerDescription {
-    font-size: 0.95rem;
-    margin-bottom: 1.25rem;
+  .mobileButtonWrapper {
+    margin-top: 1.5rem;
   }
   
-  .bannerButton {
+  .bannerButtonMobile {
     padding: 0.75rem 1.5rem;
     font-size: 0.9rem;
   }

@@ -20,7 +20,7 @@ const products = [
     description: '부드러운 코튼 소재로 제작된 베이직 티셔츠입니다.',
     price: 29000,
     originalPrice: 35000,
-    brand: 'HEBIMALL',
+    brand: 'STYNA',
     category: 'clothing',
     images: ['/tshirt-1.jpg'],
     sizes: ['S', 'M', 'L', 'XL'],
@@ -37,7 +37,7 @@ const products = [
     details: {
       material: '코튼 100%',
       origin: '한국',
-      manufacturer: 'HEBIMALL',
+      manufacturer: 'STYNA',
       precautions: '찬물 세탁, 건조기 사용 금지',
       sizes: {
         S: { chest: 50, length: 67, shoulder: 44 },

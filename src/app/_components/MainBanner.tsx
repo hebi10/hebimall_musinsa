@@ -20,6 +20,7 @@ interface BannerSlide {
   buttonText: string;
   buttonLink: string;
   backgroundImage: string;
+  modelImage: string;
   backgroundColor: string;
   textColor: 'white' | 'black';
 }
@@ -27,13 +28,14 @@ interface BannerSlide {
 const bannerSlides: BannerSlide[] = [
   {
     id: 1,
-    title: "HEBIMALL",
+    title: "STYNA",
     subtitle: "NEW SEASON",
     description: "최신 패션 트렌드를 만나보세요\n특별한 스타일, 특별한 가격",
     buttonText: "쇼핑하러 가기",
     buttonLink: "/products",
     backgroundImage: "/tshirt-1.jpg",
-    backgroundColor: "#718096",
+    modelImage: "/main/banner_main01.png",
+    backgroundColor: "#525d6dff",
     textColor: "white"
   },
   {
@@ -44,7 +46,8 @@ const bannerSlides: BannerSlide[] = [
     buttonText: "세일 상품 보기",
     buttonLink: "/main/sale",
     backgroundImage: "/shirt-2.jpg",
-    backgroundColor: "#2d3748",
+    modelImage: "/main/banner_main02.png",
+    backgroundColor: "#614f6dff",
     textColor: "white"
   },
   {
@@ -55,7 +58,8 @@ const bannerSlides: BannerSlide[] = [
     buttonText: "베스트 상품 보기",
     buttonLink: "/products?sort=bestseller",
     backgroundImage: "/product-placeholder.jpg",
-    backgroundColor: "#a0aec0",
+    modelImage: "/main/banner_main03.png",
+    backgroundColor: "#515c61ff",
     textColor: "white"
   }
 ];
@@ -107,25 +111,46 @@ export default function MainBanner() {
               </div>
               
               <div className={styles.bannerContent}>
-                <div className={styles.bannerText}>
-                  <span className={`${styles.bannerSubtitle} ${styles[slide.textColor]}`}>
-                    {slide.subtitle}
-                  </span>
-                  <h1 className={`${styles.bannerTitle} ${styles[slide.textColor]}`}>
-                    {slide.title}
-                  </h1>
-                  <p className={`${styles.bannerDescription} ${styles[slide.textColor]}`}>
-                    {slide.description.split('\n').map((line, index) => (
-                      <span key={index}>
-                        {line}
-                        {index < slide.description.split('\n').length - 1 && <br />}
-                      </span>
-                    ))}
-                  </p>
-                  <Link href={slide.buttonLink} className={styles.bannerButton}>
-                    {slide.buttonText}
-                    <span className={styles.buttonArrow}>→</span>
-                  </Link>
+                <div className={styles.bannerTextSection}>
+                  <div className={styles.bannerText}>
+                    <span className={`${styles.bannerSubtitle} ${styles[slide.textColor]}`}>
+                      {slide.subtitle}
+                    </span>
+                    <h1 className={`${styles.bannerTitle} ${styles[slide.textColor]}`}>
+                      {slide.title}
+                    </h1>
+                    <p className={`${styles.bannerDescription} ${styles[slide.textColor]}`}>
+                      {slide.description.split('\n').map((line, index) => (
+                        <span key={index}>
+                          {line}
+                          {index < slide.description.split('\n').length - 1 && <br />}
+                        </span>
+                      ))}
+                    </p>
+                    <Link href={slide.buttonLink} className={styles.bannerButton}>
+                      {slide.buttonText}
+                      <span className={styles.buttonArrow}>→</span>
+                    </Link>
+                  </div>
+                </div>
+                
+                <div className={styles.bannerModelSection}>
+                  <div className={styles.bannerModelImage}>
+                    <Image
+                      src={slide.modelImage}
+                      alt={`${slide.title} 모델컷`}
+                      fill
+                      style={{ objectFit: 'contain' }}
+                      priority
+                    />
+                  </div>
+                  {/* 모바일용 버튼 */}
+                  <div className={styles.mobileButtonWrapper}>
+                    <Link href={slide.buttonLink} className={styles.bannerButtonMobile}>
+                      {slide.buttonText}
+                      <span className={styles.buttonArrow}>→</span>
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>

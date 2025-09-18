@@ -162,7 +162,7 @@ export default function SignupPage() {
       <div className={styles.signupCard}>
         <div className={styles.header}>
           <h1 className={styles.title}>회원가입</h1>
-          <p className={styles.subtitle}>HEBIMALL과 함께 시작하세요</p>
+          <p className={styles.subtitle}>STYNA과 함께 시작하세요</p>
         </div>
 
         <form onSubmit={handleSubmit} className={styles.signupForm}>

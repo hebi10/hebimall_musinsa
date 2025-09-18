@@ -235,7 +235,7 @@ export default function AdminDashboardPage() {
         <div className={styles.headerContainer}>
           <div className={styles.headerContent}>
             <div className={styles.headerLeft}>
-              <h1 className={styles.adminTitle}>HEBIMALL Admin</h1>
+              <h1 className={styles.adminTitle}>STYNA Admin</h1>
               <AdminNav />
             </div>
             <div className={styles.headerRight}>
@@ -258,7 +258,7 @@ export default function AdminDashboardPage() {
         <div style={{ marginBottom: '30px' }}>
           <h2 className={styles.pageTitle}>관리자 대시보드</h2>
           <p className={styles.pageSubtitle}>
-            📅 {currentTime} • HEBIMALL 통합 관리 시스템
+            📅 {currentTime} • STYNA 통합 관리 시스템
           </p>
         </div>
 

@@ -40,10 +40,10 @@ export async function POST(request: NextRequest) {
 
     // 실제 OpenAI API 호출
     try {
-      const systemPrompt = `당신은 HEBIMALL 온라인 패션 쇼핑몰의 전문 고객지원 AI입니다.
+      const systemPrompt = `당신은 STYNA 온라인 패션 쇼핑몰의 전문 고객지원 AI입니다.
 
 === 회사 정보 ===
-• 회사명: HEBIMALL (무신사 스타일 패션 플랫폼)
+• 회사명: STYNA (무신사 스타일 패션 플랫폼)
 • 사업분야: 최신 트렌드 패션 의류, 액세서리, 신발 전문
 • 특징: 현대적 그라디언트 디자인, 완전 반응형 쇼핑몰
 • 위치: 대한민국 서울특별시 강남구 테스트 건물 5층
@@ -141,7 +141,7 @@ function getAIDevResponse(message: string): string {
   if (lowerMessage === '상담원연결' || lowerMessage === '상담원 연결') {
     return `🤖 AI 상담원과 연결되었습니다! 개발 환경에서 시뮬레이션 중입니다.
 
-안녕하세요! HEBIMALL AI 상담원입니다. 😊
+안녕하세요! STYNA AI 상담원입니다. 😊
 무엇을 도와드릴까요?
 
 제가 도움드릴 수 있는 분야:
@@ -216,7 +216,7 @@ function getTemporaryResponse(message: string): string {
   // 초기 선택지 제공 (숫자 입력은 제외)
   if (lowerMessage.includes('안녕') || lowerMessage.includes('도움') || lowerMessage.includes('문의') || 
       (message.length < 10 && !lowerMessage.match(/^[1-6]$/) && !lowerMessage.includes('주문') && !lowerMessage.includes('배송') && !lowerMessage.includes('반품') && !lowerMessage.includes('교환') && !lowerMessage.includes('쿠폰') && !lowerMessage.includes('할인'))) {
-    return `안녕하세요! HEBIMALL 고객지원팀입니다. 😊
+    return `안녕하세요! STYNA 고객지원팀입니다. 😊
 
 어떤 도움이 필요하신가요? 아래 번호를 선택하거나 직접 문의해 주세요:
 

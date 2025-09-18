@@ -8,7 +8,7 @@ const mockEvents = [
     description: '첫 구매 시 20% 할인 쿠폰 증정!',
     content: `
       <h2>🎉 신규 회원 가입 이벤트</h2>
-      <p>HEBIMALL에 오신 것을 환영합니다!</p>
+      <p>STYNA에 오신 것을 환영합니다!</p>
       <p>신규 회원가입 후 첫 구매 시 <strong style="color: #ff6b6b;">20% 할인 쿠폰</strong>을 드립니다.</p>
       
       <h3>💎 이벤트 혜택</h3>
@@ -21,7 +21,7 @@ const mockEvents = [
       
       <h3>📋 참여 방법</h3>
       <ol>
-        <li>HEBIMALL 회원가입</li>
+        <li>STYNA 회원가입</li>
         <li>이메일 인증 완료</li>
         <li>쿠폰 자동 지급 (마이페이지에서 확인)</li>
         <li>원하는 상품 구매 시 쿠폰 사용</li>

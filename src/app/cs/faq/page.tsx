@@ -77,7 +77,7 @@ export default function FAQPage() {
       <div className={styles.pageHeader}>
         <h1 className={styles.pageTitle}>자주 묻는 질문</h1>
         <p className={styles.pageSubtitle}>
-          HEBIMALL 이용 중 궁금한 점을 빠르게 해결해보세요
+          STYNA 이용 중 궁금한 점을 빠르게 해결해보세요
         </p>
       </div>
 

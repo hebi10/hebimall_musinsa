@@ -1,8 +1,8 @@
 export const APP_CONFIG = {
-  name: 'HEBIMALL',
+  name: 'STYNA',
   description: '무신사 스타일 쇼핑몰',
   version: '1.0.0',
-  author: 'HEBIMALL Team',
+  author: 'STYNA Team',
   
   // API 설정
   api: {
@@ -30,7 +30,7 @@ export const APP_CONFIG = {
   
   // SEO 설정
   seo: {
-    defaultTitle: 'HEBIMALL - 무신사 스타일 쇼핑몰',
+    defaultTitle: 'STYNA - 무신사 스타일 쇼핑몰',
     defaultDescription: '최신 패션 트렌드를 만나보세요',
     keywords: ['패션', '쇼핑몰', '무신사', '의류', '브랜드'],
   },

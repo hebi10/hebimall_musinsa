@@ -67,10 +67,10 @@ export const chatAPI = onRequest({
     }
 
     // GPT API 호출 설정
-    const systemPrompt = `당신은 HEBIMALL 온라인 패션 쇼핑몰의 전문 고객지원 AI입니다.
+    const systemPrompt = `당신은 STYNA 온라인 패션 쇼핑몰의 전문 고객지원 AI입니다.
 
 === 회사 정보 ===
-• 회사명: HEBIMALL (무신사 스타일 패션 플랫폼)
+• 회사명: STYNA (무신사 스타일 패션 플랫폼)
 • 사업분야: 최신 트렌드 패션 의류, 액세서리, 신발 전문
 • 특징: 현대적 그라디언트 디자인, 완전 반응형 쇼핑몰
 
@@ -259,7 +259,7 @@ function getTemporaryResponse(message: string): string {
   // 초기 선택지 제공 (다른 조건에 맞지 않는 경우)
   if (lowerMessage.includes('안녕') || lowerMessage.includes('도움') || lowerMessage.includes('문의') || message.length < 5) {
     console.log('초기 선택지 감지');
-    return `안녕하세요! HEBIMALL 고객지원팀입니다. 😊
+    return `안녕하세요! STYNA 고객지원팀입니다. 😊
 
 어떤 도움이 필요하신가요? 아래 번호를 선택하거나 직접 문의해 주세요:
 

@@ -22,7 +22,7 @@ const qnaData = [
   {
     userId: 'test-user-1',
     userEmail: 'user1@test.com',
-    userName: '김헤비',
+    userName: '김스티나',
     category: 'product',
     title: '프리미엄 코튼 티셔츠 사이즈 문의',
     content: '안녕하세요. 프리미엄 코튼 티셔츠 구매를 고려하고 있는데, 평소 M사이즈를 입는데 이 제품도 M사이즈로 주문하면 될까요? 핏이 어떤지 궁금합니다.',

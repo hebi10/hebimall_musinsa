@@ -70,11 +70,11 @@ export default function Home() {
         <div className={styles.sectionContainer}>
           <div className={styles.brandContent}>
             <div className={styles.brandText}>
-              <h2 className={styles.brandTitle}>HEBIMALL</h2>
+              <h2 className={styles.brandTitle}>STYNA</h2>
               <h3 className={styles.brandSubtitle}>당신만의 스타일을 찾아보세요</h3>
               <p className={styles.brandDescription}>
                 최신 트렌드부터 클래식까지, 다양한 스타일의 상품을 만나보세요. 
-                HEBIMALL은 고객 한 분 한 분의 개성을 존중하며, 
+                STYNA은 고객 한 분 한 분의 개성을 존중하며, 
                 최고의 쇼핑 경험을 제공합니다.
               </p>
               <div className={styles.brandStats}>
@@ -95,7 +95,7 @@ export default function Home() {
             <div className={styles.brandImage}>
               <div className={styles.brandImagePlaceholder}>
                 <span className={styles.brandImageIcon}>🏬</span>
-                <p>HEBIMALL</p>
+                <p>STYNA</p>
               </div>
             </div>
           </div>

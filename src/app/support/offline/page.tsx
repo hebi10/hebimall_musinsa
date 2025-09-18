@@ -5,7 +5,7 @@ export default function OfflinePage() {
   const stores = [
     {
       id: 1,
-      name: "HEBIMALL 강남점",
+      name: "STYNA 강남점",
       type: "플래그십 스토어",
       address: "서울특별시 강남구 테헤란로 123",
       phone: "02-1234-5678",
@@ -15,7 +15,7 @@ export default function OfflinePage() {
     },
     {
       id: 2,
-      name: "HEBIMALL 홍대점",
+      name: "STYNA 홍대점",
       type: "컨셉 스토어",
       address: "서울특별시 마포구 양화로 456",
       phone: "02-2345-6789",
@@ -25,7 +25,7 @@ export default function OfflinePage() {
     },
     {
       id: 3,
-      name: "HEBIMALL 명동점",
+      name: "STYNA 명동점",
       type: "아울렛 스토어",
       address: "서울특별시 중구 명동길 789",
       phone: "02-3456-7890",
@@ -65,7 +65,7 @@ export default function OfflinePage() {
         <div className={styles.pageHeader}>
           <h1 className={styles.pageTitle}>오프라인 매장</h1>
           <p className={styles.pageDescription}>
-            전국 HEBIMALL 매장에서 직접 체험하고 구매하세요
+            전국 STYNA 매장에서 직접 체험하고 구매하세요
           </p>
         </div>
 

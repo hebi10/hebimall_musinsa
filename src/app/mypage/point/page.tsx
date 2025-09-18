@@ -68,7 +68,7 @@ export default function PointPage() {
     <div className={styles.container}>
       <div className={styles.header}>
         <h1>포인트 관리</h1>
-        <p>HEBIMALL 포인트를 확인하고 관리하세요</p>
+        <p>STYNA 포인트를 확인하고 관리하세요</p>
       </div>
 
       {/* 포인트 잔액 카드 */}

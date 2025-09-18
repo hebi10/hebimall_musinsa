@@ -53,7 +53,7 @@ const seedInquiries = [
     userName: '박패션',
     category: 'product',
     title: '상품 재입고 문의',
-    content: 'HEBIMALL 브랜드 화이트 셔츠 (상품번호: HB-SH-001)가 품절되었는데 언제 재입고 되나요? 꼭 구매하고 싶어서 기다리고 있습니다.',
+    content: 'STYNA 브랜드 화이트 셔츠 (상품번호: HB-SH-001)가 품절되었는데 언제 재입고 되나요? 꼭 구매하고 싶어서 기다리고 있습니다.',
     status: 'waiting',
     createdAt: new Date('2024-12-13T09:20:00'),
     updatedAt: new Date('2024-12-13T09:20:00')
