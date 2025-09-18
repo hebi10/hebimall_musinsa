@@ -18,23 +18,60 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
     
     if (!product) {
       return {
-        title: '상품을 찾을 수 없습니다 - HEBIMALL'
+        title: '상품을 찾을 수 없습니다 - HEBIMALL',
+        description: 'HEBIMALL에서 다양한 상품을 만나보세요.',
+        openGraph: {
+          title: '상품을 찾을 수 없습니다 - HEBIMALL',
+          description: 'HEBIMALL에서 다양한 상품을 만나보세요.',
+          images: ['/thum.png'],
+        },
       };
     }
     
+    const productImage = product.mainImage || (product.images && product.images[0]) || '/thum.png';
+    const formattedPrice = new Intl.NumberFormat('ko-KR').format(product.price);
+    const description = `${product.description} | 가격: ${formattedPrice}원 | HEBIMALL`;
+    
     return {
-      title: `${product.name} - HEBIMALL`,
-      description: product.description,
+      title: `${product.name} - ${product.brand} | HEBIMALL`,
+      description: description,
+      keywords: [product.name, product.brand, product.category, '쇼핑몰', 'HEBIMALL', ...(product.tags || [])],
       openGraph: {
-        title: product.name,
-        description: product.description,
-        images: product.images && product.images.length > 0 ? [product.images[0]] : []
-      }
+        title: `${product.name} - ${product.brand}`,
+        description: description,
+        images: [
+          {
+            url: productImage,
+            width: 800,
+            height: 800,
+            alt: `${product.name} - ${product.brand}`,
+            type: 'image/jpeg',
+          }
+        ],
+        type: 'website',
+        siteName: 'HEBIMALL',
+        url: `https://hebimall.web.app/products/${productId}`,
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: `${product.name} - ${product.brand}`,
+        description: description,
+        images: [productImage],
+      },
+      alternates: {
+        canonical: `https://hebimall.web.app/products/${productId}`,
+      },
     };
   } catch (error) {
     console.error('메타데이터 생성 실패:', error);
     return {
-      title: '상품을 찾을 수 없습니다 - HEBIMALL'
+      title: '상품을 찾을 수 없습니다 - HEBIMALL',
+      description: 'HEBIMALL에서 다양한 상품을 만나보세요.',
+      openGraph: {
+        title: '상품을 찾을 수 없습니다 - HEBIMALL',
+        description: 'HEBIMALL에서 다양한 상품을 만나보세요.',
+        images: ['/thum.png'],
+      },
     };
   }
 }
