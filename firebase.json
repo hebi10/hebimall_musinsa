@@ -7,7 +7,7 @@
   },
   "hosting": {
     "site": "hebimall",
-    "public": ".next",
+    "public": "public",
     "ignore": [
       "firebase.json",
       "**/.*",
