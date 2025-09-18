@@ -11,7 +11,7 @@ import { useAddToCart } from '@/shared/hooks/useCart';
 import { getProductReviewStats } from '@/shared/utils/syncProductReviews';
 import Button from '@/app/_components/Button';
 import ProductCard from './ProductCard';
-// import ProductReviews from '@/features/product/components/ProductReviews';
+import ProductReviews from './ProductReviews';
 import styles from './ProductDetail.module.css';
 
 // 색상명을 CSS 색상값으로 변환하는 함수
@@ -631,23 +631,7 @@ export default function ProductDetailClient({ product }: Props) {
           )}
 
           {activeTab === 'review' && (
-            <div className={styles.reviewsContent}>
-              <h3>상품 리뷰</h3>
-              <div className={styles.reviewSummary}>
-                <div className={styles.ratingOverview}>
-                  <span className={styles.avgRating}>{displayRating}</span>
-                  <div className={styles.stars}>
-                    {Array.from({ length: 5 }, (_, i) => (
-                      <span key={i} className={i < Math.floor(displayRating) ? styles.filled : styles.empty}>
-                        ★
-                      </span>
-                    ))}
-                  </div>
-                  <span className={styles.reviewCount}>총 {displayReviewCount}개 리뷰</span>
-                </div>
-              </div>
-              <p>리뷰 컴포넌트는 추후 구현 예정입니다.</p>
-            </div>
+            <ProductReviews productId={product.id} />
           )}
 
           {activeTab === 'qna' && (

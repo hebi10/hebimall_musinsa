@@ -230,34 +230,58 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: var(--spacing-sm);
-  margin-top: var(--spacing-xl);
+  gap: var(--spacing-xs);
+  margin: var(--spacing-xl) 0;
+  flex-wrap: wrap;
 }
 
 .pageButton {
-  padding: var(--spacing-sm) var(--spacing-md);
+  min-width: 40px;
+  height: 40px;
+  padding: var(--spacing-xs) var(--spacing-sm);
   border: 1px solid var(--color-border);
   background: white;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
   font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
   transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.pageButton:hover:not(:disabled) {
+.pageButton:hover:not(.disabled) {
   border-color: var(--color-primary);
   color: var(--color-primary);
+  background: rgba(59, 130, 246, 0.05);
 }
 
 .pageButton.active {
   background: var(--color-primary);
   color: white;
   border-color: var(--color-primary);
+  font-weight: 600;
 }
 
-.pageButton:disabled {
-  opacity: 0.5;
+.pageButton.disabled {
+  opacity: 0.4;
   cursor: not-allowed;
+  color: var(--color-text-tertiary);
+}
+
+.ellipsis {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+}
+
+.pageInfo {
+  text-align: center;
+  margin: var(--spacing-md) 0 var(--spacing-xl) 0;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
 }
 
 /* 리뷰 작성 */
@@ -336,6 +360,22 @@
   margin-bottom: var(--spacing-lg);
 }
 
+.retryButton {
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background-color 0.2s ease;
+}
+
+.retryButton:hover {
+  background: var(--color-primary-dark);
+}
+
 /* 리뷰 평점 스타일 통일 */
 .rating {
   color: #ffd43b;
@@ -344,10 +384,109 @@
 
 /* ========== Mobile First Media Queries ========== */
 
+/* Small Devices (480px and down) */
+@media (max-width: 480px) {
+  .container {
+    gap: var(--spacing-lg);
+  }
+  
+  .stats {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
+  }
+  
+  .statItem {
+    padding: var(--spacing-md);
+  }
+  
+  .statNumber {
+    font-size: 1.75rem;
+  }
+  
+  .controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-sm);
+  }
+  
+  .filters {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-xs);
+  }
+  
+  .filterButton {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: 0.75rem;
+    border-radius: 16px;
+  }
+  
+  .reviewItem {
+    padding: var(--spacing-md);
+  }
+  
+  .productInfo {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
+  
+  .productImage {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .reviewHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-xs);
+  }
+  
+  .userInfo {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-xs);
+  }
+  
+  .reviewTitle {
+    font-size: 1rem;
+  }
+  
+  .reviewText {
+    font-size: 0.875rem;
+  }
+  
+  .reviewActions {
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+  
+  .pagination {
+    gap: var(--spacing-xs);
+    margin: var(--spacing-lg) 0;
+  }
+  
+  .pageButton {
+    min-width: 36px;
+    height: 36px;
+    font-size: 0.75rem;
+    padding: var(--spacing-xs);
+  }
+  
+  .pageInfo {
+    font-size: 0.75rem;
+    margin: var(--spacing-sm) 0 var(--spacing-lg) 0;
+  }
+  
+  .writeReview {
+    padding: var(--spacing-lg) 0;
+  }
+}
+
 /* Medium Devices (768px and down) */
 @media (max-width: 768px) {
   .stats {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
     gap: var(--spacing-md);
   }
   
@@ -393,5 +532,32 @@
   
   .pagination {
     flex-wrap: wrap;
+    gap: var(--spacing-xs);
+  }
+}
+
+/* Large Devices (1024px and up) */
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-lg);
+  }
+  
+  .stats {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .reviewItem {
+    padding: var(--spacing-2xl);
+  }
+  
+  .pagination {
+    gap: var(--spacing-sm);
+  }
+  
+  .pageButton {
+    min-width: 44px;
+    height: 44px;
   }
 }

@@ -254,18 +254,22 @@ export class CategoryOnlyProductService {
       if (limitCount) {
         productQuery = query(productQuery, 
           where('status', '==', 'active'),
-          orderBy('createdAt', 'desc'),
           limit(limitCount)
         ) as any;
       }
 
       const snapshot = await getDocs(productQuery);
-      return snapshot.docs.map(doc => ({
+      let products = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
         createdAt: doc.data().createdAt?.toDate() || new Date(),
         updatedAt: doc.data().updatedAt?.toDate() || new Date()
       })) as Product[];
+
+      // 클라이언트에서 createdAt 기준으로 정렬
+      products.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+
+      return products;
     } catch (error) {
       console.error('카테고리별 상품 조회 실패:', error);
       // 실패 시 전체 상품에서 카테고리 필터링으로 폴백

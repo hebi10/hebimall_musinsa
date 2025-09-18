@@ -13,6 +13,9 @@ export default function ReviewList() {
     allReviews, 
     loading, 
     error,
+    currentPage,
+    totalPages,
+    totalCount,
     loadAllReviews 
   } = useReview();
   
@@ -23,13 +26,17 @@ export default function ReviewList() {
   const [productInfo, setProductInfo] = useState<{ [key: string]: { name: string; mainImage?: string } }>({});
 
   useEffect(() => {
-    loadAllReviews(ratingFilter, sortBy);
+    console.log('🔄 리뷰 목록 로딩 시작 - ratingFilter:', ratingFilter, 'sortBy:', sortBy);
+    loadAllReviews(1, ratingFilter, sortBy);
   }, [ratingFilter, sortBy, loadAllReviews]);
 
   // 상품 정보를 가져오는 함수
   useEffect(() => {
     const loadProductInfo = async () => {
+      console.log('📦 상품 정보 로딩 시작 - 리뷰 개수:', allReviews.length);
       const uniqueProductIds = [...new Set(allReviews.map(review => review.productId))];
+      console.log('🔍 로드할 상품 ID 목록:', uniqueProductIds);
+      
       const productData: { [key: string]: { name: string; mainImage?: string } } = {};
       
       for (const productId of uniqueProductIds) {
@@ -40,13 +47,17 @@ export default function ReviewList() {
               name: product.name,
               mainImage: product.mainImage
             };
+            console.log('✅ 상품 정보 로드 완료:', product.name);
+          } else {
+            console.log('❌ 상품을 찾을 수 없음:', productId);
           }
         } catch (error) {
-          console.error(`상품 ${productId} 정보 로드 실패:`, error);
+          console.error(`❌ 상품 ${productId} 정보 로드 실패:`, error);
         }
       }
       
       setProductInfo(productData);
+      console.log('📦 모든 상품 정보 로딩 완료:', Object.keys(productData).length, '개');
     };
 
     if (allReviews.length > 0) {
@@ -58,8 +69,71 @@ export default function ReviewList() {
     return '★'.repeat(rating) + '☆'.repeat(5 - rating);
   };
 
+  // 페이지 변경 함수
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= totalPages && page !== currentPage) {
+      loadAllReviews(page, ratingFilter, sortBy);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  // 페이지 번호 배열 생성 (모바일에서는 최소화)
+  const getPageNumbers = () => {
+    const pages: (number | string)[] = [];
+    const maxVisible = 5; // 기본적으로 5개 표시
+    
+    if (totalPages <= maxVisible) {
+      // 총 페이지가 표시할 개수보다 적으면 모두 표시
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      // 현재 페이지 주변으로 표시
+      const halfVisible = Math.floor(maxVisible / 2);
+      let start = Math.max(1, currentPage - halfVisible);
+      let end = Math.min(totalPages, start + maxVisible - 1);
+      
+      // 끝이 조정되면 시작도 조정
+      if (end - start + 1 < maxVisible) {
+        start = Math.max(1, end - maxVisible + 1);
+      }
+      
+      // 첫 페이지 표시
+      if (start > 1) {
+        pages.push(1);
+        if (start > 2) pages.push('...');
+      }
+      
+      // 중간 페이지들
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
+      }
+      
+      // 마지막 페이지 표시
+      if (end < totalPages) {
+        if (end < totalPages - 1) pages.push('...');
+        pages.push(totalPages);
+      }
+    }
+    
+    return pages;
+  };
+
   if (error) {
-    return <div className={styles.error}>{error}</div>;
+    return (
+      <div className={styles.container}>
+        <div className={styles.error}>
+          <h3>리뷰 로딩 중 오류가 발생했습니다</h3>
+          <p>{error}</p>
+          <button 
+            onClick={() => loadAllReviews(1, ratingFilter, sortBy)}
+            className={styles.retryButton}
+          >
+            다시 시도
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -186,6 +260,51 @@ export default function ReviewList() {
           ))
         )}
       </div>
+
+      {/* 페이징 네비게이션 */}
+      {totalPages > 1 && (
+        <div className={styles.pagination}>
+          <button
+            className={`${styles.pageButton} ${currentPage === 1 ? styles.disabled : ''}`}
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            이전
+          </button>
+
+          {getPageNumbers().map((page, index) => (
+            <React.Fragment key={index}>
+              {typeof page === 'number' ? (
+                <button
+                  className={`${styles.pageButton} ${currentPage === page ? styles.active : ''}`}
+                  onClick={() => handlePageChange(page)}
+                >
+                  {page}
+                </button>
+              ) : (
+                <span className={styles.ellipsis}>{page}</span>
+              )}
+            </React.Fragment>
+          ))}
+
+          <button
+            className={`${styles.pageButton} ${currentPage === totalPages ? styles.disabled : ''}`}
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          >
+            다음
+          </button>
+        </div>
+      )}
+
+      {/* 페이지 정보 */}
+      {totalCount > 0 && (
+        <div className={styles.pageInfo}>
+          <span>
+            총 {totalCount}개의 리뷰 중 {currentPage}페이지 ({((currentPage - 1) * 10) + 1}~{Math.min(currentPage * 10, totalCount)}번째)
+          </span>
+        </div>
+      )}
 
       {/* 리뷰 작성 안내 */}
       <div className={styles.writeReview}>

@@ -16,6 +16,9 @@ interface ReviewContextType {
   // 페이지네이션
   hasMoreReviews: boolean;
   lastDoc?: QueryDocumentSnapshot<DocumentData>;
+  currentPage: number;
+  totalPages: number;
+  totalCount: number;
   
   // UI 상태
   loading: boolean;
@@ -24,7 +27,7 @@ interface ReviewContextType {
   // 액션
   loadProductReviews: (productId: string, reset?: boolean) => Promise<void>;
   loadMoreProductReviews: (productId: string) => Promise<void>;
-  loadAllReviews: (rating?: number, sortBy?: 'latest' | 'rating' | 'helpful') => Promise<void>;
+  loadAllReviews: (page?: number, rating?: number, sortBy?: 'latest' | 'rating' | 'helpful') => Promise<void>;
   loadReviewSummary: (productId: string) => Promise<void>;
   loadUserReviews: (userId: string) => Promise<void>;
   createReview: (productId: string, review: Omit<Review, 'id' | 'createdAt' | 'updatedAt'>) => Promise<Review>;
@@ -54,6 +57,9 @@ export function ReviewProvider({ children }: { children: ReactNode }) {
   // 페이지네이션
   const [hasMoreReviews, setHasMoreReviews] = useState(false);
   const [lastDoc, setLastDoc] = useState<QueryDocumentSnapshot<DocumentData> | undefined>();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
   
   // UI 상태
   const [loading, setLoading] = useState(false);
@@ -97,18 +103,33 @@ export function ReviewProvider({ children }: { children: ReactNode }) {
   }, [hasMoreReviews, loading, loadProductReviews]);
 
   // 모든 리뷰 로드
-  const loadAllReviews = useCallback(async (rating?: number, sortBy: 'latest' | 'rating' | 'helpful' = 'latest') => {
+  const loadAllReviews = useCallback(async (
+    page: number = 1,
+    rating?: number,
+    sortBy: 'latest' | 'rating' | 'helpful' = 'latest'
+  ) => {
     try {
+      console.log('🔄 ReviewProvider - loadAllReviews 시작:', { page, rating, sortBy });
       setLoading(true);
       setError(null);
 
-      const reviews = await ReviewService.getAllReviews(20, rating, sortBy);
-      setAllReviews(reviews);
+      const result = await ReviewService.getAllReviews(page, 10, rating, sortBy);
+      console.log('✅ ReviewProvider - 리뷰 로드 완료:', result.reviews.length, '개');
+      console.log('📊 페이지 정보:', { 
+        currentPage: result.currentPage, 
+        totalPages: result.totalPages, 
+        totalCount: result.totalCount 
+      });
+      
+      setAllReviews(result.reviews);
+      setCurrentPage(result.currentPage);
+      setTotalPages(result.totalPages);
+      setTotalCount(result.totalCount);
 
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '리뷰를 불러오는데 실패했습니다.';
+      console.error('❌ ReviewProvider - 전체 리뷰 로드 실패:', err);
       setError(errorMessage);
-      console.error('전체 리뷰 로드 실패:', err);
     } finally {
       setLoading(false);
     }
@@ -239,6 +260,9 @@ export function ReviewProvider({ children }: { children: ReactNode }) {
     setUserReviews([]);
     setHasMoreReviews(false);
     setLastDoc(undefined);
+    setCurrentPage(1);
+    setTotalPages(0);
+    setTotalCount(0);
     setError(null);
   }, []);
 
@@ -253,6 +277,9 @@ export function ReviewProvider({ children }: { children: ReactNode }) {
     // 페이지네이션
     hasMoreReviews,
     lastDoc,
+    currentPage,
+    totalPages,
+    totalCount,
     
     // UI 상태
     loading,

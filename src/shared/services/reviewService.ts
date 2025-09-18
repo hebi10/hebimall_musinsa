@@ -27,7 +27,7 @@ export class ReviewService {
   // 리뷰 생성
   static async createReview(productId: string, review: Omit<Review, 'id' | 'createdAt' | 'updatedAt'>): Promise<Review> {
     try {
-      const reviewsCollection = collection(db, this.getReviewsCollectionPath(productId));
+      const reviewsCollection = collection(db, 'reviews');
       
       const reviewData = {
         ...review,
@@ -62,12 +62,11 @@ export class ReviewService {
     lastDoc?: QueryDocumentSnapshot<DocumentData>
   ): Promise<{ reviews: Review[], hasMore: boolean, lastDoc?: QueryDocumentSnapshot<DocumentData> }> {
     try {
-      const reviewsCollection = collection(db, this.getReviewsCollectionPath(productId));
+      const reviewsCollection = collection(db, 'reviews');
       
       let reviewQuery = query(
         reviewsCollection,
         where('productId', '==', productId),
-        orderBy('createdAt', 'desc'),
         limit(pageSize)
       );
 
@@ -109,15 +108,9 @@ export class ReviewService {
     }
   }
 
-  // 모든 리뷰 조회 (리뷰 페이지용) - 단순화된 구조
-  static async getAllReviews(
-    pageSize: number = 20,
-    rating?: number,
-    sortBy: 'latest' | 'rating' | 'helpful' = 'latest'
-  ): Promise<Review[]> {
+  // 전체 리뷰 개수 조회
+  static async getTotalReviewsCount(rating?: number): Promise<number> {
     try {
-      console.log('전체 리뷰 조회 시작...');
-      
       const reviewsCollection = collection(db, 'reviews');
       let reviewQuery = query(reviewsCollection);
       
@@ -125,23 +118,67 @@ export class ReviewService {
       if (rating) {
         reviewQuery = query(reviewQuery, where('rating', '==', rating));
       }
+
+      const snapshot = await getDocs(reviewQuery);
+      return snapshot.size;
+
+    } catch (error) {
+      console.error('전체 리뷰 개수 조회 실패:', error);
+      return 0;
+    }
+  }
+
+  // 모든 리뷰 조회 (리뷰 페이지용) - 페이징 지원
+  static async getAllReviews(
+    page: number = 1,
+    pageSize: number = 10,
+    rating?: number,
+    sortBy: 'latest' | 'rating' | 'helpful' = 'latest'
+  ): Promise<{ reviews: Review[]; totalCount: number; totalPages: number; currentPage: number }> {
+    try {
+      console.log('🔄 ReviewService.getAllReviews 시작:', { page, pageSize, rating, sortBy });
       
-      // 정렬
+      // 총 개수 조회
+      const totalCount = await this.getTotalReviewsCount(rating);
+      const totalPages = Math.ceil(totalCount / pageSize);
+      
+      console.log('📊 총 리뷰 개수:', totalCount, '/ 총 페이지:', totalPages);
+      
+      const reviewsCollection = collection(db, 'reviews');
+      let reviewQuery = query(reviewsCollection);
+      
+      // 평점 필터
+      if (rating) {
+        console.log('📊 평점 필터 적용:', rating);
+        reviewQuery = query(reviewQuery, where('rating', '==', rating));
+      }
+      
+      // 단순한 정렬만 사용 (복합 인덱스 문제 방지)
       switch (sortBy) {
         case 'rating':
-          reviewQuery = query(reviewQuery, orderBy('rating', 'desc'), orderBy('createdAt', 'desc'));
+          console.log('📈 평점순 정렬 적용');
+          reviewQuery = query(reviewQuery, orderBy('rating', 'desc'));
           break;
         case 'helpful':
         case 'latest':
         default:
-          reviewQuery = query(reviewQuery, orderBy('createdAt', 'desc'));
+          console.log('⏰ 정렬 없이 가져오기 (인덱스 생성 완료 전까지)');
+          // 임시로 정렬 없이 가져오기 (인덱스 생성 완료 전까지)
+          break;
       }
       
-      reviewQuery = query(reviewQuery, limit(pageSize));
+      // 페이징 적용
+      const offset = (page - 1) * pageSize;
+      reviewQuery = query(reviewQuery, limit(pageSize + offset)) as any;
 
+      console.log('📋 Firestore 쿼리 실행...');
       const snapshot = await getDocs(reviewQuery);
+      console.log('📊 Firestore 응답:', snapshot.size, '개 문서');
       
-      const reviews: Review[] = snapshot.docs.map(doc => {
+      // 페이지에 맞는 데이터만 추출
+      const allDocs = snapshot.docs.slice(offset);
+      
+      const reviews: Review[] = allDocs.map(doc => {
         const data = doc.data();
         return {
           id: doc.id,
@@ -162,14 +199,33 @@ export class ReviewService {
         };
       });
 
-      console.log(`✅ 전체 리뷰 조회 완료: ${reviews.length}개`);
-      return reviews;
+      // 클라이언트에서 sortBy 적용
+      if (sortBy === 'latest') {
+        reviews.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+      } else if (sortBy === 'helpful') {
+        // 현재 Review 타입에 helpfulCount가 없으므로 rating으로 대체
+        reviews.sort((a, b) => b.rating - a.rating);
+      }
+
+      console.log(`✅ ReviewService.getAllReviews 완료: ${reviews.length}개`);
+      
+      return {
+        reviews,
+        totalCount,
+        totalPages,
+        currentPage: page
+      };
 
     } catch (error) {
-      console.error('전체 리뷰 조회 실패:', error);
-      // 에러 시 빈 배열 반환
-      console.warn('임시로 빈 배열을 반환합니다.');
-      return [];
+      console.error('❌ ReviewService.getAllReviews 실패:', error);
+      // 에러 시 빈 결과 반환
+      console.warn('⚠️ 임시로 빈 결과를 반환합니다.');
+      return {
+        reviews: [],
+        totalCount: 0,
+        totalPages: 0,
+        currentPage: page
+      };
     }
   }
 
