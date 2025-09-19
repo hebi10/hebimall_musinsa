@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from "next/link";
+import Image from "next/image";
 import { CategoryOrderService } from '@/shared/services/categoryOrderService';
 import styles from '../page.module.css';
 
@@ -11,6 +12,7 @@ interface CategoryCardProps {
   slug: string;
   href: string;
   icon: string;
+  image: string;
   count: string;
 }
 
@@ -40,10 +42,10 @@ export default function DynamicCategorySection({
         
         // 에러 시 기본 카테고리 설정
         setCategories([
-          { id: 'clothing', name: '의류', slug: 'clothing', href: '/categories/clothing', icon: '👕', count: '2,450+ 상품' },
-          { id: 'bags', name: '가방', slug: 'bags', href: '/categories/bags', icon: '👜', count: '890+ 상품' },
-          { id: 'accessories', name: '액세서리', slug: 'accessories', href: '/categories/accessories', icon: '💎', count: '1,200+ 상품' },
-          { id: 'outdoor', name: '아웃도어', slug: 'outdoor', href: '/categories/outdoor', icon: '🏃', count: '650+ 상품' }
+          { id: 'clothing', name: '의류', slug: 'clothing', href: '/categories/clothing', icon: '👕', image: '/category/main_category01.png', count: '2,450+ 상품' },
+          { id: 'bags', name: '가방', slug: 'bags', href: '/categories/bags', icon: '👜', image: '/category/main_category02.png', count: '890+ 상품' },
+          { id: 'accessories', name: '액세서리', slug: 'accessories', href: '/categories/accessories', icon: '💎', image: '/category/main_category03.png', count: '1,200+ 상품' },
+          { id: 'outdoor', name: '스포츠', slug: 'outdoor', href: '/categories/sports', icon: '🏃', image: '/category/main_category04.png', count: '650+ 상품' }
         ]);
       } finally {
         setLoading(false);
@@ -96,8 +98,17 @@ export default function DynamicCategorySection({
           className={styles.categoryCard}
         >
           <div className={styles.categoryImageWrapper}>
-            <div className={`${styles.categoryImagePlaceholder} ${getCategoryBgClass(category.name)}`}>
-              <span className={styles.categoryIcon}>{category.icon}</span>
+            <div className={styles.categoryImagePlaceholder}>
+              <Image
+                src={category.image}
+                alt={category.name}
+                fill
+                style={{ objectFit: 'cover' }}
+                className={styles.categoryImage}
+              />
+              <div className={styles.categoryOverlay}>
+                <span className={styles.categoryIcon}>{category.icon}</span>
+              </div>
             </div>
           </div>
           <div className={styles.categoryInfo}>

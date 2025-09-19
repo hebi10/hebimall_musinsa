@@ -159,6 +159,8 @@
   flex-direction: column;
   transition: transform 0.3s ease;
   position: relative;
+  overflow: hidden;
+  border-radius: 12px;
 }
 
 .categoryCard:hover .categoryImagePlaceholder {
@@ -187,6 +189,7 @@
   height: 100%;
   object-fit: cover;
   transition: transform 0.3s ease;
+  border-radius: 12px;
 }
 
 .categoryCard:hover .categoryImage {
@@ -200,16 +203,27 @@
   right: 0;
   bottom: 0;
   background: linear-gradient(135deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.1));
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   transition: opacity 0.3s ease;
+  border-radius: 12px;
+}
+
+.categoryCard:hover .categoryOverlay {
+  opacity: 0.7;
 }
 
 .categoryIcon {
-  font-size: 4rem;
+  font-size: 3rem;
   margin-bottom: 0.5rem;
-  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
+  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));
+  color: white;
+  transition: transform 0.3s ease;
+}
+
+.categoryCard:hover .categoryIcon {
+  transform: scale(1.1);
 }
 
 .categoryInfo {
@@ -735,6 +749,7 @@
   border: 2px solid transparent;
   position: relative;
   overflow: hidden;
+  width: 100%;
 }
 
 .categoryCard::before {
@@ -834,6 +849,13 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 3rem;
+}
+
+@media screen and (min-width: 1024px) {
+  .sectionHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 
 .moreLink {

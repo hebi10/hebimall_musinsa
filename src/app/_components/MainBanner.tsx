@@ -19,7 +19,6 @@ interface BannerSlide {
   description: string;
   buttonText: string;
   buttonLink: string;
-  backgroundImage: string;
   modelImage: string;
   backgroundColor: string;
   textColor: 'white' | 'black';
@@ -33,9 +32,8 @@ const bannerSlides: BannerSlide[] = [
     description: "최신 패션 트렌드를 만나보세요\n특별한 스타일, 특별한 가격",
     buttonText: "쇼핑하러 가기",
     buttonLink: "/products",
-    backgroundImage: "/tshirt-1.jpg",
     modelImage: "/main/banner_main01.png",
-    backgroundColor: "#525d6dff",
+    backgroundColor: "#495669ff",
     textColor: "white"
   },
   {
@@ -45,9 +43,8 @@ const bannerSlides: BannerSlide[] = [
     description: "봄 신상품 특가 세일\n지금 놓치면 후회하는 기회",
     buttonText: "세일 상품 보기",
     buttonLink: "/main/sale",
-    backgroundImage: "/shirt-2.jpg",
     modelImage: "/main/banner_main02.png",
-    backgroundColor: "#614f6dff",
+    backgroundColor: "#5b4469ff",
     textColor: "white"
   },
   {
@@ -57,7 +54,6 @@ const bannerSlides: BannerSlide[] = [
     description: "검증된 베스트셀러\n고객 만족도 98%의 상품들",
     buttonText: "베스트 상품 보기",
     buttonLink: "/products?sort=bestseller",
-    backgroundImage: "/product-placeholder.jpg",
     modelImage: "/main/banner_main03.png",
     backgroundColor: "#515c61ff",
     textColor: "white"
@@ -100,13 +96,6 @@ export default function MainBanner() {
               style={{ backgroundColor: slide.backgroundColor }}
             >
               <div className={styles.bannerBackground}>
-                <Image
-                  src={slide.backgroundImage}
-                  alt={slide.title}
-                  fill
-                  style={{ objectFit: 'cover' }}
-                  priority
-                />
                 <div className={styles.bannerOverlay}></div>
               </div>
               

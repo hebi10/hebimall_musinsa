@@ -267,6 +267,7 @@ export class CategoryOrderService {
     slug: string; 
     href: string;
     icon: string;
+    image: string;
     count: string;
   }[]> {
     try {
@@ -296,12 +297,21 @@ export class CategoryOrderService {
         '액세서리': '1,200+ 상품'
       };
 
-      return sortedCategories.slice(0, maxCount).map(category => ({
+      // 카테고리별 이미지 설정 (순서대로 할당)
+      const orderedImages = [
+        '/category/main_category01.png',
+        '/category/main_category02.png',
+        '/category/main_category03.png',
+        '/category/main_category04.png'
+      ];
+
+      return sortedCategories.slice(0, maxCount).map((category, index) => ({
         id: category.id,
         name: category.name,
         slug: category.id,
         href: `/categories/${category.id}`,
         icon: categoryIcons[category.name] || '📦',
+        image: orderedImages[index] || orderedImages[0],
         count: categoryCounts[category.name] || '100+ 상품',
       }));
     } catch (error) {
@@ -309,10 +319,10 @@ export class CategoryOrderService {
       
       // 에러 시 기본 카테고리 반환
       return [
-        { id: 'clothing', name: '의류', slug: 'clothing', href: '/categories/clothing', icon: '👕', count: '2,450+ 상품' },
-        { id: 'bags', name: '가방', slug: 'bags', href: '/categories/bags', icon: '👜', count: '890+ 상품' },
-        { id: 'accessories', name: '액세서리', slug: 'accessories', href: '/categories/accessories', icon: '💎', count: '1,200+ 상품' },
-        { id: 'outdoor', name: '아웃도어', slug: 'outdoor', href: '/categories/outdoor', icon: '🏃', count: '650+ 상품' }
+        { id: 'clothing', name: '의류', slug: 'clothing', href: '/categories/clothing', icon: '👕', image: '/category/main_category01.png', count: '2,450+ 상품' },
+        { id: 'bags', name: '가방', slug: 'bags', href: '/categories/bags', icon: '👜', image: '/category/main_category02.png', count: '890+ 상품' },
+        { id: 'accessories', name: '액세서리', slug: 'accessories', href: '/categories/accessories', icon: '💎', image: '/category/main_category03.png', count: '1,200+ 상품' },
+        { id: 'outdoor', name: '아웃도어', slug: 'outdoor', href: '/categories/outdoor', icon: '🏃', image: '/category/main_category04.png', count: '650+ 상품' }
       ];
     }
   }
