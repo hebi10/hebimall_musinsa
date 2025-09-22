@@ -1,13 +1,8 @@
 import { 
-  collection, 
   doc, 
   getDoc, 
   setDoc, 
   updateDoc, 
-  deleteDoc, 
-  arrayUnion, 
-  arrayRemove,
-  increment,
   serverTimestamp 
 } from 'firebase/firestore';
 import { db } from '@/shared/libs/firebase/firebase';
