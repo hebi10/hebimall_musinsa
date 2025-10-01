@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import ProductDetailClient from '../_components/ProductDetailClient';
-import { CategoryOnlyProductService } from '@/shared/services/hybridProductService';
+import { ProductService } from '@/shared/services/productService';
 import { serializeProduct } from '@/shared/utils/serialize';
 import { notFound } from 'next/navigation';
 
@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   const { productId } = await params;
   
   try {
-    const product = await CategoryOnlyProductService.getProductById(productId);
+    const product = await ProductService.getProductById(productId);
     
     if (!product) {
       return {
@@ -80,7 +80,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const { productId } = await params;
   
   try {
-    const product = await CategoryOnlyProductService.getProductById(productId);
+    const product = await ProductService.getProductById(productId);
     
     if (!product) {
       notFound();

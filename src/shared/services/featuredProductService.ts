@@ -11,7 +11,7 @@ import {
 } from 'firebase/firestore';
 import { db } from '@/shared/libs/firebase/firebase';
 import { Product } from '@/shared/types/product';
-import { CategoryOnlyProductService } from './hybridProductService';
+import { ProductService } from './productService';
 
 export interface FeaturedProductConfig {
   id: string;
@@ -138,12 +138,12 @@ export class FeaturedProductService {
 
       console.log('📋 추천 상품 ID 목록:', config.productIds);
 
-      // CategoryOnlyProductService를 사용하여 효율적으로 상품 조회
+      // ProductService를 사용하여 효율적으로 상품 조회
       const products: Product[] = [];
       
       for (const productId of config.productIds.slice(0, config.maxCount)) {
         try {
-          const product = await CategoryOnlyProductService.getProductById(productId);
+          const product = await ProductService.getProductById(productId);
           if (product) {
             products.push(product);
             console.log(`✅ 추천 상품 로드: ${product.name} (${product.id})`);

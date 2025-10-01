@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { CategoryOnlyProductService } from '@/shared/services/hybridProductService';
+import { ProductService } from '@/shared/services/productService';
 import { Product } from '@/shared/types/product';
 import styles from './page.module.css';
 
@@ -84,7 +84,7 @@ export default function RecommendationsAdminPage() {
   const loadProducts = async () => {
     try {
       setLoading(true);
-      const productsData = await CategoryOnlyProductService.getAllProducts();
+      const productsData = await ProductService.getAllProducts();
       setProducts(productsData);
     } catch (error) {
       console.error('상품 로딩 실패:', error);

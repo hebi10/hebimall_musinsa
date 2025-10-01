@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import ProductCard from "@/components/products/ProductCard";
 import PageHeader from "../_components/PageHeader";
-import { CategoryOnlyProductService } from "@/shared/services/hybridProductService";
+import { ProductService } from "@/shared/services/productService";
 import { Product, ProductFilter, ProductSort } from "@/shared/types/product";
 import styles from "./page.module.css";
 
@@ -67,7 +67,7 @@ export default function SearchClient() {
 
     try {
       // 모든 상품 가져오기 - 정적 메서드 사용
-      const allProducts = await CategoryOnlyProductService.getAllProducts();
+      const allProducts = await ProductService.getAllProducts();
       
       // 검색어로 필터링
       const searchResults = allProducts.filter(product => 

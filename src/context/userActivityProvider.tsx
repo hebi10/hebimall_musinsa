@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useCallback, ReactNode, useEffect } from "react";
-import { LocalUserActivityService } from "@/shared/services/localUserActivityService";
+import { HybridUserActivityService } from "@/shared/services/hybridUserActivityService";
 import { RecentProduct, WishlistItem } from "@/shared/types/userActivity";
 import { useAuth } from "./authProvider";
 
@@ -16,12 +16,12 @@ interface UserActivityContextType {
   
   // 액션
   addRecentProduct: (productId: string) => Promise<void>;
-  loadRecentProducts: (userId: string) => void;
+  loadRecentProducts: (userId: string) => Promise<void>;
   addToWishlist: (productId: string) => Promise<void>;
   removeFromWishlist: (productId: string) => Promise<void>;
-  loadWishlistItems: (userId: string) => void;
-  isInWishlist: (productId: string) => boolean;
-  clearUserActivity: () => void;
+  loadWishlistItems: (userId: string) => Promise<void>;
+  isInWishlist: (productId: string) => Promise<boolean>;
+  clearUserActivity: () => Promise<void>;
   clearAllRecentProducts: () => Promise<void>;
   clearAllWishlistItems: () => Promise<void>;
 }
@@ -63,7 +63,7 @@ export function UserActivityProvider({ children }: { children: ReactNode }) {
     if (!user?.uid) return;
     
     try {
-      LocalUserActivityService.addRecentProduct(user.uid, productId);
+      await HybridUserActivityService.addRecentProduct(user.uid, productId);
       
       // 로컬 상태 업데이트
       loadRecentProducts(user.uid);
@@ -73,32 +73,25 @@ export function UserActivityProvider({ children }: { children: ReactNode }) {
     }
   }, [user?.uid]);
 
-  // 최근 본 상품 로드
-  const loadRecentProducts = useCallback((userId: string) => {
+  // 최근 본 상품 불러오기
+  const loadRecentProducts = useCallback(async (userId?: string) => {
+    const targetUserId = userId || user?.uid;
+    if (!targetUserId) return;
+    
     try {
-      setLoading(true);
-      setError(null);
-
-      const products = LocalUserActivityService.getRecentProducts(userId);
+      const products = await HybridUserActivityService.getRecentProducts(targetUserId);
       setRecentProducts(products);
-
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : '최근 본 상품을 불러오는데 실패했습니다.';
-      setError(errorMessage);
       console.error('최근 본 상품 로드 실패:', err);
-    } finally {
-      setLoading(false);
     }
-  }, []);
-
-  // 찜하기 추가
+  }, [user?.uid]);  // 찜하기 추가
   const addToWishlist = useCallback(async (productId: string) => {
     if (!user?.uid) return;
     
     try {
       setError(null);
       
-      LocalUserActivityService.addToWishlist(user.uid, productId);
+      await HybridUserActivityService.addToWishlist(user.uid, productId);
       
       // 로컬 상태 업데이트
       loadWishlistItems(user.uid);
@@ -118,7 +111,7 @@ export function UserActivityProvider({ children }: { children: ReactNode }) {
     try {
       setError(null);
       
-      LocalUserActivityService.removeFromWishlist(user.uid, productId);
+      await HybridUserActivityService.removeFromWishlist(user.uid, productId);
       
       // 로컬 상태 업데이트
       setWishlistItems(prev => prev.filter(item => item.productId !== productId));
@@ -132,12 +125,12 @@ export function UserActivityProvider({ children }: { children: ReactNode }) {
   }, [user?.uid]);
 
   // 찜한 상품 로드
-  const loadWishlistItems = useCallback((userId: string) => {
+  const loadWishlistItems = useCallback(async (userId: string) => {
     try {
       setLoading(true);
       setError(null);
 
-      const items = LocalUserActivityService.getWishlistItems(userId);
+      const items = await HybridUserActivityService.getWishlist(userId);
       setWishlistItems(items);
 
     } catch (err) {
@@ -156,7 +149,7 @@ export function UserActivityProvider({ children }: { children: ReactNode }) {
     try {
       setError(null);
       
-      LocalUserActivityService.clearAllRecentProducts(user.uid);
+      await HybridUserActivityService.clearAllUserData(user.uid);
       
       // 로컬 상태 업데이트
       setRecentProducts([]);
@@ -176,7 +169,7 @@ export function UserActivityProvider({ children }: { children: ReactNode }) {
     try {
       setError(null);
       
-      LocalUserActivityService.clearAllWishlistItems(user.uid);
+      await HybridUserActivityService.clearAllUserData(user.uid);
       
       // 로컬 상태 업데이트
       setWishlistItems([]);
@@ -190,16 +183,16 @@ export function UserActivityProvider({ children }: { children: ReactNode }) {
   }, [user?.uid]);
 
   // 찜 여부 확인
-  const isInWishlist = useCallback((productId: string): boolean => {
+  const isInWishlist = useCallback(async (productId: string): Promise<boolean> => {
     if (!user?.uid) return false;
-    return LocalUserActivityService.isInWishlist(user.uid, productId);
+    return await HybridUserActivityService.isInWishlist(user.uid, productId);
   }, [user?.uid, wishlistItems]);
 
   // 사용자 활동 데이터 초기화
-  const clearUserActivity = useCallback(() => {
+  const clearUserActivity = useCallback(async () => {
     if (!user?.uid) return;
     
-    LocalUserActivityService.clearUserData(user.uid);
+    await HybridUserActivityService.clearAllUserData(user.uid);
     setRecentProducts([]);
     setWishlistItems([]);
     setError(null);

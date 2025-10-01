@@ -3,14 +3,10 @@ import {
   getDocs,
   doc,
   updateDoc,
-  deleteDoc,
   query,
   orderBy,
   where,
   limit,
-  startAfter,
-  getCountFromServer,
-  Timestamp,
   addDoc,
   serverTimestamp,
   getDoc,
@@ -57,9 +53,7 @@ export class AdminUserService {
     page: number = 1,
     limitCount: number = 10
   ): Promise<{ users: AdminUserData[]; totalCount: number }> {
-    try {
-      console.log('🔍 AdminUserService.getUsers 호출됨', { filters, page, limitCount });
-      
+    try {      
       // 복합 인덱스 문제를 피하기 위해 간단한 쿼리 사용
       let q = query(collection(db, COLLECTION_NAME));
 
@@ -70,12 +64,9 @@ export class AdminUserService {
         q = query(q, where('status', '==', filters.status));
       }
 
-      console.log('📊 Firestore 쿼리 실행 중...');
       const querySnapshot = await getDocs(q);
-      console.log(`📊 조회된 문서 수: ${querySnapshot.size}`);
       
       let users = querySnapshot.docs.map(doc => {
-        console.log(`👤 사용자 문서: ${doc.id}`, doc.data());
         return this.convertDocToUser(doc);
       });
 
@@ -434,5 +425,70 @@ export class AdminUserService {
 
     console.log(`🔄 변환된 사용자: ${user.id} - ${user.name} (${user.role})`);
     return user;
+  }
+}
+
+// UserService와의 호환성을 위한 별칭
+export class UserService {
+  // 모든 사용자 조회 (UserService 호환)
+  static async getAllUsers(): Promise<UserProfile[]> {
+    const users = await AdminUserService.getAllUsersSimple();
+    return users.map(user => ({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      phone: user.phone || '',
+      role: user.role,
+      status: user.status,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+      birthDate: user.birthDate,
+      gender: user.gender || 'male',
+      addresses: user.addresses || [],
+      preferences: user.preferences || {
+        favoriteCategories: [],
+        favoriteBrands: [],
+        sizes: {},
+        newsletter: false,
+        smsMarketing: false,
+      },
+      isAdmin: user.role === 'admin',
+      joinDate: user.joinDate || new Date().toISOString().split('T')[0],
+      point: user.pointBalance || 0,
+      grade: user.grade || 'bronze',
+    })) as UserProfile[];
+  }
+
+  // 활성 사용자만 조회 (UserService 호환)
+  static async getActiveUsers(): Promise<UserProfile[]> {
+    const allUsers = await this.getAllUsers();
+    return allUsers.filter(user => user.status === 'active');
+  }
+
+  // 사용자 통계 (UserService 호환)
+  static async getUserStats(): Promise<{
+    total: number;
+    active: number;
+    inactive: number;
+    admin: number;
+  }> {
+    try {
+      const users = await this.getAllUsers();
+      
+      return {
+        total: users.length,
+        active: users.filter(user => user.status === 'active').length,
+        inactive: users.filter(user => user.status === 'inactive').length,
+        admin: users.filter(user => user.role === 'admin').length
+      };
+    } catch (error) {
+      console.error('사용자 통계 조회 실패:', error);
+      return {
+        total: 0,
+        active: 0,
+        inactive: 0,
+        admin: 0
+      };
+    }
   }
 }

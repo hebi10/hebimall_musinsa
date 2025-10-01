@@ -7,7 +7,7 @@ import styles from './page.module.css';
 import { useProduct } from '@/context/productProvider';
 import { useAuth } from '@/context/authProvider';
 import { Product } from '@/shared/types/product';
-import { CategoryOnlyProductService } from '@/shared/services/hybridProductService';
+import { ProductService } from '@/shared/services/productService';
 import { getCategoryNames } from '@/shared/utils/categoryUtils';
 
 export default function AdminProductsPage() {

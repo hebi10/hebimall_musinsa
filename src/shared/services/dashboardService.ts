@@ -1,6 +1,6 @@
 import { CouponService } from './couponService';
 import { EventService } from './eventService';
-import { UserService } from './userService';
+import { UserService } from './adminUserService';
 import { SimpleQnAService } from './simpleQnAService';
 import { InquiryService } from './inquiryService';
 import { UserProfile } from '@/shared/types/user';

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { CategoryOnlyProductService } from '@/shared/services/hybridProductService';
+import { ProductService } from '@/shared/services/productService';
 import { Product } from '@/shared/types/product';
 import styles from "./page.module.css";
 
@@ -35,7 +35,7 @@ export default function RecommendPage() {
     try {
       setLoading(true);
       setError(null);
-      const allProducts = await CategoryOnlyProductService.getAllProducts();
+      const allProducts = await ProductService.getAllProducts();
       setProducts(allProducts);
     } catch (err) {
       console.error('상품 로딩 실패:', err);

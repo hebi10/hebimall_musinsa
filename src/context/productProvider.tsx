@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
-import { CategoryOnlyProductService } from "@/shared/services/hybridProductService";
+import { ProductService } from "@/shared/services/productService";
 import { Product, ProductFilter, ProductSort } from "@/shared/types/product";
 
 interface ProductContextType {
@@ -134,9 +134,9 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       setError(null);
       
       const [allProducts, categories, brands] = await Promise.all([
-        CategoryOnlyProductService.getAllProducts(),
-        CategoryOnlyProductService.getCategories(),
-        CategoryOnlyProductService.getBrands()
+        ProductService.getAllProducts(),
+        ProductService.getCategories(),
+        ProductService.getBrands()
       ]);
       
       // 상품 정규화
@@ -148,7 +148,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       setBrands(brands);
       
       // 가격 범위 설정
-      const range = CategoryOnlyProductService.getPriceRange(allProducts);
+      const range = ProductService.getPriceRange(allProducts);
       setPriceRange(range);
       
       // 마지막 fetch 시간 업데이트
@@ -171,7 +171,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       setError(null);
 
       // 모든 카테고리에서 상품을 찾아야 하므로 getAllProducts에서 필터링
-      const allProducts = await CategoryOnlyProductService.getAllProducts();
+      const allProducts = await ProductService.getAllProducts();
       const product = allProducts.find((p: Product) => p.id === productId);
       
       setCurrentProduct(product ? normalizeProduct(product) : null);
@@ -196,7 +196,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       }
       
       // 새로운 getProductById 메서드 사용
-      const product = await CategoryOnlyProductService.getProductById(productId);
+      const product = await ProductService.getProductById(productId);
       
       if (product) {
         return normalizeProduct(product);
@@ -214,7 +214,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   // 카테고리별 상품 조회
   const getProductsByCategory = useCallback(async (categoryId: string): Promise<Product[]> => {
     try {
-      const products = await CategoryOnlyProductService.getProductsByCategory(categoryId);
+      const products = await ProductService.getProductsByCategory(categoryId);
       return products.map(normalizeProduct);
     } catch (err) {
       console.error('카테고리별 상품 조회 실패:', err);
@@ -236,7 +236,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       setLoading(true);
       setError(null);
 
-      const searchResults = await CategoryOnlyProductService.searchProducts(query);
+      const searchResults = await ProductService.searchProducts(query);
       setSearchResults(searchResults);
       setFilteredProducts(searchResults);
 
@@ -262,7 +262,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       setLoading(true);
       setError(null);
 
-      const filtered = await CategoryOnlyProductService.getFilteredProducts(filter);
+      const filtered = await ProductService.getFilteredProducts(filter);
       setFilteredProducts(filtered);
       setCurrentFilter(filter);
 
@@ -281,7 +281,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       setLoading(true);
       setError(null);
 
-      const sorted = await CategoryOnlyProductService.getSortedProducts(filteredProducts, sort);
+      const sorted = await ProductService.getSortedProducts(filteredProducts, sort);
       setSortedProducts(sorted);
       setCurrentSort(sort);
 
@@ -308,7 +308,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     try {
       setError(null);
 
-      const related = await CategoryOnlyProductService.getRelatedProducts(productId, limit);
+      const related = await ProductService.getRelatedProducts(productId, limit);
       setRelatedProducts(related);
 
     } catch (err) {
@@ -325,12 +325,12 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       setError(null);
 
       const [recommendedProducts, newProducts, saleProducts, bestSellerProducts, categories, brands] = await Promise.all([
-        CategoryOnlyProductService.getRecommendedProducts(),
-        CategoryOnlyProductService.getNewProducts(),
-        CategoryOnlyProductService.getSaleProducts(),
-        CategoryOnlyProductService.getBestSellerProducts(),
-        CategoryOnlyProductService.getCategories(),
-        CategoryOnlyProductService.getBrands()
+        ProductService.getRecommendedProducts(),
+        ProductService.getNewProducts(),
+        ProductService.getSaleProducts(),
+        ProductService.getBestSellerProducts(),
+        ProductService.getCategories(),
+        ProductService.getBrands()
       ]);
 
       setRecommendedProducts(recommendedProducts);
@@ -371,7 +371,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       setLoading(true);
       setError(null);
 
-      const newProduct = await CategoryOnlyProductService.createProduct(product);
+      const newProduct = await ProductService.createProduct(product);
       
       // 상품 목록 업데이트
       setProducts(prev => [...prev, newProduct]);
@@ -394,7 +394,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       setLoading(true);
       setError(null);
 
-      const updatedProduct = await CategoryOnlyProductService.updateProduct(productId, updates);
+      const updatedProduct = await ProductService.updateProduct(productId, updates);
 
       // 상품 목록 업데이트
       setProducts(prev => prev.map(p => p.id === productId ? updatedProduct : p));
@@ -422,7 +422,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       setLoading(true);
       setError(null);
 
-      await CategoryOnlyProductService.deleteProduct(productId);
+      await ProductService.deleteProduct(productId);
 
       // 상품 목록에서 제거
       setProducts(prev => prev.filter(p => p.id !== productId));

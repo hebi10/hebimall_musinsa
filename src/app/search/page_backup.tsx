@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import ProductCard from "@/components/products/ProductCard";
 import PageHeader from "../_components/PageHeader";
-import { CategoryOnlyProductService } from "@/shared/services/hybridProductService";
+import { ProductService } from "@/shared/services/productService";
 import { Product, ProductFilter, ProductSort } from "@/shared/types/product";
 import styles from "./page.module.css";
 
@@ -68,9 +68,9 @@ export default function SearchPage() {
     setState(prev => ({ ...prev, loading: true, error: null }));
 
     try {
-      const results = await CategoryOnlyProductService.searchProducts(searchQuery);
+      const results = await ProductService.searchProducts(searchQuery);
       const filtered = applyFilters(results, state.filters);
-      const sorted = await CategoryOnlyProductService.getSortedProducts(filtered, state.sortBy);
+      const sorted = await ProductService.getSortedProducts(filtered, state.sortBy);
       
       setState(prev => ({
         ...prev,
@@ -116,7 +116,7 @@ export default function SearchPage() {
   const handleFilterChange = useCallback(async (newFilters: Partial<ProductFilter>) => {
     const updatedFilters = { ...state.filters, ...newFilters };
     const filtered = applyFilters(state.products, updatedFilters);
-    const sorted = await CategoryOnlyProductService.getSortedProducts(filtered, state.sortBy);
+    const sorted = await ProductService.getSortedProducts(filtered, state.sortBy);
     
     setState(prev => ({
       ...prev,
@@ -129,7 +129,7 @@ export default function SearchPage() {
 
   // 정렬 변경
   const handleSortChange = useCallback(async (sortBy: ProductSort) => {
-    const sorted = await CategoryOnlyProductService.getSortedProducts(state.filteredProducts, sortBy);
+    const sorted = await ProductService.getSortedProducts(state.filteredProducts, sortBy);
     
     setState(prev => ({
       ...prev,

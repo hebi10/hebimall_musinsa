@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '@/shared/libs/firebase/firebase';
-import { CategoryOnlyProductService } from '@/shared/services/hybridProductService';
+import { ProductService } from '@/shared/services/productService';
 import { Product } from '@/shared/types/product';
 import { getCategoryName } from '@/shared/utils/categoryUtils';
 import styles from './page.module.css';
@@ -72,7 +72,7 @@ export default function DynamicCategoryPage({ params }: CategoryPageProps) {
         setError(null);
 
         // 카테고리별 상품 조회 (중첩 컬렉션에서)
-        const categoryProducts = await CategoryOnlyProductService.getProductsByCategory(category);
+        const categoryProducts = await ProductService.getProductsByCategory(category);
         
         // 정렬 적용
         const sortedProducts = await sortProducts(categoryProducts, sortBy);

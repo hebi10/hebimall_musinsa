@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { CategoryOnlyProductService } from '@/shared/services/hybridProductService';
+import { ProductService } from '@/shared/services/productService';
 import { Product } from '@/shared/types/product';
 import { getCategoryName } from '@/shared/utils/categoryUtils';
 import styles from './ProductDetail.module.css';
@@ -64,7 +64,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
         setError(null);
 
         // 1. 상품 상세 정보 로드
-        const productData = await CategoryOnlyProductService.getProductById(productId);
+        const productData = await ProductService.getProductById(productId);
         
         if (!productData) {
           setError('상품을 찾을 수 없습니다.');
@@ -88,7 +88,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
         }
 
         // 2. 관련 상품 로드
-        const related = await CategoryOnlyProductService.getRelatedProducts(productId, 4);
+        const related = await ProductService.getRelatedProducts(productId, 4);
         setRelatedProducts(related);
 
       } catch (err) {

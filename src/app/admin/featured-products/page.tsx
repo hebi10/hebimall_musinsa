@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { FeaturedProductService, FeaturedProductConfig } from '@/shared/services/featuredProductService';
-import { CategoryOnlyProductService } from '@/shared/services/hybridProductService';
+import { ProductService } from '@/shared/services/productService';
 import { Product } from '@/shared/types/product';
 import Image from 'next/image';
 import styles from './page.module.css';
@@ -38,7 +38,7 @@ export default function FeaturedProductManagePage() {
 
       const [configData, productsData] = await Promise.all([
         FeaturedProductService.getFeaturedProductConfig(),
-        CategoryOnlyProductService.getAllProducts()
+        ProductService.getAllProducts()
       ]);
 
       console.log('📦 로드된 설정:', configData);
