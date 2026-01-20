@@ -84,7 +84,9 @@ export function UserActivityProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       console.error('최근 본 상품 로드 실패:', err);
     }
-  }, [user?.uid]);  // 찜하기 추가
+  }, [user?.uid]);  
+  
+  // 찜하기 추가
   const addToWishlist = useCallback(async (productId: string) => {
     if (!user?.uid) return;
     

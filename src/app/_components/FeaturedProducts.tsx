@@ -23,15 +23,15 @@ export default function FeaturedProducts() {
   const loadFeaturedProducts = async () => {
     try {
       setLoading(true);
-      console.log('🚀 추천 상품 로딩 시작...');
+      console.log('추천 상품 로딩 시작...');
       
       const [products, configData] = await Promise.all([
         FeaturedProductService.getFeaturedProducts(),
         FeaturedProductService.getFeaturedProductConfig()
       ]);
 
-      console.log('📦 로드된 추천 상품:', products);
-      console.log('⚙️ 설정 데이터:', configData);
+      console.log('로드된 추천 상품:', products);
+      console.log('설정 데이터:', configData);
 
       setFeaturedProducts(products);
       
@@ -43,7 +43,7 @@ export default function FeaturedProducts() {
         });
       }
     } catch (error) {
-      console.error('❌ 추천 상품 로딩 실패:', error);
+      console.error('추천 상품 로딩 실패:', error);
     } finally {
       setLoading(false);
     }

@@ -7,6 +7,7 @@ import { useUserActivity } from '@/context/userActivityProvider';
 import CachedImage from '@/shared/components/CachedImage';
 import { getProductReviewStats } from '@/shared/utils/syncProductReviews';
 import styles from './ProductCard.module.css';
+import { useAuthUser } from '@/shared/hooks/useAuthUser';
 
 interface ProductCardProps {
   id: string;
@@ -40,6 +41,7 @@ export default function ProductCard({
   const { calculateDiscountPrice } = useProduct();
   const { wishlistItems, addToWishlist, removeFromWishlist } = useUserActivity();
   const [actualReviewStats, setActualReviewStats] = useState<{ reviewCount: number; rating: number } | null>(null);
+  const { user } = useAuthUser();
 
   // 찜하기 상태는 실제 데이터에서 가져오기
   const isWishlisted = wishlistItems.some(item => item.productId === id);
@@ -76,6 +78,11 @@ export default function ProductCard({
   const handleWishlistClick = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+
+    if(!user) {
+      alert('로그인이 필요한 서비스입니다.');
+      return;
+    }
     
     try {
       if (isWishlisted) {
