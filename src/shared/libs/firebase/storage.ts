@@ -12,7 +12,7 @@ export const uploadProductImages = async (
   onProgress?: (progress: number, fileName: string) => void
 ): Promise<string[]> => {
   try {
-    console.log('📤 Firebase Storage 업로드 시작:', {
+    console.log('Firebase Storage 업로드 시작:', {
       files: files.length,
       category,
       productId

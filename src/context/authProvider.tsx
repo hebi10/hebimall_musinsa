@@ -144,7 +144,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (userData?.role === 'admin') {
         setIsAdmin(true);
       } else {
-        console.log('❌ 일반 사용자:', userData?.email || 'Unknown');
+        console.log('일반 사용자:', userData?.email || 'Unknown');
         setIsAdmin(false);
       }
     } else if (!user) {
