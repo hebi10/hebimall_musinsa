@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import MainBanner from "./_components/MainBanner";
 import ProductSection from "./_components/ProductSection";
 import DynamicCategorySection from "./_components/DynamicCategorySection";

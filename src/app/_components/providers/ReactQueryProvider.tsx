@@ -9,19 +9,16 @@ interface ReactQueryProviderProps {
 }
 
 export default function ReactQueryProvider({ children }: ReactQueryProviderProps) {
-  const [queryClient] = useState(
-    () =>
-      new QueryClient({
-        defaultOptions: {
-          queries: {
-            // 기본 설정
-            staleTime: 5 * 60 * 1000, // 5분
-            retry: 1,
-            refetchOnWindowFocus: false,
-          },
-        },
-      })
-  );
+  const [queryClient] = useState(() => new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 60 * 1000, // 1분
+        gcTime: 5 * 60 * 1000, // 5분 (이전 cacheTime)
+        retry: 1,
+        refetchOnWindowFocus: false,
+      },
+    },
+  }));
 
   return (
     <QueryClientProvider client={queryClient}>
