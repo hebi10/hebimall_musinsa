@@ -1,80 +1,91 @@
 import * as functions from "firebase-functions/v2";
-import { onCall, CallableRequest } from "firebase-functions/v2/https";
+import { onCall, CallableRequest, onRequest } from "firebase-functions/v2/https";
 import { onSchedule } from "firebase-functions/v2/scheduler";
-import { onRequest } from "firebase-functions/v2/https";
 import * as admin from "firebase-admin";
 import * as path from "path";
 import { secrets } from "./config/environment";
 
 admin.initializeApp();
 
-// Next.js SSR 서버 설정
+/* ============================
+   Next.js SSR 서버 (수정됨)
+============================ */
 
 let app: any;
+let handler: any;
+let prepared = false;
 
-// 동적 Next.js 서버 함수
-export const nextjsServer = onRequest({
-  region: 'us-central1',
-  memory: '2GiB',
-  timeoutSeconds: 60,
-  invoker: 'public',
-  cors: true,
-  secrets: [
-    secrets.OPENAI_API_KEY // OpenAI API Key만 Secret으로 관리
-  ]
-}, async (req, res) => {
-  // CORS 헤더 설정
-  res.set('Access-Control-Allow-Origin', '*');
-  res.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-
-  if (req.method === 'OPTIONS') {
-    res.status(204).send('');
-    return;
-  }
-
-  try {
-    if (!app) {
-      // Next.js 앱 동적 로드
-      const next = require('next');
-      app = next({
-        dev: false,
-        dir: path.join(__dirname, '..'),
-        conf: {
-          distDir: '.next',
-        }
-      });
-      await app.prepare();
+export const nextjsServer = onRequest(
+  {
+    region: "us-central1",
+    memory: "2GiB",
+    timeoutSeconds: 60,
+    invoker: "public",
+    cors: true,
+    secrets: [secrets.OPENAI_API_KEY],
+  },
+  async (req, res) => {
+    if (req.method === "OPTIONS") {
+      res.status(204).send("");
+      return;
     }
 
-    return app.getRequestHandler()(req, res);
-  } catch (error) {
-    console.error('Next.js server error:', error);
-    res.status(500).json({ error: 'Internal Server Error', details: String(error) });
+    try {
+      if (!prepared) {
+        const next = require("next");
+
+        app = next({
+          dev: false,
+          dir: path.join(__dirname, ".."),
+          conf: {
+            distDir: ".next",
+          },
+        });
+
+        await app.prepare();
+        handler = app.getRequestHandler();
+        prepared = true;
+      }
+
+      return handler(req, res);
+    } catch (error) {
+      console.error("Next.js server error:", error);
+      res.status(500).json({
+        error: "Internal Server Error",
+        details: String(error),
+      });
+    }
   }
-});
+);
 
-// 쿠폰 함수들 export
-export * from './couponFunctions';
+/* ============================
+   기타 Functions (기존 코드 그대로)
+============================ */
 
-// 환경변수 함수들 export
-export * from './environmentFunctions';
+// 쿠폰 함수들
+export * from "./couponFunctions";
 
-// 채팅 API 함수 export
-export * from './chatAPI';
-export * from './chatAPI-standalone';
+// 환경변수 함수들
+export * from "./environmentFunctions";
 
-// 포인트 타입 정의
+// 채팅 API
+export * from "./chatAPI";
+export * from "./chatAPI-standalone";
+
+/* ============================
+   포인트 관련 타입
+============================ */
+
 interface AddPointData {
   amount: number;
   description: string;
-  orderId?: string; // 주문 관련 포인트일 경우
+  orderId?: string;
 }
 
 interface RefundPointData {
   amount: number;
   description: string;
-  orderId: string; // 원주문 ID
+  orderId: string;
 }
 
 interface PointHistoryRequest {
@@ -82,204 +93,126 @@ interface PointHistoryRequest {
   lastDoc?: any;
 }
 
-// 1. 포인트 적립 함수
-export const addPoint = onCall({
-  cors: true,
-  region: 'us-central1'
-}, async (request: CallableRequest<AddPointData>) => {
-  // 인증 확인
-  if (!request.auth) {
-    throw new functions.https.HttpsError(
-      "unauthenticated",
-      "로그인이 필요합니다."
-    );
-  }
+/* ============================
+   1. 포인트 적립
+============================ */
 
-  const userId = request.auth.uid;
-  const { amount, description, orderId } = request.data;
-
-  // 데이터 검증
-  if (!amount || amount <= 0) {
-    throw new functions.https.HttpsError(
-      "invalid-argument",
-      "적립할 포인트는 0보다 커야 합니다."
-    );
-  }
-
-  if (!description) {
-    throw new functions.https.HttpsError(
-      "invalid-argument",
-      "포인트 적립 사유가 필요합니다."
-    );
-  }
-
-  try {
-    // 트랜잭션을 사용하여 포인트 업데이트
-    const result = await admin.firestore().runTransaction(async (transaction) => {
-      const userRef = admin.firestore().collection("users").doc(userId);
-      const userSnap = await transaction.get(userRef);
-
-      if (!userSnap.exists) {
-        throw new functions.https.HttpsError(
-          "not-found",
-          "사용자 정보를 찾을 수 없습니다."
-        );
-      }
-
-      const userData = userSnap.data();
-      let currentBalance = userData?.pointBalance;
-      
-      // 포인트 잔액이 설정되지 않은 경우 0으로 초기화
-      if (currentBalance === undefined || currentBalance === null) {
-        currentBalance = 0;
-      }
-      
-      const newBalance = currentBalance + amount;
-
-      // 사용자 포인트 잔액 업데이트
-      transaction.update(userRef, { pointBalance: newBalance });
-
-      // 포인트 내역 추가
-      const pointHistoryRef = userRef.collection("pointHistory").doc();
-      transaction.set(pointHistoryRef, {
-        type: 'earn',
-        amount,
-        description,
-        orderId: orderId || null,
-        date: admin.firestore.FieldValue.serverTimestamp(),
-        balanceAfter: newBalance,
-        expired: false,
-      });
-
-      return { success: true, newBalance };
-    });
-
-    return result;
-  } catch (error: any) {
-    console.error("포인트 적립 실패:", error);
-    throw new functions.https.HttpsError(
-      "internal",
-      "포인트 적립에 실패했습니다.",
-      error
-    );
-  }
-});
-
-// 2. 포인트 사용 함수 - Callable Functions로 복원
-export const usePoint = onCall({
-  region: 'us-central1',
-  timeoutSeconds: 60,
-  memory: '256MiB'
-}, async (request: CallableRequest<any>) => {
-  console.log('=== usePoint 함수 시작 ===');
-  console.log('Request auth:', !!request.auth);
-  console.log('Request data:', request.data);
-  
-  if (!request.auth) {
-    console.log('인증 실패: 로그인이 필요합니다');
-    throw new functions.https.HttpsError(
-      "unauthenticated",
-      "로그인이 필요합니다."
-    );
-  }
-
-  const userId = request.auth.uid;
-  const { amount, description, orderId } = request.data;
-
-  console.log('포인트 사용 요청:', { userId, amount, description, orderId });
-
-  // 데이터 검증
-  if (!amount || amount <= 0) {
-    console.log('데이터 검증 실패: 포인트 금액이 잘못됨');
-    throw new functions.https.HttpsError(
-      "invalid-argument",
-      "사용할 포인트는 0보다 커야 합니다."
-    );
-  }
-
-  if (!orderId) {
-    console.log('데이터 검증 실패: 주문 ID가 없음');
-    throw new functions.https.HttpsError(
-      "invalid-argument",
-      "주문 ID가 필요합니다."
-    );
-  }
-
-  try {
-    console.log('트랜잭션 시작');
-    const result = await admin.firestore().runTransaction(async (transaction) => {
-      const userRef = admin.firestore().collection("users").doc(userId);
-      const userSnap = await transaction.get(userRef);
-
-      console.log('사용자 문서 존재 여부:', userSnap.exists);
-
-      if (!userSnap.exists) {
-        throw new functions.https.HttpsError(
-          "not-found",
-          "사용자 정보를 찾을 수 없습니다."
-        );
-      }
-
-      const userData = userSnap.data();
-      let currentBalance = userData?.pointBalance;
-      
-      // 포인트 잔액이 설정되지 않은 경우 0으로 초기화
-      if (currentBalance === undefined || currentBalance === null) {
-        console.log('포인트 잔액이 설정되지 않아 0으로 초기화');
-        currentBalance = 0;
-        // 사용자 문서에 포인트 잔액 필드 추가
-        transaction.update(userRef, { pointBalance: 0 });
-      }
-
-      console.log('현재 포인트 잔액:', currentBalance);
-
-      if (currentBalance < amount) {
-        throw new functions.https.HttpsError(
-          "failed-precondition",
-          `보유 포인트가 부족합니다. (보유: ${currentBalance}, 사용 요청: ${amount})`
-        );
-      }
-
-      const newBalance = currentBalance - amount;
-
-      // 사용자 포인트 잔액 업데이트
-      transaction.update(userRef, { pointBalance: newBalance });
-
-      // 포인트 내역 추가
-      const pointHistoryRef = userRef.collection("pointHistory").doc();
-      transaction.set(pointHistoryRef, {
-        type: 'use',
-        amount,
-        description,
-        orderId,
-        date: admin.firestore.FieldValue.serverTimestamp(),
-        balanceAfter: newBalance,
-      });
-
-      console.log('트랜잭션 완료, 새 잔액:', newBalance);
-      return { success: true, newBalance, usedAmount: amount };
-    });
-
-    console.log('포인트 사용 완료:', result);
-    return result;
-  } catch (error: any) {
-    console.error("포인트 사용 실패:", error);
-    console.error("에러 타입:", typeof error);
-    console.error("에러 메시지:", error.message);
-    
-    // 이미 HttpsError인 경우 그대로 throw
-    if (error.code && error.code.startsWith('functions/')) {
-      throw error;
+export const addPoint = onCall(
+  { cors: true, region: "us-central1" },
+  async (request: CallableRequest<AddPointData>) => {
+    if (!request.auth) {
+      throw new functions.https.HttpsError("unauthenticated", "로그인이 필요합니다.");
     }
-    
-    // 그 외의 경우 internal error로 변환
-    throw new functions.https.HttpsError(
-      "internal",
-      `포인트 사용 중 오류가 발생했습니다: ${error.message || error}`,
-      error
-    );
+
+    const userId = request.auth.uid;
+    const { amount, description, orderId } = request.data;
+
+    if (!amount || amount <= 0) {
+      throw new functions.https.HttpsError("invalid-argument", "적립할 포인트는 0보다 커야 합니다.");
+    }
+
+    if (!description) {
+      throw new functions.https.HttpsError("invalid-argument", "포인트 적립 사유가 필요합니다.");
+    }
+
+    try {
+      const result = await admin.firestore().runTransaction(async (transaction) => {
+        const userRef = admin.firestore().collection("users").doc(userId);
+        const userSnap = await transaction.get(userRef);
+
+        if (!userSnap.exists) {
+          throw new functions.https.HttpsError("not-found", "사용자 정보를 찾을 수 없습니다.");
+        }
+
+        const currentBalance = userSnap.data()?.pointBalance ?? 0;
+        const newBalance = currentBalance + amount;
+
+        transaction.update(userRef, { pointBalance: newBalance });
+
+        transaction.set(userRef.collection("pointHistory").doc(), {
+          type: "earn",
+          amount,
+          description,
+          orderId: orderId || null,
+          date: admin.firestore.FieldValue.serverTimestamp(),
+          balanceAfter: newBalance,
+          expired: false,
+        });
+
+        return { success: true, newBalance };
+      });
+
+      return result;
+    } catch (error: any) {
+      console.error("포인트 적립 실패:", error);
+      throw new functions.https.HttpsError("internal", "포인트 적립에 실패했습니다.", error);
+    }
   }
-});
+);
+
+/* ============================
+   2. 포인트 사용
+============================ */
+
+export const usePoint = onCall(
+  { region: "us-central1", timeoutSeconds: 60, memory: "256MiB" },
+  async (request: CallableRequest<any>) => {
+    if (!request.auth) {
+      throw new functions.https.HttpsError("unauthenticated", "로그인이 필요합니다.");
+    }
+
+    const userId = request.auth.uid;
+    const { amount, description, orderId } = request.data;
+
+    if (!amount || amount <= 0) {
+      throw new functions.https.HttpsError("invalid-argument", "사용할 포인트는 0보다 커야 합니다.");
+    }
+
+    if (!orderId) {
+      throw new functions.https.HttpsError("invalid-argument", "주문 ID가 필요합니다.");
+    }
+
+    try {
+      const result = await admin.firestore().runTransaction(async (transaction) => {
+        const userRef = admin.firestore().collection("users").doc(userId);
+        const userSnap = await transaction.get(userRef);
+
+        if (!userSnap.exists) {
+          throw new functions.https.HttpsError("not-found", "사용자 정보를 찾을 수 없습니다.");
+        }
+
+        const currentBalance = userSnap.data()?.pointBalance ?? 0;
+
+        if (currentBalance < amount) {
+          throw new functions.https.HttpsError(
+            "failed-precondition",
+            `보유 포인트가 부족합니다. (보유: ${currentBalance})`
+          );
+        }
+
+        const newBalance = currentBalance - amount;
+
+        transaction.update(userRef, { pointBalance: newBalance });
+
+        transaction.set(userRef.collection("pointHistory").doc(), {
+          type: "use",
+          amount,
+          description,
+          orderId,
+          date: admin.firestore.FieldValue.serverTimestamp(),
+          balanceAfter: newBalance,
+        });
+
+        return { success: true, newBalance };
+      });
+
+      return result;
+    } catch (error: any) {
+      console.error("포인트 사용 실패:", error);
+      throw new functions.https.HttpsError("internal", "포인트 사용 중 오류가 발생했습니다.", error);
+    }
+  }
+);
 
 // 3. 포인트 환불 함수 (주문 취소/환불 시)
 export const refundPoint = onCall({
