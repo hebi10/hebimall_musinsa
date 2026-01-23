@@ -56,3 +56,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# 관리자 인증키
+scripts/serviceAccountKey.json
