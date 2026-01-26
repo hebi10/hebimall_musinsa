@@ -1,4 +1,4 @@
-const { db } = require('./firebase-config');
+const { db } = require('./util-firebase-config');
 const { collection, getDocs } = require('firebase/firestore');
 
 async function checkFirebaseStructure() {

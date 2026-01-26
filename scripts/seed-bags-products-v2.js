@@ -1,5 +1,5 @@
 const { collection, doc, setDoc, writeBatch, serverTimestamp } = require('firebase/firestore');
-const { db } = require('./firebase-config.js');
+const { db } = require('./util-firebase-config.js');
 
 // 가방 상품 데이터
 const bagsProducts = [

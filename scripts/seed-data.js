@@ -1,5 +1,5 @@
 const { collection, doc, setDoc, writeBatch } = require('firebase/firestore');
-const { db } = require('./firebase-config.js');
+const { db } = require('./util-firebase-config.js');
 
 // Mock data (JavaScript로 변환)
 const mockProducts = [

@@ -1,4 +1,4 @@
-const { db } = require('./firebase-config');
+const { db } = require('./util-firebase-config');
 const { collection, addDoc, Timestamp } = require('firebase/firestore');
 
 const products = [
