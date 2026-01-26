@@ -21,17 +21,6 @@
   font-family: inherit;
 }
 
-.fixedButton:hover {
-  transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 12px 30px rgba(107, 114, 128, 0.4);
-  background: linear-gradient(135deg, #5b6370 0%, #374151 100%);
-}
-
-.fixedButton:active {
-  transform: translateY(0) scale(1);
-  transition: all 0.1s ease;
-}
-
 .buttonIcon {
   font-size: 20px;
   line-height: 1;

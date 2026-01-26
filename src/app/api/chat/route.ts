@@ -116,7 +116,7 @@ export async function POST(request: NextRequest) {
       console.error('OpenAI API 오류:', openaiError);
       // OpenAI API 오류 시 대체 응답
       return NextResponse.json({
-        response: '죄송합니다. AI 상담원 연결 중 문제가 발생했습니다. 잠시 후 다시 시도해 주시거나 고객센터(1588-0000)로 연락해 주세요.\n\n기본 상담 서비스는 계속 이용하실 수 있습니다.'
+        response: '죄송합니다. AI 상담원 연결 중 문제가 발생했습니다. 잠시 후 다시 시도해 주시거나 고객센터(sevim0104@naver.com)로 연락해 주세요.\n\n기본 상담 서비스는 계속 이용하실 수 있습니다.'
       });
     }
 
@@ -126,7 +126,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       { 
         error: '서버 오류가 발생했습니다.',
-        response: '죄송합니다. 일시적인 문제가 발생했습니다. 잠시 후 다시 시도해 주시거나 고객센터(1588-0000)로 연락해 주세요.\n\n기본 상담 서비스는 계속 이용하실 수 있습니다. 아래 번호를 선택해 주세요:\n\n1️⃣ 주문/배송 2️⃣ 반품/교환 3️⃣ 쿠폰/할인'
+        response: '죄송합니다. 일시적인 문제가 발생했습니다. 잠시 후 다시 시도해 주시거나 고객센터(sevim0104@naver.com)로 연락해 주세요.\n\n기본 상담 서비스는 계속 이용하실 수 있습니다. 아래 번호를 선택해 주세요:\n\n1️⃣ 주문/배송 2️⃣ 반품/교환 3️⃣ 쿠폰/할인'
       },
       { status: 500 }
     );
@@ -242,7 +242,7 @@ function getTemporaryResponse(message: string): string {
 • 배송 기간: 1-3일 (도서/산간 지역 제외)
 • 제주/도서산간: 추가 배송비 3,000원
 
-📞 배송 관련 문의: 고객센터 1588-0000
+📞 배송 관련 문의: 고객센터 sevim0104@naver.com
 
 다른 궁금한 점이 있으시면 번호를 선택하시거나 상담원연결을 입력해 주세요!`;
   }
@@ -259,7 +259,7 @@ function getTemporaryResponse(message: string): string {
 - 속옷, 양말 등 위생용품
 - 커스텀 제작 상품
 
-📞 고객센터: 1588-0000
+📞 고객센터: sevim0104@naver.com
 
 다른 도움이 필요하시면 상담원연결을 입력해 주세요!`;
   }
@@ -313,7 +313,7 @@ function getTemporaryResponse(message: string): string {
 • SSL 보안 결제 시스템
 • 개인정보 암호화 보호
 
-❗ 결제 오류시 고객센터(1588-0000) 또는 상담원연결로 문의해 주세요!`;
+❗ 결제 오류시 고객센터(sevim0104@naver.com) 또는 상담원연결로 문의해 주세요!`;
   }
 
   if (lowerMessage === '6' || lowerMessage.includes('회원') || lowerMessage.includes('가입')) {
@@ -345,5 +345,5 @@ function getTemporaryResponse(message: string): string {
 
 🤖 상담원연결 - AI 상담원과 1:1 맞춤 상담 (프로덕션 환경)
 
-📞 고객센터: 1588-0000 (평일 9시-18시)`;
+📞 고객센터: sevim0104@naver.com (평일 9시-18시)`;
 }

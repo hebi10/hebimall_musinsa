@@ -397,7 +397,7 @@ AI 상담원은 다음과 같은 도움을 드릴 수 있습니다:
         <div className={styles.chatHeader}>
           <div>
             <h3 className={styles.chatTitle}>
-              {useAI ? '🤖 AI 상담원' : '고객상담'}
+              {useAI ? 'AI 상담원' : '고객상담'}
             </h3>
             <p className={styles.chatSubtitle}>
               {isMounted ? getSubtitleText() : '채팅 상담을 시작해보세요'}
@@ -582,7 +582,7 @@ AI 상담원은 다음과 같은 도움을 드릴 수 있습니다:
         onClick={() => setIsOpen(!isOpen)}
         aria-label={isOpen ? "채팅 닫기" : "채팅 열기"}
       >
-        {isOpen ? '×' : '💬'}
+        {isOpen ? '×' : '채팅 상담'}
       </button>
     </div>
   );

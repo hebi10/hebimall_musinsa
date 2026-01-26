@@ -95,7 +95,6 @@
 /* 슬라이드 컨테이너 */
 .slideContainer {
   height: 420px;
-  overflow: hidden;
   position: relative;
 }
 
@@ -106,6 +105,8 @@
 }
 
 .slide {
+  overflow-y: auto;
+  overflow-x: hidden;
   min-width: 100%;
   height: 100%;
   padding: 32px;
@@ -156,8 +157,21 @@
 
 .features {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-around;
   gap: 16px;
+}
+
+.features strong {
+  width: 100%;
+  text-align: center;
+}
+
+.popup strong.caution {
+  width: 100%;
+  color: #e53e3e;
+  text-align: center;
+  margin-bottom: 1rem;
 }
 
 .feature {

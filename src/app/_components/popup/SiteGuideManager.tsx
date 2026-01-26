@@ -63,7 +63,6 @@ const SiteGuideManager: React.FC = () => {
         aria-label="사이트 가이드 열기"
         title="사이트 가이드"
       >
-        <span className={styles.buttonIcon}>📖</span>
         <span className={styles.buttonText}>가이드</span>
       </button>
 

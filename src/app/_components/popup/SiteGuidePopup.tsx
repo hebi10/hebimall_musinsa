@@ -20,7 +20,7 @@ const SiteGuidePopup: React.FC<SiteGuidePopupProps> = ({
   const slides = [
     {
       id: 1,
-      title: "STYNA에 오신 것을 환영합니다! 🎉",
+      title: "STYNA 포트폴리오에 오신걸 환영합니다!",
       content: (
         <div className={styles.slideContent}>
           <div className={styles.heroSection}>
@@ -31,6 +31,9 @@ const SiteGuidePopup: React.FC<SiteGuidePopupProps> = ({
             </p>
           </div>
           <div className={styles.features}>
+            <strong>
+              관련 링크를 클릭해보세요!
+            </strong>
             <Link href="https://github.com/hebi10/hebimall_musinsa" target='_blank' className={styles.feature}>
               <span className={styles.icon}>💻</span>
               <span>Github 바로가기</span>
@@ -39,17 +42,17 @@ const SiteGuidePopup: React.FC<SiteGuidePopupProps> = ({
               <span className={styles.icon}>📄</span>
               <span>노션 문서 바로가기</span>
             </Link>
-            <div className={styles.feature}>
-              <span className={styles.icon}>👤</span>
-              <span>sevim0104@naver.com</span>
-            </div>
+            <Link href="https://blogflow.kr/category/programing-language/front-end/portfolio-analysis/" target='_blank' className={styles.feature}>
+              <span className={styles.icon}>📒</span>
+              <span>관련 블로그 바로가기</span>
+            </Link>
           </div>
         </div>
       )
     },
     {
       id: 2,
-      title: "똑똑한 쇼핑 기능들 🧠",
+      title: "구현한 쇼핑의 다양한 기능들",
       content: (
         <div className={styles.slideContent}>
           <div className={styles.shoppingFeatures}>
@@ -74,27 +77,31 @@ const SiteGuidePopup: React.FC<SiteGuidePopupProps> = ({
     },
     {
       id: 3,
-      title: "특별한 관리자 기능 구현! 💎",
+      title: "특별한 관리자 기능!",
       content: (
         <div className={styles.slideContent}>
+          <strong  className={styles.caution}>
+            설정을 만지시면 실제 프로젝트에 반영이 됩니다!<br/>
+            포트폴리오 확인 목적의 열람만 가능하며, 수정하시면 안 됩니다.<br/>
+            자세한 내용은 면접때 질문으로 부탁드립니다.
+          </strong>
           <div className={styles.benefitsSection}>
             <div className={styles.benefit}>
-              <div className={styles.benefitIcon}>🔑</div>
               <h4>관리자 로그인</h4>
-              <p>우측 상단 <strong>마이페이지 옆 버튼</strong>에서 관리자 페이지에 접속할 수 있습니다.</p>
+              <p>
+                로그인 페이이에서 관리자 로그인 후 
+                우측 상단 <strong>마이페이지 옆 버튼</strong>에서 관리자 페이지에 접속할 수 있습니다.
+              </p>
             </div>
             <div className={styles.benefit}>
-              <div className={styles.benefitIcon}>👥</div>
               <h4>유저 관리</h4>
               <p>유저별 <strong>포인트 관리</strong>와 <strong>할인 쿠폰 지급</strong>을 간편하게 할 수 있습니다.</p>
             </div>
             <div className={styles.benefit}>
-              <div className={styles.benefitIcon}>🛒</div>
               <h4>상품 등록 및 수정</h4>
               <p><strong>이미지, 카테고리</strong> 등 상품 정보를 자유롭게 수정할 수 있습니다.</p>
             </div>
             <div className={styles.benefit}>
-              <div className={styles.benefitIcon}>💬</div>
               <h4>QnA 관리</h4>
               <p><strong>실시간 QnA 확인 및 답변</strong>이 가능합니다.</p>
             </div>
@@ -113,6 +120,7 @@ const SiteGuidePopup: React.FC<SiteGuidePopupProps> = ({
                 <div className={styles.aiIcon}>🤖</div>
                 <h4>AI 상담원</h4>
                 <p>24시간 언제든 궁금한 점을 물어보세요</p>
+                <p>&#40;GPT API 연동&#41;</p>
               </div>
             </div>
             <div className={styles.supportFeatures}>
@@ -130,7 +138,7 @@ const SiteGuidePopup: React.FC<SiteGuidePopupProps> = ({
               </div>
             </div>
             <div className={styles.contactInfo}>
-              <p>📍 오른쪽 하단의 채팅 버튼을 클릭하세요!</p>
+              <p>오른쪽 하단의 채팅 버튼을 클릭하시면 확인 가능합니다!</p>
             </div>
           </div>
         </div>
