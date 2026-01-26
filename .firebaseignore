@@ -1,0 +1,60 @@
+# Node modules
+node_modules/
+
+# Build outputs
+.next/
+out/
+dist/
+*.tsbuildinfo
+
+# Environment & secrets
+.env
+.env.*
+.env.local
+.env.development
+.env.production
+serviceAccountKey.json
+firebase-adminsdk*.json
+
+# Test files
+__tests__/
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+jest.config.js
+jest.setup.ts
+coverage/
+
+# Local scripts
+scripts/
+
+# Documentation
+*.md
+LICENSE
+
+# IDE & OS
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Firebase local cache & logs
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+pubsub-debug.log
+database-debug.log
+
+# Debug files
+debug-*.js
+
+# Root only lock file (functions/package-lock.json is kept)
+/package-lock.json
+
+# Misc
+*.log
+*.local
