@@ -18,7 +18,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 async function listAllCategories() {
-  console.log('📋 모든 카테고리 목록 조회...\n');
+  console.log('모든 카테고리 목록 조회...\n');
   
   try {
     const categoriesSnapshot = await getDocs(collection(db, 'categories'));

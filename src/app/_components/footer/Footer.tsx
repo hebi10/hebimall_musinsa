@@ -66,7 +66,9 @@ export default function Footer() {
         </div>
 
         <div className={styles.copyright}>
-          <p>© 2025 STYNA. All rights reserved.</p>
+          <p>개인 포트폴리오 사이트 입니다. 이용에 주의하세요.</p>
+          <p>sevim0104@naver.com</p>
+          <strong>© 2025 STYNA. All rights reserved.</strong>
         </div>
       </div>
     </footer>
