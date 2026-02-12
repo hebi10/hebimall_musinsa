@@ -60,10 +60,10 @@ const SiteGuideManager: React.FC = () => {
       <button
         className={styles.fixedButton}
         onClick={handleOpenPopup}
-        aria-label="사이트 가이드 열기"
-        title="사이트 가이드"
+        aria-label="설계 요약 열기"
+        title="설계 요약"
       >
-        <span className={styles.buttonText}>가이드</span>
+        <span className={styles.buttonText}>Tech Spec</span>
       </button>
 
       {/* 팝업 */}

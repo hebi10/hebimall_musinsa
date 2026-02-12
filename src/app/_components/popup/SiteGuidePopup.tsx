@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import styles from './SiteGuidePopup.module.css';
 import Link from 'next/link';
 
@@ -15,150 +15,30 @@ const SiteGuidePopup: React.FC<SiteGuidePopupProps> = ({
   onClose,
   onDontShowAgain,
 }) => {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  
-  const slides = [
-    {
-      id: 1,
-      title: "STYNA 포트폴리오에 오신걸 환영합니다!",
-      content: (
-        <div className={styles.slideContent}>
-          <div className={styles.heroSection}>
-            <h3>🛍️ 프리미엄 포트폴리오 쇼핑몰</h3>
-            <p>
-              해당 사이트는 포트폴리오 사이트입니다.<br/>
-              자세한 내용은 노션 문서를 참고해주세요.
-            </p>
-          </div>
-          <div className={styles.features}>
-            <strong>
-              관련 링크를 클릭해보세요!
-            </strong>
-            <Link href="https://github.com/hebi10/hebimall_musinsa" target='_blank' className={styles.feature}>
-              <span className={styles.icon}>💻</span>
-              <span>Github 바로가기</span>
-            </Link>
-            <Link href="https://hebi10.notion.site/HEBI-MALL-24f8b702e1b8805db701c2316bcd42bf?pvs=74" target='_blank' className={styles.feature}>
-              <span className={styles.icon}>📄</span>
-              <span>노션 문서 바로가기</span>
-            </Link>
-            <Link href="https://blogflow.kr/category/programing-language/front-end/portfolio-analysis/" target='_blank' className={styles.feature}>
-              <span className={styles.icon}>📒</span>
-              <span>관련 블로그 바로가기</span>
-            </Link>
-          </div>
-        </div>
-      )
-    },
-    {
-      id: 2,
-      title: "구현한 쇼핑의 다양한 기능들",
-      content: (
-        <div className={styles.slideContent}>
-          <div className={styles.shoppingFeatures}>
-            <div className={styles.featureItem}>
-              <div className={styles.featureIcon}>🤖</div>
-              <h4>AI 실시간 상담</h4>
-              <p>우측 하단의 <strong>채팅 버튼</strong>으로 상담을 시작하세요.</p>
-            </div>
-            <div className={styles.featureItem}>
-              <div className={styles.featureIcon}>🔍</div>
-              <h4>스마트 검색</h4>
-              <p>원하는 <strong>스타일·브랜드</strong>를 빠르게 찾아보세요.</p>
-            </div>
-            <div className={styles.featureItem}>
-              <div className={styles.featureIcon}>👤</div>
-              <h4>맞춤형 관리</h4>
-              <p>마이페이지에서 <strong>개인화된 기능</strong>을 경험하세요.</p>
-            </div>
-          </div>
-        </div>
-      )
-    },
-    {
-      id: 3,
-      title: "특별한 관리자 기능!",
-      content: (
-        <div className={styles.slideContent}>
-          <strong  className={styles.caution}>
-            설정을 만지시면 실제 프로젝트에 반영이 됩니다!<br/>
-            포트폴리오 확인 목적의 열람만 가능하며, 수정하시면 안 됩니다.<br/>
-            자세한 내용은 면접때 질문으로 부탁드립니다.
-          </strong>
-          <div className={styles.benefitsSection}>
-            <div className={styles.benefit}>
-              <h4>관리자 로그인</h4>
-              <p>
-                로그인 페이이에서 관리자 로그인 후 
-                우측 상단 <strong>마이페이지 옆 버튼</strong>에서 관리자 페이지에 접속할 수 있습니다.
-              </p>
-            </div>
-            <div className={styles.benefit}>
-              <h4>유저 관리</h4>
-              <p>유저별 <strong>포인트 관리</strong>와 <strong>할인 쿠폰 지급</strong>을 간편하게 할 수 있습니다.</p>
-            </div>
-            <div className={styles.benefit}>
-              <h4>상품 등록 및 수정</h4>
-              <p><strong>이미지, 카테고리</strong> 등 상품 정보를 자유롭게 수정할 수 있습니다.</p>
-            </div>
-            <div className={styles.benefit}>
-              <h4>QnA 관리</h4>
-              <p><strong>실시간 QnA 확인 및 답변</strong>이 가능합니다.</p>
-            </div>
-          </div>
-        </div>
-      )
-    },
-    {
-      id: 4,
-      title: "언제든 도움을 받으세요! 🤝",
-      content: (
-        <div className={styles.slideContent}>
-          <div className={styles.supportSection}>
-            <div className={styles.supportMain}>
-              <div className={styles.aiAssistant}>
-                <div className={styles.aiIcon}>🤖</div>
-                <h4>AI 상담원</h4>
-                <p>24시간 언제든 궁금한 점을 물어보세요</p>
-                <p>&#40;GPT API 연동&#41;</p>
-              </div>
-            </div>
-            <div className={styles.supportFeatures}>
-              <div className={styles.supportItem}>
-                <span className={styles.supportIcon}>📞</span>
-                <span>실시간 채팅 상담</span>
-              </div>
-              <div className={styles.supportItem}>
-                <span className={styles.supportIcon}>📧</span>
-                <span>1:1 문의 시스템</span>
-              </div>
-              <div className={styles.supportItem}>
-                <span className={styles.supportIcon}>📋</span>
-                <span>자주 묻는 질문</span>
-              </div>
-            </div>
-            <div className={styles.contactInfo}>
-              <p>오른쪽 하단의 채팅 버튼을 클릭하시면 확인 가능합니다!</p>
-            </div>
-          </div>
-        </div>
-      )
-    }
-  ];
-
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
-  };
-
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-  };
-
-  const goToSlide = (index: number) => {
-    setCurrentSlide(index);
-  };
-
   if (!isOpen) return null;
+
+  const designPoints = [
+    {
+      title: 'Next.js 14 App Router + Server Components',
+      desc: '페이지별 렌더링 전략 분리, 레이아웃 중첩 구조로 공통 UI 최적화',
+    },
+    {
+      title: 'TanStack Query v5 캐싱 및 무한스크롤',
+      desc: 'staleTime/gcTime 기반 캐시 정책, useInfiniteQuery로 상품 목록 페이지네이션',
+    },
+    {
+      title: 'Firestore 복합 인덱스 설계',
+      desc: '카테고리+정렬 조합 쿼리를 위한 인덱스 사전 정의, 읽기 비용 최소화',
+    },
+    {
+      title: '리뷰 시딩 및 동시성 처리',
+      desc: 'batch write로 대량 데이터 삽입, 트랜잭션으로 평점 집계 일관성 보장',
+    },
+    {
+      title: 'GPT API 기반 상담 챗봇',
+      desc: '우측 하단 채팅 버튼에서 실시간 상담 가능, 스트리밍 응답 처리',
+    },
+  ];
 
   return (
     <div className={styles.overlay} onClick={onClose}>
@@ -167,77 +47,72 @@ const SiteGuidePopup: React.FC<SiteGuidePopupProps> = ({
         <div className={styles.header}>
           <div className={styles.logoSection}>
             <h2>STYNA</h2>
-            <span className={styles.subtitle}>사이트 가이드</span>
+            <span className={styles.subtitle}>기술 설계 요약</span>
           </div>
           <button className={styles.closeButton} onClick={onClose}>
             ×
           </button>
         </div>
 
-        {/* 슬라이드 컨테이너 */}
-        <div className={styles.slideContainer}>
-          <div 
-            className={styles.slidesWrapper}
-            style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-          >
-            {slides.map((slide, index) => (
-              <div key={slide.id} className={styles.slide}>
-                <div className={styles.slideHeader}>
-                  <h3>{slide.title}</h3>
-                </div>
-                {slide.content}
-              </div>
-            ))}
+        {/* 메인 컨텐츠 */}
+        <div className={styles.content}>
+          {/* 프로젝트 한 줄 요약 */}
+          <div className={styles.summary}>
+            <p className={styles.summaryText}>
+              Next.js App Router 기반 이커머스 설계 프로젝트
+            </p>
+            <p className={styles.summarySubtext}>
+              실제 서비스 수준의 데이터 구조와 상태 관리 패턴을 구현한 포트폴리오입니다.
+            </p>
           </div>
-        </div>
 
-        {/* 네비게이션 */}
-        <div className={styles.navigation}>
-          <div className={styles.slideControls}>
-            <button 
-              className={styles.navButton}
-              onClick={prevSlide}
-              disabled={currentSlide === 0}
-            >
-              ‹
-            </button>
-            
-            <div className={styles.slideIndicators}>
-              {slides.map((_, index) => (
-                <button
-                  key={index}
-                  className={`${styles.indicator} ${index === currentSlide ? styles.active : ''}`}
-                  onClick={() => goToSlide(index)}
-                />
+          {/* 핵심 설계 포인트 */}
+          <div className={styles.designSection}>
+            <h3 className={styles.sectionTitle}>핵심 설계 포인트</h3>
+            <ul className={styles.designList}>
+              {designPoints.map((point, index) => (
+                <li key={index} className={styles.designItem}>
+                  <span className={styles.itemTitle}>{point.title}</span>
+                  <span className={styles.itemDesc}>{point.desc}</span>
+                </li>
               ))}
-            </div>
-            
-            <button 
-              className={styles.navButton}
-              onClick={nextSlide}
-              disabled={currentSlide === slides.length - 1}
-            >
-              ›
-            </button>
+            </ul>
           </div>
 
-          <div className={styles.slideInfo}>
-            <span>{currentSlide + 1} / {slides.length}</span>
+          {/* 참고 사항 */}
+          <div className={styles.notice}>
+            <p>
+              관리자 페이지는 로그인 후 우측 상단에서 접근 가능합니다.
+              <br />
+              설정 변경은 실제 데이터에 반영되므로 열람만 부탁드립니다.
+            </p>
           </div>
         </div>
 
-        {/* 하단 액션 버튼 */}
+        {/* 링크 버튼 */}
+        <div className={styles.linkSection}>
+          <Link
+            href="https://github.com/hebi10/hebimall_musinsa"
+            target="_blank"
+            className={styles.linkButton}
+          >
+            GitHub Repository
+          </Link>
+          <Link
+            href="https://hebi10.notion.site/HEBI-MALL-24f8b702e1b8805db701c2316bcd42bf?pvs=74"
+            target="_blank"
+            className={styles.linkButtonPrimary}
+          >
+            설계 문서 (Notion)
+          </Link>
+        </div>
+
+        {/* 하단 액션 */}
         <div className={styles.footer}>
-          <button 
-            className={styles.dontShowButton}
-            onClick={onDontShowAgain}
-          >
-            1주일간 보지 않기
+          <button className={styles.dontShowButton} onClick={onDontShowAgain}>
+            1주일간 표시 안 함
           </button>
-          <button 
-            className={styles.closeButtonSecondary}
-            onClick={onClose}
-          >
+          <button className={styles.closeButtonSecondary} onClick={onClose}>
             닫기
           </button>
         </div>
