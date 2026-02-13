@@ -143,7 +143,7 @@ export default function EventDetailClient({ event }: EventDetailClientProps) {
           <div className={styles.detailsGrid}>
             {(event.discountRate && event.discountRate > 0) ? (
               <div className={styles.benefitCard}>
-                <div className={styles.benefitIcon}>🎁</div>
+                <div className={styles.benefitIcon}>할인</div>
                 <div className={styles.benefitContent}>
                   <h3 className={styles.benefitTitle}>할인 혜택</h3>
                   <p className={styles.benefitValue}>최대 {event.discountRate}% 할인</p>
@@ -153,7 +153,7 @@ export default function EventDetailClient({ event }: EventDetailClientProps) {
 
             {(event.discountAmount && event.discountAmount > 0) ? (
               <div className={styles.benefitCard}>
-                <div className={styles.benefitIcon}>💰</div>
+                <div className={styles.benefitIcon}>적립</div>
                 <div className={styles.benefitContent}>
                   <h3 className={styles.benefitTitle}>적립 혜택</h3>
                   <p className={styles.benefitValue}>{event.discountAmount.toLocaleString()}원 적립</p>
@@ -162,7 +162,7 @@ export default function EventDetailClient({ event }: EventDetailClientProps) {
             ) : null}
 
             <div className={styles.benefitCard}>
-              <div className={styles.benefitIcon}>📅</div>
+              <div className={styles.benefitIcon}>기간</div>
               <div className={styles.benefitContent}>
                 <h3 className={styles.benefitTitle}>이벤트 기간</h3>
                 <p className={styles.benefitValue}>
@@ -173,7 +173,7 @@ export default function EventDetailClient({ event }: EventDetailClientProps) {
 
             {(event.hasMaxParticipants && event.maxParticipants && event.maxParticipants > 0) ? (
               <div className={styles.benefitCard}>
-                <div className={styles.benefitIcon}>👥</div>
+                <div className={styles.benefitIcon}>정원</div>
                 <div className={styles.benefitContent}>
                   <h3 className={styles.benefitTitle}>참여 제한</h3>
                   <p className={styles.benefitValue}>

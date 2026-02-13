@@ -160,28 +160,24 @@ export default function AdminQnAPage() {
       {/* 통계 카드 */}
       <div className={styles.statsGrid}>
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>💬</div>
           <div className={styles.statContent}>
             <h3>전체 문의</h3>
             <span className={styles.statNumber}>{stats.total}</span>
           </div>
         </div>
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>⏳</div>
           <div className={styles.statContent}>
             <h3>답변 대기</h3>
             <span className={`${styles.statNumber} ${styles.waiting}`}>{stats.waiting}</span>
           </div>
         </div>
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>✅</div>
           <div className={styles.statContent}>
             <h3>답변 완료</h3>
             <span className={`${styles.statNumber} ${styles.answered}`}>{stats.answered}</span>
           </div>
         </div>
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>🔒</div>
           <div className={styles.statContent}>
             <h3>종료</h3>
             <span className={`${styles.statNumber} ${styles.closed}`}>{stats.closed}</span>
@@ -251,7 +247,6 @@ export default function AdminQnAPage() {
 
         {qnas.length === 0 && !error && (
           <div className={styles.empty}>
-            <div className={styles.emptyIcon}>💬</div>
             <h3>조건에 맞는 QnA가 없습니다</h3>
             <p>필터를 조정해보세요.</p>
           </div>
@@ -268,14 +263,14 @@ export default function AdminQnAPage() {
                   {getStatusLabel(qna.status)}
                 </span>
                 {qna.isSecret && (
-                  <span className={styles.secretBadge}>🔒 비밀글</span>
+                  <span className={styles.secretBadge}>비밀글</span>
                 )}
                 <span className={styles.priority}>
-                  {qna.status === 'waiting' && '🚨 처리필요'}
+                  {qna.status === 'waiting' && '처리필요'}
                 </span>
               </div>
               <div className={styles.qnaStats}>
-                <span className={styles.views}>👁 {qna.views}</span>
+                <span className={styles.views}>조회 {qna.views}</span>
                 <span className={styles.date}>{formatDate(qna.createdAt)}</span>
               </div>
             </div>

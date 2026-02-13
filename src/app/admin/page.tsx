@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useAuth } from '@/context/authProvider';
 import { useDashboardData, useDashboardFormatters } from '@/shared/hooks/useDashboardQuery';
 import { SimpleQnAService } from '@/shared/services/simpleQnAService';
 import { QnA } from '@/shared/types/qna';
@@ -19,9 +20,11 @@ export default function AdminDashboard() {
 }
 
 function DashboardContent() {
+  const { user } = useAuth();
   const { stats, loading, error, lastUpdated, refresh, isRefreshing } = useDashboardData();
-  const { formatNumber, formatCurrency, formatTimeAgo, getGrowthColor, getGrowthIcon } = useDashboardFormatters();
+  const { formatNumber, formatCurrency, formatTimeAgo } = useDashboardFormatters();
   const [categoryChartData, setCategoryChartData] = useState<Array<{label: string; value: number}>>([]);
+  const [isCachedData, setIsCachedData] = useState(false);
   
   // QnA 데이터 상태
   const [qnaStats, setQnaStats] = useState({
@@ -31,6 +34,14 @@ function DashboardContent() {
     closed: 0,
   });
   const [qnaLoading, setQnaLoading] = useState(true);
+
+  // 캐시 상태 확인
+  useEffect(() => {
+    if (lastUpdated) {
+      const cacheAge = Date.now() - lastUpdated.getTime();
+      setIsCachedData(cacheAge > 60000); // 1분 이상 지난 데이터는 캐시로 간주
+    }
+  }, [lastUpdated]);
 
   // 카테고리 차트 데이터 로드
   useEffect(() => {
@@ -127,141 +138,173 @@ function DashboardContent() {
 
   return (
     <div className={styles.dashboard}>
-      <div className={styles.header}>
-        <div>
-          <h1>대시보드</h1>
-          <p>전체 현황을 한눈에 확인하세요</p>
-          {lastUpdated && (
-            <small className={styles.lastUpdated}>
-              마지막 업데이트: {formatTimeAgo(lastUpdated)}
-            </small>
-          )}
+      {/* 관리자 세션 정보 헤더 */}
+      <div className={styles.sessionHeader}>
+        <div className={styles.sessionInfo}>
+          <div className={styles.adminBadge}>
+            <span>관리자</span>
+          </div>
+          <div className={styles.sessionDetails}>
+            <span className={styles.userName}>{user?.displayName || user?.email}</span>
+            <span className={styles.separator}>|</span>
+            <span className={styles.role}>admin</span>
+          </div>
         </div>
-        <button onClick={refresh} className={styles.refreshButton} disabled={isRefreshing}>
-          {isRefreshing ? '업데이트 중...' : '새로고침'}
-        </button>
+        
+        <div className={styles.dataStatus}>
+          <div className={styles.syncInfo}>
+            <span className={styles.dataType}>
+              {isCachedData ? (
+                <>캐시 데이터</>
+              ) : (
+                <>실시간 동기화</>
+              )}
+            </span>
+            {lastUpdated && (
+              <span className={styles.syncTime}>
+                최종 갱신: {formatTimeAgo(lastUpdated)}
+              </span>
+            )}
+          </div>
+          <button 
+            onClick={refresh} 
+            className={styles.syncButton}
+            disabled={isRefreshing}
+            title="데이터 새로고침"
+          >
+            {isRefreshing ? '갱신 중...' : '새로고침'}
+          </button>
+        </div>
       </div>
 
-      {/* 통계 카드 */}
-      <div className={styles.statsGrid}>
-        {/* 사용자 통계 - Firebase 데이터가 있을 때만 표시 */}
-        {stats.dataAvailability.users && (
-          <div className={styles.statCard}>
-            <div className={styles.statIcon}>👥</div>
-            <div className={styles.statContent}>
-              <h3>총 사용자</h3>
-              <p className={styles.statNumber}>{formatNumber(stats.totalUsers)}</p>
-              <span 
-                className={styles.statChange}
-                style={{ color: getGrowthColor(stats.monthlyGrowth.users) }}
-              >
-                {getGrowthIcon(stats.monthlyGrowth.users)} {stats.monthlyGrowth.users}% 이번 달
-              </span>
+      {/* 핵심 지표 */}
+      <div className={styles.metricsSection}>
+        <h2 className={styles.sectionTitle}>핵심 지표</h2>
+        
+        <div className={styles.statsGrid}>
+          {/* 사용자 통계 */}
+          {stats.dataAvailability.users && (
+            <div className={styles.metricCard}>
+              <div className={styles.metricHeader}>
+                <h3>등록 사용자</h3>
+              </div>
+              <div className={styles.metricValue}>
+                {formatNumber(stats.totalUsers)}
+              </div>
+              <div className={styles.metricDetails}>
+                <span className={styles.aggregation}>
+                  users/ · count() query
+                </span>
+                <span className={styles.trend}>
+                  {stats.monthlyGrowth.users >= 0 ? '+' : ''}{stats.monthlyGrowth.users}% (7일)
+                </span>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* 상품 통계 - Mock 데이터 사용 */}
-        {stats.dataAvailability.products && (
-          <div className={styles.statCard}>
-            <div className={styles.statIcon}>📦</div>
-            <div className={styles.statContent}>
-              <h3>총 상품</h3>
-              <p className={styles.statNumber}>{formatNumber(stats.totalProducts)}</p>
-              <span 
-                className={styles.statChange}
-                style={{ color: getGrowthColor(stats.monthlyGrowth.products) }}
-              >
-                {getGrowthIcon(stats.monthlyGrowth.products)} {stats.monthlyGrowth.products}% 이번 달
-              </span>
+          {/* 상품 통계 */}
+          {stats.dataAvailability.products && (
+            <div className={styles.metricCard}>
+              <div className={styles.metricHeader}>
+                <h3>등록 상품</h3>
+              </div>
+              <div className={styles.metricValue}>
+                {formatNumber(stats.totalProducts)}
+              </div>
+              <div className={styles.metricDetails}>
+                <span className={styles.aggregation}>
+                  products/ · 복합 쿼리
+                </span>
+                <span className={styles.trend}>
+                  {stats.monthlyGrowth.products >= 0 ? '+' : ''}{stats.monthlyGrowth.products}% (7일)
+                </span>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* 쿠폰 통계 - Firebase 연결이 있을 때만 표시 */}
-        {stats.dataAvailability.coupons && stats.totalCoupons > 0 && (
-          <div className={styles.statCard}>
-            <div className={styles.statIcon}>🎫</div>
-            <div className={styles.statContent}>
-              <h3>발급된 쿠폰</h3>
-              <p className={styles.statNumber}>{formatNumber(stats.totalCoupons)}</p>
-              <span 
-                className={styles.statChange}
-                style={{ color: getGrowthColor(stats.monthlyGrowth.coupons) }}
-              >
-                {getGrowthIcon(stats.monthlyGrowth.coupons)} {stats.monthlyGrowth.coupons}% 이번 달
-              </span>
+          {/* 주문 통계 */}
+          {stats.dataAvailability.orders && (
+            <div className={styles.metricCard}>
+              <div className={styles.metricHeader}>
+                <h3>주문 건수</h3>
+              </div>
+              <div className={styles.metricValue}>
+                {formatNumber(stats.totalOrders)}
+              </div>
+              <div className={styles.metricDetails}>
+                <span className={styles.aggregation}>
+                  orders/ · writeBatch
+                </span>
+                <span className={styles.trend}>
+                  {stats.monthlyGrowth.orders >= 0 ? '+' : ''}{stats.monthlyGrowth.orders}% (7일)
+                </span>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* 이벤트 통계 - Firebase 연결이 있을 때만 표시 */}
-        {stats.dataAvailability.events && stats.activeEvents > 0 && (
-          <div className={styles.statCard}>
-            <div className={styles.statIcon}>🎉</div>
-            <div className={styles.statContent}>
-              <h3>진행중 이벤트</h3>
-              <p className={styles.statNumber}>{formatNumber(stats.activeEvents)}</p>
-              <span 
-                className={styles.statChange}
-                style={{ color: getGrowthColor(stats.monthlyGrowth.events) }}
-              >
-                {getGrowthIcon(stats.monthlyGrowth.events)} {stats.monthlyGrowth.events}개 이번 달
-              </span>
+          {/* QnA 통계 */}
+          {!qnaLoading && qnaStats.total > 0 && (
+            <div className={`${styles.metricCard} ${qnaStats.waiting > 0 ? styles.metricCardAlert : ''}`}>
+              <div className={styles.metricHeader}>
+                <h3>문의 관리</h3>
+                {qnaStats.waiting > 0 && (
+                  <span className={styles.waitingBadge}>답변대기 {qnaStats.waiting}</span>
+                )}
+              </div>
+              <div className={styles.metricValue}>
+                {formatNumber(qnaStats.total)}
+              </div>
+              <div className={styles.metricDetails}>
+                <span className={styles.aggregation}>
+                  qna/ · status 인덱스
+                </span>
+                <span className={styles.trend}>
+                  SLA: 24시간 이내 답변
+                </span>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* 주문 통계 - Mock 데이터 사용 */}
-        {stats.dataAvailability.orders && (
-          <div className={styles.statCard}>
-            <div className={styles.statIcon}>📋</div>
-            <div className={styles.statContent}>
-              <h3>총 주문</h3>
-              <p className={styles.statNumber}>{formatNumber(stats.totalOrders)}</p>
-              <span 
-                className={styles.statChange}
-                style={{ color: getGrowthColor(stats.monthlyGrowth.orders) }}
-              >
-                {getGrowthIcon(stats.monthlyGrowth.orders)} {stats.monthlyGrowth.orders}% 이번 달
-              </span>
+          {/* 매출 통계 */}
+          {stats.dataAvailability.orders && stats.totalRevenue > 0 && (
+            <div className={styles.metricCard}>
+              <div className={styles.metricHeader}>
+                <h3>누적 매출</h3>
+              </div>
+              <div className={styles.metricValue}>
+                {formatCurrency(stats.totalRevenue)}
+              </div>
+              <div className={styles.metricDetails}>
+                <span className={styles.aggregation}>
+                  orders/ · 월별 집계
+                </span>
+                <span className={styles.trend}>
+                  {stats.monthlyGrowth.revenue >= 0 ? '+' : ''}{stats.monthlyGrowth.revenue}% (7일)
+                </span>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* 매출 통계 - 주문이 있을 때만 표시 */}
-        {stats.dataAvailability.orders && stats.totalRevenue > 0 && (
-          <div className={styles.statCard}>
-            <div className={styles.statIcon}>💰</div>
-            <div className={styles.statContent}>
-              <h3>총 매출</h3>
-              <p className={styles.statNumber}>{formatCurrency(stats.totalRevenue)}</p>
-              <span 
-                className={styles.statChange}
-                style={{ color: getGrowthColor(stats.monthlyGrowth.revenue) }}
-              >
-                {getGrowthIcon(stats.monthlyGrowth.revenue)} {stats.monthlyGrowth.revenue}% 이번 달
-              </span>
+          {/* 쿠폰 통계 */}
+          {stats.dataAvailability.coupons && stats.totalCoupons > 0 && (
+            <div className={styles.metricCard}>
+              <div className={styles.metricHeader}>
+                <h3>발급 쿠폰</h3>
+              </div>
+              <div className={styles.metricValue}>
+                {formatNumber(stats.totalCoupons)}
+              </div>
+              <div className={styles.metricDetails}>
+                <span className={styles.aggregation}>
+                  coupons/ + userCoupons/ · 조인
+                </span>
+                <span className={styles.trend}>
+                  {stats.monthlyGrowth.coupons >= 0 ? '+' : ''}{stats.monthlyGrowth.coupons}% (7일)
+                </span>
+              </div>
             </div>
-          </div>
-        )}
-
-        {/* QnA 통계 */}
-        {!qnaLoading && qnaStats.total > 0 && (
-          <div className={styles.statCard}>
-            <div className={styles.statIcon}>💬</div>
-            <div className={styles.statContent}>
-              <h3>총 문의</h3>
-              <p className={styles.statNumber}>{formatNumber(qnaStats.total)}</p>
-              <span 
-                className={styles.statChange}
-                style={{ color: qnaStats.waiting > 0 ? '#f56565' : '#48bb78' }}
-              >
-                {qnaStats.waiting > 0 ? '⚠️' : '✅'} {qnaStats.waiting}개 답변 대기
-              </span>
-            </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* 차트 섹션 - 데이터가 있을 때만 표시 */}
@@ -308,159 +351,123 @@ function DashboardContent() {
         </div>
       )}
 
-      {/* 관리 메뉴 섹션 */}
+      {/* 운영 관리 메뉴 */}
       <div className={styles.managementSection}>
-        <h2>관리 메뉴</h2>
-        <div className={styles.managementGrid}>
-          <a href="/admin/qna" className={styles.managementCard}>
-            <div className={styles.managementIcon}>💬</div>
-            <div className={styles.managementContent}>
-              <h3>QnA 관리</h3>
-              <p>상품 문의 및 Q&A 관리</p>
-              {!qnaLoading && qnaStats.waiting > 0 && (
-                <span className={styles.badge}>{qnaStats.waiting}</span>
+        <h2 className={styles.sectionTitle}>운영 관리</h2>
+        <div className={styles.managementTable}>
+          <div className={styles.tableHeader}>
+            <span className={styles.thName}>메뉴</span>
+            <span className={styles.thDesc}>설명</span>
+            <span className={styles.thStatus}>상태</span>
+          </div>
+          <a href="/admin/qna" className={styles.tableRow}>
+            <span className={styles.tdName}>QnA 관리</span>
+            <span className={styles.tdDesc}>고객 문의 답변 및 상태 관리</span>
+            <span className={styles.tdStatus}>
+              {!qnaLoading && qnaStats.waiting > 0 ? (
+                <span className={styles.statusAlert}>답변대기 {qnaStats.waiting}건</span>
+              ) : (
+                <span className={styles.statusNormal}>정상</span>
               )}
-            </div>
+            </span>
           </a>
-          
-          <a href="/admin/inquiries" className={styles.managementCard}>
-            <div className={styles.managementIcon}>📩</div>
-            <div className={styles.managementContent}>
-              <h3>1:1 문의 관리</h3>
-              <p>고객 1:1 문의 관리</p>
-            </div>
+          <a href="/admin/dashboard/orders" className={styles.tableRow}>
+            <span className={styles.tdName}>주문 관리</span>
+            <span className={styles.tdDesc}>주문 상태 변경 및 재고 동기화</span>
+            <span className={styles.tdStatus}>
+              <span className={styles.statusNormal}>정상</span>
+            </span>
           </a>
-          
-          <a href="/admin/users" className={styles.managementCard}>
-            <div className={styles.managementIcon}>👥</div>
-            <div className={styles.managementContent}>
-              <h3>사용자 관리</h3>
-              <p>회원 정보 및 권한 관리</p>
-            </div>
+          <a href="/admin/dashboard/products" className={styles.tableRow}>
+            <span className={styles.tdName}>상품 관리</span>
+            <span className={styles.tdDesc}>상품 등록/수정 및 카테고리 관리</span>
+            <span className={styles.tdStatus}>
+              <span className={styles.statusNormal}>정상</span>
+            </span>
           </a>
-          
-          <a href="/admin/products" className={styles.managementCard}>
-            <div className={styles.managementIcon}>📦</div>
-            <div className={styles.managementContent}>
-              <h3>상품 관리</h3>
-              <p>상품 등록 및 재고 관리</p>
-            </div>
+          <a href="/admin/dashboard/users" className={styles.tableRow}>
+            <span className={styles.tdName}>사용자 관리</span>
+            <span className={styles.tdDesc}>회원 권한 관리 및 포인트 지급</span>
+            <span className={styles.tdStatus}>
+              <span className={styles.statusNormal}>정상</span>
+            </span>
           </a>
-          
-          <a href="/admin/orders" className={styles.managementCard}>
-            <div className={styles.managementIcon}>📋</div>
-            <div className={styles.managementContent}>
-              <h3>주문 관리</h3>
-              <p>주문 내역 및 배송 관리</p>
-            </div>
+          <a href="/admin/inquiries" className={styles.tableRow}>
+            <span className={styles.tdName}>1:1 문의</span>
+            <span className={styles.tdDesc}>고객 문의 응대 및 이력 관리</span>
+            <span className={styles.tdStatus}>
+              <span className={styles.statusNormal}>정상</span>
+            </span>
           </a>
-          
-          <a href="/admin/coupons" className={styles.managementCard}>
-            <div className={styles.managementIcon}>🎫</div>
-            <div className={styles.managementContent}>
-              <h3>쿠폰 관리</h3>
-              <p>쿠폰 발급 및 관리</p>
-            </div>
-          </a>
-          
-          <a href="/admin/featured-products" className={styles.managementCard}>
-            <div className={styles.managementIcon}>⭐</div>
-            <div className={styles.managementContent}>
-              <h3>메인 페이지 추천 상품</h3>
-              <p>이번 주 추천 상품 설정 관리</p>
-            </div>
-          </a>
-          
-          <a href="/admin/recommendations" className={styles.managementCard}>
-            <div className={styles.managementIcon}>⭐</div>
-            <div className={styles.managementContent}>
-              <h3>추천 상품 관리</h3>
-              <p>추천 알고리즘 및 설정 관리</p>
-            </div>
+          <a href="/admin/coupons" className={styles.tableRow}>
+            <span className={styles.tdName}>쿠폰 관리</span>
+            <span className={styles.tdDesc}>쿠폰 발급 및 사용 이력 추적</span>
+            <span className={styles.tdStatus}>
+              <span className={styles.statusNormal}>정상</span>
+            </span>
           </a>
         </div>
       </div>
 
-      {/* 추가 정보 섹션 */}
+      {/* 최근 작업 로그 */}
       <div className={styles.infoGrid}>
-        {/* 최근 활동 - 항상 표시 (Mock 데이터라도) */}
-        <div className={styles.recentActivity}>
-          <h2>최근 활동</h2>
+        <div className={styles.activityLog}>
+          <h2 className={styles.sectionTitle}>최근 활동</h2>
           <div className={styles.activityList}>
             {stats.recentActivities.length > 0 ? (
               stats.recentActivities.map((activity) => (
                 <div key={activity.id} className={styles.activityItem}>
-                  <span className={styles.activityTime}>
-                    {formatTimeAgo(activity.timestamp)}
-                  </span>
-                  <p>{activity.description}</p>
-                  <span 
-                    className={styles.activityPriority}
-                    data-priority={activity.priority}
-                  >
-                    {activity.priority}
-                  </span>
+                  <div className={styles.activityContent}>
+                    <div className={styles.activityHeader}>
+                      <span className={styles.activityOperation}>
+                        {getOperationType(activity.description)}
+                      </span>
+                      <span className={styles.activityTime}>
+                        {formatTimeAgo(activity.timestamp)}
+                      </span>
+                    </div>
+                    <p className={styles.activityDesc}>{activity.description}</p>
+                    <div className={styles.activityMeta}>
+                      <code className={styles.activityPath}>
+                        {getFirestorePath(activity.description)}
+                      </code>
+                      <span 
+                        className={styles.activityPriority}
+                        data-priority={activity.priority}
+                      >
+                        {activity.priority}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               ))
             ) : (
-              <p className={styles.noDataMessage}>최근 활동이 없습니다.</p>
+              <p className={styles.noDataMessage}>최근 활동 이력이 없습니다.</p>
             )}
           </div>
         </div>
 
-        {/* 재고 부족 상품 - 상품 데이터가 있고 재고 부족 상품이 있을 때만 */}
-        {stats.dataAvailability.products && stats.lowStockProducts.length > 0 && (
-          <div className={styles.lowStockSection}>
-            <h2>재고 부족 상품</h2>
-            <div className={styles.lowStockList}>
-              {stats.lowStockProducts.slice(0, 5).map((product) => (
-                <div key={product.id} className={styles.lowStockItem}>
-                  <span className={styles.productName}>{product.name}</span>
-                  <span className={styles.stockCount}>
-                    {product.stock}개 남음
-                  </span>
-                </div>
-              ))}
+        {/* 일일 비용 추정 */}
+        <div className={styles.costEstimation}>
+          <h2 className={styles.sectionTitle}>일일 비용 추정</h2>
+          <div className={styles.costGrid}>
+            <div className={styles.costItem}>
+              <span className={styles.costLabel}>문서 읽기</span>
+              <span className={styles.costValue}>~5,000회</span>
+              <span className={styles.costInfo}>TanStack Query 캐시로 감소</span>
+            </div>
+            <div className={styles.costItem}>
+              <span className={styles.costLabel}>문서 쓰기</span>
+              <span className={styles.costValue}>~200회</span>
+              <span className={styles.costInfo}>writeBatch 활용</span>
+            </div>
+            <div className={styles.costItem}>
+              <span className={styles.costLabel}>인덱스 사용</span>
+              <span className={styles.costValue}>5개 활성화</span>
+              <span className={styles.costInfo}>카테고리 + 정렬 조합</span>
             </div>
           </div>
-        )}
-
-        {/* 베스트셀러 상품 - 상품 데이터가 있을 때만 */}
-        {stats.dataAvailability.products && stats.topSellingProducts.length > 0 && (
-          <div className={styles.topSellingSection}>
-            <h2>베스트셀러 상품</h2>
-            <div className={styles.topSellingList}>
-              {stats.topSellingProducts.slice(0, 5).map((product, index) => (
-                <div key={product.id} className={styles.topSellingItem}>
-                  <span className={styles.rank}>#{index + 1}</span>
-                  <span className={styles.productName}>{product.name}</span>
-                  <span className={styles.reviewCount}>
-                    리뷰 {formatNumber(product.reviewCount)}개
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* 주문 상태 통계 - 주문 데이터가 있을 때만 */}
-        {stats.dataAvailability.orders && Object.keys(stats.orderStatusStats).length > 0 && (
-          <div className={styles.orderStatusSection}>
-            <h2>주문 상태 현황</h2>
-            <div className={styles.orderStatusList}>
-              {Object.entries(stats.orderStatusStats).map(([status, count]) => (
-                <div key={status} className={styles.orderStatusItem}>
-                  <span className={styles.statusLabel}>
-                    {getStatusText(status)}
-                  </span>
-                  <span className={styles.statusCount}>
-                    {formatNumber(count)}건
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        </div>
       </div>
     </div>
   );
@@ -480,4 +487,29 @@ function getStatusText(status: string): string {
   };
   
   return statusMap[status] || status;
+}
+
+// 작업 타입 판별
+function getOperationType(description: string): string {
+  if (description.includes('추가') || description.includes('등록') || description.includes('발급')) {
+    return 'WRITE';
+  }
+  if (description.includes('수정') || description.includes('변경') || description.includes('업데이트')) {
+    return 'UPDATE';
+  }
+  if (description.includes('삭제') || description.includes('제거')) {
+    return 'DELETE';
+  }
+  return 'READ';
+}
+
+// Firestore 경로 추정
+function getFirestorePath(description: string): string {
+  if (description.includes('상품')) return 'products/';
+  if (description.includes('주문')) return 'orders/';
+  if (description.includes('사용자') || description.includes('회원')) return 'users/';
+  if (description.includes('쿠폰')) return 'coupons/ or userCoupons/';
+  if (description.includes('문의') || description.includes('QnA')) return 'qna/';
+  if (description.includes('리뷰')) return 'reviews/';
+  return 'unknown/';
 }

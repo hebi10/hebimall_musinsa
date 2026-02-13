@@ -16,14 +16,14 @@
 
 /* 모달 컨테이너 */
 .modalContainer {
-  background: var(--color-white);
-  border-radius: 12px;
+  background: #ffffff;
+  border-radius: 4px;
   width: 100%;
   max-width: 800px;
   max-height: 90vh;
   overflow-y: auto;
   margin-top: 2rem;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border: 1px solid #dfe1e6;
 }
 
 /* 헤더 */
@@ -40,26 +40,26 @@
 }
 
 .header h1 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--color-gray-900);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #172b4d;
   margin: 0;
 }
 
 .closeButton {
   background: none;
   border: none;
-  font-size: 1.5rem;
-  color: var(--color-gray-500);
+  font-size: 1.25rem;
+  color: #6b778c;
   cursor: pointer;
-  padding: 8px;
-  border-radius: 8px;
-  transition: all 0.2s ease;
+  padding: 6px;
+  border-radius: 3px;
+  transition: background 0.15s;
 }
 
 .closeButton:hover {
-  background-color: var(--color-gray-100);
-  color: var(--color-gray-700);
+  background-color: #f4f5f7;
+  color: #172b4d;
 }
 
 /* 폼 */
@@ -68,16 +68,16 @@
 }
 
 .section {
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 }
 
 .section h3 {
-  font-size: 1.125rem;
+  font-size: 0.9375rem;
   font-weight: 600;
-  color: var(--color-gray-900);
-  margin: 0 0 16px 0;
+  color: #172b4d;
+  margin: 0 0 12px 0;
   padding-bottom: 8px;
-  border-bottom: 2px solid var(--color-primary);
+  border-bottom: 1px solid #dfe1e6;
 }
 
 /* 폼 그룹 */
@@ -97,20 +97,20 @@
 .formGroup select,
 .formGroup textarea {
   width: 100%;
-  padding: 12px;
-  border: 1px solid var(--color-gray-300);
-  border-radius: 8px;
-  font-size: 0.875rem;
-  transition: all 0.2s ease;
-  background-color: var(--color-white);
+  padding: 10px;
+  border: 1px solid #dfe1e6;
+  border-radius: 3px;
+  font-size: 0.8125rem;
+  transition: border-color 0.15s;
+  background-color: #ffffff;
 }
 
 .formGroup input:focus,
 .formGroup select:focus,
 .formGroup textarea:focus {
   outline: none;
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: #2b6cb0;
+  box-shadow: none;
 }
 
 .formGroup textarea {
@@ -161,10 +161,10 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background-color: var(--color-primary-light);
-  color: var(--color-primary);
+  background-color: #f1f3f5;
+  color: #42526e;
   padding: 4px 8px;
-  border-radius: 6px;
+  border-radius: 3px;
   font-size: 0.75rem;
   font-weight: 500;
 }
@@ -172,7 +172,7 @@
 .tag button {
   background: none;
   border: none;
-  color: var(--color-primary);
+  color: #6b778c;
   cursor: pointer;
   font-size: 0.875rem;
   padding: 0;
@@ -180,28 +180,28 @@
 }
 
 .tag button:hover {
-  color: var(--color-red-500);
+  color: #de350b;
 }
 
 /* 이미지 업로드 */
 .imageUpload {
-  border: 2px dashed var(--color-gray-300);
-  border-radius: 8px;
-  padding: 24px;
+  border: 2px dashed #dfe1e6;
+  border-radius: 3px;
+  padding: 20px;
   text-align: center;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: border-color 0.15s;
   margin-bottom: 16px;
   position: relative;
-  min-height: 120px;
+  min-height: 100px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .imageUpload:hover {
-  border-color: var(--color-primary);
-  background-color: var(--color-primary-light);
+  border-color: #2b6cb0;
+  background-color: #f4f5f7;
 }
 
 .fileInput {
@@ -263,33 +263,33 @@
   grid-column: 1 / -1;
   margin: 0 0 12px 0;
   padding: 8px 12px;
-  background-color: var(--color-blue-50);
-  color: var(--color-blue-700);
-  border-radius: 6px;
+  background-color: #f4f5f7;
+  color: #42526e;
+  border-radius: 3px;
   font-size: 0.75rem;
-  border-left: 3px solid var(--color-blue-500);
+  border-left: 3px solid #2b6cb0;
 }
 
 .imageItem {
   position: relative;
   aspect-ratio: 1;
-  border-radius: 8px;
+  border-radius: 3px;
   overflow: hidden;
-  border: 1px solid var(--color-gray-200);
+  border: 1px solid #dfe1e6;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: border-color 0.15s;
 }
 
 .imageItem:hover {
-  border-color: var(--color-primary);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: #2b6cb0;
+  transform: none;
+  box-shadow: none;
 }
 
 .imageItem.mainImage {
-  border-color: var(--color-primary);
+  border-color: #2b6cb0;
   border-width: 2px;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  box-shadow: none;
 }
 
 .imageItem img {
@@ -372,36 +372,36 @@
 }
 
 .cancelButton {
-  padding: 12px 24px;
-  border: 1px solid var(--color-gray-300);
-  background: var(--color-white);
-  color: var(--color-gray-700);
-  border-radius: 8px;
-  font-size: 0.875rem;
+  padding: 8px 20px;
+  border: 1px solid #dfe1e6;
+  background: #ffffff;
+  color: #42526e;
+  border-radius: 3px;
+  font-size: 0.8125rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background 0.15s;
 }
 
 .cancelButton:hover {
-  background: var(--color-gray-50);
-  border-color: var(--color-gray-400);
+  background: #f4f5f7;
+  border-color: #c1c7d0;
 }
 
 .submitButton {
-  padding: 12px 24px;
-  background: var(--color-primary);
-  color: var(--color-white);
+  padding: 8px 20px;
+  background: #2b6cb0;
+  color: #ffffff;
   border: none;
-  border-radius: 8px;
-  font-size: 0.875rem;
+  border-radius: 3px;
+  font-size: 0.8125rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background 0.15s;
 }
 
 .submitButton:hover:not(:disabled) {
-  background: var(--color-primary-dark);
+  background: #2c5282;
 }
 
 .submitButton:disabled {

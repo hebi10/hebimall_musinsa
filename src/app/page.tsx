@@ -82,7 +82,7 @@ export default function Home() {
                   <span className={styles.brandStatLabel}>만족한 고객</span>
                 </div>
                 <div className={styles.brandStat}>
-                  <span className={styles.brandStatNumber}>4.8★</span>
+                  <span className={styles.brandStatNumber}>4.8</span>
                   <span className={styles.brandStatLabel}>평균 평점</span>
                 </div>
                 <div className={styles.brandStat}>
@@ -93,8 +93,8 @@ export default function Home() {
             </div>
             <div className={styles.brandImage}>
               <div className={styles.brandImagePlaceholder}>
-                <span className={styles.brandImageIcon}>🏬</span>
-                <p>STYNA</p>
+                <p className={styles.brandImageLogo}>STYNA</p>
+                <p className={styles.brandImageSub}>Premium Fashion</p>
               </div>
             </div>
           </div>
@@ -111,25 +111,21 @@ export default function Home() {
           
           <div className={styles.quickLinksGrid}>
             <Link href="/mypage/order-list" className={styles.quickLinkCard}>
-              <div className={styles.quickLinkIcon}>📦</div>
               <h4 className={styles.quickLinkTitle}>주문/배송 조회</h4>
               <p className={styles.quickLinkDescription}>주문 상태와 배송 정보를 확인하세요</p>
             </Link>
             
             <Link href="/mypage/wishlist" className={styles.quickLinkCard}>
-              <div className={styles.quickLinkIcon}>❤️</div>
               <h4 className={styles.quickLinkTitle}>위시리스트</h4>
               <p className={styles.quickLinkDescription}>관심 있는 상품을 저장해보세요</p>
             </Link>
             
             <Link href="/cs/inquiry" className={styles.quickLinkCard}>
-              <div className={styles.quickLinkIcon}>💬</div>
               <h4 className={styles.quickLinkTitle}>1:1 문의</h4>
               <p className={styles.quickLinkDescription}>궁금한 점을 언제든 문의하세요</p>
             </Link>
             
             <Link href="/events" className={styles.quickLinkCard}>
-              <div className={styles.quickLinkIcon}>🎉</div>
               <h4 className={styles.quickLinkTitle}>이벤트</h4>
               <p className={styles.quickLinkDescription}>진행 중인 다양한 이벤트를 확인하세요</p>
             </Link>

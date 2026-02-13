@@ -21,8 +21,8 @@
   margin: 0 auto;
   padding: 24px;
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border-radius: 4px;
+  border: 1px solid #dfe1e6;
 }
 
 .header {
@@ -36,8 +36,8 @@
 
 .header h1 {
   margin: 0;
-  color: #333;
-  font-size: 28px;
+  color: #172b4d;
+  font-size: 1.25rem;
   font-weight: 600;
 }
 
@@ -103,8 +103,8 @@
 .formGroup select:focus,
 .formGroup textarea:focus {
   outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  border-color: #2b6cb0;
+  box-shadow: none;
 }
 
 .formGroup textarea {
@@ -182,12 +182,12 @@
 }
 
 .submitButton {
-  background: #007bff;
+  background: #2b6cb0;
   color: white;
 }
 
 .submitButton:hover {
-  background: #0056b3;
+  background: #2c5282;
 }
 
 @media (max-width: 768px) {
@@ -309,20 +309,20 @@
 
 /* 새로 추가된 스타일들 */
 .section {
-  margin-bottom: 32px;
-  padding: 24px;
-  border: 1px solid #f0f0f0;
-  border-radius: 8px;
-  background: #fafafa;
+  margin-bottom: 24px;
+  padding: 20px;
+  border: 1px solid #dfe1e6;
+  border-radius: 4px;
+  background: #fafbfc;
 }
 
 .section h3 {
-  margin: 0 0 20px 0;
-  color: #333;
-  font-size: 18px;
+  margin: 0 0 16px 0;
+  color: #172b4d;
+  font-size: 0.9375rem;
   font-weight: 600;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #dfe1e6;
 }
 
 .checkboxGroup {
@@ -361,10 +361,10 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 12px;
-  background: #e3f2fd;
-  color: #1565c0;
-  border-radius: 16px;
+  padding: 4px 10px;
+  background: #f1f3f5;
+  color: #42526e;
+  border-radius: 3px;
   font-size: 12px;
   font-weight: 500;
 }
@@ -372,7 +372,7 @@
 .tag button {
   background: none;
   border: none;
-  color: #1565c0;
+  color: #6b778c;
   cursor: pointer;
   font-size: 14px;
   font-weight: bold;
@@ -387,7 +387,7 @@
 }
 
 .tag button:hover {
-  background: rgba(21, 101, 192, 0.1);
+  background: rgba(0, 0, 0, 0.05);
 }
 
 .imagePreview {
@@ -408,26 +408,26 @@
 }
 
 .imageItem:hover {
-  border-color: #007bff;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: #2b6cb0;
+  transform: none;
+  box-shadow: none;
 }
 
 .imageItem.mainImage {
-  border-color: #007bff;
+  border-color: #2b6cb0;
   border-width: 2px;
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+  box-shadow: none;
 }
 
 .imageGuide {
   grid-column: 1 / -1;
   margin: 0 0 12px 0;
   padding: 8px 12px;
-  background-color: #e7f3ff;
-  color: #0056b3;
-  border-radius: 6px;
+  background-color: #f4f5f7;
+  color: #42526e;
+  border-radius: 3px;
   font-size: 0.75rem;
-  border-left: 3px solid #007bff;
+  border-left: 3px solid #2b6cb0;
 }
 
 .imageItem img {

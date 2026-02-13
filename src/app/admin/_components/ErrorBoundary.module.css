@@ -8,60 +8,63 @@
 
 .errorContent {
   text-align: center;
-  max-width: 500px;
-  background: white;
-  border-radius: 12px;
+  max-width: 480px;
+  background: #ffffff;
+  border-radius: 4px;
   padding: 2rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  border: 1px solid #fee2e2;
+  border: 1px solid #dfe1e6;
+  border-top: 3px solid #de350b;
 }
 
 .errorContent h2 {
-  color: #dc2626;
-  margin: 0 0 1rem 0;
-  font-size: 1.5rem;
+  color: #de350b;
+  margin: 0 0 0.75rem 0;
+  font-size: 1.125rem;
 }
 
 .errorContent p {
-  color: #6b7280;
-  margin: 0 0 1.5rem 0;
+  color: #6b778c;
+  margin: 0 0 1.25rem 0;
   line-height: 1.5;
+  font-size: 0.875rem;
 }
 
 .errorDetails {
   text-align: left;
-  margin: 1.5rem 0;
-  background: #f9fafb;
-  border-radius: 6px;
-  padding: 1rem;
+  margin: 1.25rem 0;
+  background: #f4f5f7;
+  border-radius: 3px;
+  padding: 0.875rem;
 }
 
 .errorDetails summary {
   cursor: pointer;
   font-weight: 500;
-  color: #4b5563;
+  color: #42526e;
   margin-bottom: 0.5rem;
+  font-size: 0.8125rem;
 }
 
 .errorDetails pre {
-  font-size: 0.75rem;
-  color: #6b7280;
+  font-size: 0.6875rem;
+  color: #6b778c;
   white-space: pre-wrap;
   word-break: break-word;
   margin: 0.5rem 0 0 0;
 }
 
 .retryButton {
-  background: #dc2626;
+  background: #2b6cb0;
   color: white;
   border: none;
-  border-radius: 8px;
-  padding: 0.75rem 1.5rem;
+  border-radius: 3px;
+  padding: 0.5rem 1.25rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  font-size: 0.8125rem;
+  transition: background 0.15s;
 }
 
 .retryButton:hover {
-  background: #b91c1c;
+  background: #2c5282;
 }

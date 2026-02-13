@@ -1,50 +1,47 @@
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
-  background-color: #f8f9fa;
-  min-height: 100vh;
+  padding: 1.25rem;
 }
 
 .header {
-  background: white;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  margin-bottom: 2rem;
-  border: 1px solid #e9ecef;
+  background: #ffffff;
+  padding: 1rem;
+  border-radius: 4px;
+  border: 1px solid #dfe1e6;
+  margin-bottom: 1.25rem;
 }
 
 .title {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #212529;
-  margin-bottom: 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #172b4d;
+  margin-bottom: 0.25rem;
 }
 
 .subtitle {
-  font-size: 1rem;
-  color: #6c757d;
-  margin-bottom: 1.5rem;
+  font-size: 0.8125rem;
+  color: #6b778c;
+  margin-bottom: 1rem;
   line-height: 1.5;
 }
 
 .addButton {
   display: inline-block;
-  background: #212529;
+  background: #2b6cb0;
   color: white;
   border: none;
-  padding: 0.75rem 1.5rem;
-  margin-right: 1rem;
-  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  margin-right: 0.5rem;
+  border-radius: 3px;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s ease;
-  font-size: 0.9rem;
+  transition: background 0.15s;
+  font-size: 0.8125rem;
 }
 
 .addButton:hover {
-  background: #495057;
+  background: #2c5282;
 }
 
 .loading {
@@ -52,25 +49,25 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 300px;
-  gap: 1rem;
-  background: white;
-  border-radius: 8px;
-  border: 1px solid #e9ecef;
+  min-height: 200px;
+  gap: 0.75rem;
+  background: #ffffff;
+  border-radius: 4px;
+  border: 1px solid #dfe1e6;
 }
 
 .spinner {
   width: 32px;
   height: 32px;
-  border: 3px solid #e9ecef;
-  border-top: 3px solid #212529;
+  border: 3px solid #dfe1e6;
+  border-top: 3px solid #2b6cb0;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
 
 .loading p {
-  color: #6c757d;
-  font-size: 0.9rem;
+  color: #6b778c;
+  font-size: 0.8125rem;
 }
 
 @keyframes spin {
@@ -79,135 +76,131 @@
 }
 
 .addForm {
-  background: white;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  margin-bottom: 2rem;
-  border: 1px solid #e9ecef;
+  background: #ffffff;
+  padding: 1.25rem;
+  border-radius: 4px;
+  border: 1px solid #dfe1e6;
+  margin-bottom: 1.25rem;
 }
 
 .addForm h3 {
-  color: #212529;
-  margin-bottom: 1.5rem;
-  font-size: 1.25rem;
+  color: #172b4d;
+  margin-bottom: 1rem;
+  font-size: 0.9375rem;
   font-weight: 600;
-  border-bottom: 1px solid #e9ecef;
-  padding-bottom: 1rem;
+  border-bottom: 1px solid #dfe1e6;
+  padding-bottom: 0.75rem;
 }
 
 .formGroup {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .formGroup label {
   display: block;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.375rem;
   font-weight: 500;
-  color: #495057;
-  font-size: 0.9rem;
+  color: #42526e;
+  font-size: 0.8125rem;
 }
 
 .formGroup input,
 .formGroup textarea {
   width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #ced4da;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  transition: border-color 0.2s ease;
-  background: white;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #dfe1e6;
+  border-radius: 3px;
+  font-size: 0.8125rem;
+  transition: border-color 0.15s;
+  background: #ffffff;
 }
 
 .formGroup input:focus,
 .formGroup textarea:focus {
   outline: none;
-  border-color: #212529;
-  box-shadow: 0 0 0 2px rgba(33, 37, 41, 0.1);
+  border-color: #2b6cb0;
 }
 
 .formGroup textarea {
   resize: vertical;
-  min-height: 100px;
+  min-height: 80px;
 }
 
 .formActions {
   display: flex;
-  gap: 0.75rem;
+  gap: 0.5rem;
   justify-content: flex-end;
-  padding-top: 1rem;
-  border-top: 1px solid #e9ecef;
+  padding-top: 0.75rem;
+  border-top: 1px solid #dfe1e6;
 }
 
 .saveButton {
-  background: #212529;
+  background: #2b6cb0;
   color: white;
   border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  border-radius: 3px;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s ease;
-  font-size: 0.9rem;
+  transition: background 0.15s;
+  font-size: 0.8125rem;
 }
 
 .saveButton:hover {
-  background: #495057;
+  background: #2c5282;
 }
 
 .cancelButton {
-  background: #6c757d;
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 4px;
+  background: #ffffff;
+  color: #42526e;
+  border: 1px solid #dfe1e6;
+  padding: 0.5rem 1rem;
+  border-radius: 3px;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s ease;
-  font-size: 0.9rem;
+  transition: background 0.15s;
+  font-size: 0.8125rem;
 }
 
 .cancelButton:hover {
-  background: #5a6268;
+  background: #f4f5f7;
 }
 
 .categoriesGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
 }
 
 .categoryCard {
-  background: white;
-  border-radius: 8px;
+  background: #ffffff;
+  border-radius: 4px;
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.2s ease;
-  border: 1px solid #e9ecef;
+  border: 1px solid #dfe1e6;
 }
 
 .categoryCard:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-color: #2b6cb0;
 }
 
 .categoryHeader {
-  padding: 1.5rem;
-  background: #f8f9fa;
-  border-bottom: 1px solid #e9ecef;
+  padding: 0.875rem 1rem;
+  background: #fafbfc;
+  border-bottom: 1px solid #dfe1e6;
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
 .categoryIcon {
-  width: 48px;
-  height: 48px;
-  border-radius: 4px;
+  width: 36px;
+  height: 36px;
+  border-radius: 3px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
+  font-size: 1rem;
   color: white;
   font-weight: 600;
 }
@@ -217,20 +210,20 @@
 }
 
 .categoryName {
-  font-size: 1.1rem;
+  font-size: 0.875rem;
   font-weight: 600;
-  color: #212529;
-  margin-bottom: 0.25rem;
+  color: #172b4d;
+  margin-bottom: 0.125rem;
 }
 
 .categoryId {
-  font-size: 0.8rem;
-  color: #6c757d;
+  font-size: 0.6875rem;
+  color: #6b778c;
   margin: 0;
-  font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
-  background: #f8f9fa;
-  padding: 0.2rem 0.4rem;
-  border-radius: 3px;
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  background: #f4f5f7;
+  padding: 1px 4px;
+  border-radius: 2px;
   display: inline-block;
 }
 
@@ -239,116 +232,117 @@
 }
 
 .statusBadge {
-  padding: 0.3rem 0.6rem;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 0.6875rem;
+  font-weight: 600;
 }
 
 .statusBadge.active {
-  background: #d4edda;
-  color: #155724;
+  background: #f4f5f7;
+  color: #2b6cb0;
+  border: 1px solid #dfe1e6;
 }
 
 .statusBadge.inactive {
-  background: #f8d7da;
-  color: #721c24;
+  background: #fff5f5;
+  color: #de350b;
+  border: 1px solid #ffbdad;
 }
 
 .categoryContent {
-  padding: 1.5rem;
+  padding: 0.875rem 1rem;
 }
 
 .categoryDescription {
-  color: #495057;
+  color: #42526e;
   line-height: 1.5;
-  margin-bottom: 1rem;
-  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.8125rem;
 }
 
 .categoryMeta {
   display: flex;
-  gap: 1rem;
-  font-size: 0.8rem;
-  color: #6c757d;
+  gap: 0.5rem;
+  font-size: 0.6875rem;
+  color: #6b778c;
 }
 
 .categoryMeta span {
-  background: #f8f9fa;
-  padding: 0.3rem 0.6rem;
-  border-radius: 3px;
+  background: #f4f5f7;
+  padding: 2px 6px;
+  border-radius: 2px;
   font-weight: 500;
 }
 
 .categoryActions {
-  padding: 1rem 1.5rem;
-  background: #f8f9fa;
-  border-top: 1px solid #e9ecef;
+  padding: 0.5rem 1rem;
+  background: #fafbfc;
+  border-top: 1px solid #dfe1e6;
   display: flex;
-  gap: 0.5rem;
+  gap: 0.375rem;
   justify-content: flex-end;
 }
 
 .editButton {
-  background: #495057;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  font-size: 0.8rem;
+  background: #ffffff;
+  color: #2b6cb0;
+  border: 1px solid #2b6cb0;
+  padding: 0.375rem 0.75rem;
+  border-radius: 3px;
+  font-size: 0.75rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background 0.15s;
 }
 
 .editButton:hover {
-  background: #343a40;
+  background: #f4f5f7;
 }
 
 .toggleButton {
   border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  font-size: 0.8rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 3px;
+  font-size: 0.75rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background 0.15s;
 }
 
 .toggleButton.activate {
-  background: #28a745;
+  background: #2b6cb0;
   color: white;
 }
 
 .toggleButton.activate:hover {
-  background: #218838;
+  background: #2c5282;
 }
 
 .toggleButton.deactivate {
-  background: #ffc107;
-  color: #212529;
+  background: #f4f5f7;
+  color: #42526e;
+  border: 1px solid #dfe1e6;
 }
 
 .toggleButton.deactivate:hover {
-  background: #e0a800;
+  background: #dfe1e6;
 }
 
 .deleteButton {
-  background: #dc3545;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  font-size: 0.8rem;
+  background: #ffffff;
+  color: #de350b;
+  border: 1px solid #de350b;
+  padding: 0.375rem 0.75rem;
+  border-radius: 3px;
+  font-size: 0.75rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background 0.15s;
 }
 
 .deleteButton:hover {
-  background: #c82333;
+  background: #fff5f5;
 }
 
 .modal {
@@ -366,90 +360,87 @@
 }
 
 .modalContent {
-  background: white;
-  padding: 2rem;
-  border-radius: 8px;
+  background: #ffffff;
+  padding: 1.25rem;
+  border-radius: 4px;
   max-width: 500px;
   width: 100%;
   max-height: 80vh;
   overflow-y: auto;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  border: 1px solid #dfe1e6;
 }
 
 .modalContent h3 {
-  margin-bottom: 1.5rem;
-  color: #212529;
-  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  color: #172b4d;
+  font-size: 1.125rem;
   font-weight: 600;
-  border-bottom: 1px solid #e9ecef;
-  padding-bottom: 1rem;
+  border-bottom: 1px solid #dfe1e6;
+  padding-bottom: 0.75rem;
 }
 
 .modalActions {
   display: flex;
-  gap: 0.75rem;
+  gap: 0.5rem;
   justify-content: flex-end;
-  margin-top: 1.5rem;
-  padding-top: 1rem;
-  border-top: 1px solid #e9ecef;
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #dfe1e6;
 }
 
 .summary {
-  background: white;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e9ecef;
+  background: #ffffff;
+  padding: 1.25rem;
+  border-radius: 4px;
+  border: 1px solid #dfe1e6;
 }
 
 .summary h3 {
-  color: #212529;
-  margin-bottom: 1.5rem;
-  font-size: 1.25rem;
+  color: #172b4d;
+  margin-bottom: 1rem;
+  font-size: 0.9375rem;
   font-weight: 600;
   text-align: center;
-  border-bottom: 1px solid #e9ecef;
-  padding-bottom: 1rem;
+  border-bottom: 1px solid #dfe1e6;
+  padding-bottom: 0.75rem;
 }
 
 .stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0;
+  border: 1px solid #dfe1e6;
+  border-radius: 4px;
 }
 
 .stat {
   text-align: center;
-  padding: 1.5rem;
-  background: #f8f9fa;
-  border: 1px solid #e9ecef;
-  border-radius: 8px;
-  transition: background-color 0.2s ease;
+  padding: 1rem;
+  background: #ffffff;
+  border-right: 1px solid #dfe1e6;
 }
 
-.stat:hover {
-  background: #e9ecef;
+.stat:last-child {
+  border-right: none;
 }
 
 .statNumber {
   display: block;
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: 700;
-  color: #212529;
-  margin-bottom: 0.5rem;
+  color: #172b4d;
+  margin-bottom: 0.25rem;
 }
 
 .statLabel {
-  font-size: 0.8rem;
-  color: #6c757d;
+  font-size: 0.6875rem;
+  color: #6b778c;
   font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
 @media (max-width: 768px) {
   .container {
-    padding: 1rem;
+    padding: 0.75rem;
   }
   
   .categoriesGrid {
@@ -459,7 +450,7 @@
   .categoryHeader {
     flex-direction: column;
     text-align: center;
-    gap: 0.75rem;
+    gap: 0.5rem;
   }
   
   .categoryActions {
@@ -468,6 +459,15 @@
   
   .stats {
     grid-template-columns: 1fr;
+  }
+
+  .stat {
+    border-right: none;
+    border-bottom: 1px solid #dfe1e6;
+  }
+
+  .stat:last-child {
+    border-bottom: none;
   }
   
   .formActions,

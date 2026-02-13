@@ -85,33 +85,32 @@ export default function FeaturedProducts() {
           </div>
           
           <div className={styles.emptyState}>
-            <div className={styles.emptyIcon}>📦</div>
             <h3 className={styles.emptyTitle}>추천 상품이 없습니다</h3>
             <p className={styles.emptyDescription}>
               관리자 페이지에서 추천 상품을 설정해주세요.
             </p>
-            <div style={{ marginTop: '1rem', padding: '1rem', background: '#f8f9fa', borderRadius: '8px', fontSize: '0.9rem', color: '#666' }}>
-              <strong>⚡ 빠른 해결 방법:</strong><br/>
-              1. <a href="/admin/featured-products" style={{ color: '#007bff', textDecoration: 'underline' }}>/admin/featured-products</a> 페이지 방문<br/>
-              2. "자동 선택 (높은 평점 순)" 버튼 클릭<br/>
-              3. "설정 저장" 버튼 클릭<br/>
+            <div style={{ marginTop: '0.75rem', padding: '0.75rem', background: '#f4f5f7', borderRadius: '4px', fontSize: '0.85rem', color: '#6b778c' }}>
+              <strong>해결 방법:</strong><br/>
+              1. <a href="/admin/featured-products" style={{ color: '#2b6cb0' }}>/admin/featured-products</a> 페이지 방문<br/>
+              2. &quot;자동 선택 (높은 평점 순)&quot; 버튼 클릭<br/>
+              3. &quot;설정 저장&quot; 버튼 클릭<br/>
               4. 이 페이지로 돌아와서 새로고침
             </div>
             <button 
               onClick={() => window.location.reload()} 
               style={{ 
-                marginTop: '1rem', 
-                padding: '0.75rem 1.5rem', 
-                background: '#007bff', 
+                marginTop: '0.75rem', 
+                padding: '0.5rem 1.25rem', 
+                background: '#2b6cb0', 
                 color: 'white', 
                 border: 'none', 
-                borderRadius: '8px', 
+                borderRadius: '4px', 
                 cursor: 'pointer',
-                fontSize: '0.9rem',
+                fontSize: '0.85rem',
                 fontWeight: '600'
               }}
             >
-              🔄 페이지 새로고침
+              페이지 새로고침
             </button>
           </div>
         </div>
@@ -161,7 +160,7 @@ export default function FeaturedProducts() {
         {/* 추가 정보 섹션 */}
         <div className={styles.infoSection}>
           <div className={styles.infoCard}>
-            <div className={styles.infoIcon}>🏆</div>
+            <div className={styles.infoIcon}>MD</div>
             <div className={styles.infoContent}>
               <h4 className={styles.infoTitle}>MD 추천</h4>
               <p className={styles.infoDescription}>전문 MD가 직접 큐레이션한 상품</p>
@@ -169,7 +168,7 @@ export default function FeaturedProducts() {
           </div>
           
           <div className={styles.infoCard}>
-            <div className={styles.infoIcon}>⚡</div>
+            <div className={styles.infoIcon}>배송</div>
             <div className={styles.infoContent}>
               <h4 className={styles.infoTitle}>빠른 배송</h4>
               <p className={styles.infoDescription}>당일 발송으로 빠르게 받아보세요</p>
@@ -177,7 +176,7 @@ export default function FeaturedProducts() {
           </div>
           
           <div className={styles.infoCard}>
-            <div className={styles.infoIcon}>🎯</div>
+            <div className={styles.infoIcon}>추천</div>
             <div className={styles.infoContent}>
               <h4 className={styles.infoTitle}>맞춤 추천</h4>
               <p className={styles.infoDescription}>개인별 맞춤 상품을 추천해드려요</p>

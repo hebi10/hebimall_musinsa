@@ -213,7 +213,7 @@ export default function QnADetailPage() {
                     {getStatusLabel(qna.status)}
                   </span>
                   {qna.isSecret && (
-                    <span className={styles.secretBadge}>🔒 비밀글</span>
+                    <span className={styles.secretBadge}>비밀글</span>
                   )}
                 </div>
               </div>
@@ -276,7 +276,7 @@ export default function QnADetailPage() {
 
               {!qna.answer && qna.status === 'waiting' && (
                 <div className={styles.waitingAnswer}>
-                  <div className={styles.waitingIcon}>⏳</div>
+                  <div className={styles.waitingIcon}></div>
                   <h3>답변 대기중</h3>
                   <p>빠른 시일 내에 답변해드리겠습니다.</p>
                 </div>

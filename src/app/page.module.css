@@ -1,152 +1,67 @@
 .container {
   min-height: 100vh;
-  background: #fafafa;
+  background: #fff;
 }
 
-/* 공통 섹션 컨테이너 */
-.sectionContainer {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 2rem;
-}
-
-/* 추가 카테고리 배경 색상 */
-.accessoriesBg {
-  background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
-}
-
-.outdoorBg {
-  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
-}
-
-.sportsBg {
-  background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
-}
-
-.shoesBg {
-  background: linear-gradient(135deg, #dc2626 0%, #f87171 100%);
-}
-
-.jewelryBg {
-  background: linear-gradient(135deg, #ec4899 0%, #f9a8d4 100%);
-}
-
-.defaultBg {
-  background: linear-gradient(135deg, #6b7280 0%, #9ca3af 100%);
-}
-
-/* 로딩 상태 스타일 */
-.loading-shimmer {
-  animation: shimmer 1.5s infinite linear;
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: -200px 0;
-  }
-  100% {
-    background-position: calc(200px + 100%) 0;
-  }
-}
-
-.categoryCard.loading {
-  pointer-events: none;
-  opacity: 0.7;
-}
-
-.errorContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  text-align: center;
-  background: #f9fafb;
-  border-radius: 12px;
-  border: 2px dashed #d1d5db;
-}
-
-.errorMessage {
-  color: #dc2626;
-  font-size: 1rem;
-  margin-bottom: 1rem;
-}
-
-.retryButton {
-  background: #3b82f6;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.retryButton:hover {
-  background: #2563eb;
-}
-
-/* 공통 섹션 컨테이너 */
+/* ── 공통 섹션 컨테이너 ── */
 .sectionContainer {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1rem;
 }
 
-/* 섹션 헤더 */
+/* ── 섹션 헤더 ── */
 .sectionHeader {
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
 }
 
 .sectionTitle {
-  font-size: 2.5rem;
-  font-weight: 800;
-  color: #000;
-  margin: 0 0 0.5rem 0;
-  letter-spacing: -0.02em;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #172b4d;
+  margin: 0 0 0.35rem 0;
+  letter-spacing: -0.01em;
 }
 
 .sectionSubtitle {
-  font-size: 1.1rem;
-  color: #666;
+  font-size: 0.95rem;
+  color: #6b778c;
   margin: 0;
   font-weight: 400;
 }
 
-/* 카테고리 섹션 */
+/* ── 카테고리 섹션 ── */
 .categorySection {
-  padding: 5rem 0 3rem 0; /* 아래 패딩을 줄여서 추천 상품과 간격 조정 */
-  background: white;
+  padding: 3rem 0 2rem;
+  background: #fff;
 }
 
 .categoryGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
 }
 
 .categoryCard {
   position: relative;
   display: block;
   text-decoration: none;
-  border-radius: 12px;
+  border-radius: 4px;
   overflow: hidden;
-  transition: all 0.3s ease;
-  background: white;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  background: #fff;
+  border: 1px solid #dfe1e6;
+  transition: border-color 0.15s;
 }
 
 .categoryCard:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+  border-color: #2b6cb0;
 }
 
 .categoryImageWrapper {
   position: relative;
   width: 100%;
-  height: 200px;
+  height: 180px;
   overflow: hidden;
 }
 
@@ -157,43 +72,24 @@
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  transition: transform 0.3s ease;
   position: relative;
   overflow: hidden;
-  border-radius: 12px;
 }
 
-.categoryCard:hover .categoryImagePlaceholder {
-  transform: scale(1.05);
-}
-
-/* 카테고리별 배경 그라디언트 */
-.clothingBg {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-.bagsBg {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-}
-
-.accessoriesBg {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-}
-
-.outdoorBg {
-  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-}
+/* 카테고리별 배경 — 플레이스홀더용 */
+.clothingBg { background: #42526e; }
+.bagsBg { background: #5a6c7d; }
+.accessoriesBg { background: #3d5a80; }
+.outdoorBg { background: #4a6741; }
+.sportsBg { background: #7a6530; }
+.shoesBg { background: #6b3a3a; }
+.jewelryBg { background: #5c3d6e; }
+.defaultBg { background: #6b778c; }
 
 .categoryImage {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.3s ease;
-  border-radius: 12px;
-}
-
-.categoryCard:hover .categoryImage {
-  transform: scale(1.05);
 }
 
 .categoryOverlay {
@@ -202,54 +98,45 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.1));
-  display: none;
+  background: rgba(0, 0, 0, 0.25);
+  display: flex;
   align-items: center;
   justify-content: center;
-  transition: opacity 0.3s ease;
-  border-radius: 12px;
+  opacity: 0;
+  transition: opacity 0.15s;
 }
 
 .categoryCard:hover .categoryOverlay {
-  opacity: 0.7;
+  opacity: 1;
 }
 
 .categoryIcon {
-  font-size: 3rem;
-  margin-bottom: 0.5rem;
-  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));
+  font-size: 2rem;
   color: white;
-  transition: transform 0.3s ease;
-}
-
-.categoryCard:hover .categoryIcon {
-  transform: scale(1.1);
 }
 
 .categoryInfo {
-  padding: 1.5rem;
-  text-align: center;
+  padding: 0.875rem 1rem;
 }
 
 .categoryLabel {
   display: block;
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: #000;
-  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #172b4d;
+  margin-bottom: 0.2rem;
 }
 
 .categoryCount {
-  font-size: 0.95rem;
-  color: #666;
-  font-weight: 500;
+  font-size: 0.8rem;
+  color: #6b778c;
 }
 
-/* 프로모 배너 */
+/* ── 프로모 배너 ── */
 .promoBanner {
-  background: linear-gradient(135deg, #000 0%, #333 100%);
-  padding: 4rem 0;
-  margin: 0 0 3rem;
+  background: #172b4d;
+  padding: 3rem 0;
+  margin: 0;
 }
 
 .promoBannerContent {
@@ -268,28 +155,27 @@
 
 .promoLabel {
   display: inline-block;
-  background: #ff6b6b;
+  background: #de350b;
   color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-size: 0.9rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 3px;
+  font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 }
 
 .promoTitle {
-  font-size: 2.5rem;
-  font-weight: 900;
+  font-size: 1.75rem;
+  font-weight: 800;
   color: white;
-  margin: 0 0 1rem 0;
-  letter-spacing: -0.02em;
+  margin: 0 0 0.5rem 0;
 }
 
 .promoDescription {
-  font-size: 1.2rem;
-  color: rgba(255, 255, 255, 0.9);
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.8);
   margin: 0;
   line-height: 1.5;
 }
@@ -297,39 +183,37 @@
 .promoButton {
   display: inline-flex;
   align-items: center;
-  padding: 1rem 2rem;
-  background: white;
-  color: #000;
+  padding: 0.75rem 1.5rem;
+  background: #fff;
+  color: #172b4d;
   text-decoration: none;
-  border-radius: 50px;
-  font-weight: 700;
-  font-size: 1.1rem;
-  transition: all 0.3s ease;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: background-color 0.15s;
   white-space: nowrap;
 }
 
 .promoButton:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 25px rgba(255, 255, 255, 0.3);
+  background: #f4f5f7;
 }
 
-/* 상품 섹션들 */
+/* ── 상품 섹션들 ── */
 .productSections {
-  padding: 3rem 0;
-  background: white;
-  margin-top: 2rem; /* 추천 상품 섹션과의 간격 */
+  padding: 2rem 0;
+  background: #fff;
 }
 
-/* 브랜드 스토리 섹션 */
+/* ── 브랜드 스토리 섹션 ── */
 .brandStory {
-  background: #f8f9fa;
-  padding: 6rem 0;
+  background: #f4f5f7;
+  padding: 4rem 0;
 }
 
 .brandContent {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 4rem;
+  gap: 3rem;
   align-items: center;
 }
 
@@ -342,26 +226,25 @@
 }
 
 .brandTitle {
-  font-size: 3rem;
-  font-weight: 900;
-  color: #000;
-  margin: 0 0 1rem 0;
-  letter-spacing: -0.03em;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #172b4d;
+  margin: 0 0 0.5rem 0;
 }
 
 .brandSubtitle {
-  font-size: 1.5rem;
+  font-size: 1.15rem;
   font-weight: 600;
-  color: #333;
-  margin: 0 0 1.5rem 0;
+  color: #42526e;
+  margin: 0 0 1rem 0;
   line-height: 1.4;
 }
 
 .brandDescription {
-  font-size: 1.1rem;
-  color: #666;
+  font-size: 0.95rem;
+  color: #6b778c;
   line-height: 1.7;
-  margin: 0 0 2.5rem 0;
+  margin: 0 0 2rem 0;
 }
 
 .brandStats {
@@ -375,502 +258,151 @@
 
 .brandStatNumber {
   display: block;
-  font-size: 1.8rem;
-  font-weight: 900;
-  color: #000;
-  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #172b4d;
+  margin-bottom: 0.25rem;
 }
 
 .brandStatLabel {
-  font-size: 0.9rem;
-  color: #666;
-  font-weight: 500;
+  font-size: 0.8rem;
+  color: #6b778c;
 }
 
 .brandImage img {
   width: 100%;
-  height: 400px;
+  height: 360px;
   object-fit: cover;
-  border-radius: 12px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
 }
 
 .brandImagePlaceholder {
   width: 100%;
-  height: 400px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 12px;
+  height: 360px;
+  background: #42526e;
+  border-radius: 4px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   color: white;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.brandImageLogo {
+  font-size: 2.5rem;
+  font-weight: 900;
+  margin: 0 0 0.25rem 0;
+  letter-spacing: 0.05em;
+}
+
+.brandImageSub {
+  font-size: 0.9rem;
+  font-weight: 400;
+  margin: 0;
+  opacity: 0.7;
 }
 
 .brandImageIcon {
-  font-size: 4rem;
-  margin-bottom: 1rem;
-  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
+  display: none;
 }
 
-.brandImagePlaceholder p {
-  font-size: 1.5rem;
-  font-weight: 800;
-  margin: 0;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-/* Quick Links 섹션 */
+/* ── Quick Links 섹션 ── */
 .quickLinks {
-  background: white;
-  padding: 5rem 0;
+  background: #fff;
+  padding: 3rem 0;
+  border-top: 1px solid #dfe1e6;
 }
 
 .quickLinksGrid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(280px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
 }
 
 .quickLinkCard {
   display: block;
   text-decoration: none;
-  background: #f8f9fa;
-  border-radius: 12px;
-  padding: 2rem;
-  text-align: center;
-  transition: all 0.3s ease;
-  border: 2px solid transparent;
+  background: #f4f5f7;
+  border-radius: 4px;
+  padding: 1.5rem;
+  border: 1px solid #dfe1e6;
+  transition: border-color 0.15s;
 }
 
 .quickLinkCard:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
-  border-color: #000;
-  background: white;
+  border-color: #2b6cb0;
+  background: #fff;
 }
 
 .quickLinkIcon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
+  display: none;
 }
 
 .quickLinkTitle {
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: #000;
-  margin: 0 0 1rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #172b4d;
+  margin: 0 0 0.5rem 0;
 }
 
 .quickLinkDescription {
-  font-size: 1rem;
-  color: #666;
+  font-size: 0.85rem;
+  color: #6b778c;
   margin: 0;
   line-height: 1.5;
 }
 
-/* 반응형 디자인 */
-@media (max-width: 1024px) {
-  .sectionTitle {
-    font-size: 2.2rem;
-  }
-  
-  .categoryGrid {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-  }
-  
-  .promoBannerContent {
-    flex-direction: column;
-    text-align: center;
-  }
-  
-  .promoTitle {
-    font-size: 2.2rem;
-  }
-  
-  .brandContent {
-    grid-template-columns: 1fr;
-    gap: 3rem;
-  }
-  
-  .brandText {
-    order: 2;
-    text-align: center;
-  }
-  
-  .brandImage {
-    order: 1;
-  }
-  
-  .brandTitle {
-    font-size: 2.5rem;
-  }
+/* ── 로딩 / 에러 상태 ── */
+.loadingShimmer {
+  animation: shimmer 1.5s infinite linear;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+  background-size: 200px 100%;
 }
 
-@media (max-width: 768px) {
-  .categorySection {
-    padding: 3rem 0;
-  }
-  
-  .sectionHeader {
-    margin-bottom: 2rem;
-  }
-  
-  .sectionTitle {
-    font-size: 1.8rem;
-  }
-  
-  .categoryGrid {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-  }
-  
-  .categoryImageWrapper {
-    height: 150px;
-  }
-  
-  .categoryIcon {
-    font-size: 2.5rem;
-  }
-  
-  .categoryInfo {
-    padding: 1rem;
-  }
-  
-  .categoryLabel {
-    font-size: 1.1rem;
-  }
-  
-  .promoBanner {
-    padding: 3rem 0;
-    margin: 2rem 0;
-  }
-  
-  .promoTitle {
-    font-size: 1.8rem;
-  }
-  
-  .promoDescription {
-    font-size: 1rem;
-  }
-  
-  .brandStory {
-    padding: 4rem 0;
-  }
-  
-  .brandTitle {
-    font-size: 2rem;
-  }
-  
-  .brandSubtitle {
-    font-size: 1.3rem;
-  }
-  
-  .brandDescription {
-    font-size: 1rem;
-  }
-  
-  .brandStats {
-    gap: 1.5rem;
-  }
-  
-  .brandStatNumber {
-    font-size: 1.5rem;
-  }
-
-  .quickLinks {
-    padding: 3rem 0;
-  }
-  
-  .quickLinksGrid {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-  }
-  
-  .quickLinkCard {
-    padding: 1.5rem;
-  }
-  
-  .quickLinkIcon {
-    font-size: 2.5rem;
-  }
-  
-  .quickLinkTitle {
-    font-size: 1.2rem;
-  }
+@keyframes shimmer {
+  0% { background-position: -200px 0; }
+  100% { background-position: calc(200px + 100%) 0; }
 }
 
-@media (max-width: 480px) {
-  .categoryGrid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-  
-  .categoryCard {
-    margin: 0 0.5rem;
-  }
-  
-  .promoBannerContent {
-    padding: 0 0.5rem;
-  }
-  
-  .promoTitle {
-    font-size: 1.5rem;
-  }
-  
-  .promoButton {
-    padding: 0.8rem 1.5rem;
-    font-size: 1rem;
-  }
-  
-  .brandTitle {
-    font-size: 1.8rem;
-  }
-  
-  .brandStats {
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .brandImage img,
-  .brandImagePlaceholder {
-    height: 300px;
-  }
-
-  .quickLinksGrid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-  
-  .quickLinkCard {
-    padding: 1.25rem;
-  }
-  
-  .quickLinkIcon {
-    font-size: 2rem;
-  }
-  
-  .quickLinkTitle {
-    font-size: 1.1rem;
-  }
-  
-  .quickLinkDescription {
-    font-size: 0.9rem;
-  }
-}
-
-.banner {
-  position: relative;
-  height: 24rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-
-.banner::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.3);
-}
-
-.bannerContent {
-  text-align: center;
-  position: relative;
-  z-index: 1;
-  color: white;
-}
-
-.productImage{
-  width: 100%;
-  padding-bottom: 100%;
-  background-color: rgba(0, 0, 0, 0.3);
-}
-
-.bannerTitle {
-  font-size: 3rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.bannerSubtitle {
-  font-size: 1.25rem;
-  margin-bottom: 2rem;
-  opacity: 0.9;
-}
-
-.section {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 4rem 1rem;
-}
-
-.sectionTitle {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #111827;
-  margin-bottom: 0.5rem;
-  text-align: center;
-}
-
-.sectionSubtitle {
-  color: #6b7280;
-  text-align: center;
-  font-size: 1.125rem;
-}
-
-.categoryGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-.categoryCard {
-  background-color: #f8fafc;
-  aspect-ratio: 1;
-  border-radius: 1rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  color: inherit;
-  transition: all 0.3s ease;
-  border: 2px solid transparent;
-  position: relative;
-  overflow: hidden;
-  width: 100%;
-}
-
-.categoryCard::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.categoryCard:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
-  border-color: #667eea;
-}
-
-.categoryCard:hover::before {
-  opacity: 1;
-}
-
-.categoryIcon {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
-  position: relative;
-  z-index: 1;
-}
-
-.categoryLabel {
-  font-size: 1.125rem;
-  font-weight: 600;
-  position: relative;
-  z-index: 1;
-}
-
-.statsSection {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 20px;
-  padding: 4rem 2rem;
-  margin: 4rem 0;
-  color: white;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-}
-
-.statsSection::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+.categoryCard.loading {
   pointer-events: none;
+  opacity: 0.6;
 }
 
-.statsGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2rem;
-  position: relative;
-  z-index: 1;
-}
-
-.statItem {
+.errorContainer {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  background: #f4f5f7;
+  border-radius: 4px;
+  border: 1px dashed #dfe1e6;
 }
 
-.statNumber {
-  font-size: 2.5rem;
-  font-weight: 800;
-  margin-bottom: 0.5rem;
-  background: linear-gradient(45deg, #ffffff, #e2e8f0);
-  -webkit-background-clip: text;
-  background-clip: text;
+.errorMessage {
+  color: #de350b;
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
 }
 
-.statLabel {
-  font-size: 1rem;
-  font-weight: 500;
-  opacity: 0.9;
+.retryButton {
+  background: #2b6cb0;
+  color: white;
+  border: none;
+  padding: 0.4rem 1rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background-color 0.15s;
 }
 
-.productsSection {
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-  padding: 4rem 0;
+.retryButton:hover {
+  background: #2c5282;
 }
 
-.sectionHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 3rem;
-}
-
-@media screen and (min-width: 1024px) {
-  .sectionHeader {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
-
-.moreLink {
-  color: #667eea;
-  text-decoration: none;
-  font-weight: 600;
-  transition: color 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.moreLink:hover {
-  color: #764ba2;
-}
-
+/* ── Next.js 기본 레거시 스타일 ── */
 .main code {
   font-family: inherit;
   background: var(--gray-alpha-100);
@@ -886,19 +418,16 @@
 
 .ctas a {
   appearance: none;
-  border-radius: 128px;
-  height: 48px;
+  border-radius: 4px;
+  height: 44px;
   padding: 0 20px;
   border: 1px solid transparent;
-  transition:
-    background 0.2s,
-    color 0.2s,
-    border-color 0.2s;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 20px;
   font-weight: 500;
 }
@@ -930,42 +459,169 @@ a.secondary {
   flex-shrink: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  .logo {
-    filter: invert();
+.productImage {
+  width: 100%;
+  padding-bottom: 100%;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* ========== 반응형 디자인 ========== */
+
+@media (max-width: 1024px) {
+  .categoryGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .promoBannerContent {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .brandContent {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .brandText {
+    order: 2;
+    text-align: center;
+  }
+
+  .brandImage {
+    order: 1;
+  }
+
+  .quickLinksGrid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
-/* ========== Mobile First Media Queries ========== */
-
-/* Extra Small Devices (480px and down) */
-@media (max-width: 480px) {
-  .bannerTitle {
-    font-size: 2rem;
+@media (max-width: 768px) {
+  .categorySection {
+    padding: 2rem 0 1.5rem;
   }
 
-  .bannerSubtitle {
-    font-size: 1rem;
+  .sectionHeader {
+    margin-bottom: 1.5rem;
+  }
+
+  .sectionTitle {
+    font-size: 1.25rem;
   }
 
   .categoryGrid {
-    gap: 1rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .categoryImageWrapper {
+    height: 140px;
+  }
+
+  .categoryInfo {
+    padding: 0.75rem;
+  }
+
+  .categoryLabel {
+    font-size: 0.9rem;
+  }
+
+  .promoBanner {
+    padding: 2rem 0;
+  }
+
+  .promoTitle {
+    font-size: 1.3rem;
+  }
+
+  .promoDescription {
+    font-size: 0.9rem;
+  }
+
+  .brandStory {
+    padding: 3rem 0;
+  }
+
+  .brandTitle {
+    font-size: 1.5rem;
+  }
+
+  .brandSubtitle {
+    font-size: 1rem;
+  }
+
+  .brandStats {
+    gap: 1.5rem;
+  }
+
+  .brandStatNumber {
+    font-size: 1.25rem;
+  }
+
+  .quickLinks {
+    padding: 2rem 0;
+  }
+
+  .quickLinksGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .quickLinkCard {
+    padding: 1rem;
+  }
+
+  .quickLinkTitle {
+    font-size: 0.9rem;
   }
 }
 
-/* Small Devices (600px and down) */
+@media (max-width: 480px) {
+  .categoryGrid {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .promoBannerContent {
+    padding: 0 0.75rem;
+  }
+
+  .promoTitle {
+    font-size: 1.15rem;
+  }
+
+  .promoButton {
+    padding: 0.6rem 1.25rem;
+    font-size: 0.9rem;
+  }
+
+  .brandTitle {
+    font-size: 1.3rem;
+  }
+
+  .brandStats {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .brandImage img,
+  .brandImagePlaceholder {
+    height: 260px;
+  }
+
+  .quickLinksGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .quickLinkCard {
+    padding: 1rem;
+  }
+}
+
 @media (max-width: 600px) {
   .page {
     padding: 32px;
     padding-bottom: 80px;
-  }
-
-  .main {
-    align-items: center;
-  }
-
-  .main ol {
-    text-align: center;
   }
 
   .ctas {
@@ -989,125 +645,12 @@ a.secondary {
   }
 }
 
-/* Small to Medium Devices (640px and down) */
-@media (max-width: 640px) {
-  .bannerSubtitle {
-    font-size: 1.125rem;
-    margin-bottom: 1.5rem;
+@media (prefers-color-scheme: dark) {
+  .logo {
+    filter: invert();
   }
 }
 
-/* Medium Devices (768px and down) */
-@media (max-width: 768px) {
-  .bannerTitle {
-    font-size: 2.5rem;
-  }
-}
-
-/* Large Screens (640px and up) */
-@media (min-width: 640px) {
-  .section {
-    padding: 4rem 1.5rem;
-  }
-}
-
-/* Large Screens (768px and up) */
-@media (min-width: 768px) {
-  .categoryGrid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-
-  .statsGrid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-
-  .statNumber {
-    font-size: 3rem;
-  }
-}
-
-/* 추가 카테고리 배경 및 로딩 스타일 */
-.jewelryBg {
-  background: linear-gradient(135deg, #ec4899 0%, #f9a8d4 100%);
-}
-
-.defaultBg {
-  background: linear-gradient(135deg, #6b7280 0%, #9ca3af 100%);
-}
-
-/* 로딩 상태 스타일 */
-.loadingShimmer {
-  animation: shimmer 1.5s infinite linear;
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 200px 100%;
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: -200px 0;
-  }
-  100% {
-    background-position: calc(200px + 100%) 0;
-  }
-}
-
-.categoryCard.loading {
-  pointer-events: none;
-  opacity: 0.7;
-}
-
-.errorContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  text-align: center;
-  background: #f9fafb;
-  border-radius: 12px;
-  border: 2px dashed #d1d5db;
-}
-
-.errorMessage {
-  color: #dc2626;
-  font-size: 1rem;
-  margin-bottom: 1rem;
-}
-
-.retryButton {
-  background: #3b82f6;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.retryButton:hover {
-  background: #2563eb;
-}
-
-/* Large Screens (768px and up) continued */
-@media (min-width: 768px) {
-  .statLabel {
-    font-size: 1.1rem;
-  }
-
-  .productGrid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-/* Extra Large Screens (1024px and up) */
-@media (min-width: 1024px) {
-  .section {
-    padding: 4rem 2rem;
-  }
-}
-
-/* Hover States (for devices that support hover) */
 @media (hover: hover) and (pointer: fine) {
   a.primary:hover {
     background: var(--button-primary-hover);

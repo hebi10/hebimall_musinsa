@@ -1,10 +1,8 @@
 /* 컨테이너 */
 .container {
-  padding: 24px;
+  padding: 1.25rem;
   max-width: 1400px;
   margin: 0 auto;
-  background-color: var(--color-gray-50, #f9fafb);
-  min-height: 100vh;
 }
 
 /* 헤더 */
@@ -12,72 +10,71 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--color-gray-200, #e5e7eb);
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #dfe1e6;
 }
 
 .title {
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--color-gray-900, #111827);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #172b4d;
   margin: 0;
 }
 
 .headerActions {
   display: flex;
-  gap: 12px;
+  gap: 0.5rem;
   align-items: center;
 }
 
 .refreshButton {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 10px 16px;
-  background-color: #6b7280;
-  color: white;
-  border: none;
-  border-radius: 6px;
+  gap: 0.375rem;
+  padding: 0.5rem 0.875rem;
+  background-color: #ffffff;
+  color: #42526e;
+  border: 1px solid #dfe1e6;
+  border-radius: 3px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 0.9rem;
+  transition: background 0.15s;
+  font-size: 0.8125rem;
 }
 
 .refreshButton:hover {
-  background-color: #4b5563;
-  transform: translateY(-1px);
+  background-color: #f4f5f7;
 }
 
 .addButton {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 24px;
-  background-color: var(--color-primary, #3b82f6);
+  gap: 0.375rem;
+  padding: 0.5rem 1rem;
+  background-color: #2b6cb0;
   color: white;
   text-decoration: none;
-  border-radius: 8px;
+  border-radius: 3px;
   font-weight: 500;
-  transition: all 0.2s ease;
+  transition: background 0.15s;
+  font-size: 0.8125rem;
 }
 
 .addButton:hover {
-  background-color: var(--color-primary-dark, #2563eb);
-  transform: translateY(-1px);
+  background-color: #2c5282;
 }
 
 /* 필터 */
 .filters {
   display: flex;
-  gap: 16px;
+  gap: 0.5rem;
   align-items: center;
-  margin-bottom: 24px;
-  padding: 20px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+  padding: 0.875rem;
+  background: #ffffff;
+  border-radius: 4px;
+  border: 1px solid #dfe1e6;
 }
 
 .searchBox {
@@ -87,48 +84,46 @@
 
 .searchInput {
   width: 100%;
-  padding: 12px 16px;
-  border: 1px solid var(--color-gray-300, #d1d5db);
-  border-radius: 8px;
-  font-size: 14px;
-  transition: border-color 0.2s ease;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #dfe1e6;
+  border-radius: 3px;
+  font-size: 0.8125rem;
+  transition: border-color 0.15s;
 }
 
 .searchInput:focus {
   outline: none;
-  border-color: var(--color-primary, #3b82f6);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: #2b6cb0;
 }
 
 .filterBox {
   display: flex;
-  gap: 12px;
+  gap: 0.5rem;
 }
 
 .filterSelect {
-  padding: 12px 16px;
-  border: 1px solid var(--color-gray-300, #d1d5db);
-  border-radius: 8px;
-  font-size: 14px;
-  background: white;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #dfe1e6;
+  border-radius: 3px;
+  font-size: 0.8125rem;
+  background: #ffffff;
   cursor: pointer;
-  transition: border-color 0.2s ease;
-  min-width: 140px;
+  transition: border-color 0.15s;
+  min-width: 130px;
 }
 
 .filterSelect:focus {
   outline: none;
-  border-color: var(--color-primary, #3b82f6);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: #2b6cb0;
 }
 
 /* 테이블 */
 .tableContainer {
-  background: white;
-  border-radius: 12px;
+  background: #ffffff;
+  border-radius: 4px;
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  margin-bottom: 24px;
+  border: 1px solid #dfe1e6;
+  margin-bottom: 1rem;
 }
 
 .table {
@@ -137,33 +132,36 @@
 }
 
 .table th {
-  background-color: var(--color-gray-50, #f9fafb);
-  padding: 16px;
+  background-color: #fafbfc;
+  padding: 0.625rem 0.875rem;
   text-align: left;
   font-weight: 600;
-  color: var(--color-gray-700, #374151);
-  border-bottom: 1px solid var(--color-gray-200, #e5e7eb);
-  font-size: 14px;
+  color: #42526e;
+  border-bottom: 1px solid #dfe1e6;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
 .table td {
-  padding: 16px;
-  border-bottom: 1px solid var(--color-gray-100, #f3f4f6);
+  padding: 0.625rem 0.875rem;
+  border-bottom: 1px solid #dfe1e6;
   vertical-align: middle;
-  font-size: 14px;
+  font-size: 0.8125rem;
+  color: #172b4d;
 }
 
 .table tr:hover {
-  background-color: var(--color-gray-50, #f9fafb);
+  background-color: #fafbfc;
 }
 
 /* 상품 정보 */
 .productImage {
-  width: 60px;
-  height: 60px;
-  border-radius: 8px;
+  width: 48px;
+  height: 48px;
+  border-radius: 3px;
   object-fit: cover;
-  background-color: var(--color-gray-100, #f3f4f6);
+  background-color: #f4f5f7;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -173,23 +171,24 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: 3px;
 }
 
 .noImage {
-  color: var(--color-gray-400, #9ca3af);
-  font-size: 12px;
+  color: #97a0af;
+  font-size: 0.6875rem;
   text-align: center;
 }
 
 .productName {
   font-weight: 600;
-  color: var(--color-gray-900, #111827);
+  color: #172b4d;
 }
 
 .price {
   font-weight: 600;
-  color: var(--color-gray-900, #111827);
+  color: #172b4d;
+  font-family: 'SFMono-Regular', Consolas, monospace;
 }
 
 .stock {
@@ -197,64 +196,66 @@
 }
 
 .lowStock {
-  color: var(--color-red-600, #dc2626);
+  color: #de350b;
   font-weight: 600;
 }
 
 .date {
-  color: var(--color-gray-600, #4b5563);
-  font-size: 14px;
+  color: #6b778c;
+  font-size: 0.8125rem;
 }
 
 /* 상태 선택 */
 .statusSelect {
-  padding: 8px 12px;
-  border: 1px solid var(--color-gray-300, #d1d5db);
-  border-radius: 6px;
-  font-size: 13px;
+  padding: 0.375rem 0.625rem;
+  border: 1px solid #dfe1e6;
+  border-radius: 3px;
+  font-size: 0.75rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: border-color 0.15s;
 }
 
 .statusSelect:focus {
   outline: none;
-  border-color: var(--color-primary, #3b82f6);
+  border-color: #2b6cb0;
 }
 
 /* 액션 버튼 */
 .actions {
   display: flex;
-  gap: 8px;
+  gap: 0.375rem;
 }
 
 .editButton,
 .deleteButton {
-  padding: 8px 16px;
+  padding: 0.375rem 0.75rem;
   border: none;
-  border-radius: 6px;
-  font-size: 13px;
+  border-radius: 3px;
+  font-size: 0.75rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background 0.15s;
 }
 
 .editButton {
-  background-color: var(--color-blue-500, #3b82f6);
-  color: white;
+  background-color: #ffffff;
+  color: #2b6cb0;
+  border: 1px solid #2b6cb0;
 }
 
 .editButton:hover {
-  background-color: var(--color-blue-600, #2563eb);
+  background-color: #f4f5f7;
 }
 
 .deleteButton {
-  background-color: var(--color-red-500, #ef4444);
-  color: white;
+  background-color: #ffffff;
+  color: #de350b;
+  border: 1px solid #de350b;
 }
 
 .deleteButton:hover {
-  background-color: var(--color-red-600, #dc2626);
+  background-color: #fff5f5;
 }
 
 /* 페이지네이션 */
@@ -262,66 +263,72 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 8px;
-  margin: 24px 0;
+  gap: 0.375rem;
+  margin: 1rem 0;
 }
 
 .pageButton {
-  padding: 8px 12px;
-  border: 1px solid var(--color-gray-300, #d1d5db);
-  background: white;
-  border-radius: 6px;
+  padding: 0.375rem 0.625rem;
+  border: 1px solid #dfe1e6;
+  background: #ffffff;
+  border-radius: 3px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 14px;
+  transition: border-color 0.15s;
+  font-size: 0.8125rem;
   font-weight: 500;
 }
 
 .pageButton:hover {
-  border-color: var(--color-primary, #3b82f6);
-  color: var(--color-primary, #3b82f6);
+  border-color: #2b6cb0;
+  color: #2b6cb0;
 }
 
 .pageButton.active {
-  background-color: var(--color-primary, #3b82f6);
+  background-color: #2b6cb0;
   color: white;
-  border-color: var(--color-primary, #3b82f6);
+  border-color: #2b6cb0;
 }
 
 .pageButton:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  background-color: var(--color-gray-100, #f3f4f6);
+  background-color: #f4f5f7;
 }
 
 /* 통계 */
 .stats {
-  display: flex;
-  gap: 24px;
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  margin-top: 24px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0;
+  background: #ffffff;
+  border-radius: 4px;
+  border: 1px solid #dfe1e6;
+  margin-top: 1rem;
 }
 
 .statItem {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 0.25rem;
+  padding: 1rem;
+  border-right: 1px solid #dfe1e6;
+}
+
+.statItem:last-child {
+  border-right: none;
 }
 
 .statLabel {
-  font-size: 14px;
-  color: var(--color-gray-600, #4b5563);
+  font-size: 0.6875rem;
+  color: #6b778c;
   font-weight: 500;
 }
 
 .statValue {
-  font-size: 24px;
+  font-size: 1.5rem;
   font-weight: 700;
-  color: var(--color-primary, #3b82f6);
+  color: #172b4d;
 }
 
 /* 로딩 상태 */
@@ -330,30 +337,30 @@
   justify-content: center;
   align-items: center;
   height: 200px;
-  color: var(--color-gray-600, #4b5563);
-  font-size: 16px;
+  color: #6b778c;
+  font-size: 0.875rem;
 }
 
 /* 반응형 */
 @media (max-width: 768px) {
   .container {
-    padding: 16px;
+    padding: 0.75rem;
   }
   
   .header {
     flex-direction: column;
-    gap: 16px;
+    gap: 0.75rem;
     align-items: stretch;
   }
   
   .title {
     text-align: center;
-    font-size: 1.5rem;
+    font-size: 1.125rem;
   }
   
   .filters {
     flex-direction: column;
-    gap: 12px;
+    gap: 0.5rem;
   }
   
   .filterBox {
@@ -361,39 +368,47 @@
   }
   
   .table {
-    font-size: 12px;
+    font-size: 0.6875rem;
   }
   
   .table th,
   .table td {
-    padding: 12px 8px;
+    padding: 0.5rem;
   }
   
   .actions {
     flex-direction: column;
-    gap: 4px;
+    gap: 0.25rem;
   }
   
   .editButton,
   .deleteButton {
-    padding: 6px 12px;
-    font-size: 12px;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.6875rem;
   }
   
   .stats {
-    flex-direction: column;
-    gap: 16px;
+    grid-template-columns: 1fr;
+  }
+
+  .statItem {
+    border-right: none;
+    border-bottom: 1px solid #dfe1e6;
+  }
+
+  .statItem:last-child {
+    border-bottom: none;
   }
   
   .pagination {
     flex-wrap: wrap;
-    gap: 4px;
+    gap: 0.25rem;
   }
   
   .pageButton {
-    min-width: 40px;
-    padding: 6px 8px;
-    font-size: 13px;
+    min-width: 36px;
+    padding: 0.375rem 0.5rem;
+    font-size: 0.75rem;
   }
 }
 
@@ -405,7 +420,7 @@
   }
   
   .productImage {
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
   }
 }

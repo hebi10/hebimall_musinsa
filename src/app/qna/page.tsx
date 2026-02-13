@@ -222,7 +222,7 @@ export default function QnAListPage() {
 
         {qnas.length === 0 && !loading && !error && (
           <div className={styles.empty}>
-            <div className={styles.emptyIcon}>📝</div>
+            <div className={styles.emptyIcon}></div>
             <h3>등록된 QnA가 없습니다</h3>
             <p>첫 번째 질문을 등록해보세요!</p>
           </div>
@@ -239,11 +239,11 @@ export default function QnAListPage() {
                   {getStatusLabel(qna.status)}
                 </span>
                 {qna.isSecret && (
-                  <span className={styles.secretBadge}>🔒 비밀글</span>
+                  <span className={styles.secretBadge}>비밀글</span>
                 )}
               </div>
               <div className={styles.qnaStats}>
-                <span className={styles.views}>👁 {qna.views}</span>
+                <span className={styles.views}>조회 {qna.views}</span>
                 <span className={styles.date}>{formatDate(qna.createdAt)}</span>
               </div>
             </div>
@@ -262,7 +262,7 @@ export default function QnAListPage() {
               </div>
               {qna.answer && (
                 <div className={styles.answerPreview}>
-                  <span className={styles.answerLabel}>✅ 답변완료</span>
+                  <span className={styles.answerLabel}>답변완료</span>
                   <span className={styles.answerDate}>
                     {formatDate(qna.answer.answeredAt)}
                   </span>
@@ -309,7 +309,7 @@ export default function QnAListPage() {
       {/* 문의하기 버튼 */}
       <div className={styles.writeSection}>
         <a href="/qna/write" className={styles.writeButton}>
-          💬 문의하기
+          문의하기
         </a>
       </div>
     </div>

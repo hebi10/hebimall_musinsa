@@ -1,8 +1,8 @@
-/* QnA 상세 페이지 스타일 */
+/* QnA 상세 페이지 */
 .container {
-  max-width: 1000px;
+  max-width: 960px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 2rem 1rem;
   min-height: 100vh;
 }
 
@@ -11,17 +11,18 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 400px;
-  gap: 16px;
+  min-height: 300px;
+  gap: 1rem;
+  color: #6b778c;
 }
 
 .spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #f3f4f6;
-  border-top: 4px solid #3b82f6;
+  width: 32px;
+  height: 32px;
+  border: 2px solid #dfe1e6;
+  border-top: 2px solid #2b6cb0;
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  animation: spin 0.8s linear infinite;
 }
 
 @keyframes spin {
@@ -31,55 +32,59 @@
 
 .error {
   text-align: center;
-  padding: 40px 20px;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  border-radius: 8px;
-  margin: 20px 0;
+  padding: 2rem;
+  background: #fff;
+  border: 1px solid #dfe1e6;
+  border-left: 3px solid #de350b;
+  border-radius: 4px;
+  margin: 1rem 0;
 }
 
 .error h2 {
-  color: #dc2626;
-  margin-bottom: 12px;
+  color: #de350b;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
 }
 
 .error p {
-  color: #7f1d1d;
-  margin-bottom: 20px;
+  color: #42526e;
+  margin-bottom: 1rem;
 }
 
 .buttonGroup {
   display: flex;
-  gap: 12px;
+  gap: 0.5rem;
   justify-content: center;
 }
 
 .backButton,
 .retryButton {
-  padding: 10px 20px;
+  padding: 0.5rem 1rem;
   border: none;
-  border-radius: 6px;
+  border-radius: 4px;
   cursor: pointer;
-  font-weight: 500;
-  transition: all 0.2s;
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: background-color 0.15s;
 }
 
 .backButton {
-  background: #6b7280;
-  color: white;
+  background: #f4f5f7;
+  color: #42526e;
+  border: 1px solid #dfe1e6;
 }
 
 .backButton:hover {
-  background: #4b5563;
+  background: #ebecf0;
 }
 
 .retryButton {
-  background: #3b82f6;
+  background: #2b6cb0;
   color: white;
 }
 
 .retryButton:hover {
-  background: #2563eb;
+  background: #2c5282;
 }
 
 /* 비밀번호 모달 */
@@ -98,88 +103,90 @@
 
 .modal {
   background: white;
-  border-radius: 12px;
+  border-radius: 4px;
   width: 90%;
   max-width: 400px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border: 1px solid #dfe1e6;
 }
 
 .modalHeader {
-  padding: 20px 24px 0;
-  border-bottom: 1px solid #e5e7eb;
+  padding: 1rem 1.25rem 0;
+  border-bottom: 1px solid #dfe1e6;
 }
 
 .modalHeader h3 {
-  margin: 0 0 16px 0;
-  font-size: 18px;
-  font-weight: 600;
-  color: #111827;
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #172b4d;
 }
 
 .modalContent {
-  padding: 20px 24px;
+  padding: 1.25rem;
 }
 
 .modalContent p {
-  margin-bottom: 16px;
-  color: #6b7280;
+  margin-bottom: 1rem;
+  color: #6b778c;
   line-height: 1.5;
+  font-size: 0.9rem;
 }
 
 .passwordInput {
   width: 100%;
-  padding: 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 16px;
-  transition: border-color 0.2s;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #dfe1e6;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  transition: border-color 0.15s;
 }
 
 .passwordInput:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: #2b6cb0;
 }
 
 .passwordError {
-  margin-top: 8px;
-  color: #dc2626;
-  font-size: 14px;
+  margin-top: 0.5rem;
+  color: #de350b;
+  font-size: 0.85rem;
 }
 
 .modalActions {
-  padding: 16px 24px 24px;
+  padding: 1rem 1.25rem 1.25rem;
   display: flex;
-  gap: 12px;
+  gap: 0.5rem;
   justify-content: flex-end;
 }
 
 .cancelButton,
 .submitButton {
-  padding: 10px 20px;
+  padding: 0.5rem 1rem;
   border: none;
-  border-radius: 6px;
+  border-radius: 4px;
   cursor: pointer;
-  font-weight: 500;
-  transition: all 0.2s;
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: background-color 0.15s;
 }
 
 .cancelButton {
-  background: #f3f4f6;
-  color: #374151;
+  background: #f4f5f7;
+  color: #42526e;
+  border: 1px solid #dfe1e6;
 }
 
 .cancelButton:hover {
-  background: #e5e7eb;
+  background: #ebecf0;
 }
 
 .submitButton {
-  background: #3b82f6;
+  background: #2b6cb0;
   color: white;
 }
 
 .submitButton:hover:not(:disabled) {
-  background: #2563eb;
+  background: #2c5282;
 }
 
 .submitButton:disabled {
@@ -192,104 +199,102 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #dfe1e6;
 }
 
 .breadcrumb {
   display: flex;
   align-items: center;
-  gap: 8px;
-  color: #6b7280;
-  font-size: 14px;
+  gap: 0.5rem;
+  color: #6b778c;
+  font-size: 0.85rem;
 }
 
 .breadcrumb span:last-child {
-  color: #111827;
-  font-weight: 500;
+  color: #172b4d;
+  font-weight: 600;
 }
 
 /* QnA 카드 */
 .qnaCard {
   background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  margin-bottom: 24px;
+  border: 1px solid #dfe1e6;
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
 }
 
 .qnaHeader {
-  padding: 24px;
-  border-bottom: 1px solid #e5e7eb;
+  padding: 1.25rem;
+  border-bottom: 1px solid #dfe1e6;
 }
 
 .titleSection {
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
 }
 
 .title {
-  font-size: 24px;
+  font-size: 1.35rem;
   font-weight: 700;
-  color: #111827;
-  margin: 0 0 12px 0;
+  color: #172b4d;
+  margin: 0 0 0.75rem 0;
   line-height: 1.3;
 }
 
 .badges {
   display: flex;
-  gap: 8px;
+  gap: 0.35rem;
   flex-wrap: wrap;
 }
 
 .category,
 .status,
 .secretBadge {
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 500;
-  text-transform: uppercase;
+  padding: 0.15rem 0.5rem;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  font-weight: 600;
 }
 
 .category {
-  background: #dbeafe;
-  color: #1e40af;
+  background: #e3f2fd;
+  color: #1565c0;
 }
 
-.category.product { background: #fef3c7; color: #92400e; }
-.category.delivery { background: #d1fae5; color: #065f46; }
-.category.payment { background: #fce7f3; color: #9d174d; }
-.category.general { background: #e0e7ff; color: #3730a3; }
+.category.product { background: #fff3e0; color: #e65100; }
+.category.delivery { background: #e8f5e9; color: #2e7d32; }
+.category.payment { background: #fce4ec; color: #c62828; }
+.category.general { background: #e3f2fd; color: #1565c0; }
 
 .status {
-  background: #f3f4f6;
-  color: #374151;
+  background: #f4f5f7;
+  color: #42526e;
 }
 
-.status.waiting { background: #fef3c7; color: #92400e; }
-.status.answered { background: #d1fae5; color: #065f46; }
-.status.closed { background: #f3f4f6; color: #6b7280; }
+.status.waiting { background: #fff8e1; color: #f57f17; }
+.status.answered { background: #e8f5e9; color: #2e7d32; }
+.status.closed { background: #f4f5f7; color: #6b778c; }
 
 .secretBadge {
-  background: #fef2f2;
-  color: #dc2626;
+  background: #42526e;
+  color: white;
 }
 
 .metaInfo {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 16px;
-  font-size: 14px;
-  color: #6b7280;
+  gap: 1rem;
+  font-size: 0.85rem;
+  color: #6b778c;
 }
 
 .authorInfo,
 .statsInfo {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0.25rem;
 }
 
 .statsInfo {
@@ -298,34 +303,34 @@
 
 /* QnA 내용 */
 .qnaContent {
-  padding: 24px;
+  padding: 1.25rem;
 }
 
 .questionSection,
 .answerSection {
-  margin-bottom: 32px;
+  margin-bottom: 1.5rem;
 }
 
 .questionSection h3,
 .answerSection h3 {
-  font-size: 18px;
-  font-weight: 600;
-  color: #111827;
-  margin: 0 0 16px 0;
-  padding-bottom: 8px;
-  border-bottom: 2px solid #e5e7eb;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #172b4d;
+  margin: 0 0 0.75rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #dfe1e6;
 }
 
 .content,
 .answerContent {
   line-height: 1.7;
-  color: #374151;
-  font-size: 15px;
+  color: #42526e;
+  font-size: 0.9rem;
 }
 
 .content p,
 .answerContent p {
-  margin-bottom: 12px;
+  margin-bottom: 0.5rem;
 }
 
 .content p:last-child,
@@ -334,128 +339,128 @@
 }
 
 .images {
-  margin-top: 20px;
+  margin-top: 1rem;
   display: flex;
-  gap: 12px;
+  gap: 0.5rem;
   flex-wrap: wrap;
 }
 
 .attachedImage {
-  max-width: 200px;
-  max-height: 200px;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
+  max-width: 180px;
+  max-height: 180px;
+  border-radius: 4px;
+  border: 1px solid #dfe1e6;
   cursor: pointer;
-  transition: transform 0.2s;
-}
-
-.attachedImage:hover {
-  transform: scale(1.05);
 }
 
 .answerSection {
-  background: #f8fafc;
-  padding: 20px;
-  border-radius: 8px;
-  border-left: 4px solid #3b82f6;
+  background: #f4f5f7;
+  padding: 1rem;
+  border-radius: 4px;
+  border-left: 3px solid #2b6cb0;
 }
 
 .answerHeader {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 16px;
+  margin-bottom: 0.75rem;
 }
 
 .answerMeta {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  font-size: 13px;
-  color: #6b7280;
+  gap: 0.2rem;
+  font-size: 0.8rem;
+  color: #6b778c;
   text-align: right;
 }
 
 .waitingAnswer {
   text-align: center;
-  padding: 40px 20px;
-  background: #fefce8;
-  border: 1px solid #fde047;
-  border-radius: 8px;
-  color: #713f12;
+  padding: 2rem 1rem;
+  background: #fff8e1;
+  border: 1px solid #ffe082;
+  border-radius: 4px;
+  color: #6d4c00;
 }
 
 .waitingIcon {
-  font-size: 32px;
-  margin-bottom: 12px;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  opacity: 0.6;
 }
 
 .waitingAnswer h3 {
-  margin: 0 0 8px 0;
-  font-size: 18px;
+  margin: 0 0 0.35rem 0;
+  font-size: 1rem;
+  border: none;
+  padding: 0;
 }
 
 .waitingAnswer p {
   margin: 0;
   opacity: 0.8;
+  font-size: 0.85rem;
 }
 
 /* 액션 버튼 */
 .actions {
   display: flex;
-  gap: 12px;
+  gap: 0.5rem;
   justify-content: center;
-  margin-top: 32px;
+  margin-top: 1.5rem;
 }
 
 .listButton,
 .editButton {
-  padding: 12px 24px;
+  padding: 0.6rem 1.25rem;
   border: none;
-  border-radius: 8px;
+  border-radius: 4px;
   cursor: pointer;
-  font-weight: 500;
-  font-size: 15px;
-  transition: all 0.2s;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: background-color 0.15s;
 }
 
 .listButton {
-  background: #f3f4f6;
-  color: #374151;
+  background: #f4f5f7;
+  color: #42526e;
+  border: 1px solid #dfe1e6;
 }
 
 .listButton:hover {
-  background: #e5e7eb;
+  background: #ebecf0;
 }
 
 .editButton {
-  background: #3b82f6;
+  background: #2b6cb0;
   color: white;
 }
 
 .editButton:hover {
-  background: #2563eb;
+  background: #2c5282;
 }
 
 /* 반응형 */
 @media (max-width: 768px) {
   .container {
-    padding: 16px;
+    padding: 1rem;
   }
 
   .header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 12px;
+    gap: 0.5rem;
   }
 
   .title {
-    font-size: 20px;
+    font-size: 1.15rem;
   }
 
   .metaInfo {
     flex-direction: column;
-    gap: 12px;
+    gap: 0.5rem;
   }
 
   .statsInfo {
@@ -463,7 +468,7 @@
   }
 
   .qnaCard {
-    margin: 0 -16px 24px -16px;
+    margin: 0 -1rem 1.5rem -1rem;
     border-radius: 0;
     border-left: none;
     border-right: none;
@@ -471,7 +476,7 @@
 
   .answerHeader {
     flex-direction: column;
-    gap: 8px;
+    gap: 0.35rem;
   }
 
   .answerMeta {

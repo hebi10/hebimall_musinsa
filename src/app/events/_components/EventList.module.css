@@ -1,19 +1,20 @@
+/* EventList 컴포넌트 */
 .container {
-  padding: 4rem 0;
+  padding: 2rem 0;
 }
 
 /* 배너 섹션 */
 .bannerSection {
-  margin-bottom: 4rem;
+  margin-bottom: 2rem;
 }
 
 .mainBanner {
   position: relative;
-  border-radius: 1rem;
+  border-radius: 4px;
   overflow: hidden;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  height: 400px;
-  box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1);
+  background: #42526e;
+  height: 320px;
+  border: 1px solid #dfe1e6;
 }
 
 .bannerImage {
@@ -26,26 +27,24 @@
 .bannerContent {
   position: absolute;
   top: 50%;
-  left: 3rem;
+  left: 2rem;
   transform: translateY(-50%);
   color: white;
-  max-width: 600px;
+  max-width: 560px;
   z-index: 2;
 }
 
 .bannerTitle {
-  font-size: 3rem;
-  font-weight: 800;
-  margin: 0 0 1rem 0;
-  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 0.75rem 0;
   line-height: 1.2;
 }
 
 .bannerDescription {
-  font-size: 1.5rem;
-  margin: 0 0 2rem 0;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  opacity: 0.95;
+  font-size: 1.1rem;
+  margin: 0 0 1.5rem 0;
+  opacity: 0.9;
   line-height: 1.4;
 }
 
@@ -53,108 +52,94 @@
 .stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
-  margin-bottom: 4rem;
-  max-width: 800px;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+  max-width: 640px;
   margin-left: auto;
   margin-right: auto;
 }
 
 .statItem {
   text-align: center;
-  padding: 2rem 1.5rem;
-  background: white;
-  border-radius: 1rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  border: 1px solid #f3f4f6;
-  transition: all 0.3s ease;
-}
-
-.statItem:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  background: #f4f5f7;
+  border-radius: 4px;
+  border: 1px solid #dfe1e6;
 }
 
 .statNumber {
-  font-size: 2.5rem;
-  font-weight: 800;
-  color: #667eea;
-  margin-bottom: 0.5rem;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #2b6cb0;
+  margin-bottom: 0.25rem;
   display: block;
 }
 
 .statLabel {
-  font-size: 1rem;
-  color: #6b7280;
+  font-size: 0.85rem;
+  color: #6b778c;
   font-weight: 600;
 }
 
 /* 필터 */
 .filters {
   display: flex;
-  gap: 1rem;
+  gap: 0.35rem;
   justify-content: center;
-  margin-bottom: 4rem;
+  margin-bottom: 2rem;
   flex-wrap: wrap;
 }
 
 .filterButton {
-  padding: 0.75rem 1.5rem;
-  border: 2px solid #e5e7eb;
+  padding: 0.45rem 1rem;
+  border: 1px solid #dfe1e6;
   background: white;
-  border-radius: 2rem;
+  border-radius: 4px;
   cursor: pointer;
-  font-size: 0.875rem;
+  font-size: 0.85rem;
   font-weight: 600;
-  transition: all 0.3s ease;
-  color: #6b7280;
-  min-width: 80px;
+  transition: border-color 0.15s, background-color 0.15s;
+  color: #42526e;
 }
 
 .filterButton:hover {
-  border-color: #667eea;
-  color: #667eea;
-  transform: translateY(-1px);
+  border-color: #2b6cb0;
+  color: #2b6cb0;
 }
 
 .filterButton.active {
-  background: #667eea;
+  background: #2b6cb0;
   color: white;
-  border-color: #667eea;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  border-color: #2b6cb0;
 }
 
 /* 이벤트 그리드 */
 .eventGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 2rem;
-  margin-bottom: 4rem;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
 }
 
 .eventCard {
   display: block;
   background: white;
-  border-radius: 1rem;
+  border-radius: 4px;
   overflow: hidden;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+  border: 1px solid #dfe1e6;
+  transition: border-color 0.15s;
   text-decoration: none;
   color: inherit;
-  border: 1px solid #f3f4f6;
 }
 
 .eventCard:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  border-color: #e5e7eb;
+  border-color: #2b6cb0;
 }
 
 .eventImageContainer {
   position: relative;
   width: 100%;
-  height: 220px;
+  height: 200px;
   overflow: hidden;
 }
 
@@ -162,66 +147,59 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.3s ease;
-}
-
-.eventCard:hover .eventImage {
-  transform: scale(1.05);
 }
 
 .eventBadges {
   position: absolute;
-  top: 1rem;
-  left: 1rem;
+  top: 0.75rem;
+  left: 0.75rem;
   display: flex;
-  gap: 0.5rem;
+  gap: 0.35rem;
   z-index: 1;
 }
 
 .typeBadge,
 .statusBadge {
-  padding: 0.5rem 0.75rem;
-  border-radius: 1rem;
-  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+  font-size: 0.7rem;
   font-weight: 700;
   color: white;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
 .typeBadge.sale {
-  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+  background: #de350b;
 }
 
 .typeBadge.coupon {
-  background: linear-gradient(135deg, #ffd93d 0%, #ff8c42 100%);
+  background: #e65100;
 }
 
 .typeBadge.special {
-  background: linear-gradient(135deg, #a855f7 0%, #6366f1 100%);
+  background: #6554c0;
 }
 
 .typeBadge.new {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: #00875a;
 }
 
 .statusBadge.active {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: #00875a;
 }
 
 .statusBadge.ended {
-  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+  background: #6b778c;
 }
 
 .eventInfo {
-  padding: 1.5rem;
+  padding: 1rem;
 }
 
 .eventTitle {
-  font-size: 1.25rem;
+  font-size: 1.05rem;
   font-weight: 700;
-  color: #111827;
-  margin: 0 0 0.75rem 0;
+  color: #172b4d;
+  margin: 0 0 0.5rem 0;
   line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -231,10 +209,10 @@
 }
 
 .eventDescription {
-  color: #6b7280;
-  margin: 0 0 1rem 0;
-  line-height: 1.6;
-  font-size: 0.875rem;
+  color: #6b778c;
+  margin: 0 0 0.75rem 0;
+  line-height: 1.5;
+  font-size: 0.85rem;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -245,56 +223,56 @@
 .eventMeta {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-  padding: 1rem;
-  background: #f9fafb;
-  border-radius: 0.5rem;
+  gap: 0.35rem;
+  margin-bottom: 0.75rem;
+  padding: 0.75rem;
+  background: #f4f5f7;
+  border-radius: 4px;
 }
 
 .eventPeriod {
-  font-size: 0.875rem;
-  color: #374151;
+  font-size: 0.85rem;
+  color: #172b4d;
   font-weight: 600;
 }
 
 .eventParticipants {
-  font-size: 0.875rem;
-  color: #6b7280;
+  font-size: 0.85rem;
+  color: #6b778c;
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0.2rem;
 }
 
 .maxParticipants {
-  color: #9ca3af;
+  color: #97a0af;
 }
 
 .noLimit {
-  color: #10b981;
+  color: #00875a;
   font-weight: 600;
 }
 
 .eventDiscount {
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 700;
-  color: #ff6b6b;
-  background: linear-gradient(135deg, rgba(255, 107, 107, 0.1) 0%, rgba(255, 107, 107, 0.05) 100%);
-  padding: 0.75rem;
-  border-radius: 0.5rem;
+  color: #de350b;
+  background: #fff;
+  padding: 0.5rem;
+  border-radius: 4px;
   text-align: center;
-  border: 1px solid rgba(255, 107, 107, 0.2);
+  border: 1px solid #dfe1e6;
 }
 
 /* 빈 상태 */
 .emptyState {
   text-align: center;
-  padding: 6rem 2rem;
-  color: #6b7280;
+  padding: 3rem 1rem;
+  color: #6b778c;
 }
 
 .emptyState p {
-  font-size: 1.125rem;
+  font-size: 1rem;
   margin: 0;
 }
 
@@ -303,32 +281,31 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 0.5rem;
-  margin-top: 4rem;
+  gap: 0.25rem;
+  margin-top: 2rem;
 }
 
 .pageButton {
-  padding: 0.75rem 1rem;
-  border: 2px solid #e5e7eb;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #dfe1e6;
   background: white;
-  border-radius: 0.5rem;
+  border-radius: 4px;
   cursor: pointer;
-  font-size: 0.875rem;
+  font-size: 0.85rem;
   font-weight: 600;
-  transition: all 0.3s ease;
-  color: #6b7280;
-  min-width: 44px;
+  transition: border-color 0.15s;
+  color: #42526e;
 }
 
 .pageButton:hover:not(:disabled) {
-  border-color: #667eea;
-  color: #667eea;
+  border-color: #2b6cb0;
+  color: #2b6cb0;
 }
 
 .pageButton.active {
-  background: #667eea;
+  background: #2b6cb0;
   color: white;
-  border-color: #667eea;
+  border-color: #2b6cb0;
 }
 
 .pageButton:disabled {
@@ -336,43 +313,42 @@
   cursor: not-allowed;
 }
 
-/* ========== Mobile First Media Queries ========== */
-
+/* 반응형 */
 @media (max-width: 480px) {
   .container {
-    padding: 2rem 0;
+    padding: 1rem 0;
   }
 
   .bannerContent {
-    left: 1.5rem;
-    right: 1.5rem;
+    left: 1rem;
+    right: 1rem;
     max-width: none;
   }
 
   .bannerTitle {
-    font-size: 2rem;
+    font-size: 1.5rem;
   }
 
   .bannerDescription {
-    font-size: 1.125rem;
+    font-size: 0.9rem;
   }
 
   .stats {
     grid-template-columns: 1fr;
-    gap: 1rem;
-    margin-bottom: 2rem;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
   }
 
   .eventGrid {
     grid-template-columns: 1fr;
-    gap: 1.5rem;
+    gap: 0.75rem;
   }
 
   .filters {
     justify-content: flex-start;
     overflow-x: auto;
-    padding: 0 1rem 1rem 1rem;
-    gap: 0.75rem;
+    padding: 0 1rem 0.5rem 1rem;
+    gap: 0.35rem;
   }
 
   .filterButton {
@@ -383,34 +359,34 @@
 
 @media (max-width: 640px) {
   .mainBanner {
-    height: 300px;
+    height: 240px;
   }
 
   .bannerTitle {
-    font-size: 2.5rem;
+    font-size: 1.75rem;
   }
 
   .bannerDescription {
-    font-size: 1.25rem;
+    font-size: 1rem;
   }
 
   .stats {
     grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
+    gap: 0.5rem;
   }
 
   .statItem {
-    padding: 1.5rem 1rem;
+    padding: 0.75rem;
   }
 
   .statNumber {
-    font-size: 2rem;
+    font-size: 1.5rem;
   }
 }
 
 @media (max-width: 768px) {
   .eventGrid {
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   }
 
   .stats {
@@ -420,7 +396,7 @@
 
 @media (min-width: 1024px) {
   .eventGrid {
-    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-    gap: 2.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.25rem;
   }
 }

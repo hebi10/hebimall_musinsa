@@ -22,8 +22,8 @@ export default function AdminPage() {
       return;
     }
 
-    // 관리자인 경우 대시보드로 리다이렉트
-    router.replace("/admin/dashboard");
+    // 관리자인 경우 실제 대시보드로 리다이렉트
+    router.replace("/admin/dashboard/dashboard");
   }, [router, user]);
 
   return (
@@ -32,12 +32,11 @@ export default function AdminPage() {
       alignItems: 'center',
       justifyContent: 'center',
       height: '100vh',
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      color: 'white',
-      fontSize: '1.2rem'
+      background: '#f4f5f7',
+      color: '#172b4d',
+      fontSize: '0.875rem'
     }}>
       <div style={{ textAlign: 'center' }}>
-        <div style={{ fontSize: '3rem', marginBottom: '20px' }}>⏳</div>
         <p>관리자 페이지로 이동중...</p>
       </div>
     </div>

@@ -1,21 +1,47 @@
 .adminNav {
   display: flex;
-  flex-wrap: wrap;
-  gap: 18px;
-  padding: 10px 0;
+  flex-direction: column;
+  gap: 0;
+  padding: 0.5rem 0;
 }
 
-aside .adminNav{
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 20px var(--spacing-lg) 0;
-  box-sizing: border-box;
+.navLink {
+  display: block;
+  padding: 0.5rem 1.25rem;
+  color: #42526e;
+  text-decoration: none;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  border-left: 3px solid transparent;
+  transition: background 0.1s;
+}
+
+.navLink:hover {
+  background: #f4f5f7;
+  color: #172b4d;
+  border-left-color: #2b6cb0;
+}
+
+aside .adminNav {
+  padding: 0.5rem 0;
 }
 
 @media (max-width: 768px) {
   .adminNav {
+    flex-direction: row;
     flex-wrap: wrap;
-    justify-content: center;
-    gap: 15px;
+    justify-content: flex-start;
+    gap: 0;
+    padding: 0.5rem;
+  }
+  .navLink {
+    border-left: none;
+    border-bottom: 2px solid transparent;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+  }
+  .navLink:hover {
+    border-left: none;
+    border-bottom-color: #2b6cb0;
   }
 }

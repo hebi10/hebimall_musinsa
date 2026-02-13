@@ -59,7 +59,7 @@ const ChatWidget: React.FC = () => {
       return '맞춤형 AI 상담 연결됨';
     }
     if (isChatStarted && !isAgentConnected) {
-      return '상담원 연결을 위해 "🤖 상담원연결" 버튼을 클릭해주세요';
+      return '상담원 연결을 위해 "상담원연결" 버튼을 클릭해주세요';
     }
     if (isChatStarted && isAgentConnected) {
       return '언제든 문의해 주세요';
@@ -72,18 +72,18 @@ const ChatWidget: React.FC = () => {
     setIsChatStarted(true);
     const initialMessage: ChatMessage = {
       id: '1',
-      text: `안녕하세요! STYNA 고객지원팀입니다. 😊
+      text: `안녕하세요! STYNA 고객지원팀입니다.
 
 어떤 도움이 필요하신가요? 아래 번호를 선택하거나 직접 문의해 주세요:
 
-1️⃣ 주문/배송 문의
-2️⃣ 반품/교환 안내
-3️⃣ 쿠폰/할인 혜택
-4️⃣ 사이즈 가이드
-5️⃣ 결제 방법 안내
-6️⃣ 회원 혜택 정보
+1. 주문/배송 문의
+2. 반품/교환 안내
+3. 쿠폰/할인 혜택
+4. 사이즈 가이드
+5. 결제 방법 안내
+6. 회원 혜택 정보
 
-🤖 상담원연결 - AI 상담원과 1:1 맞춤 상담
+상담원연결 - AI 상담원과 1:1 맞춤 상담
 
 번호를 입력하시거나 궁금한 점을 직접 말씀해 주세요!`,
       sender: 'bot',
@@ -217,7 +217,7 @@ const ChatWidget: React.FC = () => {
         
         // AI 상담원 연결 시 특별 처리
         if ((messageText.toLowerCase() === '상담원연결' || messageText.toLowerCase() === '상담원 연결') && shouldUseAI) {
-          responseText = `AI 상담원과 연결되었습니다! 이제 더 자세하고 개인화된 상담을 받으실 수 있습니다. 😊
+          responseText = `AI 상담원과 연결되었습니다! 이제 더 자세하고 개인화된 상담을 받으실 수 있습니다.
 
 무엇을 도와드릴까요?
 
@@ -247,7 +247,7 @@ AI 상담원은 다음과 같은 도움을 드릴 수 있습니다:
       
       const errorMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
-        text: '죄송합니다. 일시적인 문제가 발생했습니다. 잠시 후 다시 시도해 주시거나 고객센터(1588-0000)로 연락해 주세요.\n\n기본 상담은 "🤖 상담원연결" 버튼을 클릭하신 후 이용 가능합니다.',
+        text: '죄송합니다. 일시적인 문제가 발생했습니다. 잠시 후 다시 시도해 주시거나 고객센터(1588-0000)로 연락해 주세요.\n\n기본 상담은 "상담원연결" 버튼을 클릭하신 후 이용 가능합니다.',
         sender: 'bot',
         timestamp: new Date()
       };
@@ -322,7 +322,7 @@ AI 상담원은 다음과 같은 도움을 드릴 수 있습니다:
         
         // AI 상담원 연결 시 특별 처리
         if ((text.toLowerCase() === '상담원연결' || text.toLowerCase() === '상담원 연결') && shouldUseAI) {
-          responseText = `AI 상담원과 연결되었습니다! 이제 더 자세하고 개인화된 상담을 받으실 수 있습니다. 😊
+          responseText = `AI 상담원과 연결되었습니다! 이제 더 자세하고 개인화된 상담을 받으실 수 있습니다.
 
 무엇을 도와드릴까요?
 
@@ -354,7 +354,7 @@ AI 상담원은 다음과 같은 도움을 드릴 수 있습니다:
       
       const errorMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
-        text: '죄송합니다. 일시적인 문제가 발생했습니다. 잠시 후 다시 시도해 주시거나 고객센터(1588-0000)로 연락해 주세요.\n\n기본 상담은 "🤖 상담원연결" 버튼을 클릭하신 후 이용 가능합니다.',
+        text: '죄송합니다. 일시적인 문제가 발생했습니다. 잠시 후 다시 시도해 주시거나 고객센터(1588-0000)로 연락해 주세요.\n\n기본 상담은 "상담원연결" 버튼을 클릭하신 후 이용 가능합니다.',
         sender: 'bot',
         timestamp: new Date()
       };
@@ -411,7 +411,7 @@ AI 상담원은 다음과 같은 도움을 드릴 수 있습니다:
                 aria-label="채팅 처음부터 시작"
                 title="새로 시작"
               >
-                🔄
+                ↻
               </button>
             )}
             <button
@@ -434,19 +434,19 @@ AI 상담원은 다음과 같은 도움을 드릴 수 있습니다:
             // 채팅 시작 전 화면
             <div className={styles.chatStart}>
               <div className={styles.welcomeMessage}>
-                <h3>🎉 STYNA 고객상담</h3>
+                <h3>STYNA 고객상담</h3>
                 <p>안녕하세요! 무엇을 도와드릴까요?</p>
                 <div className={styles.chatFeatures}>
                   <div className={styles.feature}>
-                    <span className={styles.featureIcon}>📞</span>
+                    <span className={styles.featureIcon}>●</span>
                     <span>실시간 상담 지원</span>
                   </div>
                   <div className={styles.feature}>
-                    <span className={styles.featureIcon}>🤖</span>
+                    <span className={styles.featureIcon}>●</span>
                     <span>AI 맞춤 상담</span>
                   </div>
                   <div className={styles.feature}>
-                    <span className={styles.featureIcon}>⚡</span>
+                    <span className={styles.featureIcon}>●</span>
                     <span>빠른 문제 해결</span>
                   </div>
                 </div>
@@ -498,49 +498,49 @@ AI 상담원은 다음과 같은 도움을 드릴 수 있습니다:
               onClick={() => handleQuickButton('1. 주문/배송')}
               disabled={isLoading}
             >
-              1️⃣ 주문/배송
+              1. 주문/배송
             </button>
             <button 
               className={styles.quickButton}
               onClick={() => handleQuickButton('2. 반품/교환')}
               disabled={isLoading}
             >
-              2️⃣ 반품/교환
+              2. 반품/교환
             </button>
             <button 
               className={styles.quickButton}
               onClick={() => handleQuickButton('3. 쿠폰/할인')}
               disabled={isLoading}
             >
-              3️⃣ 쿠폰/할인
+              3. 쿠폰/할인
             </button>
             <button 
               className={styles.quickButton}
               onClick={() => handleQuickButton('4. 사이즈 가이드')}
               disabled={isLoading}
             >
-              4️⃣ 사이즈 가이드
+              4. 사이즈 가이드
             </button>
             <button 
               className={styles.quickButton}
               onClick={() => handleQuickButton('5. 결제 방법 안내')}
               disabled={isLoading}
             >
-              5️⃣ 결제 방법 안내
+              5. 결제 방법 안내
             </button>
             <button 
               className={styles.quickButton}
               onClick={() => handleQuickButton('6. 회원 혜택 정보')}
               disabled={isLoading}
             >
-              6️⃣ 회원 혜택 정보
+              6. 회원 혜택 정보
             </button>
             <button 
               className={`${styles.quickButton} ${styles.ai}`}
               onClick={() => handleQuickButton('상담원연결')}
               disabled={isLoading}
             >
-              🤖 상담원연결
+              상담원연결
             </button>
           </div>
         )}

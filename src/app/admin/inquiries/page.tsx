@@ -169,28 +169,24 @@ export default function AdminInquiriesPage() {
       {/* 통계 카드 */}
       <div className={styles.statsGrid}>
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>📝</div>
           <div className={styles.statContent}>
             <h3>전체 문의</h3>
             <span className={styles.statNumber}>{stats.total}</span>
           </div>
         </div>
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>⏳</div>
           <div className={styles.statContent}>
             <h3>답변 대기</h3>
             <span className={`${styles.statNumber} ${styles.waiting}`}>{stats.waiting}</span>
           </div>
         </div>
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>✅</div>
           <div className={styles.statContent}>
             <h3>답변 완료</h3>
             <span className={`${styles.statNumber} ${styles.answered}`}>{stats.answered}</span>
           </div>
         </div>
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>🔒</div>
           <div className={styles.statContent}>
             <h3>처리 완료</h3>
             <span className={`${styles.statNumber} ${styles.closed}`}>{stats.closed}</span>
@@ -260,7 +256,6 @@ export default function AdminInquiriesPage() {
 
         {inquiries.length === 0 && !error && (
           <div className={styles.empty}>
-            <div className={styles.emptyIcon}>📝</div>
             <h3>조건에 맞는 문의가 없습니다</h3>
             <p>필터를 조정해보세요.</p>
           </div>
@@ -277,7 +272,7 @@ export default function AdminInquiriesPage() {
                   {getStatusLabel(inquiry.status)}
                 </span>
                 {inquiry.status === 'waiting' && (
-                  <span className={styles.priority}>🚨 처리필요</span>
+                  <span className={styles.priority}>처리필요</span>
                 )}
               </div>
               <div className={styles.inquiryStats}>

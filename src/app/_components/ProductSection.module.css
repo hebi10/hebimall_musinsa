@@ -10,36 +10,34 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #eee;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #dfe1e6;
 }
 
 .title {
-  font-size: 2rem;
-  font-weight: 800;
-  color: #000;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #172b4d;
   margin: 0;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
 }
 
 .viewAllLink {
-  color: #000;
+  color: #42526e;
   text-decoration: none;
   font-weight: 600;
-  font-size: 0.95rem;
-  padding: 0.75rem 1.5rem;
-  border: 1px solid #000;
+  font-size: 0.85rem;
+  padding: 0.6rem 1rem;
+  border: 1px solid #dfe1e6;
   border-radius: 4px;
-  transition: all 0.2s ease;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  transition: background-color 0.15s, color 0.15s;
+  letter-spacing: 0.3px;
 }
 
 .viewAllLink:hover {
-  background: #000;
+  background: #172b4d;
   color: white;
-  transform: translateY(-1px);
 }
 
 .productGrid {
@@ -51,18 +49,18 @@
 
 .loading {
   text-align: center;
-  padding: 3rem 0;
-  color: #666;
+  padding: 2rem 0;
+  color: #6b778c;
 }
 
 .spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid #f3f3f3;
-  border-top: 3px solid #000;
+  width: 32px;
+  height: 32px;
+  border: 2px solid #dfe1e6;
+  border-top: 2px solid #2b6cb0;
   border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 1rem;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 0.75rem;
 }
 
 @keyframes spin {
