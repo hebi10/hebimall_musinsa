@@ -2,25 +2,27 @@
 .fixedButton {
   position: fixed;
   right: 20px;
-  bottom: 95px;
-  padding: 10px 14px;
+  bottom: 72px;
+  height: 40px;
+  padding: 0 16px;
   background: #1a1a1a;
   border: none;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.15s ease;
+  transition: background-color 0.15s, box-shadow 0.15s;
   z-index: 999;
   color: #ffffff;
   font-family: inherit;
+  white-space: nowrap;
 }
 
 .fixedButton:hover {
   background: #333333;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
 }
 
 .buttonText {
@@ -33,9 +35,17 @@
 /* 반응형 디자인 */
 @media (max-width: 768px) {
   .fixedButton {
-    right: 16px;
-    bottom: 110px;
-    padding: 8px 12px;
+    right: 20px;
+    bottom: 68px;
+  }
+}
+
+@media (max-width: 480px) {
+  .fixedButton {
+    right: 20px;
+    bottom: 64px;
+    height: 36px;
+    padding: 0 14px;
   }
 
   .buttonText {
@@ -43,20 +53,8 @@
   }
 }
 
-@media (max-width: 480px) {
-  .fixedButton {
-    right: 12px;
-    bottom: 100px;
-    padding: 8px 10px;
-  }
-
-  .buttonText {
-    font-size: 10px;
-  }
-}
-
 /* 접근성 */
-.fixedButton:focus {
+.fixedButton:focus-visible {
   outline: 2px solid #1a1a1a;
   outline-offset: 2px;
 }

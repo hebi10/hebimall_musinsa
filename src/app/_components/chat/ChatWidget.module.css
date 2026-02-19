@@ -9,40 +9,43 @@
 
 /* 채팅 토글 버튼 */
 .chatButton {
-  width: 56px;
-  height: 56px;
-  border-radius: 4px;
-  background: #2b6cb0;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 6px;
+  background: #1a1a1a;
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  font-size: 11px;
-  font-weight: 600;
-  transition: background-color 0.15s;
-  border: 1px solid #2b6cb0;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  transition: background-color 0.15s, box-shadow 0.15s;
 }
 
 .chatButton:hover {
-  background: #2c5282;
+  background: #333333;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
 }
 
 .chatButton.open {
-  font-size: 24px;
-  background: #de350b;
-  border-color: #de350b;
+  background: #1a1a1a;
+  font-size: 20px;
+  font-weight: 400;
 }
 
 .chatButton.open:hover {
-  background: #bf2600;
+  background: #333333;
 }
 
 /* 채팅 창 */
 .chatWindow {
   position: absolute;
-  bottom: 76px;
+  bottom: 56px;
   right: 0;
   width: 400px;
   background: white;
@@ -408,6 +411,12 @@
   
   .chatWidget {
     right: 20px;
+  }
+
+  .chatButton {
+    height: 36px;
+    padding: 0 14px;
+    font-size: 11px;
   }
   
   .quickButton {
