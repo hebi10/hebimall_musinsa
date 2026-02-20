@@ -70,7 +70,6 @@ export * from "./environmentFunctions";
 
 // 채팅 API
 export * from "./chatAPI";
-export * from "./chatAPI-standalone";
 
 /* ============================
    포인트 관련 타입
