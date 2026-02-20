@@ -15,8 +15,20 @@
     ],
     "rewrites": [
       {
+        "source": "/api/points",
+        "function": "points"
+      },
+      {
+        "source": "/api/coupon",
+        "function": "coupon"
+      },
+      {
+        "source": "/api/config",
+        "function": "config"
+      },
+      {
         "source": "/api/chat",
-        "function": "chatAPI"
+        "function": "chat"
       },
       {
         "source": "**",

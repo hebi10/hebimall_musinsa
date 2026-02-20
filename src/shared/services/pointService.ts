@@ -1,8 +1,8 @@
 // 포인트 관리 서비스
 
-import { httpsCallable } from 'firebase/functions';
 import { doc, getDoc, collection, query, orderBy, limit, getDocs, startAfter } from 'firebase/firestore';
-import { functions, db } from '@/shared/libs/firebase/firebase';
+import { getAuth } from 'firebase/auth';
+import { db } from '@/shared/libs/firebase/firebase';
 import { 
   AddPointRequest, 
   UsePointRequest, 
@@ -13,10 +13,33 @@ import {
   PointHistory
 } from '@/shared/types/point';
 
-// Firebase Functions 호출 함수들 (쓰기 작업만)
-const addPointFunction = httpsCallable<AddPointRequest, PointResponse>(functions, 'addPoint');
-const usePointFunction = httpsCallable<UsePointRequest, PointResponse>(functions, 'usePoint');
-const refundPointFunction = httpsCallable<RefundPointRequest, PointResponse>(functions, 'refundPoint');
+/** Firebase Auth ID 토큰을 가져오는 헬퍼 */
+async function getIdToken(): Promise<string> {
+  const user = getAuth().currentUser;
+  if (!user) throw new Error('로그인이 필요합니다.');
+  return user.getIdToken();
+}
+
+/** 통합 Points API 호출 헬퍼 */
+async function callPointsAPI(action: string, data?: Record<string, any>): Promise<any> {
+  const token = await getIdToken();
+  const res = await fetch('/api/points', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ action, ...data }),
+  });
+
+  const json = await res.json();
+
+  if (!json.success) {
+    throw new Error(json.error || '요청에 실패했습니다.');
+  }
+
+  return json.data;
+}
 
 export class PointService {
   /**
@@ -25,52 +48,26 @@ export class PointService {
   static async addPoint(data: AddPointRequest): Promise<PointResponse> {
     try {
       console.log('포인트 적립 요청:', data);
-      const result = await addPointFunction(data);
-      console.log('포인트 적립 결과:', result.data);
-      return result.data;
+      const result = await callPointsAPI('add', data);
+      console.log('포인트 적립 결과:', result);
+      return { success: true, newBalance: result.newBalance };
     } catch (error: any) {
       console.error('포인트 적립 실패:', error);
-      
-      // 구체적인 에러 메시지 처리
-      if (error.code === 'functions/unauthenticated') {
-        throw new Error('로그인이 필요합니다.');
-      } else if (error.code === 'functions/invalid-argument') {
-        throw new Error(error.message || '잘못된 요청입니다.');
-      } else if (error.code === 'functions/not-found') {
-        throw new Error('포인트 기능을 찾을 수 없습니다.');
-      } else if (error.code === 'functions/internal') {
-        throw new Error('서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
-      }
-      
       throw new Error(error.message || '포인트 적립에 실패했습니다.');
     }
   }
 
   /**
-   * 포인트 사용 - Callable Functions 복원
+   * 포인트 사용
    */
   static async usePoint(data: UsePointRequest): Promise<PointResponse> {
     try {
       console.log('포인트 사용 요청:', data);
-      const result = await usePointFunction(data);
-      console.log('포인트 사용 결과:', result.data);
-      return result.data;
+      const result = await callPointsAPI('use', data);
+      console.log('포인트 사용 결과:', result);
+      return { success: true, newBalance: result.newBalance, usedAmount: result.usedAmount };
     } catch (error: any) {
       console.error('포인트 사용 실패:', error);
-      
-      // 구체적인 에러 메시지 처리
-      if (error.code === 'functions/unauthenticated') {
-        throw new Error('로그인이 필요합니다.');
-      } else if (error.code === 'functions/failed-precondition') {
-        throw new Error(error.message || '보유 포인트가 부족합니다.');
-      } else if (error.code === 'functions/invalid-argument') {
-        throw new Error(error.message || '잘못된 요청입니다.');
-      } else if (error.code === 'functions/not-found') {
-        throw new Error('포인트 기능을 찾을 수 없습니다.');
-      } else if (error.code === 'functions/internal') {
-        throw new Error('서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
-      }
-      
       throw new Error(error.message || '포인트 사용에 실패했습니다.');
     }
   }
@@ -81,23 +78,11 @@ export class PointService {
   static async refundPoint(data: RefundPointRequest): Promise<PointResponse> {
     try {
       console.log('포인트 환불 요청:', data);
-      const result = await refundPointFunction(data);
-      console.log('포인트 환불 결과:', result.data);
-      return result.data;
+      const result = await callPointsAPI('refund', data);
+      console.log('포인트 환불 결과:', result);
+      return { success: true, newBalance: result.newBalance, refundedAmount: result.refundedAmount };
     } catch (error: any) {
       console.error('포인트 환불 실패:', error);
-      
-      // 구체적인 에러 메시지 처리
-      if (error.code === 'functions/unauthenticated') {
-        throw new Error('로그인이 필요합니다.');
-      } else if (error.code === 'functions/invalid-argument') {
-        throw new Error(error.message || '잘못된 요청입니다.');
-      } else if (error.code === 'functions/not-found') {
-        throw new Error('포인트 기능을 찾을 수 없습니다.');
-      } else if (error.code === 'functions/internal') {
-        throw new Error('서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
-      }
-      
       throw new Error(error.message || '포인트 환불에 실패했습니다.');
     }
   }

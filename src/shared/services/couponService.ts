@@ -8,32 +8,49 @@ import {
   query, 
   where, 
   orderBy, 
-  limit, 
-  startAfter,
   addDoc,
   updateDoc,
   deleteDoc,
-  serverTimestamp,
-  Timestamp
+  serverTimestamp
 } from 'firebase/firestore';
-import { httpsCallable } from 'firebase/functions';
-import { db, functions } from '@/shared/libs/firebase/firebase';
+import { getAuth } from 'firebase/auth';
+import { db } from '@/shared/libs/firebase/firebase';
 import { 
   Coupon, 
   UserCoupon, 
   UserCouponView,
-  IssueCouponRequest,
-  UseCouponRequest,
-  RegisterCouponRequest,
   CouponResponse,
   CouponFilter,
   CouponStats
 } from '@/shared/types/coupon';
 
-// Firebase Functions 호출 함수들 (쓰기 작업용)
-const issueCouponFunction = httpsCallable<IssueCouponRequest, CouponResponse>(functions, 'issueCoupon');
-const useCouponFunction = httpsCallable<UseCouponRequest, CouponResponse>(functions, 'useCoupon');
-const registerCouponFunction = httpsCallable<RegisterCouponRequest, CouponResponse>(functions, 'registerCoupon');
+/** Firebase Auth ID 토큰을 가져오는 헬퍼 */
+async function getIdToken(): Promise<string> {
+  const user = getAuth().currentUser;
+  if (!user) throw new Error('로그인이 필요합니다.');
+  return user.getIdToken();
+}
+
+/** 통합 Coupon API 호출 헬퍼 */
+async function callCouponAPI(action: string, data?: Record<string, any>): Promise<any> {
+  const token = await getIdToken();
+  const res = await fetch('/api/coupon', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ action, ...data }),
+  });
+
+  const json = await res.json();
+
+  if (!json.success) {
+    throw new Error(json.error || '요청에 실패했습니다.');
+  }
+
+  return json.data;
+}
 
 export class CouponService {
   
@@ -386,20 +403,20 @@ export class CouponService {
   // ============ 쿠폰 발급/사용/등록 (Firebase Functions) ============
   
   /**
-   * 쿠폰 발급 (Firebase Function 호출)
+   * 쿠폰 발급 (REST API 호출)
    */
   static async issueCoupon(uid: string, couponId: string): Promise<CouponResponse> {
     try {
-      const result = await issueCouponFunction({ uid, couponId });
-      return result.data;
-    } catch (error) {
+      const result = await callCouponAPI('issue', { couponId });
+      return { success: true, message: result.message, data: result };
+    } catch (error: any) {
       console.error('쿠폰 발급 실패:', error);
-      throw new Error('쿠폰 발급에 실패했습니다.');
+      throw new Error(error.message || '쿠폰 발급에 실패했습니다.');
     }
   }
 
   /**
-   * 쿠폰 사용 (Firebase Function 호출)
+   * 쿠폰 사용 (REST API 호출)
    */
   static async useCoupon(
     userCouponId: string, 
@@ -407,32 +424,26 @@ export class CouponService {
     uid: string
   ): Promise<CouponResponse> {
     try {
-      const result = await useCouponFunction({ userCouponId, orderId, uid });
-      return result.data;
-    } catch (error) {
+      const result = await callCouponAPI('use', { userCouponId, orderId });
+      return { success: true, message: result.message, data: result };
+    } catch (error: any) {
       console.error('쿠폰 사용 실패:', error);
-      throw new Error('쿠폰 사용에 실패했습니다.');
+      throw new Error(error.message || '쿠폰 사용에 실패했습니다.');
     }
   }
 
   /**
-   * 쿠폰 코드로 등록 (Firebase Function 호출)
+   * 쿠폰 코드로 등록 (REST API 호출)
    */
   static async registerCouponByCode(uid: string, couponCode: string): Promise<CouponResponse> {
     try {
       console.log('쿠폰 등록 시도:', { uid, couponCode });
-      const result = await registerCouponFunction({ uid, couponCode });
-      console.log('쿠폰 등록 결과:', result.data);
-      return result.data;
-    } catch (error) {
+      const result = await callCouponAPI('register', { couponCode });
+      console.log('쿠폰 등록 결과:', result);
+      return { success: true, message: result.message, data: result };
+    } catch (error: any) {
       console.error('쿠폰 등록 실패 상세:', error);
-      
-      // Firebase Function 오류를 더 자세히 처리
-      if (error && typeof error === 'object' && 'message' in error) {
-        throw new Error(error.message as string);
-      }
-      
-      throw new Error('쿠폰 등록에 실패했습니다.');
+      throw new Error(error.message || '쿠폰 등록에 실패했습니다.');
     }
   }
 

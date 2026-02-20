@@ -122,17 +122,27 @@ export default function SignupPage() {
         createdAt: serverTimestamp(),
       });
 
-      // Firebase Functions를 통한 포인트 적립으로 변경
+      // Firebase Functions REST API를 통한 포인트 적립
       // 회원가입 완료 후 포인트 서비스를 통해 적립
       try {
-        const { getFunctions, httpsCallable } = await import('firebase/functions');
-        const functions = getFunctions();
-        const addPoint = httpsCallable(functions, 'addPoint');
+        const { getAuth } = await import('firebase/auth');
+        const auth = getAuth();
+        const idToken = await auth.currentUser?.getIdToken();
         
-        await addPoint({
-          amount: 5000,
-          description: '신규 회원가입 적립'
-        });
+        if (idToken) {
+          await fetch('/api/points', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${idToken}`,
+            },
+            body: JSON.stringify({
+              action: 'add',
+              amount: 5000,
+              description: '신규 회원가입 적립',
+            }),
+          });
+        }
       } catch (pointError) {
         console.error("포인트 적립 실패:", pointError);
       }

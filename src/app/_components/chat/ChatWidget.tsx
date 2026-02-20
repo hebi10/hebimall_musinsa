@@ -113,7 +113,15 @@ async function callChatAPI(params: ChatAPIParams): Promise<ChatAPIResponse> {
     throw new Error(`HTTP ${response.status}: ${errorText}`);
   }
 
-  return response.json();
+  const json = await response.json();
+
+  // 통합 응답 포맷 { success, data: { response } } 처리
+  if (json.success && json.data?.response) {
+    return { response: json.data.response };
+  }
+
+  // 레거시 포맷 호환 { response }
+  return json;
 }
 
 // ─── MessageText 컴포넌트 (split 1회) ──────────────────
@@ -190,7 +198,7 @@ const ChatWidget: React.FC = () => {
       const responseText =
         isConnect && useAI
           ? AI_CONNECTED_TEXT
-          : data.response || data.error || '응답을 받을 수 없습니다.';
+          : data.response || '응답을 받을 수 없습니다.';
 
       setMessages((prev) => [...prev, createMessage(responseText, 'bot')]);
     },
