@@ -240,6 +240,9 @@ export default function AdminProductsPage() {
           >
             🔄 새로고침
           </button>
+          <Link href="/admin/featured-products" className={styles.addButton}>
+            추천 상품 설정
+          </Link>
           <Link href="/admin/dashboard/products/add" className={styles.addButton}>
             상품 추가
           </Link>

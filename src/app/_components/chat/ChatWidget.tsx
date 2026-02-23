@@ -49,7 +49,7 @@ AI 상담원은 다음과 같은 도움을 드릴 수 있습니다:
 이제 채팅창에서 자유롭게 메시지를 입력하실 수 있습니다!`;
 
 const ERROR_TEXT =
-  '죄송합니다. 일시적인 문제가 발생했습니다. 잠시 후 다시 시도해 주시거나 고객센터(1588-0000)로 연락해 주세요.\n\n기본 상담은 "상담원연결" 버튼을 클릭하신 후 이용 가능합니다.';
+  '죄송합니다. 일시적인 문제가 발생했습니다. 잠시 후 다시 시도해 주시거나 고객센터(sevim0104@naver.com)로 연락해 주세요.';
 
 // ─── 타입 ──────────────────────────────────────────────
 export type ChatMode = 'idle' | 'menu' | 'ai';
@@ -190,16 +190,11 @@ const ChatWidget: React.FC = () => {
   const chatMutation = useMutation({
     mutationFn: async (params: ChatAPIParams) => {
       const data = await callChatAPI(params);
-      await typingDelay(); // 타이핑 딜레이를 mutation에 포함
-      return { data, message: params.message, useAI: params.useAI };
+      await typingDelay();
+      return data;
     },
-    onSuccess: ({ data, message, useAI }) => {
-      const isConnect = isAgentConnectCommand(message);
-      const responseText =
-        isConnect && useAI
-          ? AI_CONNECTED_TEXT
-          : data.response || '응답을 받을 수 없습니다.';
-
+    onSuccess: (data) => {
+      const responseText = data.response || '응답을 받을 수 없습니다.';
       setMessages((prev) => [...prev, createMessage(responseText, 'bot')]);
     },
     onError: () => {
@@ -253,9 +248,19 @@ const ChatWidget: React.FC = () => {
       if (!messageText.trim() || chatMutation.isPending) return;
 
       const isConnect = isAgentConnectCommand(messageText);
-      const shouldUseAI = isConnect || chatMode === 'ai';
 
-      if (isConnect) setChatMode('ai');
+      // 상담원연결: API 호출 없이 즉시 AI 모드 전환 + 안내 메시지 표시
+      if (isConnect) {
+        setChatMode('ai');
+        setMessages((prev) => [
+          ...prev,
+          createMessage(messageText, 'user'),
+          createMessage(AI_CONNECTED_TEXT, 'bot'),
+        ]);
+        return;
+      }
+
+      const shouldUseAI = chatMode === 'ai';
 
       // Optimistic: 사용자 메시지 즉시 추가
       setMessages((prev) => [...prev, createMessage(messageText, 'user')]);

@@ -182,7 +182,7 @@ export default function FeaturedProductManagePage() {
         <div className={styles.titleContainer}>
           <h1 className={styles.title}>추천 상품 관리</h1>
           <button 
-            onClick={() => router.push('/admin/dashboard')} 
+            onClick={() => router.push('/admin/')} 
             className={styles.backButton}
           >
             대시보드로 돌아가기
