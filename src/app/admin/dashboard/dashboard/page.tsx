@@ -80,7 +80,6 @@ export default function AdminDashboardPage() {
         fontSize: '1.2rem'
       }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '3rem', marginBottom: '20px' }}>🔐</div>
           <p>권한을 확인하는 중...</p>
         </div>
       </div>
@@ -105,7 +104,7 @@ export default function AdminDashboardPage() {
       change: '+12%', 
       isPositive: true, 
       color: 'blue',
-      icon: '👥'
+      icon: '사용자'
     },
     { 
       title: '총 상품', 
@@ -113,7 +112,7 @@ export default function AdminDashboardPage() {
       change: '+5%', 
       isPositive: true, 
       color: 'green',
-      icon: '📦'
+      icon: '상품'
     },
     { 
       title: '추천 상품', 
@@ -121,7 +120,7 @@ export default function AdminDashboardPage() {
       change: '활성화', 
       isPositive: true, 
       color: 'orange',
-      icon: '⭐'
+      icon: '추천'
     },
     { 
       title: '총 주문', 
@@ -129,7 +128,7 @@ export default function AdminDashboardPage() {
       change: '+18%', 
       isPositive: true, 
       color: 'purple',
-      icon: '�'
+      icon: '주문'
     },
     { 
       title: '매출액', 
@@ -137,7 +136,7 @@ export default function AdminDashboardPage() {
       change: '+25%', 
       isPositive: true, 
       color: 'red',
-      icon: '💰'
+      icon: '매출'
     },
     { 
       title: '반품 요청', 
@@ -145,7 +144,7 @@ export default function AdminDashboardPage() {
       change: '-15%', 
       isPositive: false, 
       color: 'cyan',
-      icon: '↩️'
+      icon: '반품'
     },
   ];
 
@@ -197,31 +196,31 @@ export default function AdminDashboardPage() {
       id: '1',
       text: '새로운 주문이 접수되었습니다 (#12346)',
       time: '5분 전',
-      icon: '🛒'
+      icon: '주문'
     },
     {
       id: '2',
       text: '상품 재고가 부족합니다 (아디다스 운동화)',
       time: '15분 전',
-      icon: '⚠️'
+      icon: '경고'
     },
     {
       id: '3',
       text: '새로운 사용자가 가입했습니다 (이진우)',
       time: '1시간 전',
-      icon: '👤'
+      icon: '신규'
     },
     {
       id: '4',
       text: '반품 요청이 처리되었습니다 (#12340)',
       time: '2시간 전',
-      icon: '↩️'
+      icon: '반품'
     },
     {
       id: '5',
       text: '상품 리뷰가 등록되었습니다',
       time: '3시간 전',
-      icon: '⭐'
+      icon: '리뷰'
     },
   ];
 
@@ -240,7 +239,7 @@ export default function AdminDashboardPage() {
             </div>
             <div className={styles.headerRight}>
               <div className={styles.userInfo}>
-                👨‍💼 관리자
+                관리자
               </div>
               <button 
                 onClick={handleLogout} 
@@ -258,7 +257,7 @@ export default function AdminDashboardPage() {
         <div style={{ marginBottom: '30px' }}>
           <h2 className={styles.pageTitle}>관리자 대시보드</h2>
           <p className={styles.pageSubtitle}>
-            📅 {currentTime} • STYNA 통합 관리 시스템
+            {currentTime} • STYNA 통합 관리 시스템
           </p>
         </div>
 
@@ -285,7 +284,7 @@ export default function AdminDashboardPage() {
           {/* 최근 주문 */}
           <div className={styles.dashboardCard}>
             <h3 className={styles.cardTitle}>
-              🛒 최근 주문 현황
+              최근 주문 현황
             </h3>
             <table className={styles.ordersTable}>
               <thead>
@@ -318,26 +317,26 @@ export default function AdminDashboardPage() {
           {/* 빠른 작업 */}
           <div className={styles.dashboardCard}>
             <h3 className={styles.cardTitle}>
-              ⚡ 빠른 작업
+              빠른 작업
             </h3>
             <div className={styles.quickActions}>
               <Link href="/admin/dashboard/products/add" className={styles.actionButton}>
-                📦 새 상품 등록
+                새 상품 등록
               </Link>
               <Link href="/admin/featured-products" className={styles.actionButton}>
-                ⭐ 추천 상품 관리
+                추천 상품 관리
               </Link>
               <Link href="/admin/recommendations" className={`${styles.actionButton} ${styles.secondary}`}>
-                🤖 추천 알고리즘 설정
+                추천 알고리즘 설정
               </Link>
               <Link href="/admin/dashboard/orders" className={`${styles.actionButton} ${styles.secondary}`}>
-                � 주문 관리
+                주문 관리
               </Link>
               <Link href="/admin/dashboard/users" className={`${styles.actionButton} ${styles.tertiary}`}>
-                � 사용자 관리
+                사용자 관리
               </Link>
               <button className={styles.actionButton}>
-                � 보고서 생성
+                보고서 생성
               </button>
             </div>
           </div>
@@ -346,7 +345,7 @@ export default function AdminDashboardPage() {
         {/* 최근 활동 */}
         <div className={styles.dashboardCard}>
           <h3 className={styles.cardTitle}>
-            📋 최근 활동
+            최근 활동
           </h3>
           <div className={styles.activityList}>
             {recentActivity.map((activity) => (

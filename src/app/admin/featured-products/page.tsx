@@ -34,16 +34,16 @@ export default function FeaturedProductManagePage() {
     try {
       setLoading(true);
       setError(null);
-      console.log('🚀 관리자 페이지 데이터 로딩 시작...');
+      console.log('관리자 페이지 데이터 로딩 시작...');
 
       const [configData, productsData] = await Promise.all([
         FeaturedProductService.getFeaturedProductConfig(),
         ProductService.getAllProducts()
       ]);
 
-      console.log('📦 로드된 설정:', configData);
-      console.log('📦 로드된 상품 개수:', productsData.length);
-      console.log('📦 상품 샘플:', productsData.slice(0, 3));
+      console.log('로드된 설정:', configData);
+      console.log('로드된 상품 개수:', productsData.length);
+      console.log('상품 샘플:', productsData.slice(0, 3));
 
       setConfig(configData);
       setAllProducts(productsData);
@@ -57,20 +57,20 @@ export default function FeaturedProductManagePage() {
 
         // 선택된 상품들 로드
         if (configData.productIds && configData.productIds.length > 0) {
-          console.log('🔍 선택된 상품 ID들:', configData.productIds);
+          console.log('선택된 상품 ID들:', configData.productIds);
           const selectedProductsData = productsData.filter(product => 
             configData.productIds.includes(product.id)
           );
-          console.log('✅ 매칭된 선택된 상품들:', selectedProductsData);
+          console.log('매칭된 선택된 상품들:', selectedProductsData);
           setSelectedProducts(selectedProductsData);
         } else {
-          console.log('⚠️ 선택된 상품 ID가 없습니다.');
+          console.log('선택된 상품 ID가 없습니다.');
         }
       } else {
-        console.log('⚠️ 설정 데이터가 없습니다.');
+        console.log('설정 데이터가 없습니다.');
       }
     } catch (err) {
-      console.error('❌ 데이터 로딩 실패:', err);
+      console.error('데이터 로딩 실패:', err);
       setError(`데이터를 불러오는데 실패했습니다: ${err instanceof Error ? err.message : '알 수 없는 오류'}`);
     } finally {
       setLoading(false);
@@ -102,7 +102,7 @@ export default function FeaturedProductManagePage() {
     try {
       setSaving(true);
       setError(null);
-      console.log('💾 저장 시작...', { selectedProducts: selectedProducts.length });
+      console.log('저장 시작...', { selectedProducts: selectedProducts.length });
 
       const productIds = selectedProducts.map(p => p.id);
       
@@ -124,7 +124,7 @@ export default function FeaturedProductManagePage() {
       // 데이터 새로고침
       await loadData();
     } catch (err) {
-      console.error('❌ 저장 실패:', err);
+      console.error('저장 실패:', err);
       setError(`저장에 실패했습니다: ${err instanceof Error ? err.message : '알 수 없는 오류'}`);
     } finally {
       setSaving(false);
@@ -157,7 +157,7 @@ export default function FeaturedProductManagePage() {
     setSuccess(`자동으로 ${topProducts.length}개 상품을 선택했습니다!`);
     setTimeout(() => setSuccess(null), 3000);
 
-    console.log('🤖 자동 선택된 상품들:', topProducts.map(p => `${p.name} (⭐${p.rating})`));
+    console.log('자동 선택된 상품들:', topProducts.map(p => `${p.name} (평점: ${p.rating})`));
   };
 
   const filteredProducts = allProducts.filter(product =>
@@ -195,14 +195,14 @@ export default function FeaturedProductManagePage() {
 
       {error && (
         <div className={styles.errorAlert}>
-          <span className={styles.errorIcon}>❌</span>
+          <span className={styles.errorIcon}>[X]</span>
           {error}
         </div>
       )}
 
       {success && (
         <div className={styles.successAlert}>
-          <span className={styles.successIcon}>✅</span>
+          <span className={styles.successIcon}>[O]</span>
           {success}
         </div>
       )}
@@ -373,7 +373,7 @@ export default function FeaturedProductManagePage() {
                     {product.price.toLocaleString()}원
                   </p>
                   <div className={styles.productMeta}>
-                    <span className={styles.rating}>⭐ {product.rating}</span>
+                    <span className={styles.rating}>평점: {product.rating}</span>
                     <span className={styles.stock}>재고: {product.stock}</span>
                   </div>
                 </div>

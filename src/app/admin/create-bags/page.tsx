@@ -9,7 +9,7 @@ const bagsCategory = {
   id: 'bags',
   name: 'Bags',
   description: '실용성과 스타일을 겸비한 가방 컬렉션',
-  icon: '👜',
+  icon: '',
   color: '#ffc107',
   order: 3,
   isActive: true,
@@ -38,18 +38,18 @@ export default function CreateBagsCategory() {
 
   const createBagsCategory = async () => {
     setIsLoading(true);
-    setStatus('👜 가방 카테고리 생성 시작...');
+    setStatus('가방 카테고리 생성 시작...');
     setProgress(0);
 
     try {
       // 1. 가방 카테고리 문서 생성
       const categoryRef = doc(db, 'categories', 'bags');
       await setDoc(categoryRef, bagsCategory);
-      setStatus('✅ 가방 카테고리 문서 생성 완료');
+      setStatus('가방 카테고리 문서 생성 완료');
       setProgress(10);
 
       // 2. 가방 상품들 추가
-      setStatus('📦 가방 상품 추가 중...');
+      setStatus('가방 상품 추가 중...');
       
       let addedCount = 0;
       
@@ -72,18 +72,18 @@ export default function CreateBagsCategory() {
         
         const progressPercent = 10 + Math.round((i + 1) / bagsProducts.length * 90);
         setProgress(progressPercent);
-        setStatus(`📦 상품 추가 중... (${addedCount}/${bagsProducts.length}) - ${product.name}`);
+        setStatus(`상품 추가 중... (${addedCount}/${bagsProducts.length}) - ${product.name}`);
         
         // 너무 빠르게 실행되지 않도록 약간의 지연
         await new Promise(resolve => setTimeout(resolve, 200));
       }
 
-      setStatus(`🎉 가방 카테고리 및 상품 생성 완료!\n📊 카테고리: bags\n📦 상품 수: ${addedCount}개\n🔗 경로: /categories/bags/products`);
+      setStatus(`가방 카테고리 및 상품 생성 완료!\n카테고리: bags\n상품 수: ${addedCount}개\n경로: /categories/bags/products`);
       setProgress(100);
 
     } catch (error) {
       console.error('생성 실패:', error);
-      setStatus(`❌ 생성 실패: ${error instanceof Error ? error.message : String(error)}`);
+      setStatus(`생성 실패: ${error instanceof Error ? error.message : String(error)}`);
     } finally {
       setIsLoading(false);
     }
@@ -91,7 +91,7 @@ export default function CreateBagsCategory() {
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">👜 가방 카테고리 생성</h1>
+      <h1 className="text-2xl font-bold mb-6">가방 카테고리 생성</h1>
       
       <div className="mb-6">
         <button

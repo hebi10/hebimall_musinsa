@@ -22,7 +22,7 @@ export default function FixKoreanDocuments() {
     try {
       for (const mapping of mappings) {
         const { koreanId, englishId, englishName } = mapping;
-        setStatus(`🔄 "${koreanId}" → "${englishId}" 처리 중...`);
+        setStatus(`"${koreanId}" → "${englishId}" 처리 중...`);
 
         // 1. 한국어 문서 확인
         const koreanDocRef = doc(db, 'categories', koreanId);
@@ -60,7 +60,7 @@ export default function FixKoreanDocuments() {
             });
           }
           
-          setStatus(`✅ "${koreanId}" 상품들을 기존 "${englishId}" 카테고리에 병합`);
+          setStatus(`"${koreanId}" 상품들을 기존 "${englishId}" 카테고리에 병합`);
         } else {
           // 영어 문서가 없으면 새로 생성
           await setDoc(englishDocRef, {
@@ -84,7 +84,7 @@ export default function FixKoreanDocuments() {
             });
           }
           
-          setStatus(`✅ "${koreanId}" → "${englishId}" 새 카테고리 생성 및 상품 이동`);
+          setStatus(`"${koreanId}" → "${englishId}" 새 카테고리 생성 및 상품 이동`);
         }
 
         // 4. 한국어 문서의 모든 상품 삭제
@@ -95,14 +95,14 @@ export default function FixKoreanDocuments() {
         // 5. 한국어 카테고리 문서 삭제
         await deleteDoc(koreanDocRef);
         
-        console.log(`🗑️ "${koreanId}" 카테고리 삭제 완료`);
+        console.log(`"${koreanId}" 카테고리 삭제 완료`);
       }
 
-      setStatus('🎉 모든 한국어 카테고리 문서 수정 완료!');
+      setStatus('모든 한국어 카테고리 문서 수정 완료!');
 
     } catch (error) {
       console.error('수정 실패:', error);
-      setStatus(`❌ 실패: ${error instanceof Error ? error.message : String(error)}`);
+      setStatus(`실패: ${error instanceof Error ? error.message : String(error)}`);
     } finally {
       setIsLoading(false);
     }
@@ -116,7 +116,7 @@ export default function FixKoreanDocuments() {
       const categoriesRef = collection(db, 'categories');
       const snapshot = await getDocs(categoriesRef);
 
-      let statusText = '📊 현재 카테고리 상태:\n\n';
+      let statusText = '현재 카테고리 상태:\n\n';
       
       const koreanCategories = [];
       const englishCategories = [];
@@ -143,7 +143,7 @@ export default function FixKoreanDocuments() {
         }
       }
 
-      statusText += '🇰🇷 한국어 카테고리:\n';
+      statusText += '[한국어] 한국어 카테고리:\n';
       if (koreanCategories.length === 0) {
         statusText += '   없음\n';
       } else {
@@ -152,7 +152,7 @@ export default function FixKoreanDocuments() {
         });
       }
 
-      statusText += '\n🇺🇸 영어 카테고리:\n';
+      statusText += '\n[영어] 영어 카테고리:\n';
       englishCategories.forEach(cat => {
         statusText += `   • "${cat.id}" (${cat.name}) - ${cat.productCount}개 상품\n`;
       });
@@ -160,7 +160,7 @@ export default function FixKoreanDocuments() {
       setStatus(statusText);
 
     } catch (error) {
-      setStatus(`❌ 확인 실패: ${error instanceof Error ? error.message : String(error)}`);
+      setStatus(`확인 실패: ${error instanceof Error ? error.message : String(error)}`);
     } finally {
       setIsLoading(false);
     }
@@ -195,14 +195,14 @@ export default function FixKoreanDocuments() {
       )}
       
       <div className="mt-8 p-4 bg-yellow-50 rounded border-l-4 border-yellow-400">
-        <h3 className="font-semibold mb-2">⚠️ 현재 문제 상황:</h3>
+        <h3 className="font-semibold mb-2">현재 문제 상황:</h3>
         <ul className="text-sm space-y-1">
           <li>• 카테고리 문서 ID가 한국어: `/categories/가방`, `/categories/상의` 등</li>
           <li>• 웹 애플리케이션에서 영어 ID로 접근할 때 문제 발생</li>
           <li>• URL 경로도 한국어로 되어 혼란 야기</li>
         </ul>
         
-        <h3 className="font-semibold mt-4 mb-2">🔧 수정 작업:</h3>
+        <h3 className="font-semibold mt-4 mb-2">수정 작업:</h3>
         <ol className="list-decimal list-inside text-sm space-y-1">
           <li>한국어 문서의 모든 상품과 데이터 백업</li>
           <li>영어 ID로 새 카테고리 문서 생성 (또는 기존 영어 문서에 병합)</li>

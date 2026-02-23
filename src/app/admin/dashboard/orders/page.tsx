@@ -110,7 +110,7 @@ export default function AdminOrdersPage() {
         fontSize: '1.2rem'
       }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '3rem', marginBottom: '20px' }}>🔐</div>
+          <div style={{ fontSize: '3rem', marginBottom: '20px' }}></div>
           <p>권한을 확인하는 중...</p>
         </div>
       </div>
@@ -129,7 +129,7 @@ export default function AdminOrdersPage() {
         fontSize: '1.1rem'
       }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '3rem', marginBottom: '20px' }}>🚫</div>
+          <div style={{ fontSize: '3rem', marginBottom: '20px' }}></div>
           <p>관리자 권한이 필요합니다.</p>
           <button 
             onClick={() => router.push('/auth/login')}
@@ -249,7 +249,7 @@ export default function AdminOrdersPage() {
             </div>
             <div className={styles.headerRight}>
               <div className={styles.userInfo}>
-                👨‍💼 관리자
+                관리자
               </div>
               <button 
                 onClick={handleLogout} 
@@ -306,7 +306,7 @@ export default function AdminOrdersPage() {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className={styles.searchInput}
               />
-              <span className={styles.searchIcon}>🔍</span>
+              <span className={styles.searchIcon}></span>
             </div>
             
             <select
@@ -324,11 +324,11 @@ export default function AdminOrdersPage() {
             </select>
 
             <button onClick={handleExport} className={styles.exportButton}>
-              📊 CSV 내보내기
+              CSV 내보내기
             </button>
 
             <button onClick={loadOrders} className={styles.refreshButton}>
-              🔄 새로고침
+              새로고침
             </button>
           </div>
         </div>
@@ -336,7 +336,7 @@ export default function AdminOrdersPage() {
         {/* 주문 테이블 */}
         <div className={styles.ordersTable}>
           <div className={styles.tableHeader}>
-            <h3 className={styles.tableTitle}>🛒 주문 목록</h3>
+            <h3 className={styles.tableTitle}>주문 목록</h3>
           </div>
           
           {isLoading ? (

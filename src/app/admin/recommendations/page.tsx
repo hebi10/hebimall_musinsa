@@ -202,7 +202,7 @@ export default function RecommendationsAdminPage() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1>⭐ 추천 상품 관리</h1>
+        <h1>추천 상품 관리</h1>
         <p>추천 알고리즘 설정 및 수동 추천 상품을 관리합니다</p>
         
         <div className={styles.summary}>
@@ -266,13 +266,13 @@ export default function RecommendationsAdminPage() {
                   
                   <div className={styles.settingsStats}>
                     <span className={styles.statItem}>
-                      📊 {recommendedProducts.length}개 상품
+                      {recommendedProducts.length}개 상품
                     </span>
                     <span className={styles.statItem}>
-                      🔥 {settings.isActive ? '활성' : '비활성'}
+                      {settings.isActive ? '활성' : '비활성'}
                     </span>
                     <span className={styles.statItem}>
-                      📅 순서: {settings.order}
+                      순서: {settings.order}
                     </span>
                   </div>
                   
@@ -280,27 +280,27 @@ export default function RecommendationsAdminPage() {
                   <div className={styles.criteria}>
                     {settings.criteria.minRating && (
                       <span className={styles.criteriaItem}>
-                        ⭐ 평점 {settings.criteria.minRating}점 이상
+                        평점 {settings.criteria.minRating}점 이상
                       </span>
                     )}
                     {settings.criteria.minReviews && (
                       <span className={styles.criteriaItem}>
-                        💬 리뷰 {settings.criteria.minReviews}개 이상
+                        리뷰 {settings.criteria.minReviews}개 이상
                       </span>
                     )}
                     {settings.criteria.minSaleRate && (
                       <span className={styles.criteriaItem}>
-                        🔥 할인율 {settings.criteria.minSaleRate}% 이상
+                        할인율 {settings.criteria.minSaleRate}% 이상
                       </span>
                     )}
                     {settings.criteria.maxDaysOld && (
                       <span className={styles.criteriaItem}>
-                        ✨ {settings.criteria.maxDaysOld}일 이내 신상품
+                        {settings.criteria.maxDaysOld}일 이내 신상품
                       </span>
                     )}
                     {settings.type === 'manual' && (
                       <span className={styles.criteriaItem}>
-                        👤 수동 선택 ({settings.productIds?.length || 0}개)
+                        수동 선택 ({settings.productIds?.length || 0}개)
                       </span>
                     )}
                   </div>
@@ -458,7 +458,7 @@ export default function RecommendationsAdminPage() {
                             <div className={styles.productInfo}>
                               <span className={styles.productName}>{product.name}</span>
                               <span className={styles.productDetails}>
-                                {product.brand} | ⭐{product.rating} | 💬{product.reviewCount}
+                                {product.brand} | {product.rating} | {product.reviewCount}
                               </span>
                             </div>
                           </label>
@@ -491,7 +491,7 @@ export default function RecommendationsAdminPage() {
         {previewProducts.length > 0 && (
           <div className={styles.previewSection}>
             <div className={styles.previewHeader}>
-              <h3>🔍 미리보기 ({previewProducts.length}개)</h3>
+              <h3>미리보기 ({previewProducts.length}개)</h3>
               <button 
                 onClick={() => setPreviewProducts([])}
                 className={styles.closePreviewButton}
@@ -508,7 +508,7 @@ export default function RecommendationsAdminPage() {
                       <img src={product.mainImage} alt={product.name} />
                     ) : (
                       <div className={styles.placeholderImage}>
-                        📦
+                        
                       </div>
                     )}
                   </div>
@@ -516,9 +516,9 @@ export default function RecommendationsAdminPage() {
                     <h4>{product.name}</h4>
                     <p>{product.brand}</p>
                     <div className={styles.previewStats}>
-                      <span>⭐ {product.rating}</span>
-                      <span>💬 {product.reviewCount}</span>
-                      {product.isSale && <span>🔥 {product.saleRate}%</span>}
+                      <span>{product.rating}</span>
+                      <span>{product.reviewCount}</span>
+                      {product.isSale && <span>{product.saleRate}%</span>}
                     </div>
                     <div className={styles.previewPrice}>
                       {product.price.toLocaleString()}원

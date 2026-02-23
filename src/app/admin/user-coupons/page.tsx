@@ -204,9 +204,9 @@ export default function AdminUserCouponsPage() {
                     <h4>선택된 쿠폰</h4>
                     <div className={styles.couponCard}>
                       <div className={styles.couponType}>
-                        {coupon.type === '할인금액' && '💰'}
-                        {coupon.type === '할인율' && '📊'}
-                        {coupon.type === '무료배송' && '🚚'}
+                        {coupon.type === '할인금액' && ''}
+                        {coupon.type === '할인율' && ''}
+                        {coupon.type === '무료배송' && ''}
                       </div>
                       <div className={styles.couponDetails}>
                         <h5>{coupon.name}</h5>
@@ -255,7 +255,7 @@ export default function AdminUserCouponsPage() {
 
       {/* 지급 내역 */}
       <div className={styles.historySection}>
-        <h3>📋 최근 지급 내역</h3>
+        <h3>최근 지급 내역</h3>
         <div className={styles.historyList}>
           <div className={styles.historyItem}>
             <div className={styles.historyDate}>2024.08.11 14:30</div>

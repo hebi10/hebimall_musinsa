@@ -24,7 +24,6 @@ export default function AdminSeedPage() {
         fontSize: '1.2rem'
       }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '3rem', marginBottom: '20px' }}>🔐</div>
           <p>권한을 확인하는 중...</p>
         </div>
       </div>
@@ -44,7 +43,6 @@ export default function AdminSeedPage() {
         fontSize: '1.1rem'
       }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '3rem', marginBottom: '20px' }}>🚫</div>
           <p>관리자 권한이 필요합니다.</p>
           <button 
             onClick={() => router.push('/auth/login')}
@@ -89,7 +87,7 @@ export default function AdminSeedPage() {
 
       <div className={styles.content}>
         <div className={styles.warning}>
-          <h3>⚠️ 주의사항</h3>
+          <h3>주의사항</h3>
           <p>이 기능은 개발 환경에서만 사용하세요. 기존 데이터가 덮어씌워질 수 있습니다.</p>
         </div>
 

@@ -31,7 +31,7 @@ export default function AdminUsersPage() {
   // 사용자 데이터 로드
   const loadUsers = async () => {
     try {
-      console.log('🔍 loadUsers 시작...');
+      console.log('loadUsers 시작...');
       setIsLoading(true);
       setError(null);
       
@@ -41,17 +41,17 @@ export default function AdminUsersPage() {
         status: statusFilter !== 'all' ? statusFilter : undefined,
       };
 
-      console.log('📋 필터 설정:', filters);
+      console.log('필터 설정:', filters);
       const { users: fetchedUsers } = await AdminUserService.getUsers(filters, currentPage, 10);
-      console.log('👥 사용자 데이터 조회 완료:', fetchedUsers);
+      console.log('사용자 데이터 조회 완료:', fetchedUsers);
       
       const userStats = await AdminUserService.getUserStats();
-      console.log('📊 사용자 통계:', userStats);
+      console.log('사용자 통계:', userStats);
       
       setUsers(fetchedUsers);
       setStats(userStats);
     } catch (err) {
-      console.error('❌ Error loading users:', err);
+      console.error('Error loading users:', err);
       const errorMessage = err instanceof Error ? err.message : String(err);
       setError(`사용자 데이터를 불러오는데 실패했습니다: ${errorMessage}`);
     } finally {
@@ -83,7 +83,7 @@ export default function AdminUsersPage() {
         fontSize: '1.2rem'
       }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '3rem', marginBottom: '20px' }}>🔐</div>
+          <div style={{ fontSize: '3rem', marginBottom: '20px' }}></div>
           <p>권한을 확인하는 중...</p>
         </div>
       </div>
@@ -103,7 +103,7 @@ export default function AdminUsersPage() {
         fontSize: '1.1rem'
       }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '3rem', marginBottom: '20px' }}>🚫</div>
+          <div style={{ fontSize: '3rem', marginBottom: '20px' }}></div>
           <p>관리자 권한이 필요합니다.</p>
           <button 
             onClick={() => router.push('/auth/login')}
@@ -225,7 +225,7 @@ export default function AdminUsersPage() {
     const role = confirm('관리자 권한을 부여하시겠습니까?') ? 'admin' : 'user';
     
     try {
-      console.log('👤 새 사용자 생성 중:', { name, email, role });
+      console.log('새 사용자 생성 중:', { name, email, role });
       await AdminUserService.createUser({ name, email, role });
       alert('사용자가 성공적으로 추가되었습니다.');
       await loadUsers();
@@ -321,7 +321,7 @@ export default function AdminUsersPage() {
             </div>
             <div className={styles.headerRight}>
               <div className={styles.userInfo}>
-                👨‍💼 관리자
+                관리자
               </div>
               <button 
                 onClick={handleLogout} 
@@ -378,7 +378,7 @@ export default function AdminUsersPage() {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className={styles.searchInput}
               />
-              <span className={styles.searchIcon}>🔍</span>
+              <span className={styles.searchIcon}></span>
             </div>
             
             <select
@@ -403,15 +403,15 @@ export default function AdminUsersPage() {
             </select>
 
             <button onClick={handleAddUser} className={styles.addButton}>
-              ➕ 사용자 추가
+              사용자 추가
             </button>
 
             <button onClick={handleBulkPointGift} className={styles.pointButton}>
-              💰 일괄 포인트 지급
+              일괄 포인트 지급
             </button>
 
             <button onClick={handleExport} className={styles.exportButton}>
-              📊 CSV 내보내기
+              CSV 내보내기
             </button>
           </div>
         </div>
@@ -419,7 +419,7 @@ export default function AdminUsersPage() {
         {/* 사용자 테이블 */}
         <div className={styles.usersTable}>
           <div className={styles.tableHeader}>
-            <h3 className={styles.tableTitle}>👥 사용자 목록</h3>
+            <h3 className={styles.tableTitle}>사용자 목록</h3>
           </div>
           
           {isLoading ? (
@@ -437,11 +437,11 @@ export default function AdminUsersPage() {
           ) : filteredUsers.length === 0 ? (
             <div className={styles.emptyState}>
               <div style={{ textAlign: 'center', padding: '40px' }}>
-                <h3>👥 사용자가 없습니다</h3>
+                <h3>사용자가 없습니다</h3>
                 <p>아직 등록된 사용자가 없거나 검색 조건에 맞는 사용자가 없습니다.</p>
                 <div style={{ marginTop: '20px' }}>
                   <button onClick={handleAddUser} className={styles.addButton}>
-                    ➕ 첫 번째 사용자 추가
+                    첫 번째 사용자 추가
                   </button>
                 </div>
                 <div style={{ marginTop: '20px', fontSize: '14px', color: '#666' }}>

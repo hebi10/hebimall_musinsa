@@ -409,7 +409,7 @@ export default function EditProductForm({ product, onSave, onCancel }: EditProdu
 
     // 이미 저장 중이거나 업로드 중이면 무시
     if (isSaving || uploading) {
-      console.log('⏳ 이미 처리 중입니다. 중복 요청을 무시합니다.');
+      console.log('이미 처리 중입니다. 중복 요청을 무시합니다.');
       return;
     }
 

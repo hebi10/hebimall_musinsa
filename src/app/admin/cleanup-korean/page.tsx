@@ -64,9 +64,9 @@ export default function CleanupKoreanCategories() {
             }))
           });
           
-          console.log(`✅ "${koreanId}" 발견 - ${productsSnap.size}개 상품`);
+          console.log(`"${koreanId}" 발견 - ${productsSnap.size}개 상품`);
         } else {
-          console.log(`❌ "${koreanId}" 없음`);
+          console.log(`"${koreanId}" 없음`);
         }
       }
       
@@ -109,7 +109,7 @@ export default function CleanupKoreanCategories() {
         const categoryRef = doc(db, 'categories', koreanId);
         await deleteDoc(categoryRef);
         
-        console.log(`✅ "${koreanId}" 문서 삭제 완료`);
+        console.log(`"${koreanId}" 문서 삭제 완료`);
         deletedCount++;
       }
       

@@ -56,7 +56,7 @@ export default function MigrateProducts() {
             updatedAt: new Date()
           });
 
-          console.log(`✅ ${productData.name} → ${to} 카테고리로 이동`);
+          console.log(`${productData.name} → ${to} 카테고리로 이동`);
           movedCount++;
         }
 
@@ -76,7 +76,7 @@ export default function MigrateProducts() {
           status: '완료'
         });
 
-        console.log(`🎉 ${from} → ${to}: ${movedCount}개 상품 마이그레이션 완료`);
+        console.log(`${from} → ${to}: ${movedCount}개 상품 마이그레이션 완료`);
       }
 
       setResults(migrationResults);

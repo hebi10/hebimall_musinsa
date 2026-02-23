@@ -37,7 +37,7 @@ export default function AdminProductsPage() {
         const categoriesData = await getCategoryNames();
         setCategories(Object.entries(categoriesData).map(([id, name]) => ({ id, name })));
       } catch (error) {
-        console.error('❌ 카테고리 목록 로드 실패:', error);
+        console.error('카테고리 목록 로드 실패:', error);
         // 기본 카테고리 설정 (fallback)
         setCategories([
           { id: 'tops', name: '상의' },
@@ -64,7 +64,7 @@ export default function AdminProductsPage() {
     
     // 인증 완료 후 한 번만 데이터 로드 (중복 방지)
     if (!hasLoadedRef.current && !isLoadingRef.current) {
-      console.log('✅ 관리자 권한 확인됨 - 상품 데이터 로드 중...');
+      console.log('관리자 권한 확인됨 - 상품 데이터 로드 중...');
       isLoadingRef.current = true;
       loadProducts(true).finally(() => {
         isLoadingRef.current = false;
@@ -77,11 +77,11 @@ export default function AdminProductsPage() {
   const handleForceRefresh = useCallback(() => {
     // 이미 로딩 중이면 무시
     if (isLoadingRef.current) {
-      console.log('⏳ 이미 로딩 중입니다. 새로고침을 무시합니다.');
+      console.log('이미 로딩 중입니다. 새로고침을 무시합니다.');
       return;
     }
 
-    console.log('🔄 관리자 페이지 - 강제 새로고침 시작...');
+    console.log('관리자 페이지 - 강제 새로고침 시작...');
     setCurrentPage(1); // 페이지를 첫 페이지로 리셋
     hasLoadedRef.current = false; // 로드 플래그 리셋
     isLoadingRef.current = true;
@@ -95,7 +95,7 @@ export default function AdminProductsPage() {
   // 상품 삭제 처리 (중복 방지)
   const handleDeleteProduct = useCallback(async (productId: string) => {
     if (isLoadingRef.current) {
-      console.log('⏳ 로딩 중에는 삭제할 수 없습니다.');
+      console.log('로딩 중에는 삭제할 수 없습니다.');
       return;
     }
 
@@ -238,7 +238,7 @@ export default function AdminProductsPage() {
             className={styles.refreshButton}
             title="데이터 새로고침"
           >
-            🔄 새로고침
+            새로고침
           </button>
           <Link href="/admin/featured-products" className={styles.addButton}>
             추천 상품 설정

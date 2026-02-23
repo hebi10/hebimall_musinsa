@@ -119,14 +119,14 @@ export default function AddProductModal() {
 
     try {
       setUploading(true);
-      console.log('📤 이미지 업로드 시작:', files.length, '개 파일');
+      console.log('이미지 업로드 시작:', files.length, '개 파일');
       
       // 파일 유효성 검사
       const fileArray = Array.from(files);
       const { valid, errors } = validateImageFiles(fileArray);
       
       if (errors.length > 0) {
-        console.warn('⚠️ 파일 유효성 검사 오류:', errors);
+        console.warn('파일 유효성 검사 오류:', errors);
         alert(errors.join('\n'));
         if (valid.length === 0) {
           setUploading(false);
@@ -134,7 +134,7 @@ export default function AddProductModal() {
         }
       }
       
-      console.log('✅ 유효한 파일:', valid.length, '개');
+      console.log('유효한 파일:', valid.length, '개');
       
       // 임시 상품 ID 생성 (실제 상품 추가 시 사용될 ID)
       const tempProductId = generateId();
@@ -145,7 +145,7 @@ export default function AddProductModal() {
         basicFields.category,
         tempProductId,
         (progress: number, fileName: string) => {
-          console.log(`📊 업로드 진행률: ${fileName} - ${progress}%`);
+          console.log(`업로드 진행률: ${fileName} - ${progress}%`);
           setUploadProgress(prev => ({
             ...prev,
             [fileName]: progress
@@ -153,7 +153,7 @@ export default function AddProductModal() {
         }
       );
       
-      console.log('✅ 이미지 업로드 완료:', uploadedUrls);
+      console.log('이미지 업로드 완료:', uploadedUrls);
       
       setComplexFields(prev => ({
         ...prev,
@@ -166,7 +166,7 @@ export default function AddProductModal() {
       alert(`${uploadedUrls.length}개의 이미지가 성공적으로 업로드되었습니다.`);
       
     } catch (error) {
-      console.error('❌ 이미지 업로드 실패:', error);
+      console.error('이미지 업로드 실패:', error);
       const errorMessage = error instanceof Error ? error.message : '이미지 업로드에 실패했습니다.';
       alert(`이미지 업로드 실패: ${errorMessage}`);
     } finally {
@@ -186,7 +186,7 @@ export default function AddProductModal() {
     e.preventDefault();
     
     try {
-      console.log('💾 상품 추가 시작...');
+      console.log('상품 추가 시작...');
       
       // 필수 필드 검증
       if (!basicFields.name.trim()) {
@@ -261,16 +261,16 @@ export default function AddProductModal() {
         newProduct.saleRate = Number(basicFields.saleRate);
       }
       
-      console.log('📤 추가할 상품 데이터:', newProduct);
+      console.log('추가할 상품 데이터:', newProduct);
       
       await createProduct(newProduct);
       
-      console.log('✅ 상품 추가 완료');
+      console.log('상품 추가 완료');
       alert('상품이 성공적으로 추가되었습니다.');
       router.push('/admin/dashboard/products');
       
     } catch (error) {
-      console.error('❌ 상품 추가 실패:', error);
+      console.error('상품 추가 실패:', error);
       const errorMessage = error instanceof Error ? error.message : '상품 추가에 실패했습니다.';
       alert(`상품 추가 실패: ${errorMessage}`);
     } finally {

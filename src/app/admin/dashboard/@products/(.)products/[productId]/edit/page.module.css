@@ -60,7 +60,7 @@
   margin: 0;
   padding: 24px 60px 20px 32px; /* 오른쪽에 닫기 버튼 공간 확보 */
   border-bottom: 1px solid #f1f3f4;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #001366;
   color: white;
   position: sticky;
   top: 0;
@@ -238,15 +238,6 @@
   font-weight: bold;
   transition: all 0.2s ease;
   z-index: 20;
-}
-
-.closeButton:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: scale(1.1);
-}
-
-.closeButton:active {
-  transform: scale(0.95);
 }
 
 /* 애니메이션 효과 */

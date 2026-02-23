@@ -14,39 +14,39 @@ export default function FirebaseStorageTest() {
     
     try {
       // 1. Storage 연결 테스트
-      setTestResult(prev => prev + '🔧 Firebase Storage 연결 테스트 시작...\n');
+      setTestResult(prev => prev + 'Firebase Storage 연결 테스트 시작...\n');
       
       if (!storage) {
         throw new Error('Firebase Storage가 초기화되지 않았습니다.');
       }
       
-      setTestResult(prev => prev + '✅ Firebase Storage 연결 성공\n');
+      setTestResult(prev => prev + 'Firebase Storage 연결 성공\n');
       
       // 2. 테스트 파일 생성 및 업로드
-      setTestResult(prev => prev + '📤 테스트 파일 업로드 시작...\n');
+      setTestResult(prev => prev + '테스트 파일 업로드 시작...\n');
       
       const testFile = new File(['test content'], 'test.txt', { type: 'text/plain' });
       const testPath = `test/admin-test/${Date.now()}_test.txt`;
       const testRef = ref(storage, testPath);
       
       const uploadResult = await uploadBytes(testRef, testFile);
-      setTestResult(prev => prev + `✅ 파일 업로드 성공: ${uploadResult.metadata.fullPath}\n`);
+      setTestResult(prev => prev + `파일 업로드 성공: ${uploadResult.metadata.fullPath}\n`);
       
       // 3. 다운로드 URL 생성
       const downloadURL = await getDownloadURL(testRef);
-      setTestResult(prev => prev + `✅ 다운로드 URL 생성 성공: ${downloadURL}\n`);
+      setTestResult(prev => prev + `다운로드 URL 생성 성공: ${downloadURL}\n`);
       
       // 4. 파일 삭제
-      setTestResult(prev => prev + '🗑️ 테스트 파일 삭제 시작...\n');
+      setTestResult(prev => prev + '테스트 파일 삭제 시작...\n');
       await deleteObject(testRef);
-      setTestResult(prev => prev + '✅ 테스트 파일 삭제 성공\n');
+      setTestResult(prev => prev + '테스트 파일 삭제 성공\n');
       
-      setTestResult(prev => prev + '\n🎉 모든 Firebase Storage 테스트 통과!\n');
+      setTestResult(prev => prev + '\n모든 Firebase Storage 테스트 통과!\n');
       
     } catch (error) {
       console.error('Firebase Storage 테스트 실패:', error);
       const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류';
-      setTestResult(prev => prev + `❌ 테스트 실패: ${errorMessage}\n`);
+      setTestResult(prev => prev + `테스트 실패: ${errorMessage}\n`);
     } finally {
       setTesting(false);
     }

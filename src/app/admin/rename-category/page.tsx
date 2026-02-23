@@ -18,18 +18,18 @@ export default function RenameCategoryId() {
       const koreanCategoryDoc = await getDoc(koreanCategoryRef);
 
       if (!koreanCategoryDoc.exists()) {
-        setStatus('❌ "가방" 카테고리를 찾을 수 없습니다.');
+        setStatus('"가방" 카테고리를 찾을 수 없습니다.');
         return;
       }
 
       const categoryData = koreanCategoryDoc.data();
-      setStatus('✅ "가방" 카테고리 데이터 확인됨');
+      setStatus('"가방" 카테고리 데이터 확인됨');
 
       // 2. '가방' 카테고리의 모든 상품 가져오기
       const koreanProductsRef = collection(db, 'categories', '가방', 'products');
       const productsSnapshot = await getDocs(koreanProductsRef);
       
-      setStatus(`📦 상품 ${productsSnapshot.size}개 발견`);
+      setStatus(`상품 ${productsSnapshot.size}개 발견`);
 
       // 3. 새로운 'bags' 카테고리 문서 생성
       const englishCategoryRef = doc(db, 'categories', 'bags');
@@ -39,7 +39,7 @@ export default function RenameCategoryId() {
         updatedAt: new Date()
       });
       
-      setStatus('✅ "bags" 카테고리 문서 생성됨');
+      setStatus('"bags" 카테고리 문서 생성됨');
 
       // 4. 모든 상품을 'bags' 카테고리로 복사
       let movedCount = 0;
@@ -55,10 +55,10 @@ export default function RenameCategoryId() {
         });
         
         movedCount++;
-        setStatus(`📦 상품 이동 중... (${movedCount}/${productsSnapshot.size})`);
+        setStatus(`상품 이동 중... (${movedCount}/${productsSnapshot.size})`);
       }
 
-      setStatus('✅ 모든 상품이 bags 카테고리로 이동됨');
+      setStatus('모든 상품이 bags 카테고리로 이동됨');
 
       // 5. 기존 '가방' 카테고리의 모든 상품 삭제
       for (const productDoc of productsSnapshot.docs) {
@@ -68,11 +68,11 @@ export default function RenameCategoryId() {
       // 6. 기존 '가방' 카테고리 문서 삭제
       await deleteDoc(koreanCategoryRef);
 
-      setStatus(`🎉 완료! "가방" → "bags" 변경 및 ${movedCount}개 상품 이동 완료`);
+      setStatus(`완료! "가방" → "bags" 변경 및 ${movedCount}개 상품 이동 완료`);
 
     } catch (error) {
       console.error('변경 실패:', error);
-      setStatus(`❌ 실패: ${error instanceof Error ? error.message : String(error)}`);
+      setStatus(`실패: ${error instanceof Error ? error.message : String(error)}`);
     } finally {
       setIsLoading(false);
     }
@@ -91,7 +91,7 @@ export default function RenameCategoryId() {
       const englishCategoryRef = doc(db, 'categories', 'bags');
       const englishCategoryDoc = await getDoc(englishCategoryRef);
 
-      let statusText = '📊 현재 상태:\n';
+      let statusText = '현재 상태:\n';
 
       if (koreanCategoryDoc.exists()) {
         const koreanProductsRef = collection(db, 'categories', '가방', 'products');
@@ -112,7 +112,7 @@ export default function RenameCategoryId() {
       setStatus(statusText);
 
     } catch (error) {
-      setStatus(`❌ 확인 실패: ${error instanceof Error ? error.message : String(error)}`);
+      setStatus(`확인 실패: ${error instanceof Error ? error.message : String(error)}`);
     } finally {
       setIsLoading(false);
     }
@@ -157,7 +157,7 @@ export default function RenameCategoryId() {
         </ol>
         
         <p className="mt-2 text-sm text-red-600">
-          ⚠️ 주의: 이 작업은 되돌릴 수 없습니다. 실행 전에 현재 상태를 먼저 확인하세요.
+          주의: 이 작업은 되돌릴 수 없습니다. 실행 전에 현재 상태를 먼저 확인하세요.
         </p>
       </div>
     </div>

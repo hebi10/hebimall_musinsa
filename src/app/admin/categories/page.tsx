@@ -29,7 +29,7 @@ export default function AdminCategoriesPage() {
     description: '',
     order: 1,
     isActive: true,
-    icon: '📦',
+    icon: 'box',
     color: '#007bff'
   });
 
@@ -101,7 +101,7 @@ export default function AdminCategoriesPage() {
         description: '',
         order: 1,
         isActive: true,
-        icon: '📦',
+        icon: 'box',
         color: '#007bff'
       });
       alert('새 카테고리가 추가되었습니다.');
@@ -212,7 +212,7 @@ export default function AdminCategoriesPage() {
               type="text"
               value={newCategory.icon}
               onChange={(e) => setNewCategory({...newCategory, icon: e.target.value})}
-              placeholder="📦"
+              placeholder="icon"
             />
           </div>
           <div className={styles.formGroup}>

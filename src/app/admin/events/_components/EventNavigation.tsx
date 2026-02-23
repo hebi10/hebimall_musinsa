@@ -8,8 +8,8 @@ export default function EventNavigation() {
   const pathname = usePathname();
 
   const navItems = [
-    { href: '/admin/events', label: '이벤트 목록', icon: '📋' },
-    { href: '/admin/events/create', label: '새 이벤트', icon: '➕' },
+    { href: '/admin/events', label: '이벤트 목록', icon: '' },
+    { href: '/admin/events/create', label: '새 이벤트', icon: '' },
   ];
 
   return (

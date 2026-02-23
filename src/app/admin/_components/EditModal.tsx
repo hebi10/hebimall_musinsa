@@ -31,7 +31,7 @@ export default function EditProductModal({ product, onSave, onClose }: EditProdu
         const categoriesData = await getCategoryNames();
         setCategories(Object.entries(categoriesData).map(([id, name]) => ({ id, name })));
       } catch (error) {
-        console.error('❌ 카테고리 목록 로드 실패:', error);
+        console.error('카테고리 목록 로드 실패:', error);
         // 기본 카테고리 설정 (fallback)
         setCategories([
           { id: 'tops', name: '상의' },
@@ -110,14 +110,14 @@ export default function EditProductModal({ product, onSave, onClose }: EditProdu
 
     try {
       setUploading(true);
-      console.log('📤 이미지 업로드 시작:', files.length, '개 파일');
+      console.log('이미지 업로드 시작:', files.length, '개 파일');
       
       // 파일 유효성 검사
       const fileArray = Array.from(files);
       const { valid, errors } = validateImageFiles(fileArray);
       
       if (errors.length > 0) {
-        console.warn('⚠️ 파일 유효성 검사 오류:', errors);
+        console.warn('파일 유효성 검사 오류:', errors);
         alert(errors.join('\n'));
         if (valid.length === 0) {
           setUploading(false);
@@ -125,7 +125,7 @@ export default function EditProductModal({ product, onSave, onClose }: EditProdu
         }
       }
       
-      console.log('✅ 유효한 파일:', valid.length, '개');
+      console.log('유효한 파일:', valid.length, '개');
       
       // 카테고리별 구조화된 경로로 업로드: images/{category}/{productId}/
       const uploadedUrls = await uploadProductImages(
@@ -133,7 +133,7 @@ export default function EditProductModal({ product, onSave, onClose }: EditProdu
         basicFields.category,
         product.id,
         (progress: number, fileName: string) => {
-          console.log(`📊 업로드 진행률: ${fileName} - ${progress}%`);
+          console.log(`업로드 진행률: ${fileName} - ${progress}%`);
           setUploadProgress(prev => ({
             ...prev,
             [fileName]: progress
@@ -141,7 +141,7 @@ export default function EditProductModal({ product, onSave, onClose }: EditProdu
         }
       );
       
-      console.log('✅ 이미지 업로드 완료:', uploadedUrls);
+      console.log('이미지 업로드 완료:', uploadedUrls);
       
       setComplexFields(prev => ({
         ...prev,
@@ -154,7 +154,7 @@ export default function EditProductModal({ product, onSave, onClose }: EditProdu
       alert(`${uploadedUrls.length}개의 이미지가 성공적으로 업로드되었습니다.`);
       
     } catch (error) {
-      console.error('❌ 이미지 업로드 실패:', error);
+      console.error('이미지 업로드 실패:', error);
       const errorMessage = error instanceof Error ? error.message : '이미지 업로드에 실패했습니다.';
       alert(`이미지 업로드 실패: ${errorMessage}`);
     } finally {
@@ -168,7 +168,7 @@ export default function EditProductModal({ product, onSave, onClose }: EditProdu
     }
     
     try {
-      console.log('🗑️ 이미지 삭제 시작:', imageUrl);
+      console.log('이미지 삭제 시작:', imageUrl);
       
       // Firebase Storage에서 이미지 삭제
       await deleteProductImage(imageUrl);
@@ -184,11 +184,11 @@ export default function EditProductModal({ product, onSave, onClose }: EditProdu
           : prev.mainImage
       }));
       
-      console.log('✅ 이미지 삭제 완료');
+      console.log('이미지 삭제 완료');
       alert('이미지가 성공적으로 삭제되었습니다.');
       
     } catch (error) {
-      console.error('❌ 이미지 삭제 실패:', error);
+      console.error('이미지 삭제 실패:', error);
       const errorMessage = error instanceof Error ? error.message : '이미지 삭제에 실패했습니다.';
       alert(`이미지 삭제 실패: ${errorMessage}`);
     }
@@ -206,7 +206,7 @@ export default function EditProductModal({ product, onSave, onClose }: EditProdu
     e.preventDefault();
     
     try {
-      console.log('💾 상품 수정 시작...');
+      console.log('상품 수정 시작...');
       
       // 필수 필드 검증
       if (!basicFields.name.trim()) {
@@ -279,15 +279,15 @@ export default function EditProductModal({ product, onSave, onClose }: EditProdu
         updatedProduct.saleRate = Number(basicFields.saleRate);
       }
       
-      console.log('📤 업데이트할 상품 데이터:', updatedProduct);
+      console.log('업데이트할 상품 데이터:', updatedProduct);
       
       await onSave(updatedProduct);
       
-      console.log('✅ 상품 수정 완료');
+      console.log('상품 수정 완료');
       // 성공 메시지는 부모 컴포넌트에서 처리하고 모달 닫기도 부모에서 처리
       
     } catch (error) {
-      console.error('❌ 상품 수정 실패:', error);
+      console.error('상품 수정 실패:', error);
       const errorMessage = error instanceof Error ? error.message : '상품 수정에 실패했습니다.';
       alert(`상품 수정 실패: ${errorMessage}`);
     }

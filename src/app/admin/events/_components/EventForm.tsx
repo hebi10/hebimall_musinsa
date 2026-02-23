@@ -512,7 +512,7 @@ export default function EventForm({ event, isEdit = false }: Props) {
               rows={15}
             />
             <div className={styles.htmlNote}>
-              💡 HTML 태그를 사용하여 풍부한 내용을 작성할 수 있습니다.
+              HTML 태그를 사용하여 풍부한 내용을 작성할 수 있습니다.
             </div>
           </div>
         </div>
