@@ -82,7 +82,6 @@ export function CategoryProvider({ children }: CategoryProviderProps) {
     },
   ];
 
-  // 한국어 이름 매핑 (Firebase 데이터가 영어인 경우 대비)
   const koreanNameMap: { [key: string]: string } = {
     'clothing': '의류',
     'shoes': '신발', 
@@ -102,13 +101,11 @@ export function CategoryProvider({ children }: CategoryProviderProps) {
       setLoading(true);
       setError(null);
       
-      // Firebase에서 카테고리 목록을 가져오고, 각 카테고리에 상품이 있는지 확인
       const snapshot = await getDocs(collection(db, 'categories'));
       const categoryList = snapshot.docs.map(doc => {
         const data = doc.data();
         const rawName = data.name || '';
         
-        // 한국어 이름 변환 (영어 이름인 경우 한국어로 매핑)
         const koreanName = koreanNameMap[rawName.toLowerCase()] || 
                           koreanNameMap[doc.id.toLowerCase()] || 
                           rawName;
@@ -137,18 +134,15 @@ export function CategoryProvider({ children }: CategoryProviderProps) {
         
         for (const category of activeCategories) {
           try {
-            // 해당 카테고리의 products 서브컬렉션 확인
             const productsSnapshot = await getDocs(collection(db, 'categories', category.id, 'products'));
             categoriesWithInfo.push(category);
           } catch (error) {
-            // 에러가 있어도 카테고리는 표시
             categoriesWithInfo.push(category);
           }
         }
         
         setCategories(categoriesWithInfo);
       } else {
-        // 카테고리 컬렉션이 없는 경우 fallback 카테고리 표시
         console.log('Firebase 카테고리 없음 - Fallback 사용');
         setCategories(fallbackCategories);
       }
@@ -156,7 +150,6 @@ export function CategoryProvider({ children }: CategoryProviderProps) {
       console.error('카테고리 불러오기 실패:', err);
       console.log('Fallback 카테고리 사용');
       
-      // Firebase 연결 실패 시 fallback 카테고리 사용
       setCategories(fallbackCategories);
       setError(err instanceof Error ? err.message : '카테고리를 불러오는데 실패했습니다. 기본 카테고리를 표시합니다.');
     } finally {

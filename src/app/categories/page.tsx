@@ -29,18 +29,13 @@ export default function CategoriesPage() {
     );
   }
 
-  // 인기 카테고리 (상위 3개)
-  const featuredCategories = categories.slice(0, 3);
-
   return (
     <div className={styles.container}>
-      {/* Hero Section */}
-      <div className={styles.heroSection}>
-        <div className={styles.heroContent}>
-          <h1 className={styles.heroTitle}>전체 카테고리</h1>
-          <p className={styles.heroSubtitle}>
-            원하는 카테고리를 선택해서 쇼핑하세요
-          </p>
+      {/* 페이지 헤더 */}
+      <div className={styles.pageHeader}>
+        <div className={styles.pageHeaderInner}>
+          <h1 className={styles.pageTitle}>카테고리</h1>
+          <p className={styles.pageSubtitle}>전체 {categories.length}개</p>
         </div>
       </div>
 
@@ -70,7 +65,7 @@ export default function CategoriesPage() {
                   {category.description}
                 </p>
                 <div className={styles.categoryAction}>
-                  쇼핑하기
+                  보러가기
                   <span className={styles.arrow}>→</span>
                 </div>
               </div>
@@ -78,53 +73,11 @@ export default function CategoriesPage() {
           ))}
         </div>
 
-        {/* Featured Categories */}
-        {featuredCategories.length > 0 && (
-          <div className={styles.featuredSection}>
-            <div className={styles.featuredHeader}>
-              <h2 className={styles.featuredTitle}>인기 카테고리</h2>
-              <p className={styles.featuredSubtitle}>
-                가장 인기 있는 카테고리를 확인해보세요
-              </p>
-            </div>
-            <div className={styles.featuredGrid}>
-              {featuredCategories.map((category, index) => (
-                <Link 
-                  key={category.id} 
-                  href={`/categories/${category.id}`} 
-                  className={`${styles.featuredCard} ${styles[`featured${index + 1}`]}`}
-                >
-                  <div className={styles.featuredCardContent}>
-                    <div className={styles.featuredIcon}>
-                      {category.icon ? (
-                        category.icon
-                      ) : (
-                        <div className={styles.iconPlaceholder}>
-                          <p className={styles.placeholderText}>이미지 준비중</p>
-                        </div>
-                      )}
-                    </div>
-                    <h3 className={styles.featuredName}>{category.name}</h3>
-                    <p className={styles.featuredDescription}>{category.description}</p>
-                    <div className={styles.featuredAction}>
-                      지금 쇼핑하기
-                      <span className={styles.featuredArrow}>→</span>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
-
         {/* Empty State */}
         {categories.length === 0 && !loading && (
           <div className={styles.emptyState}>
-            <div className={styles.emptyIcon}></div>
-            <h3 className={styles.emptyTitle}>카테고리가 없습니다</h3>
-            <p className={styles.emptyMessage}>
-              아직 등록된 카테고리가 없습니다. 잠시 후 다시 시도해주세요.
-            </p>
+            <h3 className={styles.emptyTitle}>등록된 카테고리가 없습니다</h3>
+            <p className={styles.emptyMessage}>잠시 후 다시 시도해주세요.</p>
           </div>
         )}
       </div>

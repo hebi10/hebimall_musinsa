@@ -15,7 +15,6 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
         </div>
         {children}
       </div>
-      <div className={styles.backgroundPattern}></div>
     </div>
   );
 }

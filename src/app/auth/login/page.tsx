@@ -19,7 +19,7 @@ export default function LoginPage() {
   const [rememberMe, setRememberMe] = useState(false);
 
   const { login, error, clearError, user, loading } = useAuth();
-  
+
   const handleRememberMeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setRememberMe(e.target.checked);
   };
@@ -28,10 +28,9 @@ export default function LoginPage() {
   const handleNaverLogin = async () => {
     setIsSubmitting(true);
     clearError();
-    
+
     try {
       await login("test@test.com", "testtest", false);
-      // 페이지 최상단으로 스크롤
       window.scrollTo(0, 0);
       router.replace("/mypage");
     } catch (error) {
@@ -45,10 +44,9 @@ export default function LoginPage() {
   const handleKakaoLogin = async () => {
     setIsSubmitting(true);
     clearError();
-    
+
     try {
       await login("test01@test.com", "test01test01", false);
-      // 페이지 최상단으로 스크롤
       window.scrollTo(0, 0);
       router.replace("/mypage");
     } catch (error) {
@@ -57,7 +55,7 @@ export default function LoginPage() {
       setIsSubmitting(false);
     }
   };
-  
+
   useEffect(() => {
     if (!loading && user) {
       router.replace("/mypage");
@@ -66,17 +64,16 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!values.id || !values.password) {
       return;
     }
 
     setIsSubmitting(true);
     clearError();
-    
+
     try {
       await login(values.id, values.password, rememberMe);
-      // 페이지 최상단으로 스크롤
       window.scrollTo(0, 0);
       router.replace("/mypage");
     } catch (error) {
@@ -89,20 +86,16 @@ export default function LoginPage() {
   return (
     <div className={styles.container}>
       <div className={styles.formWrapper}>
-        <div>
-          <h2 className={styles.title}>
-            로그인
-          </h2>
-        </div>
-        
+        <h2 className={styles.title}>로그인</h2>
+
         <form className={styles.form} onSubmit={handleSubmit}>
-          
+
           {error && (
             <div className={styles.errorMessage}>
               {error}
             </div>
           )}
-          
+
           <Input
             label="이메일"
             type="email"
@@ -112,7 +105,7 @@ export default function LoginPage() {
             value={values.id}
             onChange={onChange}
           />
-          
+
           <Input
             label="비밀번호"
             type="password"
@@ -129,36 +122,36 @@ export default function LoginPage() {
                 id="remember-me"
                 name="remember-me"
                 type="checkbox"
-                style={{ marginRight: '0.5rem' }}
+                className={styles.checkboxInput}
                 checked={rememberMe}
                 onChange={handleRememberMeChange}
               />
-              <label htmlFor="remember-me" style={{ fontSize: '0.875rem', color: '#111827' }}>
+              <label htmlFor="remember-me" className={styles.checkboxLabel}>
                 로그인 상태 유지
               </label>
             </div>
-            
+
             <Link href="/auth/find-password" className={styles.linkText}>
               비밀번호 찾기
             </Link>
           </div>
-          
-          <Button 
-            type="submit" 
-            size="lg" 
+
+          <Button
+            type="submit"
+            size="lg"
             style={{ width: '100%' }}
             disabled={isSubmitting || !values.id || !values.password}
           >
             {isSubmitting ? "로그인 중..." : "로그인"}
           </Button>
         </form>
-        
+
         <div className={styles.divider}>
           <span className={styles.dividerText}>또는</span>
         </div>
-        
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-          <button 
+
+        <div className={styles.socialButtons}>
+          <button
             type="button"
             className={styles.socialButton}
             onClick={handleKakaoLogin}
@@ -167,7 +160,7 @@ export default function LoginPage() {
             <span className={`${styles.socialBtn} ${styles.kakaoIcon}`}>K</span>
             {isSubmitting ? "로그인 중..." : "일반 유저 로그인"}
           </button>
-          <button 
+          <button
             type="button"
             className={styles.socialButton}
             onClick={handleNaverLogin}
@@ -176,12 +169,12 @@ export default function LoginPage() {
             <span className={`${styles.socialBtn} ${styles.naverIcon}`}>N</span>
             {isSubmitting ? "로그인 중..." : "관리자 로그인"}
           </button>
-          <button className={styles.socialButton}>
+          <button type="button" className={styles.socialButton}>
             <span className={`${styles.socialBtn} ${styles.googleIcon}`}>G</span>
             구글 로그인
           </button>
         </div>
-        
+
         <div className={styles.link}>
           아직 계정이 없으신가요?{' '}
           <Link href="/auth/signup" className={styles.linkText}>
