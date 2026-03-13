@@ -12,7 +12,7 @@ export const uploadProductImages = async (
   onProgress?: (progress: number, fileName: string) => void
 ): Promise<string[]> => {
   try {
-    console.log('Firebase Storage 업로드 시작:', {
+ console.log('Firebase Storage 업로드 시작:', {
       files: files.length,
       category,
       productId
@@ -36,7 +36,7 @@ export const uploadProductImages = async (
         // 구조화된 경로: images/{category}/{productId}/{filename}
         const filePath = `images/${categoryPath}/${productId}/${fileName}`;
         
-        console.log(`📁 업로드 경로: ${filePath}`);
+ console.log(` 업로드 경로: ${filePath}`);
         
         const storageRef = ref(storage, filePath);
         const uploadTask = uploadBytesResumable(storageRef, file);
@@ -45,11 +45,11 @@ export const uploadProductImages = async (
           'state_changed',
           (snapshot) => {
             const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            console.log(`📊 업로드 진행률: ${file.name} - ${Math.round(progress)}%`);
+ console.log(` 업로드 진행률: ${file.name} - ${Math.round(progress)}%`);
             onProgress?.(progress, file.name);
           },
           (error) => {
-            console.error(`❌ 이미지 업로드 실패: ${file.name}`, error);
+ console.error(` 이미지 업로드 실패: ${file.name}`, error);
             
             // Firebase Storage 에러 코드별 처리
             switch (error.code) {
@@ -75,10 +75,10 @@ export const uploadProductImages = async (
           async () => {
             try {
               const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-              console.log(`✅ 업로드 완료: ${file.name} -> ${downloadURL}`);
+ console.log(` 업로드 완료: ${file.name} -> ${downloadURL}`);
               resolve(downloadURL);
             } catch (error) {
-              console.error(`❌ 다운로드 URL 생성 실패: ${file.name}`, error);
+ console.error(` 다운로드 URL 생성 실패: ${file.name}`, error);
               reject(new Error('업로드 완료 후 URL 생성에 실패했습니다.'));
             }
           }
@@ -87,10 +87,10 @@ export const uploadProductImages = async (
     });
 
     const urls = await Promise.all(uploadPromises);
-    console.log('✅ 모든 이미지 업로드 완료:', urls.length, '개');
+ console.log(' 모든 이미지 업로드 완료:', urls.length, '개');
     return urls;
   } catch (error) {
-    console.error('❌ 이미지 업로드 중 전체 오류:', error);
+ console.error(' 이미지 업로드 중 전체 오류:', error);
     throw error;
   }
 };
@@ -100,7 +100,7 @@ export const uploadProductImages = async (
  */
 export const deleteProductImage = async (imageUrl: string): Promise<void> => {
   try {
-    console.log('🗑️ Firebase Storage 이미지 삭제 시작:', imageUrl);
+ console.log(' Firebase Storage 이미지 삭제 시작:', imageUrl);
 
     // Storage 연결 확인
     if (!storage) {
@@ -111,7 +111,7 @@ export const deleteProductImage = async (imageUrl: string): Promise<void> => {
     const url = new URL(imageUrl);
     const pathname = url.pathname;
     
-    console.log('📁 URL 경로 분석:', pathname);
+ console.log(' URL 경로 분석:', pathname);
     
     // Firebase Storage URL 패턴 매칭 개선
     // 패턴: /v0/b/{bucket}/o/{encodedPath}
@@ -131,15 +131,15 @@ export const deleteProductImage = async (imageUrl: string): Promise<void> => {
     const imageRef = ref(storage, filePath);
     
     await deleteObject(imageRef);
-    console.log('✅ 이미지 삭제 완료:', filePath);
+ console.log(' 이미지 삭제 완료:', filePath);
     
   } catch (error) {
-    console.error('❌ 이미지 삭제 실패:', error);
+ console.error(' 이미지 삭제 실패:', error);
     
     // Firebase Storage 에러 코드별 처리
     if (error instanceof Error) {
       if (error.message.includes('storage/object-not-found')) {
-        console.warn('⚠️ 삭제하려는 파일이 이미 존재하지 않습니다.');
+ console.warn(' 삭제하려는 파일이 이미 존재하지 않습니다.');
         // 파일이 없어도 UI에서는 성공으로 처리
         return;
       } else if (error.message.includes('storage/unauthorized')) {
@@ -163,11 +163,11 @@ export const deleteAllProductImages = async (category: string, productId: string
     
     // 폴더 내 모든 파일을 삭제하는 것은 클라이언트에서 직접 할 수 없으므로
     // Firebase Functions를 통해 처리하거나, 개별 이미지 URL을 통해 삭제해야 합니다.
-    console.log('상품 폴더 삭제 요청:', folderPath);
+ console.log('상품 폴더 삭제 요청:', folderPath);
     
     // 실제로는 상품 수정 시 기존 이미지 URL 배열을 받아서 개별 삭제해야 합니다.
   } catch (error) {
-    console.error('상품 이미지 폴더 삭제 실패:', error);
+ console.error('상품 이미지 폴더 삭제 실패:', error);
     throw error;
   }
 };
@@ -225,7 +225,7 @@ export const parseStoragePath = (imageUrl: string): { category: string; productI
       productId
     };
   } catch (error) {
-    console.error('Storage 경로 파싱 실패:', error);
+ console.error('Storage 경로 파싱 실패:', error);
     return null;
   }
 };

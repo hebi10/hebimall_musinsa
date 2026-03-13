@@ -42,7 +42,7 @@
 
 .badges {
   position: absolute;
-  top: var(--spacing-sm);
+  top: 40px;
   left: var(--spacing-sm);
   display: flex;
   flex-direction: column;
@@ -225,7 +225,7 @@
   }
 
   .badges {
-    top: var(--spacing-xs);
+    top: 40px;
     left: var(--spacing-xs);
   }
 

@@ -30,10 +30,10 @@ export class OrderService {
       };
 
       const docRef = await addDoc(collection(db, this.COLLECTION_NAME), order);
-      console.log('주문 생성 완료:', docRef.id);
+ console.log('주문 생성 완료:', docRef.id);
       return docRef.id;
     } catch (error) {
-      console.error('주문 생성 실패:', error);
+ console.error('주문 생성 실패:', error);
       throw error;
     }
   }
@@ -58,7 +58,7 @@ export class OrderService {
 
       return null;
     } catch (error) {
-      console.error('주문 조회 실패:', error);
+ console.error('주문 조회 실패:', error);
       throw error;
     }
   }
@@ -68,13 +68,13 @@ export class OrderService {
    */
   static async getUserOrders(userId: string, limitCount: number = 20): Promise<Order[]> {
     try {
-      console.log('🔍 OrderService.getUserOrders called with:', { userId, limitCount });
+ console.log(' OrderService.getUserOrders called with:', { userId, limitCount });
       
       const ordersRef = collection(db, this.COLLECTION_NAME);
       
       // 먼저 단순 쿼리로 시도 (인덱스 불필요)
       try {
-        console.log('📋 Executing simple query without orderBy...');
+ console.log(' Executing simple query without orderBy...');
         const simpleQ = query(
           ordersRef,
           where('userId', '==', userId),
@@ -82,11 +82,11 @@ export class OrderService {
         );
 
         const querySnapshot = await getDocs(simpleQ);
-        console.log('✅ Simple query executed successfully, found', querySnapshot.size, 'documents');
+ console.log(' Simple query executed successfully, found', querySnapshot.size, 'documents');
         
         const orders = querySnapshot.docs.map(doc => {
           const data = doc.data();
-          console.log('📦 Processing order document:', doc.id, data);
+ console.log(' Processing order document:', doc.id, data);
           
           return {
             id: doc.id,
@@ -99,17 +99,17 @@ export class OrderService {
         // 클라이언트 사이드에서 생성일 기준으로 내림차순 정렬
         orders.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
         
-        console.log('✅ Orders processed and sorted successfully:', orders.length);
+ console.log(' Orders processed and sorted successfully:', orders.length);
         return orders;
         
       } catch (simpleError: any) {
-        console.error('❌ Simple query also failed:', simpleError.message);
+ console.error(' Simple query also failed:', simpleError.message);
         throw simpleError;
       }
       
     } catch (error: any) {
-      console.error('❌ getUserOrders 완전 실패:', error);
-      console.error('Error details:', {
+ console.error(' getUserOrders 완전 실패:', error);
+ console.error('Error details:', {
         message: error.message,
         code: error.code,
         stack: error.stack
@@ -150,7 +150,7 @@ export class OrderService {
         } as Order;
       });
     } catch (error) {
-      console.error('전체 주문 목록 조회 실패:', error);
+ console.error('전체 주문 목록 조회 실패:', error);
       throw error;
     }
   }
@@ -179,7 +179,7 @@ export class OrderService {
         } as Order;
       });
     } catch (error) {
-      console.error('상태별 주문 조회 실패:', error);
+ console.error('상태별 주문 조회 실패:', error);
       throw error;
     }
   }
@@ -195,9 +195,9 @@ export class OrderService {
         updatedAt: serverTimestamp()
       });
 
-      console.log(`주문 상태 업데이트 완료: ${orderId} -> ${status}`);
+ console.log(`주문 상태 업데이트 완료: ${orderId} -> ${status}`);
     } catch (error) {
-      console.error('주문 상태 업데이트 실패:', error);
+ console.error('주문 상태 업데이트 실패:', error);
       throw error;
     }
   }
@@ -224,7 +224,7 @@ export class OrderService {
         updatedAt: data.updatedAt?.toDate() || new Date()
       } as Order;
     } catch (error) {
-      console.error('주문번호로 주문 조회 실패:', error);
+ console.error('주문번호로 주문 조회 실패:', error);
       throw error;
     }
   }
@@ -256,7 +256,7 @@ export class OrderService {
 
       return stats;
     } catch (error) {
-      console.error('주문 통계 조회 실패:', error);
+ console.error('주문 통계 조회 실패:', error);
       return {
         total: 0,
         pending: 0,
@@ -292,7 +292,7 @@ export class OrderService {
         } as Order;
       });
     } catch (error) {
-      console.error('최근 주문 조회 실패:', error);
+ console.error('최근 주문 조회 실패:', error);
       throw error;
     }
   }
@@ -314,9 +314,9 @@ export class OrderService {
       }
 
       await updateDoc(orderRef, updateData);
-      console.log(`주문 취소 완료: ${orderId}`);
+ console.log(`주문 취소 완료: ${orderId}`);
     } catch (error) {
-      console.error('주문 취소 실패:', error);
+ console.error('주문 취소 실패:', error);
       throw error;
     }
   }
@@ -336,9 +336,9 @@ export class OrderService {
         updatedAt: serverTimestamp()
       });
 
-      console.log(`배송 정보 업데이트 완료: ${orderId}`);
+ console.log(`배송 정보 업데이트 완료: ${orderId}`);
     } catch (error) {
-      console.error('배송 정보 업데이트 실패:', error);
+ console.error('배송 정보 업데이트 실패:', error);
       throw error;
     }
   }

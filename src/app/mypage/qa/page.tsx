@@ -114,7 +114,7 @@ export default function QAPage() {
         {/* Statistics Cards */}
         <div className={styles.statsGrid}>
           <div className={styles.statCard}>
-            <div className={styles.statIcon}>❓</div>
+            <div className={styles.statIcon}></div>
             <div className={styles.statContent}>
               <div className={styles.statNumber}>{stats.total}</div>
               <div className={styles.statLabel}>총 문의</div>
@@ -128,14 +128,14 @@ export default function QAPage() {
             </div>
           </div>
           <div className={styles.statCard}>
-            <div className={styles.statIcon}>✅</div>
+            <div className={styles.statIcon}></div>
             <div className={styles.statContent}>
               <div className={styles.statNumber}>{stats.answered}</div>
               <div className={styles.statLabel}>답변 완료</div>
             </div>
           </div>
           <div className={styles.statCard}>
-            <div className={styles.statIcon}>⚡</div>
+            <div className={styles.statIcon}></div>
             <div className={styles.statContent}>
               <div className={styles.statNumber}>2.5시간</div>
               <div className={styles.statLabel}>평균 답변시간</div>
@@ -179,7 +179,7 @@ export default function QAPage() {
 
         <div className={styles.newQAButtonContainer}>
           <Link href="/qna/write" className={styles.newQAButton}>
-            <span className={styles.buttonIcon}>✏️</span>
+            <span className={styles.buttonIcon}></span>
             새 문의 작성
           </Link>
         </div>
@@ -252,7 +252,7 @@ export default function QAPage() {
             ))
           ) : (
             <div className={styles.emptyState}>
-              <div className={styles.emptyIcon}>❓</div>
+              <div className={styles.emptyIcon}></div>
               <div className={styles.emptyTitle}>문의 내역이 없습니다</div>
               <div className={styles.emptyDesc}>궁금한 사항이 있으시면 언제든 문의해주세요.</div>
               <Link href="/qna/write" className={styles.newQAButton}>

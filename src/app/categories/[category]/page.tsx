@@ -128,7 +128,7 @@ export default function DynamicCategoryPage({ params }: CategoryPageProps) {
     return (
       <div className={styles.container}>
         <div className={styles.errorMessage}>
-          <p>❌ {error}</p>
+          <p>{error}</p>
           <button 
             onClick={() => window.location.reload()} 
             className={styles.retryButton}
@@ -211,13 +211,6 @@ export default function DynamicCategoryPage({ params }: CategoryPageProps) {
                 <div className={styles.imagePlaceholder} style={{ display: product.mainImage ? 'none' : 'flex' }}>
                   <div className={styles.placeholderContent}>
                     <span className={styles.productIcon}>
-                      {category === 'accessories' && '💍'}
-                      {category === 'bags' && '🎒'}
-                      {category === 'bottoms' && '👖'}
-                      {category === 'shoes' && '👟'}
-                      {category === 'tops' && '👕'}
-                      {category === 'clothing' && '👕'}
-                      {!['accessories', 'bags', 'bottoms', 'shoes', 'tops', 'clothing'].includes(category) && '📦'}
                     </span>
                     <p className={styles.placeholderText}>이미지 준비중</p>
                   </div>
@@ -247,7 +240,7 @@ export default function DynamicCategoryPage({ params }: CategoryPageProps) {
                   )}
                 </div>
                 <div className={styles.ratingSection}>
-                  <span className={styles.rating}>⭐ {product.rating}</span>
+                  <span className={styles.rating}>{product.rating}</span>
                   <span className={styles.reviewCount}>({product.reviewCount})</span>
                 </div>
                 <div className={styles.stockInfo}>

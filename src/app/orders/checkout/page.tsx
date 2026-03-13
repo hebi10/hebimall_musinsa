@@ -210,7 +210,7 @@ export default function CheckoutPage() {
       sessionStorage.setItem("orderResult", JSON.stringify(orderResult));
       
       // 사용자에게 완료 알림 후 페이지 이동
-      alert("🎉 결제가 성공적으로 완료되었습니다!\n주문 상세 정보 페이지로 이동합니다.");
+      alert("결제가 성공적으로 완료되었습니다!\n주문 상세 정보 페이지로 이동합니다.");
       router.push("/orders/complete");
 
     } catch (error) {
@@ -437,7 +437,7 @@ export default function CheckoutPage() {
 
               {/* 안내 사항 */}
               <div className={styles.noticeSection}>
-                <div className={styles.noticeTitle}>💡 안내사항</div>
+                <div className={styles.noticeTitle}>안내사항</div>
                 <ul className={styles.noticeList}>
                   <li>주문 완료 후 취소/변경은 제한될 수 있습니다</li>
                   <li>결제 완료 후 즉시 상품 준비가 시작됩니다</li>

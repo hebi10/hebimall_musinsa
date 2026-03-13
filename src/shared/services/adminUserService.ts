@@ -98,10 +98,10 @@ export class AdminUserService {
       const startIndex = (page - 1) * limitCount;
       const paginatedUsers = users.slice(startIndex, startIndex + limitCount);
 
-      console.log(`✅ 최종 반환: ${paginatedUsers.length}명 (전체 ${totalCount}명)`);
+ console.log(` 최종 반환: ${paginatedUsers.length}명 (전체 ${totalCount}명)`);
       return { users: paginatedUsers, totalCount };
     } catch (error) {
-      console.error('❌ Error fetching users:', error);
+ console.error(' Error fetching users:', error);
       throw error;
     }
   }
@@ -109,20 +109,20 @@ export class AdminUserService {
   // 모든 사용자 조회 (간단한 쿼리, 인덱스 불필요)
   static async getAllUsersSimple(): Promise<AdminUserData[]> {
     try {
-      console.log('🔍 모든 사용자 조회 (간단한 쿼리)...');
+ console.log(' 모든 사용자 조회 (간단한 쿼리)...');
       const q = query(collection(db, COLLECTION_NAME));
       const querySnapshot = await getDocs(q);
       
-      console.log(`📊 조회된 사용자 수: ${querySnapshot.size}`);
+ console.log(` 조회된 사용자 수: ${querySnapshot.size}`);
       
       const users = querySnapshot.docs.map(doc => {
-        console.log(`👤 사용자: ${doc.id}`, doc.data());
+ console.log(` 사용자: ${doc.id}`, doc.data());
         return this.convertDocToUser(doc);
       });
       
       return users;
     } catch (error) {
-      console.error('❌ Error fetching all users (simple):', error);
+ console.error(' Error fetching all users (simple):', error);
       throw error;
     }
   }
@@ -148,7 +148,7 @@ export class AdminUserService {
         totalPoints
       };
     } catch (error) {
-      console.error('Error fetching user stats:', error);
+ console.error('Error fetching user stats:', error);
       return { total: 0, active: 0, admin: 0, newUsers: 0, totalPoints: 0 };
     }
   }
@@ -165,7 +165,7 @@ export class AdminUserService {
         updatedAt: serverTimestamp(),
       });
     } catch (error) {
-      console.error('Error updating user status:', error);
+ console.error('Error updating user status:', error);
       throw error;
     }
   }
@@ -182,7 +182,7 @@ export class AdminUserService {
         updatedAt: serverTimestamp(),
       });
     } catch (error) {
-      console.error('Error updating user role:', error);
+ console.error('Error updating user role:', error);
       throw error;
     }
   }
@@ -197,7 +197,7 @@ export class AdminUserService {
         updatedAt: serverTimestamp(),
       });
     } catch (error) {
-      console.error('Error deleting user:', error);
+ console.error('Error deleting user:', error);
       throw error;
     }
   }
@@ -210,7 +210,7 @@ export class AdminUserService {
     status?: 'active' | 'inactive';
   }): Promise<string> {
     try {
-      console.log('👤 사용자 생성 시작:', userData);
+ console.log(' 사용자 생성 시작:', userData);
       
       const newUser = {
         name: userData.name.trim(),
@@ -238,12 +238,12 @@ export class AdminUserService {
         }
       };
 
-      console.log('💾 Firestore에 저장할 데이터:', newUser);
+ console.log(' Firestore에 저장할 데이터:', newUser);
       const docRef = await addDoc(collection(db, COLLECTION_NAME), newUser);
-      console.log('✅ 사용자 생성 완료, ID:', docRef.id);
+ console.log(' 사용자 생성 완료, ID:', docRef.id);
       return docRef.id;
     } catch (error) {
-      console.error('❌ Error creating user:', error);
+ console.error(' Error creating user:', error);
       throw error;
     }
   }
@@ -276,7 +276,7 @@ export class AdminUserService {
 
       return csvContent;
     } catch (error) {
-      console.error('Error exporting users to CSV:', error);
+ console.error('Error exporting users to CSV:', error);
       throw error;
     }
   }
@@ -318,9 +318,9 @@ export class AdminUserService {
         adminAction: true,
       });
 
-      console.log(`✅ 포인트 ${operation.type === 'add' ? '적립' : '차감'} 완료: ${operation.amount}원`);
+ console.log(` 포인트 ${operation.type === 'add' ? '적립' : '차감'} 완료: ${operation.amount}원`);
     } catch (error) {
-      console.error('Error updating user points:', error);
+ console.error('Error updating user points:', error);
       throw error;
     }
   }
@@ -338,7 +338,7 @@ export class AdminUserService {
         date: doc.data().date?.toDate() || new Date(),
       }));
     } catch (error) {
-      console.error('Error fetching user point history:', error);
+ console.error('Error fetching user point history:', error);
       throw error;
     }
   }
@@ -355,7 +355,7 @@ export class AdminUserService {
 
       return this.convertDocToUser(userDoc);
     } catch (error) {
-      console.error('Error fetching user detail:', error);
+ console.error('Error fetching user detail:', error);
       throw error;
     }
   }
@@ -377,14 +377,14 @@ export class AdminUserService {
             });
             successCount++;
           } catch (error) {
-            console.error(`Failed to give points to user ${user.id}:`, error);
+ console.error(`Failed to give points to user ${user.id}:`, error);
           }
         }
       }
 
       return successCount;
     } catch (error) {
-      console.error('Error giving points to all users:', error);
+ console.error('Error giving points to all users:', error);
       throw error;
     }
   }
@@ -423,7 +423,7 @@ export class AdminUserService {
       grade: data.grade || data.tier || 'bronze',
     };
 
-    console.log(`🔄 변환된 사용자: ${user.id} - ${user.name} (${user.role})`);
+ console.log(` 변환된 사용자: ${user.id} - ${user.name} (${user.role})`);
     return user;
   }
 }
@@ -482,7 +482,7 @@ export class UserService {
         admin: users.filter(user => user.role === 'admin').length
       };
     } catch (error) {
-      console.error('사용자 통계 조회 실패:', error);
+ console.error('사용자 통계 조회 실패:', error);
       return {
         total: 0,
         active: 0,

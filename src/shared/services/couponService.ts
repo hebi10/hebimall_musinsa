@@ -74,7 +74,7 @@ export class CouponService {
         updatedAt: doc.data().updatedAt?.toDate() || new Date()
       })) as Coupon[];
     } catch (error) {
-      console.error('모든 쿠폰 조회 실패:', error);
+ console.error('모든 쿠폰 조회 실패:', error);
       throw new Error('쿠폰 정보를 불러오는데 실패했습니다.');
     }
   }
@@ -91,7 +91,7 @@ export class CouponService {
       });
       return docRef.id;
     } catch (error) {
-      console.error('쿠폰 생성 실패:', error);
+ console.error('쿠폰 생성 실패:', error);
       throw new Error('쿠폰 생성에 실패했습니다.');
     }
   }
@@ -116,7 +116,7 @@ export class CouponService {
         updatedAt: serverTimestamp()
       });
     } catch (error) {
-      console.error('쿠폰 수정 실패:', error);
+ console.error('쿠폰 수정 실패:', error);
       throw new Error('쿠폰 수정에 실패했습니다.');
     }
   }
@@ -129,7 +129,7 @@ export class CouponService {
       const docRef = doc(db, 'coupons', couponId);
       await deleteDoc(docRef);
     } catch (error) {
-      console.error('쿠폰 삭제 실패:', error);
+ console.error('쿠폰 삭제 실패:', error);
       throw new Error('쿠폰 삭제에 실패했습니다.');
     }
   }
@@ -152,7 +152,7 @@ export class CouponService {
 
       return stats;
     } catch (error) {
-      console.error('전체 쿠폰 통계 조회 실패:', error);
+ console.error('전체 쿠폰 통계 조회 실패:', error);
       throw new Error('쿠폰 통계를 불러오는데 실패했습니다.');
     }
   }
@@ -176,9 +176,9 @@ export class CouponService {
         updatedAt: doc.data().updatedAt?.toDate() || new Date()
       })) as Coupon[];
     } catch (error) {
-      console.error('쿠폰 마스터 조회 실패:', error);
+ console.error('쿠폰 마스터 조회 실패:', error);
       // 대시보드가 중단되지 않도록 빈 배열 반환
-      console.warn('쿠폰 데이터를 불러올 수 없습니다. 빈 배열을 반환합니다.');
+ console.warn('쿠폰 데이터를 불러올 수 없습니다. 빈 배열을 반환합니다.');
       return [];
     }
   }
@@ -202,7 +202,7 @@ export class CouponService {
         updatedAt: docSnap.data().updatedAt?.toDate() || new Date()
       } as Coupon;
     } catch (error) {
-      console.error('쿠폰 조회 실패:', error);
+ console.error('쿠폰 조회 실패:', error);
       throw new Error('쿠폰 정보를 불러오는데 실패했습니다.');
     }
   }
@@ -304,7 +304,7 @@ export class CouponService {
       
       return userCouponViews;
     } catch (error) {
-      console.error('❌ 사용자 쿠폰 목록 조회 실패:', error);
+ console.error(' 사용자 쿠폰 목록 조회 실패:', error);
       throw new Error('쿠폰 목록을 불러오는데 실패했습니다.');
     }
   }
@@ -331,7 +331,7 @@ export class CouponService {
 
       return stats;
     } catch (error) {
-      console.error('쿠폰 통계 조회 실패:', error);
+ console.error('쿠폰 통계 조회 실패:', error);
       throw new Error('쿠폰 통계를 불러오는데 실패했습니다.');
     }
   }
@@ -355,7 +355,7 @@ export class CouponService {
         updatedAt: docSnap.data().updatedAt?.toDate() || new Date()
       } as UserCoupon;
     } catch (error) {
-      console.error('유저쿠폰 조회 실패:', error);
+ console.error('유저쿠폰 조회 실패:', error);
       throw new Error('쿠폰 정보를 불러오는데 실패했습니다.');
     }
   }
@@ -395,7 +395,7 @@ export class CouponService {
 
       return availableCoupons;
     } catch (error) {
-      console.error('주문 사용가능 쿠폰 조회 실패:', error);
+ console.error('주문 사용가능 쿠폰 조회 실패:', error);
       throw new Error('사용 가능한 쿠폰을 불러오는데 실패했습니다.');
     }
   }
@@ -410,7 +410,7 @@ export class CouponService {
       const result = await callCouponAPI('issue', { couponId });
       return { success: true, message: result.message, data: result };
     } catch (error: any) {
-      console.error('쿠폰 발급 실패:', error);
+ console.error('쿠폰 발급 실패:', error);
       throw new Error(error.message || '쿠폰 발급에 실패했습니다.');
     }
   }
@@ -427,7 +427,7 @@ export class CouponService {
       const result = await callCouponAPI('use', { userCouponId, orderId });
       return { success: true, message: result.message, data: result };
     } catch (error: any) {
-      console.error('쿠폰 사용 실패:', error);
+ console.error('쿠폰 사용 실패:', error);
       throw new Error(error.message || '쿠폰 사용에 실패했습니다.');
     }
   }
@@ -437,12 +437,12 @@ export class CouponService {
    */
   static async registerCouponByCode(uid: string, couponCode: string): Promise<CouponResponse> {
     try {
-      console.log('쿠폰 등록 시도:', { uid, couponCode });
+ console.log('쿠폰 등록 시도:', { uid, couponCode });
       const result = await callCouponAPI('register', { couponCode });
-      console.log('쿠폰 등록 결과:', result);
+ console.log('쿠폰 등록 결과:', result);
       return { success: true, message: result.message, data: result };
     } catch (error: any) {
-      console.error('쿠폰 등록 실패 상세:', error);
+ console.error('쿠폰 등록 실패 상세:', error);
       throw new Error(error.message || '쿠폰 등록에 실패했습니다.');
     }
   }
@@ -461,7 +461,7 @@ export class CouponService {
         updatedAt: serverTimestamp()
       });
     } catch (error) {
-      console.error('쿠폰 만료 처리 실패:', error);
+ console.error('쿠폰 만료 처리 실패:', error);
     }
   }
 

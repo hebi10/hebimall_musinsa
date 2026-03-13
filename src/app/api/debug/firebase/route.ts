@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const productId = searchParams.get('productId');
     
-    console.log('🔍 Firebase 데이터 디버깅 시작...');
+    console.log('Firebase 데이터 디버깅 시작...');
     
     // 카테고리 목록 확인
     const categoriesSnapshot = await getDocs(collection(db, 'categories'));
@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
               ...product,
               data: productData
             };
-            console.log(`✅ 타겟 상품 발견! 카테고리: ${categoryId}`);
+            console.log(`타겟 상품 발견! 카테고리: ${categoryId}`);
           }
         });
         
@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
         });
         
       } catch (error) {
-        console.error(`❌ ${categoryId} 상품 조회 실패:`, error);
+        console.error(`${categoryId} 상품 조회 실패:`, error);
         result.categories.push({
           id: categoryId,
           productCount: 0,
@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(result);
     
   } catch (error) {
-    console.error('❌ Firebase 디버깅 실패:', error);
+    console.error('Firebase 디버깅 실패:', error);
     return NextResponse.json({ 
       error: error instanceof Error ? error.message : 'Unknown error' 
     }, { status: 500 });

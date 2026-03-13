@@ -1,6 +1,6 @@
 export const APP_CONFIG = {
   name: 'STYNA',
-  description: '무신사 스타일 쇼핑몰',
+  description: '패션 이커머스 쇼핑몰',
   version: '1.0.0',
   author: 'STYNA Team',
   
@@ -30,8 +30,8 @@ export const APP_CONFIG = {
   
   // SEO 설정
   seo: {
-    defaultTitle: 'STYNA - 무신사 스타일 쇼핑몰',
-    defaultDescription: '최신 패션 트렌드를 만나보세요',
-    keywords: ['패션', '쇼핑몰', '무신사', '의류', '브랜드'],
+    defaultTitle: 'STYNA - 패션 쇼핑몰',
+    defaultDescription: '패션 상품을 판매하는 온라인 쇼핑몰입니다',
+    keywords: ['패션', '쇼핑몰', '의류', '브랜드'],
   },
 } as const;

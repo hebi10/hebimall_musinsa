@@ -19,20 +19,20 @@ export default function OrderListPage() {
   // 주문 데이터 로드
   const loadOrders = async () => {
     if (!user?.uid) {
-      console.log('❌ No user UID available');
+      console.log('No user UID available');
       return;
     }
     
     try {
-      console.log('🔍 Loading orders for user:', user.uid);
+      console.log('Loading orders for user:', user.uid);
       setIsLoading(true);
       setError(null);
       const userOrders = await OrderService.getUserOrders(user.uid, 50);
-      console.log('✅ Orders loaded successfully:', userOrders.length, 'orders');
-      console.log('📦 First order sample:', userOrders[0]);
+      console.log('Orders loaded:', userOrders.length, 'orders');
+      console.log('First order sample:', userOrders[0]);
       setOrders(userOrders);
     } catch (err: any) {
-      console.error('❌ 주문 목록 로드 실패:', err);
+      console.error('주문 목록 로드 실패:', err);
       console.error('Error details:', {
         message: err.message,
         code: err.code,
@@ -43,9 +43,9 @@ export default function OrderListPage() {
       let errorMessage = err.message || '주문 목록을 불러오는데 실패했습니다.';
       
       if (err.message?.includes('시스템 준비')) {
-        errorMessage = '🔧 시스템 업데이트 중입니다. 잠시 후 다시 시도해주세요. (약 2-3분 소요)';
+        errorMessage = '시스템 업데이트 중입니다. 잠시 후 다시 시도해주세요.';
       } else if (err.message?.includes('index')) {
-        errorMessage = '📊 데이터베이스 최적화 중입니다. 잠시만 기다려주세요.';
+        errorMessage = '데이터베이스 최적화 중입니다. 잠시만 기다려주세요.';
       }
       
       setError(errorMessage);
@@ -75,7 +75,7 @@ export default function OrderListPage() {
       // 주문 목록 새로고침
       await loadOrders();
       
-      alert(`주문이 성공적으로 취소되었습니다.\n\n✅ 포인트/쿠폰이 복원되었습니다.\n✅ 결제금액은 2-3일 내 환불 예정입니다.`);
+      alert(`주문이 성공적으로 취소되었습니다.\n\n포인트/쿠폰이 복원되었습니다.\n결제금액은 2-3일 내 환불 예정입니다.`);
     } catch (error: any) {
       console.error('주문 취소 실패:', error);
       
@@ -165,28 +165,28 @@ export default function OrderListPage() {
       {/* Statistics Cards */}
       <div className={styles.statsGrid}>
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>📦</div>
+          <div className={styles.statIcon}></div>
           <div className={styles.statContent}>
             <div className={styles.statNumber}>{stats.total}</div>
             <div className={styles.statLabel}>총 주문</div>
           </div>
         </div>
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>🚚</div>
+          <div className={styles.statIcon}></div>
           <div className={styles.statContent}>
             <div className={styles.statNumber}>{stats.shipped}</div>
             <div className={styles.statLabel}>배송중</div>
           </div>
         </div>
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>✅</div>
+          <div className={styles.statIcon}></div>
           <div className={styles.statContent}>
             <div className={styles.statNumber}>{stats.delivered}</div>
             <div className={styles.statLabel}>배송완료</div>
           </div>
         </div>
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>💰</div>
+          <div className={styles.statIcon}></div>
           <div className={styles.statContent}>
             <div className={styles.statNumber}>{formatCurrency(stats.totalAmount)}</div>
             <div className={styles.statLabel}>총 구매금액</div>
@@ -237,7 +237,7 @@ export default function OrderListPage() {
             className={styles.refreshButton}
             disabled={isLoading}
           >
-            {isLoading ? '새로고침 중...' : '🔄 새로고침'}
+            {isLoading ? '새로고침 중...' : '새로고침'}
           </button>
         </div>
 
@@ -250,7 +250,7 @@ export default function OrderListPage() {
           ) : error ? (
             <div className={styles.errorState}>
               <div className={styles.errorIcon}>
-                {error.includes('시스템 준비') || error.includes('최적화') ? '🔧' : '❌'}
+                {error.includes('시스템 준비') || error.includes('최적화') ? '!' : 'X'}
               </div>
               <h3>
                 {error.includes('시스템 준비') || error.includes('최적화') 
@@ -261,11 +261,11 @@ export default function OrderListPage() {
               <p>{error}</p>
               <div className={styles.errorActions}>
                 <button onClick={loadOrders} className={styles.retryButton}>
-                  🔄 다시 시도
+                  다시 시도
                 </button>
                 {error.includes('시스템 준비') && (
                   <p className={styles.waitingNote}>
-                    💡 시스템 최적화가 완료되면 자동으로 정상 작동됩니다.
+                    시스템 최적화가 완료되면 자동으로 정상 작동됩니다.
                   </p>
                 )}
               </div>
@@ -333,7 +333,7 @@ export default function OrderListPage() {
                             target.src = '/tshirt-1.jpg';
                           }}
                           onLoad={() => {
-                            console.log('✅ Image loaded successfully:', product.productName);
+                            console.log('Image loaded:', product.productName);
                           }}
                           loading="lazy"
                         />
@@ -382,7 +382,7 @@ export default function OrderListPage() {
                     )}
                     {(order.status === 'preparing' || order.status === 'shipped') && (
                       <div className={styles.cancelNotice}>
-                        <span className={styles.noticeIcon}>ℹ️</span>
+                        <span className={styles.noticeIcon}></span>
                         <span className={styles.noticeText}>
                           {order.status === 'preparing' ? '상품 준비중 - 고객센터 문의' : '배송중 - 취소 불가'}
                         </span>
@@ -394,7 +394,7 @@ export default function OrderListPage() {
             ))
           ) : (
             <div className={styles.emptyState}>
-              <div className={styles.emptyIcon}>📦</div>
+              <div className={styles.emptyIcon}></div>
               <div className={styles.emptyTitle}>주문 내역이 없습니다</div>
               <div className={styles.emptyDesc}>
                 {selectedStatus === '전체' 

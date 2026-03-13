@@ -394,9 +394,9 @@ export default function ProductDetailClient({ product }: Props) {
           {/* 재고 상태 */}
           <div className={styles.stockInfo}>
             {inStock ? (
-              <span className={styles.inStock}>✓ 재고 있음 ({product.stock}개)</span>
+              <span className={styles.inStock}>재고 있음 ({product.stock}개)</span>
             ) : (
-              <span className={styles.outOfStock}>✗ 품절</span>
+              <span className={styles.outOfStock}>품절</span>
             )}
           </div>
 
@@ -470,7 +470,7 @@ export default function ProductDetailClient({ product }: Props) {
               disabled={isWishlistLoading}
               title={isWishlisted ? '찜 해제' : '찜하기'}
             >
-              {isWishlistLoading ? '⏳' : isWishlisted ? '❤️' : '🤍'}
+              {isWishlisted ? '찜 해제' : '찜하기'}
             </button>
             <Button
               variant="secondary"

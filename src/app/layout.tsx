@@ -23,9 +23,9 @@ const SITE_URL =
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
 
-  title: "STYNA - 깔끔한 스타일 쇼핑몰",
+  title: "STYNA - 패션 쇼핑몰",
   description:
-    "최신 패션 트렌드를 만나보세요. 티셔츠, 바지, 아우터, 액세서리까지 다양한 스타일을 STYNA에서 만나보세요.",
+    "티셔츠, 바지, 아우터, 액세서리 등 다양한 패션 상품을 판매하는 온라인 쇼핑몰입니다.",
 
   keywords: [
     "쇼핑몰",
@@ -33,8 +33,6 @@ export const metadata: Metadata = {
     "온라인쇼핑",
     "의류",
     "STYNA",
-    "무신사",
-    "스타일",
   ],
 
   authors: [{ name: "STYNA" }],
@@ -69,9 +67,9 @@ export const metadata: Metadata = {
   themeColor: "#000000",
 
   openGraph: {
-    title: "STYNA - 깔끔한 스타일 쇼핑몰",
+    title: "STYNA - 패션 쇼핑몰",
     description:
-      "최신 패션 트렌드를 만나보세요. 티셔츠, 바지, 아우터, 액세서리까지 다양한 스타일을 STYNA에서!",
+      "티셔츠, 바지, 아우터, 액세서리 등 패션 상품을 판매하는 온라인 쇼핑몰입니다.",
     url: SITE_URL,
     siteName: "STYNA",
     images: [
@@ -79,7 +77,7 @@ export const metadata: Metadata = {
         url: "/thum.png",
         width: 1200,
         height: 630,
-        alt: "STYNA 쇼핑몰 - 최신 패션 트렌드",
+        alt: "STYNA 쇼핑몰",
         type: "image/png",
       },
     ],
@@ -89,8 +87,8 @@ export const metadata: Metadata = {
 
   twitter: {
     card: "summary_large_image",
-    title: "STYNA - 깔끔한 스타일 쇼핑몰",
-    description: "최신 패션 트렌드를 만나보세요",
+    title: "STYNA - 패션 쇼핑몰",
+    description: "패션 상품을 판매하는 온라인 쇼핑몰입니다",
     images: ["/thum.png"],
     creator: "@STYNA",
   },

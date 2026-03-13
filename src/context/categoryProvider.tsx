@@ -39,8 +39,8 @@ export function CategoryProvider({ children }: CategoryProviderProps) {
     {
       id: 'clothing',
       name: '상의',
-      description: '트렌디하고 편안한 상의로 완성하는 나만의 스타일',
-      icon: '👕',
+      description: '상의 카테고리',
+      icon: '',
       color: '#007bff',
       order: 1,
       isActive: true,
@@ -50,8 +50,8 @@ export function CategoryProvider({ children }: CategoryProviderProps) {
     {
       id: 'shoes',
       name: '신발',
-      description: '편안하고 스타일리시한 신발로 완벽한 발걸음을',
-      icon: '�',
+      description: '신발 카테고리',
+      icon: '',
       color: '#6610f2',
       order: 2,
       isActive: true,
@@ -61,8 +61,8 @@ export function CategoryProvider({ children }: CategoryProviderProps) {
     {
       id: 'bags',
       name: '가방',
-      description: '실용성과 스타일을 겸비한 가방 컬렉션',
-      icon: '🎒',
+      description: '가방 카테고리',
+      icon: '',
       color: '#ffc107',
       order: 3,
       isActive: true,
@@ -72,8 +72,8 @@ export function CategoryProvider({ children }: CategoryProviderProps) {
     {
       id: 'accessories',
       name: '액세서리',
-      description: '포인트가 되는 액세서리로 스타일 완성',
-      icon: '�',
+      description: '액세서리 카테고리',
+      icon: '',
       color: '#28a745',
       order: 4,
       isActive: true,
@@ -149,12 +149,12 @@ export function CategoryProvider({ children }: CategoryProviderProps) {
         setCategories(categoriesWithInfo);
       } else {
         // 카테고리 컬렉션이 없는 경우 fallback 카테고리 표시
-        console.log('🔄 Firebase 카테고리 없음 - Fallback 사용');
+        console.log('Firebase 카테고리 없음 - Fallback 사용');
         setCategories(fallbackCategories);
       }
     } catch (err) {
-      console.error('❌ 카테고리 불러오기 실패:', err);
-      console.log('🔄 Fallback 카테고리 사용');
+      console.error('카테고리 불러오기 실패:', err);
+      console.log('Fallback 카테고리 사용');
       
       // Firebase 연결 실패 시 fallback 카테고리 사용
       setCategories(fallbackCategories);

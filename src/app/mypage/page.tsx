@@ -31,7 +31,7 @@ export default function MyPage() {
       <div className={styles.contentArea}>
         <div className={styles.notLoggedIn}>
           <div className={styles.loginPrompt}>
-            <div className={styles.loginIcon}>👤</div>
+            <div className={styles.loginIcon}></div>
             <h2>로그인이 필요합니다</h2>
             <p>마이페이지를 이용하려면 로그인해주세요.</p>
             <Link href="/auth/login" className={styles.loginButton}>
@@ -48,13 +48,13 @@ export default function MyPage() {
       {/* 대시보드 헤더 */}
       <div className={styles.dashboardHeader}>
         <h2>나의 쇼핑 현황</h2>
-        <p>최근 활동과 찜한 상품을 확인하세요</p>
+        <p>최근 활동과 찜한 상품을 확인할 수 있습니다</p>
       </div>
 
       {/* 통계 카드 */}
       <div className={styles.statsGrid}>
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>📦</div>
+          <div className={styles.statIcon}></div>
           <div className={styles.statInfo}>
             <h3>주문내역</h3>
             <p className={styles.statNumber}>0</p>
@@ -63,9 +63,9 @@ export default function MyPage() {
             </Link>
           </div>
         </div>
-        
+
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>👀</div>
+          <div className={styles.statIcon}></div>
           <div className={styles.statInfo}>
             <h3>최근 본 상품</h3>
             <p className={styles.statNumber}>{recentProducts.length}</p>
@@ -74,9 +74,9 @@ export default function MyPage() {
             </Link>
           </div>
         </div>
-        
+
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>❤️</div>
+          <div className={styles.statIcon}></div>
           <div className={styles.statInfo}>
             <h3>찜한 상품</h3>
             <p className={styles.statNumber}>{wishlistItems.length}</p>
@@ -85,9 +85,9 @@ export default function MyPage() {
             </Link>
           </div>
         </div>
-        
+
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>🎁</div>
+          <div className={styles.statIcon}></div>
           <div className={styles.statInfo}>
             <h3>보유 쿠폰</h3>
             <p className={styles.statNumber}>0</p>

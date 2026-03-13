@@ -40,7 +40,7 @@ export default function CouponRegister({ onRegister }: CouponRegisterProps) {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h3>🎫 쿠폰 등록</h3>
+        <h3>쿠폰 등록</h3>
         <p>쿠폰 코드를 입력하여 할인 혜택을 받아보세요!</p>
       </div>
 
@@ -72,7 +72,7 @@ export default function CouponRegister({ onRegister }: CouponRegisterProps) {
       )}
 
       <div className={styles.info}>
-        <h4>💡 쿠폰 사용 안내</h4>
+        <h4>쿠폰 사용 안내</h4>
         <ul>
           <li>쿠폰 코드는 대소문자를 구분하지 않습니다</li>
           <li>한 번 사용된 쿠폰은 재사용할 수 없습니다</li>

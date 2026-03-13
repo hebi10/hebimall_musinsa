@@ -9,7 +9,7 @@ export default function EventsPage() {
         <div className={styles.heroContent}>
           <h1 className={styles.heroTitle}>이벤트</h1>
           <p className={styles.heroSubtitle}>
-            다양한 혜택과 특별한 이벤트를 만나보세요
+            진행 중인 이벤트 목록입니다
           </p>
         </div>
       </div>

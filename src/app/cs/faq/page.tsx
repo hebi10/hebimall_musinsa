@@ -97,7 +97,7 @@ export default function FAQPage() {
       </div>
 
       <div className={styles.searchContainer}>
-        <div className={styles.searchIcon}>🔍</div>
+        <div className={styles.searchIcon}></div>
         <input
           type="text"
           placeholder="궁금한 내용을 검색해보세요..."
@@ -146,7 +146,7 @@ export default function FAQPage() {
           ))
         ) : (
           <div className={styles.noResults}>
-            <div className={styles.noResultsIcon}>🔍</div>
+            <div className={styles.noResultsIcon}></div>
             <h3>검색 결과가 없습니다</h3>
             <p>다른 키워드로 검색해보세요.</p>
           </div>

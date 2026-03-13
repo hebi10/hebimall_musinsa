@@ -57,14 +57,14 @@ export class ProductService {
           await new Promise(resolve => setTimeout(resolve, 50));
           
         } catch (error) {
-          console.warn(`⚠️ 카테고리 ${categoryId} 상품 조회 실패:`, error);
+ console.warn(` 카테고리 ${categoryId} 상품 조회 실패:`, error);
         }
       }
       
       return allProducts;
       
     } catch (error) {
-      console.error('전체 상품 조회 실패:', error);
+ console.error('전체 상품 조회 실패:', error);
       throw new Error('상품 목록을 불러오는데 실패했습니다.');
     }
   }
@@ -98,7 +98,7 @@ export class ProductService {
 
       await setDoc(categoryProductRef, productData);
 
-      console.log(`✅ 상품 생성: ${product.name} → categories/${product.category}/products/${categoryProductRef.id}`);
+ console.log(` 상품 생성: ${product.name} → categories/${product.category}/products/${categoryProductRef.id}`);
 
       return {
         id: categoryProductRef.id,
@@ -108,7 +108,7 @@ export class ProductService {
         status: product.status || 'active'
       };
     } catch (error) {
-      console.error('상품 생성 실패:', error);
+ console.error('상품 생성 실패:', error);
       throw new Error('상품 생성에 실패했습니다.');
     }
   }
@@ -158,13 +158,13 @@ export class ProductService {
         
         await setDoc(newCategoryProductRef, newProductData);
         
-        console.log(`✅ 상품 카테고리 변경: ${existingProduct.category} → ${updates.category}`);
+ console.log(` 상품 카테고리 변경: ${existingProduct.category} → ${updates.category}`);
       } else {
         // 같은 카테고리 내에서 업데이트
         const categoryProductRef = doc(db, 'categories', existingProduct.category, 'products', productId);
         await updateDoc(categoryProductRef, updateData);
         
-        console.log(`✅ 상품 수정: ${existingProduct.name}`);
+ console.log(` 상품 수정: ${existingProduct.name}`);
       }
       
       return {
@@ -173,7 +173,7 @@ export class ProductService {
         updatedAt: new Date()
       };
     } catch (error) {
-      console.error('상품 수정 실패:', error);
+ console.error('상품 수정 실패:', error);
       throw new Error('상품 수정에 실패했습니다.');
     }
   }
@@ -191,9 +191,9 @@ export class ProductService {
       const categoryProductRef = doc(db, 'categories', existingProduct.category, 'products', productId);
       await deleteDoc(categoryProductRef);
       
-      console.log(`✅ 상품 삭제: ${existingProduct.name} (categories/${existingProduct.category}/products/)`);
+ console.log(` 상품 삭제: ${existingProduct.name} (categories/${existingProduct.category}/products/)`);
     } catch (error) {
-      console.error('상품 삭제 실패:', error);
+ console.error('상품 삭제 실패:', error);
       throw new Error('상품 삭제에 실패했습니다.');
     }
   }
@@ -226,7 +226,7 @@ export class ProductService {
           }
         } catch (error) {
           // 해당 카테고리에서 찾지 못한 경우 계속 진행
-          console.log(`⚠️ ${categoryId}에서 검색 실패, 다음 카테고리로 진행...`);
+ console.log(` ${categoryId}에서 검색 실패, 다음 카테고리로 진행...`);
           continue;
         }
         
@@ -234,10 +234,10 @@ export class ProductService {
         await new Promise(resolve => setTimeout(resolve, 10));
       }
       
-      console.log(`❌ 상품을 찾을 수 없음: ${productId}`);
+ console.log(` 상품을 찾을 수 없음: ${productId}`);
       return null;
     } catch (error) {
-      console.error('상품 상세 조회 실패:', error);
+ console.error('상품 상세 조회 실패:', error);
       throw new Error('상품을 불러오는데 실패했습니다.');
     }
   }
@@ -271,7 +271,7 @@ export class ProductService {
 
       return products;
     } catch (error) {
-      console.error('카테고리별 상품 조회 실패:', error);
+ console.error('카테고리별 상품 조회 실패:', error);
       // 실패 시 전체 상품에서 카테고리 필터링으로 폴백
       return this.getProductsByCategoryFallback(categorySlug, limitCount);
     }
@@ -291,7 +291,7 @@ export class ProductService {
       
       return filteredProducts;
     } catch (error) {
-      console.error('폴백 상품 조회도 실패:', error);
+ console.error('폴백 상품 조회도 실패:', error);
       return [];
     }
   }
@@ -322,7 +322,7 @@ export class ProductService {
 
       return products;
     } catch (error) {
-      console.error('상품 필터링 실패:', error);
+ console.error('상품 필터링 실패:', error);
       throw new Error('상품 필터링에 실패했습니다.');
     }
   }
@@ -365,7 +365,7 @@ export class ProductService {
         product.tags.some(tag => tag.toLowerCase().includes(query))
       );
     } catch (error) {
-      console.error('상품 검색 실패:', error);
+ console.error('상품 검색 실패:', error);
       throw new Error('상품 검색에 실패했습니다.');
     }
   }
@@ -383,7 +383,7 @@ export class ProductService {
         .filter(p => p.id !== productId) // 현재 상품 제외
         .slice(0, limitCount);
     } catch (error) {
-      console.error('연관 상품 조회 실패:', error);
+ console.error('연관 상품 조회 실패:', error);
       return [];
     }
   }
@@ -398,7 +398,7 @@ export class ProductService {
         .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
         .slice(0, limitCount);
     } catch (error) {
-      console.error('신상품 조회 실패:', error);
+ console.error('신상품 조회 실패:', error);
       return [];
     }
   }
@@ -412,7 +412,7 @@ export class ProductService {
         .filter(p => p.isSale && p.status === 'active')
         .slice(0, limitCount);
     } catch (error) {
-      console.error('세일 상품 조회 실패:', error);
+ console.error('세일 상품 조회 실패:', error);
       return [];
     }
   }
@@ -427,7 +427,7 @@ export class ProductService {
         .sort((a, b) => b.reviewCount - a.reviewCount)
         .slice(0, limitCount);
     } catch (error) {
-      console.error('베스트셀러 조회 실패:', error);
+ console.error('베스트셀러 조회 실패:', error);
       return [];
     }
   }
@@ -442,7 +442,7 @@ export class ProductService {
         .sort((a, b) => b.rating - a.rating)
         .slice(0, limitCount);
     } catch (error) {
-      console.error('추천 상품 조회 실패:', error);
+ console.error('추천 상품 조회 실패:', error);
       return [];
     }
   }
@@ -454,7 +454,7 @@ export class ProductService {
       const categories = categoriesSnapshot.docs.map(doc => doc.id);
       return categories.sort();
     } catch (error) {
-      console.error('카테고리 목록 조회 실패:', error);
+ console.error('카테고리 목록 조회 실패:', error);
       return ['accessories', 'bags', 'bottoms', 'shoes', 'tops']; // 기본 카테고리
     }
   }
@@ -468,7 +468,7 @@ export class ProductService {
         name: doc.data().name || doc.id
       })).sort((a, b) => a.name.localeCompare(b.name));
     } catch (error) {
-      console.error('카테고리 정보 조회 실패:', error);
+ console.error('카테고리 정보 조회 실패:', error);
       return [
         { id: 'accessories', name: '액세서리' },
         { id: 'bags', name: '가방' },
@@ -486,7 +486,7 @@ export class ProductService {
       const brands = [...new Set(products.map(p => p.brand))];
       return brands.sort();
     } catch (error) {
-      console.error('브랜드 목록 조회 실패:', error);
+ console.error('브랜드 목록 조회 실패:', error);
       return [];
     }
   }

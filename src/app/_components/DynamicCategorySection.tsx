@@ -42,10 +42,10 @@ export default function DynamicCategorySection({
         
         // 에러 시 기본 카테고리 설정
         setCategories([
-          { id: 'clothing', name: '의류', slug: 'clothing', href: '/categories/clothing', icon: '👕', image: '/category/main_category01.png', count: '2,450+ 상품' },
-          { id: 'bags', name: '가방', slug: 'bags', href: '/categories/bags', icon: '👜', image: '/category/main_category02.png', count: '890+ 상품' },
-          { id: 'accessories', name: '액세서리', slug: 'accessories', href: '/categories/accessories', icon: '💎', image: '/category/main_category03.png', count: '1,200+ 상품' },
-          { id: 'outdoor', name: '스포츠', slug: 'outdoor', href: '/categories/sports', icon: '🏃', image: '/category/main_category04.png', count: '650+ 상품' }
+          { id: 'clothing', name: '의류', slug: 'clothing', href: '/categories/clothing', icon: '', image: '/category/main_category01.png', count: '' },
+          { id: 'bags', name: '가방', slug: 'bags', href: '/categories/bags', icon: '', image: '/category/main_category02.png', count: '' },
+          { id: 'accessories', name: '액세서리', slug: 'accessories', href: '/categories/accessories', icon: '', image: '/category/main_category03.png', count: '' },
+          { id: 'outdoor', name: '스포츠', slug: 'outdoor', href: '/categories/sports', icon: '', image: '/category/main_category04.png', count: '' }
         ]);
       } finally {
         setLoading(false);
@@ -62,7 +62,7 @@ export default function DynamicCategorySection({
           <div key={index} className={`${styles.categoryCard} ${styles.loading}`}>
             <div className={styles.categoryImageWrapper}>
               <div className={`${styles.categoryImagePlaceholder} ${styles.loadingShimmer}`}>
-                <span className={styles.categoryIcon}>⏳</span>
+                <span className={styles.categoryIcon}></span>
               </div>
             </div>
             <div className={styles.categoryInfo}>

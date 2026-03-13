@@ -269,7 +269,7 @@ export default function SearchClient() {
         {!state.hasSearched && (
           <div className={styles.initialState}>
             <div className={styles.searchTip}>
-              <div className={styles.searchTipIcon}>🔍</div>
+              <div className={styles.searchTipIcon}></div>
               <h3>상품을 검색해보세요</h3>
               <ul className={styles.tipList}>
                 <li>상품명이나 브랜드명으로 검색할 수 있습니다</li>
@@ -403,7 +403,7 @@ export default function SearchClient() {
             {/* 에러 상태 */}
             {state.error && (
               <div className={styles.error}>
-                <div className={styles.errorIcon}>⚠️</div>
+                <div className={styles.errorIcon}></div>
                 <h3>검색 오류</h3>
                 <p>{state.error}</p>
                 <button 
@@ -418,7 +418,7 @@ export default function SearchClient() {
             {/* 검색 결과 없음 */}
             {!state.loading && !state.error && state.filteredProducts.length === 0 && (
               <div className={styles.noResults}>
-                <div className={styles.noResultsIcon}>🔍</div>
+                <div className={styles.noResultsIcon}></div>
                 <h3>검색 결과가 없습니다</h3>
                 <p>'{state.searchQuery}'에 대한 검색 결과를 찾을 수 없습니다.</p>
                 

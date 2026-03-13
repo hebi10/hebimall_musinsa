@@ -128,6 +128,15 @@ npm run seed:coupons
 `firestore.rules`, `storage.rules`로 미인증 접근과 일반 사용자의
 쓰기 범위를 제한합니다. 관리자 권한은 `users` 컬렉션의 `role` 필드로 확인합니다.
 
+## 상세 문서
+
+| 문서 | 내용 |
+|------|------|
+| [docs/env-setup.md](docs/env-setup.md) | 환경변수 설정, Firebase Secrets 관리 |
+| [docs/coupon-system.md](docs/coupon-system.md) | 쿠폰 Firestore 구조, 서비스 로직, Cloud Functions |
+| [docs/dashboard.md](docs/dashboard.md) | 관리자 대시보드 구조, 데이터 레이어 |
+| [docs/storage-structure.md](docs/storage-structure.md) | Firebase Storage 경로 구조, 업로드 함수 |
+
 ## 작업 메모
 
 - Context Provider가 늘어나면서 Provider 중첩이 깊어졌다. 서버 데이터 성격의

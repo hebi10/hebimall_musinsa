@@ -88,21 +88,21 @@ export default function CouponsPage() {
       {/* Statistics Cards */}
       <div className={styles.statsGrid}>
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>🎫</div>
+          <div className={styles.statIcon}></div>
           <div className={styles.statContent}>
             <div className={styles.statNumber}>{couponStats?.total || 0}</div>
             <div className={styles.statLabel}>전체 쿠폰</div>
           </div>
         </div>
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>✅</div>
+          <div className={styles.statIcon}></div>
           <div className={styles.statContent}>
             <div className={styles.statNumber}>{couponStats?.available || 0}</div>
             <div className={styles.statLabel}>사용가능</div>
           </div>
         </div>
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>💰</div>
+          <div className={styles.statIcon}></div>
           <div className={styles.statContent}>
             <div className={styles.statNumber}>
               {userCoupons
@@ -178,9 +178,9 @@ export default function CouponsPage() {
                   <div className={styles.couponMain}>
                     <div className={styles.couponLeft}>
                       <div className={styles.couponType}>
-                        {userCouponView.coupon.type === '할인금액' && '💰'}
-                        {userCouponView.coupon.type === '할인율' && '📊'}
-                        {userCouponView.coupon.type === '무료배송' && '🚚'}
+                        {userCouponView.coupon.type === '할인금액' && ''}
+                        {userCouponView.coupon.type === '할인율' && ''}
+                        {userCouponView.coupon.type === '무료배송' && ''}
                       </div>
                       
                       <div className={styles.couponInfo}>
@@ -238,7 +238,7 @@ export default function CouponsPage() {
             })
           ) : (
             <div className={styles.emptyState}>
-              <div className={styles.emptyIcon}>🎫</div>
+              <div className={styles.emptyIcon}></div>
               <div className={styles.emptyTitle}>보유하신 쿠폰이 없습니다</div>
               <div className={styles.emptyDesc}>쿠폰을 등록하거나 이벤트에 참여하여 쿠폰을 받아보세요.</div>
               {/* CouponRegister 컴포넌트에서 버튼을 제공 */}

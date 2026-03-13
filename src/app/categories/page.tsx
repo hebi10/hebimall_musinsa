@@ -60,7 +60,6 @@ export default function CategoriesPage() {
                   </span>
                 ) : (
                   <div className={styles.iconPlaceholder}>
-                    <span className={styles.defaultIcon}>📦</span>
                     <p className={styles.placeholderText}>이미지 준비중</p>
                   </div>
                 )}
@@ -101,7 +100,6 @@ export default function CategoriesPage() {
                         category.icon
                       ) : (
                         <div className={styles.iconPlaceholder}>
-                          <span className={styles.defaultIcon}>📦</span>
                           <p className={styles.placeholderText}>이미지 준비중</p>
                         </div>
                       )}
@@ -122,7 +120,7 @@ export default function CategoriesPage() {
         {/* Empty State */}
         {categories.length === 0 && !loading && (
           <div className={styles.emptyState}>
-            <div className={styles.emptyIcon}>🛍️</div>
+            <div className={styles.emptyIcon}></div>
             <h3 className={styles.emptyTitle}>카테고리가 없습니다</h3>
             <p className={styles.emptyMessage}>
               아직 등록된 카테고리가 없습니다. 잠시 후 다시 시도해주세요.

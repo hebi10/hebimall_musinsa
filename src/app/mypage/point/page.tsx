@@ -90,7 +90,7 @@ export default function PointPage() {
           </p>
         </div>
         <div className={styles.balanceIcon}>
-          <span>💎</span>
+          <span></span>
         </div>
       </div>
 
@@ -99,28 +99,28 @@ export default function PointPage() {
         <h3>포인트 적립 안내</h3>
         <div className={styles.earnMethods}>
           <div className={styles.earnMethod}>
-            <span className={styles.methodIcon}>🎉</span>
+            <span className={styles.methodIcon}></span>
             <div className={styles.methodInfo}>
               <h4>신규 가입</h4>
               <p>5,000P 지급</p>
             </div>
           </div>
           <div className={styles.earnMethod}>
-            <span className={styles.methodIcon}>🛍️</span>
+            <span className={styles.methodIcon}></span>
             <div className={styles.methodInfo}>
               <h4>상품 구매</h4>
               <p>구매금액의 1% 적립</p>
             </div>
           </div>
           <div className={styles.earnMethod}>
-            <span className={styles.methodIcon}>⭐</span>
+            <span className={styles.methodIcon}></span>
             <div className={styles.methodInfo}>
               <h4>리뷰 작성</h4>
               <p>500P 적립</p>
             </div>
           </div>
           <div className={styles.earnMethod}>
-            <span className={styles.methodIcon}>🎂</span>
+            <span className={styles.methodIcon}></span>
             <div className={styles.methodInfo}>
               <h4>생일 혜택</h4>
               <p>3,000P 적립</p>
@@ -196,7 +196,7 @@ export default function PointPage() {
               <div className={styles.loading}>포인트 내역을 불러오는 중...</div>
             ) : history.length === 0 ? (
               <div className={styles.emptyState}>
-                <span className={styles.emptyIcon}>📋</span>
+                <span className={styles.emptyIcon}></span>
                 <p>포인트 사용 내역이 없습니다</p>
               </div>
             ) : (

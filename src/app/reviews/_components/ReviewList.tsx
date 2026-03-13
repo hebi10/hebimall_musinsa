@@ -27,16 +27,16 @@ export default function ReviewList() {
   const [productInfo, setProductInfo] = useState<{ [key: string]: { name: string; mainImage?: string } }>({});
 
   useEffect(() => {
-    console.log('🔄 리뷰 목록 로딩 시작 - ratingFilter:', ratingFilter, 'sortBy:', sortBy);
+    console.log('리뷰 목록 로딩 시작 - ratingFilter:', ratingFilter, 'sortBy:', sortBy);
     loadAllReviews(1, ratingFilter, sortBy);
   }, [ratingFilter, sortBy, loadAllReviews]);
 
   // 상품 정보를 가져오는 함수
   useEffect(() => {
     const loadProductInfo = async () => {
-      console.log('📦 상품 정보 로딩 시작 - 리뷰 개수:', allReviews.length);
+      console.log('상품 정보 로딩 시작 - 리뷰 개수:', allReviews.length);
       const uniqueProductIds = [...new Set(allReviews.map(review => review.productId))];
-      console.log('🔍 로드할 상품 ID 목록:', uniqueProductIds);
+      console.log('로드할 상품 ID 목록:', uniqueProductIds);
       
       const productData: { [key: string]: { name: string; mainImage?: string } } = {};
       
@@ -48,17 +48,17 @@ export default function ReviewList() {
               name: product.name,
               mainImage: product.mainImage
             };
-            console.log('✅ 상품 정보 로드 완료:', product.name);
+            console.log('상품 정보 로드 완료:', product.name);
           } else {
-            console.log('❌ 상품을 찾을 수 없음:', productId);
+            console.log('상품을 찾을 수 없음:', productId);
           }
         } catch (error) {
-          console.error(`❌ 상품 ${productId} 정보 로드 실패:`, error);
+          console.error(`상품 ${productId} 정보 로드 실패:`, error);
         }
       }
       
       setProductInfo(productData);
-      console.log('📦 모든 상품 정보 로딩 완료:', Object.keys(productData).length, '개');
+      console.log('모든 상품 정보 로딩 완료:', Object.keys(productData).length, '개');
     };
 
     if (allReviews.length > 0) {

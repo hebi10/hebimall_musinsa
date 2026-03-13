@@ -3,37 +3,31 @@
   background: #fff;
 }
 
-/* ── 공통 섹션 컨테이너 ── */
+/* -- 공통 섹션 컨테이너 -- */
 .sectionContainer {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1rem;
 }
 
-/* ── 섹션 헤더 ── */
-.sectionHeader {
-  text-align: center;
-  margin-bottom: 2rem;
+/* -- 섹션 헤더 (좌측 정렬) -- */
+.sectionHeaderLeft {
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #172b4d;
 }
 
 .sectionTitle {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: #172b4d;
-  margin: 0 0 0.35rem 0;
+  margin: 0;
   letter-spacing: -0.01em;
 }
 
-.sectionSubtitle {
-  font-size: 0.95rem;
-  color: #6b778c;
-  margin: 0;
-  font-weight: 400;
-}
-
-/* ── 카테고리 섹션 ── */
+/* -- 카테고리 섹션 -- */
 .categorySection {
-  padding: 3rem 0 2rem;
+  padding: 2.5rem 0 1.5rem;
   background: #fff;
 }
 
@@ -50,12 +44,12 @@
   border-radius: 4px;
   overflow: hidden;
   background: #fff;
-  border: 1px solid #dfe1e6;
+  border: 1px solid #e8e8e8;
   transition: border-color 0.15s;
 }
 
 .categoryCard:hover {
-  border-color: #2b6cb0;
+  border-color: #172b4d;
 }
 
 .categoryImageWrapper {
@@ -76,7 +70,7 @@
   overflow: hidden;
 }
 
-/* 카테고리별 배경 — 플레이스홀더용 */
+/* 카테고리별 배경 */
 .clothingBg { background: #42526e; }
 .bagsBg { background: #5a6c7d; }
 .accessoriesBg { background: #3d5a80; }
@@ -98,7 +92,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.25);
+  background: rgba(0, 0, 0, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -116,15 +110,15 @@
 }
 
 .categoryInfo {
-  padding: 0.875rem 1rem;
+  padding: 0.75rem 0.875rem;
 }
 
 .categoryLabel {
   display: block;
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 600;
   color: #172b4d;
-  margin-bottom: 0.2rem;
+  margin-bottom: 0.15rem;
 }
 
 .categoryCount {
@@ -132,227 +126,110 @@
   color: #6b778c;
 }
 
-/* ── 프로모 배너 ── */
-.promoBanner {
-  background: #172b4d;
-  padding: 3rem 0;
-  margin: 0;
+/* -- 상품 섹션 래퍼 -- */
+.productSections {
+  padding: 0;
+  background: #fff;
 }
 
-.promoBannerContent {
+/* -- 세일 배너 -- */
+.saleBanner {
+  background: #f4f5f7;
+  padding: 2rem 0;
+  margin: 1rem 0;
+}
+
+.saleBannerContent {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 2rem;
+  gap: 1.5rem;
 }
 
-.promoText {
+.saleText {
   flex: 1;
 }
 
-.promoLabel {
-  display: inline-block;
-  background: #de350b;
-  color: white;
-  padding: 0.3rem 0.75rem;
-  border-radius: 3px;
-  font-size: 0.75rem;
+.saleTitle {
+  font-size: 1.15rem;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 0.75rem;
+  color: #172b4d;
+  margin: 0 0 0.25rem 0;
 }
 
-.promoTitle {
-  font-size: 1.75rem;
-  font-weight: 800;
-  color: white;
-  margin: 0 0 0.5rem 0;
-}
-
-.promoDescription {
-  font-size: 1rem;
-  color: rgba(255, 255, 255, 0.8);
+.saleDescription {
+  font-size: 0.9rem;
+  color: #6b778c;
   margin: 0;
-  line-height: 1.5;
 }
 
-.promoButton {
+.saleButton {
   display: inline-flex;
   align-items: center;
-  padding: 0.75rem 1.5rem;
-  background: #fff;
-  color: #172b4d;
+  padding: 0.6rem 1.25rem;
+  background: #172b4d;
+  color: #fff;
   text-decoration: none;
   border-radius: 4px;
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   transition: background-color 0.15s;
   white-space: nowrap;
 }
 
-.promoButton:hover {
-  background: #f4f5f7;
+.saleButton:hover {
+  background: #0d1b30;
 }
 
-/* ── 상품 섹션들 ── */
-.productSections {
-  padding: 2rem 0;
+/* -- 서비스 안내 영역 -- */
+.serviceInfo {
   background: #fff;
+  padding: 2.5rem 0;
+  border-top: 1px solid #e8e8e8;
 }
 
-/* ── 브랜드 스토리 섹션 ── */
-.brandStory {
-  background: #f4f5f7;
-  padding: 4rem 0;
-}
-
-.brandContent {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3rem;
-  align-items: center;
-}
-
-.brandText {
-  order: 1;
-}
-
-.brandImage {
-  order: 2;
-}
-
-.brandTitle {
-  font-size: 2rem;
-  font-weight: 800;
-  color: #172b4d;
-  margin: 0 0 0.5rem 0;
-}
-
-.brandSubtitle {
-  font-size: 1.15rem;
-  font-weight: 600;
-  color: #42526e;
-  margin: 0 0 1rem 0;
-  line-height: 1.4;
-}
-
-.brandDescription {
-  font-size: 0.95rem;
-  color: #6b778c;
-  line-height: 1.7;
-  margin: 0 0 2rem 0;
-}
-
-.brandStats {
-  display: flex;
-  gap: 2rem;
-}
-
-.brandStat {
-  text-align: center;
-}
-
-.brandStatNumber {
-  display: block;
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: #172b4d;
-  margin-bottom: 0.25rem;
-}
-
-.brandStatLabel {
-  font-size: 0.8rem;
-  color: #6b778c;
-}
-
-.brandImage img {
-  width: 100%;
-  height: 360px;
-  object-fit: cover;
-  border-radius: 4px;
-}
-
-.brandImagePlaceholder {
-  width: 100%;
-  height: 360px;
-  background: #42526e;
-  border-radius: 4px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: white;
-}
-
-.brandImageLogo {
-  font-size: 2.5rem;
-  font-weight: 900;
-  margin: 0 0 0.25rem 0;
-  letter-spacing: 0.05em;
-}
-
-.brandImageSub {
-  font-size: 0.9rem;
-  font-weight: 400;
-  margin: 0;
-  opacity: 0.7;
-}
-
-.brandImageIcon {
-  display: none;
-}
-
-/* ── Quick Links 섹션 ── */
-.quickLinks {
-  background: #fff;
-  padding: 3rem 0;
-  border-top: 1px solid #dfe1e6;
-}
-
-.quickLinksGrid {
+.serviceGrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 1rem;
+  gap: 0;
 }
 
-.quickLinkCard {
-  display: block;
-  text-decoration: none;
-  background: #f4f5f7;
-  border-radius: 4px;
-  padding: 1.5rem;
-  border: 1px solid #dfe1e6;
-  transition: border-color 0.15s;
+.serviceItem {
+  padding: 0 1.5rem;
+  border-right: 1px solid #e8e8e8;
 }
 
-.quickLinkCard:hover {
-  border-color: #2b6cb0;
-  background: #fff;
+.serviceItem:last-child {
+  border-right: none;
 }
 
-.quickLinkIcon {
-  display: none;
-}
-
-.quickLinkTitle {
-  font-size: 1rem;
+.serviceItemTitle {
+  font-size: 0.9rem;
   font-weight: 600;
   color: #172b4d;
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 0.4rem 0;
 }
 
-.quickLinkDescription {
-  font-size: 0.85rem;
+.serviceItemDesc {
+  font-size: 0.8rem;
   color: #6b778c;
   margin: 0;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
-/* ── 로딩 / 에러 상태 ── */
+.serviceLink {
+  color: #2b6cb0;
+  text-decoration: none;
+}
+
+.serviceLink:hover {
+  text-decoration: underline;
+}
+
+/* -- 로딩 / 에러 상태 -- */
 .loadingShimmer {
   animation: shimmer 1.5s infinite linear;
   background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
@@ -402,111 +279,44 @@
   background: #2c5282;
 }
 
-/* ── Next.js 기본 레거시 스타일 ── */
-.main code {
-  font-family: inherit;
-  background: var(--gray-alpha-100);
-  padding: 2px 4px;
-  border-radius: 4px;
-  font-weight: 600;
-}
-
-.ctas {
-  display: flex;
-  gap: 16px;
-}
-
-.ctas a {
-  appearance: none;
-  border-radius: 4px;
-  height: 44px;
-  padding: 0 20px;
-  border: 1px solid transparent;
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  line-height: 20px;
-  font-weight: 500;
-}
-
-a.primary {
-  background: var(--foreground);
-  color: var(--background);
-  gap: 8px;
-}
-
-a.secondary {
-  border-color: var(--gray-alpha-200);
-  min-width: 158px;
-}
-
-.footer {
-  grid-row-start: 3;
-  display: flex;
-  gap: 24px;
-}
-
-.footer a {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.footer img {
-  flex-shrink: 0;
-}
-
-.productImage {
-  width: 100%;
-  padding-bottom: 100%;
-  background-color: rgba(0, 0, 0, 0.05);
-}
-
-/* ========== 반응형 디자인 ========== */
+/* ========== 반응형 ========== */
 
 @media (max-width: 1024px) {
   .categoryGrid {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .promoBannerContent {
+  .saleBannerContent {
     flex-direction: column;
     text-align: center;
   }
 
-  .brandContent {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
-
-  .brandText {
-    order: 2;
-    text-align: center;
-  }
-
-  .brandImage {
-    order: 1;
-  }
-
-  .quickLinksGrid {
+  .serviceGrid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem 0;
+  }
+
+  .serviceItem {
+    border-right: none;
+    padding: 0 1rem;
+  }
+
+  .serviceItem:nth-child(odd) {
+    border-right: 1px solid #e8e8e8;
   }
 }
 
 @media (max-width: 768px) {
   .categorySection {
-    padding: 2rem 0 1.5rem;
+    padding: 2rem 0 1rem;
   }
 
-  .sectionHeader {
-    margin-bottom: 1.5rem;
+  .sectionHeaderLeft {
+    margin-bottom: 1rem;
   }
 
   .sectionTitle {
-    font-size: 1.25rem;
+    font-size: 1.1rem;
   }
 
   .categoryGrid {
@@ -519,151 +329,63 @@ a.secondary {
   }
 
   .categoryInfo {
-    padding: 0.75rem;
+    padding: 0.65rem 0.75rem;
   }
 
   .categoryLabel {
     font-size: 0.9rem;
   }
 
-  .promoBanner {
+  .saleBanner {
+    padding: 1.5rem 0;
+  }
+
+  .saleTitle {
+    font-size: 1.05rem;
+  }
+
+  .serviceInfo {
     padding: 2rem 0;
   }
 
-  .promoTitle {
-    font-size: 1.3rem;
+  .serviceGrid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
   }
 
-  .promoDescription {
-    font-size: 0.9rem;
+  .serviceItem {
+    border-right: none;
+    padding: 0;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid #f0f0f0;
   }
 
-  .brandStory {
-    padding: 3rem 0;
+  .serviceItem:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
   }
 
-  .brandTitle {
-    font-size: 1.5rem;
-  }
-
-  .brandSubtitle {
-    font-size: 1rem;
-  }
-
-  .brandStats {
-    gap: 1.5rem;
-  }
-
-  .brandStatNumber {
-    font-size: 1.25rem;
-  }
-
-  .quickLinks {
-    padding: 2rem 0;
-  }
-
-  .quickLinksGrid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.75rem;
-  }
-
-  .quickLinkCard {
-    padding: 1rem;
-  }
-
-  .quickLinkTitle {
-    font-size: 0.9rem;
+  .serviceItem:nth-child(odd) {
+    border-right: none;
   }
 }
 
 @media (max-width: 480px) {
   .categoryGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
     gap: 0.5rem;
   }
 
-  .promoBannerContent {
+  .saleBannerContent {
     padding: 0 0.75rem;
   }
 
-  .promoTitle {
-    font-size: 1.15rem;
+  .saleTitle {
+    font-size: 1rem;
   }
 
-  .promoButton {
-    padding: 0.6rem 1.25rem;
-    font-size: 0.9rem;
-  }
-
-  .brandTitle {
-    font-size: 1.3rem;
-  }
-
-  .brandStats {
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-
-  .brandImage img,
-  .brandImagePlaceholder {
-    height: 260px;
-  }
-
-  .quickLinksGrid {
-    grid-template-columns: 1fr;
-  }
-
-  .quickLinkCard {
-    padding: 1rem;
-  }
-}
-
-@media (max-width: 600px) {
-  .page {
-    padding: 32px;
-    padding-bottom: 80px;
-  }
-
-  .ctas {
-    flex-direction: column;
-  }
-
-  .ctas a {
-    font-size: 14px;
-    height: 40px;
-    padding: 0 16px;
-  }
-
-  a.secondary {
-    min-width: auto;
-  }
-
-  .footer {
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .logo {
-    filter: invert();
-  }
-}
-
-@media (hover: hover) and (pointer: fine) {
-  a.primary:hover {
-    background: var(--button-primary-hover);
-    border-color: transparent;
-  }
-
-  a.secondary:hover {
-    background: var(--button-secondary-hover);
-    border-color: transparent;
-  }
-
-  .footer a:hover {
-    text-decoration: underline;
-    text-underline-offset: 4px;
+  .saleButton {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
   }
 }

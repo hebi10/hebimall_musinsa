@@ -40,19 +40,19 @@ export default function Header() {
           id: category.id,
           name: category.name,
           href: `/categories/${category.id}`,
-          icon: getCategoryIcon(category.name)
+          icon: ''
         }));
-        
+
         setCategories(headerCategories);
       } catch (error) {
         console.error('헤더 카테고리 로딩 실패:', error);
-        
+
         // 에러 시 기본 카테고리 설정
         setCategories([
-          { id: 'clothing', name: '의류', href: '/categories/clothing', icon: '👕' },
-          { id: 'bags', name: '가방', href: '/categories/bags', icon: '👜' },
-          { id: 'accessories', name: '액세서리', href: '/categories/accessories', icon: '💍' },
-          { id: 'outdoor', name: '아웃도어', href: '/categories/outdoor', icon: '🏔️' }
+          { id: 'clothing', name: '의류', href: '/categories/clothing', icon: '' },
+          { id: 'bags', name: '가방', href: '/categories/bags', icon: '' },
+          { id: 'accessories', name: '액세서리', href: '/categories/accessories', icon: '' },
+          { id: 'outdoor', name: '아웃도어', href: '/categories/outdoor', icon: '' }
         ]);
       } finally {
         setCategoriesLoading(false);
@@ -62,22 +62,7 @@ export default function Header() {
     loadCategories();
   }, []);
 
-  // 카테고리별 아이콘 반환
-  const getCategoryIcon = (categoryName: string): string => {
-    const iconMap: Record<string, string> = {
-      '상의': '👔',
-      '하의': '👖',
-      '신발': '👟',
-      '스포츠': '⚽',
-      '아웃도어': '🏔️',
-      '가방': '👜',
-      '주얼리': '💎',
-      '액세서리': '💍',
-      '의류': '👕'
-    };
-    
-    return iconMap[categoryName] || '📦';
-  };
+  // 카테고리 아이콘은 사용하지 않음 (텍스트만 표시)
 
   // SSR 안전한 장바구니 카운트 표시
   const safeCartItemCount = isMounted ? cartItemCount : 0;
@@ -136,7 +121,6 @@ export default function Header() {
                         href={category.href}
                         className={styles.dropdownItem}
                       >
-                        <span className={styles.categoryIcon}>{category.icon}</span>
                         {category.name}
                       </Link>
                     ))}
@@ -201,7 +185,6 @@ export default function Header() {
                     className={styles.mobileCategoryItem}
                     onClick={closeMobileMenu}
                   >
-                    <span className={styles.categoryIcon}>{category.icon}</span>
                     {category.name}
                   </Link>
                 ))}

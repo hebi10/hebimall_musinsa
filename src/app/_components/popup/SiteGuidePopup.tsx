@@ -19,24 +19,24 @@ const SiteGuidePopup: React.FC<SiteGuidePopupProps> = ({
 
   const designPoints = [
     {
-      title: 'Next.js 14 App Router + Server Components',
-      desc: '페이지별 렌더링 전략 분리, 레이아웃 중첩 구조로 공통 UI 최적화',
+      title: 'Next.js App Router',
+      desc: '페이지별 렌더링 전략을 분리하고 중첩 레이아웃으로 공통 UI를 관리합니다',
     },
     {
-      title: 'TanStack Query v5 캐싱 및 무한스크롤',
-      desc: 'staleTime/gcTime 기반 캐시 정책, useInfiniteQuery로 상품 목록 페이지네이션',
+      title: 'TanStack Query 캐싱',
+      desc: 'staleTime/gcTime 기반 캐시 정책을 설정하고 useInfiniteQuery로 상품 목록을 페이지네이션합니다',
     },
     {
-      title: 'Firestore 복합 인덱스 설계',
-      desc: '카테고리+정렬 조합 쿼리를 위한 인덱스 사전 정의, 읽기 비용 최소화',
+      title: 'Firestore 복합 인덱스',
+      desc: '카테고리+정렬 조합 쿼리를 위해 인덱스를 사전 정의했습니다',
     },
     {
-      title: '리뷰 시딩 및 동시성 처리',
-      desc: 'batch write로 대량 데이터 삽입, 트랜잭션으로 평점 집계 일관성 보장',
+      title: '리뷰 시딩 및 트랜잭션',
+      desc: 'batch write로 데이터를 삽입하고 트랜잭션으로 평점 집계 일관성을 유지합니다',
     },
     {
-      title: 'GPT API 기반 상담 챗봇',
-      desc: '우측 하단 채팅 버튼에서 실시간 상담 가능, 스트리밍 응답 처리',
+      title: 'GPT API 상담 챗봇',
+      desc: '우측 하단 채팅 버튼에서 상담 가능하며 스트리밍 응답을 처리합니다',
     },
   ];
 
@@ -47,7 +47,7 @@ const SiteGuidePopup: React.FC<SiteGuidePopupProps> = ({
         <div className={styles.header}>
           <div className={styles.logoSection}>
             <h2>STYNA</h2>
-            <span className={styles.subtitle}>기술 설계 요약</span>
+            <span className={styles.subtitle}>프로젝트 구조 안내</span>
           </div>
           <button className={styles.closeButton} onClick={onClose}>
             ×
@@ -59,16 +59,16 @@ const SiteGuidePopup: React.FC<SiteGuidePopupProps> = ({
           {/* 프로젝트 한 줄 요약 */}
           <div className={styles.summary}>
             <p className={styles.summaryText}>
-              Next.js App Router 기반 이커머스 설계 프로젝트
+              Next.js App Router + Firebase 기반 이커머스 프로젝트
             </p>
             <p className={styles.summarySubtext}>
-              실제 서비스 수준의 데이터 구조와 상태 관리 패턴을 구현한 포트폴리오입니다.
+              상품 조회부터 주문, 관리자 대시보드까지 주요 흐름을 구현한 포트폴리오입니다.
             </p>
           </div>
 
           {/* 핵심 설계 포인트 */}
           <div className={styles.designSection}>
-            <h3 className={styles.sectionTitle}>핵심 설계 포인트</h3>
+            <h3 className={styles.sectionTitle}>구현 포인트</h3>
             <ul className={styles.designList}>
               {designPoints.map((point, index) => (
                 <li key={index} className={styles.designItem}>

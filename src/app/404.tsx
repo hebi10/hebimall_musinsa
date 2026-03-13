@@ -12,7 +12,7 @@ export default function NotFound() {
       </div>
       
       <div className={styles.content}>
-        <div className={styles.illustration}>🔍</div>
+        <div className={styles.illustration}></div>
         
         <div className={styles.errorNumber}>404</div>
         
@@ -27,20 +27,20 @@ export default function NotFound() {
         
         <div className={styles.actions}>
           <Link href="/" className={styles.homeButton}>
-            🏠 홈으로 돌아가기
+            홈으로 돌아가기
           </Link>
           
           <div className={styles.links}>
             <Link href="/sale" className={styles.link}>
-              💥 세일 상품 보기
+              세일 상품 보기
             </Link>
             <span className={styles.separator}>|</span>
             <Link href="/ranking" className={styles.link}>
-              🏆 인기 상품 보기
+              인기 상품 보기
             </Link>
             <span className={styles.separator}>|</span>
             <Link href="/brand" className={styles.link}>
-              🏷️ 브랜드 보기
+              브랜드 보기
             </Link>
           </div>
         </div>

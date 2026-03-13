@@ -114,7 +114,6 @@ function ResetPasswordContent() {
       <div className={styles.container}>
         <div className={styles.formWrapper}>
           <div className={styles.errorContainer}>
-            <div className={styles.errorIcon}>❌</div>
             <h2 className={styles.errorTitle}>링크가 올바르지 않습니다</h2>
             <div className={styles.errorMessage}>
               {error}
@@ -138,7 +137,6 @@ function ResetPasswordContent() {
       <div className={styles.container}>
         <div className={styles.formWrapper}>
           <div className={styles.successContainer}>
-            <div className={styles.successIcon}>✅</div>
             <h2 className={styles.successTitle}>비밀번호가 변경되었습니다</h2>
             <div className={styles.successMessage}>
               <p>비밀번호가 성공적으로 변경되었습니다.</p>

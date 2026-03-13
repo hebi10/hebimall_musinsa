@@ -143,7 +143,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
     return (
       <div className={styles.container}>
         <div className={styles.errorMessage}>
-          <p>❌ {error || '상품을 찾을 수 없습니다.'}</p>
+          <p>{error || '상품을 찾을 수 없습니다.'}</p>
           <Link href={`/categories/${category}`} className={styles.backButton}>
             카테고리로 돌아가기
           </Link>
@@ -180,9 +180,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
                 className={styles.productImage}
               />
             ) : (
-              <div className={styles.imagePlaceholder}>
-                <span className={styles.productIcon}>📦</span>
-              </div>
+              <div className={styles.imagePlaceholder}></div>
             )}
           </div>
           
@@ -337,7 +335,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
                   {relatedProduct.mainImage ? (
                     <img src={relatedProduct.mainImage} alt={relatedProduct.name} />
                   ) : (
-                    <div className={styles.relatedPlaceholder}>📦</div>
+                    <div className={styles.relatedPlaceholder}></div>
                   )}
                 </div>
                 <div className={styles.relatedInfo}>

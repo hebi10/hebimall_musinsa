@@ -131,7 +131,7 @@ export default function AdminUserCouponsPage() {
       <div className={styles.content}>
         {/* 사용자 검색 */}
         <div className={styles.section}>
-          <h3>1️⃣ 사용자 검색</h3>
+          <h3>1. 사용자 검색</h3>
           <div className={styles.userSearch}>
             <div className={styles.searchGroup}>
               <input
@@ -167,7 +167,7 @@ export default function AdminUserCouponsPage() {
                   }}
                   className={styles.clearBtn}
                 >
-                  ✕
+                  X
                 </button>
               </div>
             </div>
@@ -176,7 +176,7 @@ export default function AdminUserCouponsPage() {
 
         {/* 쿠폰 선택 */}
         <div className={styles.section}>
-          <h3>2️⃣ 지급할 쿠폰 선택</h3>
+          <h3>2. 지급할 쿠폰 선택</h3>
           <div className={styles.couponSelect}>
             <select
               value={selectedCoupon}
@@ -226,7 +226,7 @@ export default function AdminUserCouponsPage() {
 
         {/* 지급 실행 */}
         <div className={styles.section}>
-          <h3>3️⃣ 쿠폰 지급</h3>
+          <h3>3. 쿠폰 지급</h3>
           <div className={styles.assignSection}>
             {selectedUser && selectedCoupon ? (
               <div className={styles.assignConfirm}>

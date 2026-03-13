@@ -116,7 +116,7 @@ export default function WishlistProducts() {
         <div className={styles.loading}>찜한 상품을 불러오는 중...</div>
       ) : wishlistItems.length === 0 ? (
         <div className={styles.empty}>
-          <div className={styles.emptyIcon}>❤️</div>
+          <div className={styles.emptyIcon}></div>
           <p>찜한 상품이 없습니다.</p>
           <Link href="/categories" className={styles.shopLink}>
             상품 둘러보기
@@ -147,7 +147,7 @@ export default function WishlistProducts() {
                     disabled={removing === wishlistItem.id}
                     className={styles.removeBtn}
                   >
-                    {removing === wishlistItem.id ? '삭제중...' : '❌'}
+                    {removing === wishlistItem.id ? '삭제중...' : 'X'}
                   </button>
                 </div>
                 

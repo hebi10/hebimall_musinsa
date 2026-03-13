@@ -228,7 +228,7 @@ export default function OrderCartPage() {
         
         <div className={styles.content}>
           <div className={styles.emptyCart}>
-            <div className={styles.emptyIcon}>🛒</div>
+            <div className={styles.emptyIcon}></div>
             <h2 className={styles.emptyTitle}>주문할 상품이 없습니다</h2>
             <p className={styles.emptyDescription}>
               장바구니에서 상품을 선택하고 주문을 진행해주세요.
@@ -345,7 +345,7 @@ export default function OrderCartPage() {
                     onClick={() => removeItem(item.id)}
                     aria-label="상품 삭제"
                   >
-                    ✕
+                    삭제
                   </button>
                 </div>
               ))}
@@ -478,7 +478,7 @@ export default function OrderCartPage() {
 
               {/* 혜택 정보 */}
               <div className={styles.benefitInfo}>
-                <div className={styles.benefitTitle}>💡 혜택 정보</div>
+                <div className={styles.benefitTitle}>혜택 정보</div>
                 <ul className={styles.benefitList}>
                   <li>5만원 이상 구매 시 무료배송</li>
                   <li>구매 시 적립금 {Math.floor(finalAmount * 0.01).toLocaleString()}원 적립</li>

@@ -118,13 +118,13 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     
     // 이미 로딩 중이면 무시
     if (isLoadingRef.current) {
-      console.log('⏳ 이미 로딩 중입니다. 중복 요청을 무시합니다.');
+ console.log('⏳ 이미 로딩 중입니다. 중복 요청을 무시합니다.');
       return;
     }
     
     // 강제 새로고침이 아니고 캐시 기간 내라면 로딩하지 않음
     if (!forceReload && now - lastFetchTime < CACHE_DURATION) {
-      console.log('⏰ 캐시된 데이터 사용 중... 남은 시간:', Math.ceil((CACHE_DURATION - (now - lastFetchTime)) / 1000), '초');
+ console.log('⏰ 캐시된 데이터 사용 중... 남은 시간:', Math.ceil((CACHE_DURATION - (now - lastFetchTime)) / 1000), '초');
       return;
     }
 
@@ -157,7 +157,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '상품을 불러오는데 실패했습니다.';
       setError(errorMessage);
-      console.error('상품 조회 실패:', err);
+ console.error('상품 조회 실패:', err);
     } finally {
       isLoadingRef.current = false;
       setLoading(false);
@@ -179,7 +179,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '상품을 불러오는데 실패했습니다.';
       setError(errorMessage);
-      console.error('상품 조회 실패:', err);
+ console.error('상품 조회 실패:', err);
     } finally {
       setLoading(false);
     }
@@ -191,7 +191,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       // 현재 products 배열에서 먼저 찾기
       const existingProduct = products.find(p => p.id === productId);
       if (existingProduct) {
-        console.log('✅ products 배열에서 찾음:', existingProduct.name);
+ console.log(' products 배열에서 찾음:', existingProduct.name);
         return normalizeProduct(existingProduct);
       }
       
@@ -201,12 +201,12 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       if (product) {
         return normalizeProduct(product);
       } else {
-        console.log('❌ 상품을 찾을 수 없음');
+ console.log(' 상품을 찾을 수 없음');
         return null;
       }
 
     } catch (err) {
-      console.error('상품 조회 실패:', err);
+ console.error('상품 조회 실패:', err);
       return null;
     }
   }, [products, normalizeProduct]);
@@ -217,7 +217,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       const products = await ProductService.getProductsByCategory(categoryId);
       return products.map(normalizeProduct);
     } catch (err) {
-      console.error('카테고리별 상품 조회 실패:', err);
+ console.error('카테고리별 상품 조회 실패:', err);
       return [];
     }
   }, [normalizeProduct]);
@@ -243,7 +243,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '검색에 실패했습니다.';
       setError(errorMessage);
-      console.error('상품 검색 실패:', err);
+ console.error('상품 검색 실패:', err);
     } finally {
       setLoading(false);
     }
@@ -269,7 +269,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '필터링에 실패했습니다.';
       setError(errorMessage);
-      console.error('상품 필터링 실패:', err);
+ console.error('상품 필터링 실패:', err);
     } finally {
       setLoading(false);
     }
@@ -288,7 +288,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '정렬에 실패했습니다.';
       setError(errorMessage);
-      console.error('상품 정렬 실패:', err);
+ console.error('상품 정렬 실패:', err);
     } finally {
       setLoading(false);
     }
@@ -314,7 +314,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '관련 상품을 불러오는데 실패했습니다.';
       setError(errorMessage);
-      console.error('관련 상품 조회 실패:', err);
+ console.error('관련 상품 조회 실패:', err);
     }
   }, []);
 
@@ -343,7 +343,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '홈페이지 데이터를 불러오는데 실패했습니다.';
       setError(errorMessage);
-      console.error('홈페이지 데이터 로드 실패:', err);
+ console.error('홈페이지 데이터 로드 실패:', err);
     } finally {
       setLoading(false);
     }
@@ -382,7 +382,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '상품 생성에 실패했습니다.';
       setError(errorMessage);
-      console.error('상품 생성 실패:', err);
+ console.error('상품 생성 실패:', err);
       throw err;
     } finally {
       setLoading(false);
@@ -410,7 +410,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '상품 수정에 실패했습니다.';
       setError(errorMessage);
-      console.error('상품 수정 실패:', err);
+ console.error('상품 수정 실패:', err);
       throw err;
     } finally {
       setLoading(false);
@@ -436,7 +436,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '상품 삭제에 실패했습니다.';
       setError(errorMessage);
-      console.error('상품 삭제 실패:', err);
+ console.error('상품 삭제 실패:', err);
       throw err;
     } finally {
       setLoading(false);

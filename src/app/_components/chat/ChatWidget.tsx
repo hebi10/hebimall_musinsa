@@ -36,17 +36,17 @@ const INITIAL_BOT_TEXT = `안녕하세요! STYNA 고객지원팀입니다.
 
 번호를 입력하시거나 궁금한 점을 직접 말씀해 주세요!`;
 
-const AI_CONNECTED_TEXT = `AI 상담원과 연결되었습니다! 이제 더 자세하고 개인화된 상담을 받으실 수 있습니다.
+const AI_CONNECTED_TEXT = `AI 상담원과 연결되었습니다.
 
 무엇을 도와드릴까요?
 
-AI 상담원은 다음과 같은 도움을 드릴 수 있습니다:
-• 맞춤형 상품 추천
-• 상세한 주문/배송 안내  
-• 개인화된 고객 지원
-• 실시간 문제 해결
+다음 내용을 문의하실 수 있습니다:
+- 상품 추천
+- 주문/배송 안내
+- 고객 지원
+- 문제 해결
 
-이제 채팅창에서 자유롭게 메시지를 입력하실 수 있습니다!`;
+채팅창에 메시지를 입력해주세요.`;
 
 const ERROR_TEXT =
   '죄송합니다. 일시적인 문제가 발생했습니다. 잠시 후 다시 시도해 주시거나 고객센터(sevim0104@naver.com)로 연락해 주세요.';
@@ -368,15 +368,15 @@ const ChatWidget: React.FC = () => {
                 <div className={styles.chatFeatures}>
                   <div className={styles.feature}>
                     <span className={styles.featureIcon}>●</span>
-                    <span>실시간 상담 지원</span>
+                    <span>주문/배송 문의</span>
                   </div>
                   <div className={styles.feature}>
                     <span className={styles.featureIcon}>●</span>
-                    <span>AI 맞춤 상담</span>
+                    <span>AI 상담 연결</span>
                   </div>
                   <div className={styles.feature}>
                     <span className={styles.featureIcon}>●</span>
-                    <span>빠른 문제 해결</span>
+                    <span>FAQ 안내</span>
                   </div>
                 </div>
                 <button className={styles.startChatButton} onClick={startChat}>
@@ -462,7 +462,7 @@ const ChatWidget: React.FC = () => {
                 disabled={isSendDisabled}
                 aria-label="메시지 전송"
               >
-                ➤
+                전송
               </button>
             </div>
           </div>

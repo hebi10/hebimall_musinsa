@@ -85,12 +85,6 @@ export default function CategoryClient({ products: initialProducts, category, ca
               ) : (
                 <div className={styles.imagePlaceholder}>
                   <span className={styles.productIcon}>
-                    {category === 'accessories' && '💍'}
-                    {category === 'bags' && '🎒'}
-                    {category === 'bottoms' && '👖'}
-                    {category === 'shoes' && '👟'}
-                    {category === 'tops' && '👕'}
-                    {category === 'clothing' && '👔'}
                   </span>
                 </div>
               )}
@@ -119,7 +113,7 @@ export default function CategoryClient({ products: initialProducts, category, ca
                 )}
               </div>
               <div className={styles.ratingSection}>
-                <span className={styles.rating}>⭐ {product.rating}</span>
+                <span className={styles.rating}>{product.rating}</span>
                 <span className={styles.reviewCount}>({product.reviewCount})</span>
               </div>
               <div className={styles.stockInfo}>

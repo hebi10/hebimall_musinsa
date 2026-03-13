@@ -16,7 +16,7 @@ const preloadImage = (url: string): Promise<string> => {
     };
     
     img.onerror = (error) => {
-      console.error('❌ 이미지 로드 실패:', url, error);
+ console.error(' 이미지 로드 실패:', url, error);
       // CORS 에러일 경우에도 URL 자체는 유효하다고 가정하고 resolve
       resolve(url);
     };

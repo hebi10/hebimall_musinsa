@@ -95,9 +95,9 @@ export function useDashboardFormatters() {
   }, []);
 
   const getGrowthIcon = useCallback((growth: number): string => {
-    if (growth > 0) return '↗️';
-    if (growth < 0) return '↘️';
-    return '➡️';
+    if (growth > 0) return '▲';
+    if (growth < 0) return '▼';
+    return '→';
   }, []);
 
   const getPriorityColor = useCallback((priority: 'low' | 'medium' | 'high'): string => {

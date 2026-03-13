@@ -35,8 +35,8 @@ export default function SalePage() {
     return (
       <div className={styles.container}>
         <PageHeader 
-          title="🔥 세일" 
-          description="특가 상품을 만나보세요" 
+          title="세일"
+          description="할인 중인 상품 목록입니다"
         />
         <div className={styles.loading}>상품을 불러오는 중...</div>
       </div>
@@ -47,8 +47,8 @@ export default function SalePage() {
     return (
       <div className={styles.container}>
         <PageHeader 
-          title="🔥 세일" 
-          description="특가 상품을 만나보세요" 
+          title="세일"
+          description="할인 중인 상품 목록입니다"
         />
         <div className={styles.error}>
           상품을 불러오는 중 오류가 발생했습니다: {error}
@@ -61,8 +61,8 @@ export default function SalePage() {
     return (
       <div className={styles.container}>
         <PageHeader 
-          title="🔥 세일" 
-          description="특가 상품을 만나보세요" 
+          title="세일"
+          description="할인 중인 상품 목록입니다"
         />
         <div className={styles.empty}>
           현재 세일 중인 상품이 없습니다.
@@ -74,17 +74,17 @@ export default function SalePage() {
   return (
     <div className={styles.container}>
       <PageHeader 
-        title="🔥 세일" 
+        title="세일"
         description="특가 상품을 만나보세요" 
       />
       
       <div className={styles.content}>
         <div className={styles.saleInfo}>
           <h2 className={styles.sectionTitle}>
-            🎯 특가 할인 ({localProducts.length}개 상품)
+            할인 상품 ({localProducts.length}개)
           </h2>
           <p className={styles.sectionDescription}>
-            지금 놓치면 후회할 특가 상품들을 확인해보세요!
+            현재 할인 중인 상품들입니다.
           </p>
         </div>
 

@@ -27,35 +27,35 @@ interface BannerSlide {
 const bannerSlides: BannerSlide[] = [
   {
     id: 1,
-    title: "STYNA",
-    subtitle: "NEW SEASON",
-    description: "최신 패션 트렌드를 만나보세요\n특별한 스타일, 특별한 가격",
-    buttonText: "쇼핑하러 가기",
+    title: "3월 신상 입고",
+    subtitle: "STYNA",
+    description: "봄 시즌에 맞춘 새로운 상품을\n지금 만나보세요",
+    buttonText: "신상품 보기",
     buttonLink: "/products",
     modelImage: "/main/banner_main01.png",
-    backgroundColor: "#495669ff",
+    backgroundColor: "#495669",
     textColor: "white"
   },
   {
     id: 2,
-    title: "SPRING COLLECTION",
-    subtitle: "UP TO 70% OFF",
-    description: "봄 신상품 특가 세일\n지금 놓치면 후회하는 기회",
-    buttonText: "세일 상품 보기",
+    title: "시즌오프 세일",
+    subtitle: "STYNA",
+    description: "겨울 시즌 상품 정리\n할인가로 만나보세요",
+    buttonText: "할인 상품 보기",
     buttonLink: "/main/sale",
     modelImage: "/main/banner_main02.png",
-    backgroundColor: "#5b4469ff",
+    backgroundColor: "#5b4469",
     textColor: "white"
   },
   {
     id: 3,
-    title: "PREMIUM QUALITY",
-    subtitle: "BEST SELLER",
-    description: "검증된 베스트셀러\n고객 만족도 98%의 상품들",
-    buttonText: "베스트 상품 보기",
+    title: "이번 주 인기 상품",
+    subtitle: "STYNA",
+    description: "고객 리뷰가 많은 상품을\n모아봤습니다",
+    buttonText: "인기 상품 보기",
     buttonLink: "/products?sort=bestseller",
     modelImage: "/main/banner_main03.png",
-    backgroundColor: "#515c61ff",
+    backgroundColor: "#515c61",
     textColor: "white"
   }
 ];

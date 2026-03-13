@@ -107,7 +107,6 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
           />
         ) : (
           <div className={styles.placeholderImage}>
-            <span className={styles.placeholderIcon}>📷</span>
             <span className={styles.placeholderText}>이미지 없음</span>
           </div>
         )}
@@ -195,7 +194,6 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
         )}
 
         <div className={styles.shipping}>
-          <span className={styles.shippingIcon}>🚚</span>
           <span>무료배송</span>
         </div>
       </div>

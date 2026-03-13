@@ -7,23 +7,29 @@ import styles from './ProductSection.module.css';
 
 interface ProductSectionProps {
   title: string;
+  subtitle?: string;
   type: 'recommended' | 'new' | 'sale' | 'bestseller';
   showViewAllButton?: boolean;
   maxItems?: number;
+  variant?: 'default' | 'ranking' | 'sale';
+  viewAllLink?: string;
 }
 
-export default function ProductSection({ 
-  title, 
-  type, 
+export default function ProductSection({
+  title,
+  subtitle,
+  type,
   showViewAllButton = true,
-  maxItems = 8
+  maxItems = 8,
+  variant = 'default',
+  viewAllLink = '/recommend'
 }: ProductSectionProps) {
-  const { 
-    recommendedProducts, 
-    newProducts, 
-    saleProducts, 
-    bestSellerProducts, 
-    loading 
+  const {
+    recommendedProducts,
+    newProducts,
+    saleProducts,
+    bestSellerProducts,
+    loading
   } = useProduct();
 
   const getProducts = () => {
@@ -47,7 +53,10 @@ export default function ProductSection({
     return (
       <section className={styles.section}>
         <div className={styles.header}>
-          <h2 className={styles.title}>{title}</h2>
+          <div>
+            <h2 className={styles.title}>{title}</h2>
+            {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
+          </div>
         </div>
         <div className={styles.loading}>
           <div className={styles.spinner}></div>
@@ -61,34 +70,50 @@ export default function ProductSection({
     return null;
   }
 
+  const gridClass = variant === 'ranking'
+    ? styles.rankingGrid
+    : variant === 'sale'
+    ? styles.saleGrid
+    : styles.productGrid;
+
   return (
     <section className={styles.section}>
       <div className={styles.header}>
-        <h2 className={styles.title}>{title}</h2>
+        <div>
+          <h2 className={styles.title}>{title}</h2>
+          {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
+        </div>
         {showViewAllButton && (
-          <Link href="/recommend" className={styles.viewAllLink}>
-            전체보기 →
+          <Link href={viewAllLink} className={styles.viewAllLink}>
+            전체보기
           </Link>
         )}
       </div>
-      
-      <div className={styles.productGrid}>
-        {products.map(product => (
-          <ProductCard
+
+      <div className={gridClass}>
+        {products.map((product, index) => (
+          <div
             key={product.id}
-            id={product.id}
-            name={product.name}
-            brand={product.brand}
-            price={product.price}
-            originalPrice={product.originalPrice}
-            isNew={product.isNew}
-            isSale={product.isSale}
-            saleRate={product.saleRate}
-            rating={product.rating}
-            reviewCount={product.reviewCount}
-            image={product.mainImage || product.images[0]} // 대표 이미지 우선 사용
-            stock={product.stock}
-          />
+            className={variant === 'ranking' ? styles.rankingItem : undefined}
+          >
+            {variant === 'ranking' && (
+              <span className={styles.rankNumber}>{index + 1}</span>
+            )}
+            <ProductCard
+              id={product.id}
+              name={product.name}
+              brand={product.brand}
+              price={product.price}
+              originalPrice={product.originalPrice}
+              isNew={product.isNew}
+              isSale={product.isSale}
+              saleRate={product.saleRate}
+              rating={product.rating}
+              reviewCount={product.reviewCount}
+              image={product.mainImage || product.images[0]}
+              stock={product.stock}
+            />
+          </div>
         ))}
       </div>
     </section>

@@ -48,13 +48,13 @@ export default function MyPageLayout({ children }: MyPageLayoutProps) {
   };
 
   const quickActions = [
-    { icon: "📦", title: "주문내역", desc: "주문 현황 확인", href: "/mypage/order-list" },
-    { icon: "⭐", title: "문의관리", desc: "작성한 문의", href: "/mypage/qa" },
-    { icon: "🎁", title: "쿠폰함", desc: "사용 가능 쿠폰", href: "/mypage/coupons" },
-    { icon: "👤", title: "회원정보", desc: "정보 수정", href: "/mypage/info-edit" },
-    { icon: "👀", title: "최근본상품", desc: "최근 본 상품", href: "/mypage/recently-viewed" },
-    { icon: "❤️", title: "찜한상품", desc: "찜한 상품 관리", href: "/mypage/wishlist" },
-    { icon: "💰", title: "적립금", desc: "포인트 관리", href: "/mypage/point" }
+    { icon: "", title: "주문내역", desc: "주문 현황 확인", href: "/mypage/order-list" },
+    { icon: "", title: "문의관리", desc: "작성한 문의", href: "/mypage/qa" },
+    { icon: "", title: "쿠폰함", desc: "사용 가능 쿠폰", href: "/mypage/coupons" },
+    { icon: "", title: "회원정보", desc: "정보 수정", href: "/mypage/info-edit" },
+    { icon: "", title: "최근본상품", desc: "최근 본 상품", href: "/mypage/recently-viewed" },
+    { icon: "", title: "찜한상품", desc: "찜한 상품 관리", href: "/mypage/wishlist" },
+    { icon: "", title: "적립금", desc: "포인트 관리", href: "/mypage/point" }
   ];
 
   useEffect(() => {

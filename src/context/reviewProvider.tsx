@@ -113,7 +113,7 @@ export function ReviewProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '리뷰를 불러오는데 실패했습니다.';
       setError(errorMessage);
-      console.error('상품 리뷰 로드 실패:', err);
+ console.error('상품 리뷰 로드 실패:', err);
     } finally {
       isLoadingRef.current = false;
       setLoading(false);
@@ -124,13 +124,13 @@ export function ReviewProvider({ children }: { children: ReactNode }) {
   const loadMoreProductReviews = useCallback(async (productId: string) => {
     // 이미 로딩 중이면 무시
     if (isLoadingRef.current) {
-      console.log('🚫 이미 로딩 중이므로 요청 무시');
+ console.log(' 이미 로딩 중이므로 요청 무시');
       return;
     }
     
     // 더 이상 로드할 리뷰가 없으면 무시
     if (!hasMoreReviewsRef.current) {
-      console.log('🚫 더 이상 로드할 리뷰가 없음');
+ console.log(' 더 이상 로드할 리뷰가 없음');
       return;
     }
     
@@ -156,7 +156,7 @@ export function ReviewProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '더 많은 리뷰를 불러오는데 실패했습니다.';
       setError(errorMessage);
-      console.error('더 많은 상품 리뷰 로드 실패:', err);
+ console.error('더 많은 상품 리뷰 로드 실패:', err);
     } finally {
       isLoadingRef.current = false;
       setLoading(false);
@@ -170,7 +170,7 @@ export function ReviewProvider({ children }: { children: ReactNode }) {
     sortBy: 'latest' | 'rating' | 'helpful' = 'latest'
   ) => {
     try {
-      console.log('🔄 ReviewProvider - loadAllReviews 시작:', { page, rating, sortBy });
+ console.log(' ReviewProvider - loadAllReviews 시작:', { page, rating, sortBy });
       setLoading(true);
       setError(null);
 
@@ -180,13 +180,13 @@ export function ReviewProvider({ children }: { children: ReactNode }) {
         ReviewService.getReviewStatistics(rating)
       ]);
 
-      console.log('✅ ReviewProvider - 리뷰 로드 완료:', result.reviews.length, '개');
-      console.log('📊 페이지 정보:', { 
+ console.log(' ReviewProvider - 리뷰 로드 완료:', result.reviews.length, '개');
+ console.log(' 페이지 정보:', { 
         currentPage: result.currentPage, 
         totalPages: result.totalPages, 
         totalCount: result.totalCount 
       });
-      console.log('📈 통계 정보:', statistics);
+ console.log(' 통계 정보:', statistics);
       
       setAllReviews(result.reviews);
       setCurrentPage(result.currentPage);
@@ -196,7 +196,7 @@ export function ReviewProvider({ children }: { children: ReactNode }) {
 
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '리뷰를 불러오는데 실패했습니다.';
-      console.error('❌ ReviewProvider - 전체 리뷰 로드 실패:', err);
+ console.error(' ReviewProvider - 전체 리뷰 로드 실패:', err);
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -214,7 +214,7 @@ export function ReviewProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '리뷰 요약 정보를 불러오는데 실패했습니다.';
       setError(errorMessage);
-      console.error('리뷰 요약 로드 실패:', err);
+ console.error('리뷰 요약 로드 실패:', err);
     }
   }, []);
 
@@ -230,7 +230,7 @@ export function ReviewProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '사용자 리뷰를 불러오는데 실패했습니다.';
       setError(errorMessage);
-      console.error('사용자 리뷰 로드 실패:', err);
+ console.error('사용자 리뷰 로드 실패:', err);
     } finally {
       setLoading(false);
     }
@@ -255,7 +255,7 @@ export function ReviewProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '리뷰를 작성하는데 실패했습니다.';
       setError(errorMessage);
-      console.error('리뷰 생성 실패:', err);
+ console.error('리뷰 생성 실패:', err);
       throw err;
     } finally {
       setLoading(false);
@@ -285,7 +285,7 @@ export function ReviewProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '리뷰를 수정하는데 실패했습니다.';
       setError(errorMessage);
-      console.error('리뷰 수정 실패:', err);
+ console.error('리뷰 수정 실패:', err);
       throw err;
     } finally {
       setLoading(false);
@@ -312,7 +312,7 @@ export function ReviewProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '리뷰를 삭제하는데 실패했습니다.';
       setError(errorMessage);
-      console.error('리뷰 삭제 실패:', err);
+ console.error('리뷰 삭제 실패:', err);
       throw err;
     } finally {
       setLoading(false);

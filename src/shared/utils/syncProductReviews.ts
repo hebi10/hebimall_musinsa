@@ -20,11 +20,11 @@ export async function syncProductReviewData(productId: string): Promise<{ review
     const totalRating = reviews.reduce((sum, review) => sum + (review.rating || 0), 0);
     const averageRating = Math.round((totalRating / reviewCount) * 10) / 10; // 소수점 1자리
     
-    console.log(`📊 상품 ${productId} 리뷰 동기화: ${reviewCount}개, 평점 ${averageRating}`);
+ console.log(` 상품 ${productId} 리뷰 동기화: ${reviewCount}개, 평점 ${averageRating}`);
     
     return { reviewCount, rating: averageRating };
   } catch (error) {
-    console.error('리뷰 데이터 동기화 실패:', error);
+ console.error('리뷰 데이터 동기화 실패:', error);
     return { reviewCount: 0, rating: 0 };
   }
 }
@@ -34,7 +34,7 @@ export async function syncProductReviewData(productId: string): Promise<{ review
  */
 export async function syncAllProductsReviewData(): Promise<void> {
   try {
-    console.log('🔄 모든 상품의 리뷰 데이터 동기화 시작...');
+ console.log(' 모든 상품의 리뷰 데이터 동기화 시작...');
     
     // 모든 리뷰 가져오기
     const reviewsCollection = collection(db, 'reviews');
@@ -70,7 +70,7 @@ export async function syncAllProductsReviewData(): Promise<void> {
             rating: averageRating,
             updatedAt: new Date()
           });
-          console.log(`✅ 상품 ${productId} (${category}) 업데이트: ${reviewCount}개 리뷰, 평점 ${averageRating}`);
+ console.log(` 상품 ${productId} (${category}) 업데이트: ${reviewCount}개 리뷰, 평점 ${averageRating}`);
           break; // 첫 번째 찾은 카테고리에서만 업데이트
         } catch (error) {
           // 해당 카테고리에 상품이 없으면 계속 진행
@@ -79,10 +79,10 @@ export async function syncAllProductsReviewData(): Promise<void> {
     });
     
     await Promise.all(updatePromises);
-    console.log('✅ 모든 상품의 리뷰 데이터 동기화 완료');
+ console.log(' 모든 상품의 리뷰 데이터 동기화 완료');
     
   } catch (error) {
-    console.error('❌ 리뷰 데이터 동기화 실패:', error);
+ console.error(' 리뷰 데이터 동기화 실패:', error);
   }
 }
 
@@ -106,7 +106,7 @@ export async function getProductReviewStats(productId: string): Promise<{ review
     
     return { reviewCount, rating: averageRating };
   } catch (error) {
-    console.error('리뷰 통계 조회 실패:', error);
+ console.error('리뷰 통계 조회 실패:', error);
     return { reviewCount: 0, rating: 0 };
   }
 }

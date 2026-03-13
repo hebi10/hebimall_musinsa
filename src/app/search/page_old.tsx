@@ -350,7 +350,6 @@ export default function SearchPage() {
               </div>
             ) : state.error ? (
               <div className={styles.error}>
-                <div className={styles.errorIcon}>❌</div>
                 <h3>검색 실패</h3>
                 <p>{state.error}</p>
                 <button 
@@ -410,7 +409,6 @@ export default function SearchPage() {
               </>
             ) : (
               <div className={styles.noResults}>
-                <div className={styles.noResultsIcon}>🔍</div>
                 <h3>검색 결과가 없습니다</h3>
                 <p>'{state.searchQuery}'에 대한 상품을 찾을 수 없습니다.</p>
                 <div className={styles.searchSuggestions}>
@@ -436,7 +434,6 @@ export default function SearchPage() {
         {!state.hasSearched && !state.loading && (
           <div className={styles.initialState}>
             <div className={styles.searchTip}>
-              <div className={styles.searchTipIcon}>💡</div>
               <h3>검색 팁</h3>
               <ul className={styles.tipList}>
                 <li>상품명이나 브랜드명으로 검색해보세요</li>

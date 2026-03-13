@@ -52,7 +52,7 @@ export default function FindPasswordPage() {
       <div className={styles.container}>
         <div className={styles.formWrapper}>
           <div className={styles.successContainer}>
-            <div className={styles.successIcon}>✅</div>
+            <div className={styles.successIcon}></div>
             <h2 className={styles.successTitle}>이메일을 전송했습니다</h2>
             <div className={styles.successMessage}>
               <p>

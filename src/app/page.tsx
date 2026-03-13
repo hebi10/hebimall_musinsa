@@ -8,127 +8,106 @@ import styles from "./page.module.css";
 export default function Home() {
   return (
     <div className={styles.container}>
-      {/* 메인 배너 슬라이드 */}
+      {/* 메인 배너 */}
       <MainBanner />
 
-      {/* 인기 카테고리 섹션 */}
+      {/* 카테고리 */}
       <section className={styles.categorySection}>
         <div className={styles.sectionContainer}>
-          <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>인기 카테고리</h2>
-            <p className={styles.sectionSubtitle}>스타일별로 찾아보세요</p>
+          <div className={styles.sectionHeaderLeft}>
+            <h2 className={styles.sectionTitle}>카테고리</h2>
           </div>
-          
-          <DynamicCategorySection 
-            maxCategories={4} 
+
+          <DynamicCategorySection
+            maxCategories={4}
             className={styles.categoryGrid}
           />
         </div>
       </section>
 
-      {/* 추천 상품 섹션 */}
+      {/* 추천 상품 */}
       <FeaturedProducts />
 
-      {/* 특가 할인 배너 */}
-      <section className={styles.promoBanner}>
-        <div className={styles.promoBannerContent}>
-          <div className={styles.promoText}>
-            <span className={styles.promoLabel}>SPECIAL OFFER</span>
-            <h3 className={styles.promoTitle}>지금 최대 70% 할인</h3>
-            <p className={styles.promoDescription}>선착순 한정 특가! 놓치면 후회하는 기회</p>
+      {/* 신상품 */}
+      <div className={styles.productSections}>
+        <ProductSection
+          title="신상품"
+          subtitle="최근 등록된 상품"
+          type="new"
+          maxItems={4}
+          viewAllLink="/products?sort=newest"
+        />
+      </div>
+
+      {/* 세일 안내 */}
+      <section className={styles.saleBanner}>
+        <div className={styles.saleBannerContent}>
+          <div className={styles.saleText}>
+            <h3 className={styles.saleTitle}>시즌오프 할인 중</h3>
+            <p className={styles.saleDescription}>지금 할인 중인 상품을 확인해보세요.</p>
           </div>
-          <Link href="/main/sale" className={styles.promoButton}>
-            특가 상품 보기
+          <Link href="/main/sale" className={styles.saleButton}>
+            할인 상품 보기
           </Link>
         </div>
       </section>
 
-      {/* 상품 섹션들 */}
+      {/* 베스트셀러 */}
       <div className={styles.productSections}>
-        <ProductSection 
-          title="신상품" 
-          type="new"
-          maxItems={6}
-        />
-        
-        <ProductSection 
-          title="베스트셀러" 
+        <ProductSection
+          title="베스트셀러"
+          subtitle="리뷰가 많은 인기 상품"
           type="bestseller"
-          maxItems={6}
-        />
-        
-        <ProductSection 
-          title="특가 상품" 
-          type="sale"
-          maxItems={6}
+          maxItems={8}
+          variant="ranking"
+          viewAllLink="/products?sort=bestseller"
         />
       </div>
 
-      {/* 브랜드 스토리 섹션 */}
-      <section className={styles.brandStory}>
-        <div className={styles.sectionContainer}>
-          <div className={styles.brandContent}>
-            <div className={styles.brandText}>
-              <h2 className={styles.brandTitle}>STYNA</h2>
-              <h3 className={styles.brandSubtitle}>당신만의 스타일을 찾아보세요</h3>
-              <p className={styles.brandDescription}>
-                최신 트렌드부터 클래식까지, 다양한 스타일의 상품을 만나보세요. 
-                STYNA은 고객 한 분 한 분의 개성을 존중하며, 
-                최고의 쇼핑 경험을 제공합니다.
-              </p>
-              <div className={styles.brandStats}>
-                <div className={styles.brandStat}>
-                  <span className={styles.brandStatNumber}>50K+</span>
-                  <span className={styles.brandStatLabel}>만족한 고객</span>
-                </div>
-                <div className={styles.brandStat}>
-                  <span className={styles.brandStatNumber}>4.8</span>
-                  <span className={styles.brandStatLabel}>평균 평점</span>
-                </div>
-                <div className={styles.brandStat}>
-                  <span className={styles.brandStatNumber}>24/7</span>
-                  <span className={styles.brandStatLabel}>고객 지원</span>
-                </div>
-              </div>
-            </div>
-            <div className={styles.brandImage}>
-              <div className={styles.brandImagePlaceholder}>
-                <p className={styles.brandImageLogo}>STYNA</p>
-                <p className={styles.brandImageSub}>Premium Fashion</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* 특가 상품 */}
+      <div className={styles.productSections}>
+        <ProductSection
+          title="할인 상품"
+          subtitle="지금 할인 중인 상품"
+          type="sale"
+          maxItems={4}
+          variant="sale"
+          viewAllLink="/main/sale"
+        />
+      </div>
 
-      {/* Quick Links 섹션 */}
-      <section className={styles.quickLinks}>
+      {/* 서비스 안내 */}
+      <section className={styles.serviceInfo}>
         <div className={styles.sectionContainer}>
-          <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>빠른 서비스</h2>
-            <p className={styles.sectionSubtitle}>자주 찾는 서비스를 빠르게 이용하세요</p>
-          </div>
-          
-          <div className={styles.quickLinksGrid}>
-            <Link href="/mypage/order-list" className={styles.quickLinkCard}>
-              <h4 className={styles.quickLinkTitle}>주문/배송 조회</h4>
-              <p className={styles.quickLinkDescription}>주문 상태와 배송 정보를 확인하세요</p>
-            </Link>
-            
-            <Link href="/mypage/wishlist" className={styles.quickLinkCard}>
-              <h4 className={styles.quickLinkTitle}>위시리스트</h4>
-              <p className={styles.quickLinkDescription}>관심 있는 상품을 저장해보세요</p>
-            </Link>
-            
-            <Link href="/cs/inquiry" className={styles.quickLinkCard}>
-              <h4 className={styles.quickLinkTitle}>1:1 문의</h4>
-              <p className={styles.quickLinkDescription}>궁금한 점을 언제든 문의하세요</p>
-            </Link>
-            
-            <Link href="/events" className={styles.quickLinkCard}>
-              <h4 className={styles.quickLinkTitle}>이벤트</h4>
-              <p className={styles.quickLinkDescription}>진행 중인 다양한 이벤트를 확인하세요</p>
-            </Link>
+          <div className={styles.serviceGrid}>
+            <div className={styles.serviceItem}>
+              <h4 className={styles.serviceItemTitle}>배송 안내</h4>
+              <p className={styles.serviceItemDesc}>
+                평일 오후 2시 이전 주문 시 당일 발송됩니다.
+                배송은 2~3일 정도 소요됩니다.
+              </p>
+            </div>
+            <div className={styles.serviceItem}>
+              <h4 className={styles.serviceItemTitle}>교환/반품</h4>
+              <p className={styles.serviceItemDesc}>
+                수령 후 7일 이내 접수 가능합니다.
+                상품 하자 시 반품 배송비는 무료입니다.
+              </p>
+            </div>
+            <div className={styles.serviceItem}>
+              <h4 className={styles.serviceItemTitle}>고객 문의</h4>
+              <p className={styles.serviceItemDesc}>
+                1:1 문의 또는 채팅 상담을 이용해주세요.
+                평일 10:00~18:00 운영합니다.
+              </p>
+            </div>
+            <div className={styles.serviceItem}>
+              <h4 className={styles.serviceItemTitle}>주문 조회</h4>
+              <p className={styles.serviceItemDesc}>
+                <Link href="/mypage/order-list" className={styles.serviceLink}>마이페이지</Link>에서
+                주문 상태와 배송 현황을 확인할 수 있습니다.
+              </p>
+            </div>
           </div>
         </div>
       </section>

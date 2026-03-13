@@ -42,7 +42,7 @@ export const usePointHistory = (limit: number = 50) => {
 
   useEffect(() => {
     if (data?.success && data.history && !isInitialized) {
-      console.log('🔄 포인트 내역 초기 로드:', data.history.length);
+ console.log(' 포인트 내역 초기 로드:', data.history.length);
       setAllHistory(data.history);
       setLastDoc(data.lastDoc);
       setHasMore(data.hasMore);
@@ -52,24 +52,24 @@ export const usePointHistory = (limit: number = 50) => {
 
   const loadMore = useCallback(async () => {
     if (!hasMore || isLoadingMoreRef.current || !lastDoc) {
-      console.log('🚫 포인트 내역 추가 로드 스킵:', { hasMore, isLoading: isLoadingMoreRef.current, lastDoc: !!lastDoc });
+ console.log(' 포인트 내역 추가 로드 스킵:', { hasMore, isLoading: isLoadingMoreRef.current, lastDoc: !!lastDoc });
       return;
     }
 
-    console.log('🔄 포인트 내역 추가 로드 시작');
+ console.log(' 포인트 내역 추가 로드 시작');
     isLoadingMoreRef.current = true;
     setIsLoadingMore(true);
     
     try {
       const response = await PointService.getPointHistory(user!.uid, limit, lastDoc);
       if (response.success) {
-        console.log('✅ 포인트 내역 추가 로드 완료:', response.history.length);
+ console.log(' 포인트 내역 추가 로드 완료:', response.history.length);
         setAllHistory(prev => [...prev, ...response.history]);
         setLastDoc(response.lastDoc);
         setHasMore(response.hasMore);
       }
     } catch (error) {
-      console.error('포인트 내역 추가 로드 실패:', error);
+ console.error('포인트 내역 추가 로드 실패:', error);
     } finally {
       isLoadingMoreRef.current = false;
       setIsLoadingMore(false);

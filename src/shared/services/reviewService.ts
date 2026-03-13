@@ -46,11 +46,11 @@ export class ReviewService {
         updatedAt: reviewData.updatedAt.toDate()
       };
 
-      console.log(`✅ 리뷰 생성 완료 - 상품: ${productId}, 리뷰: ${docRef.id}`);
+ console.log(` 리뷰 생성 완료 - 상품: ${productId}, 리뷰: ${docRef.id}`);
       return createdReview;
 
     } catch (error) {
-      console.error('리뷰 생성 실패:', error);
+ console.error('리뷰 생성 실패:', error);
       throw new Error('리뷰를 생성하는데 실패했습니다.');
     }
   }
@@ -103,7 +103,7 @@ export class ReviewService {
       return { reviews, hasMore, lastDoc: newLastDoc };
 
     } catch (error) {
-      console.error('상품 리뷰 조회 실패:', error);
+ console.error('상품 리뷰 조회 실패:', error);
       throw new Error('상품 리뷰를 불러오는데 실패했습니다.');
     }
   }
@@ -115,7 +115,7 @@ export class ReviewService {
     recommendationRate: number;
   }> {
     try {
-      console.log('🔄 ReviewService.getReviewStatistics 시작:', { rating });
+ console.log(' ReviewService.getReviewStatistics 시작:', { rating });
       
       const reviewsCollection = collection(db, 'reviews');
       let reviewQuery = query(reviewsCollection);
@@ -136,7 +136,7 @@ export class ReviewService {
         ? (reviews.filter(review => review.isRecommended).length / totalCount) * 100
         : 0;
 
-      console.log('✅ ReviewService.getReviewStatistics 완료:', { totalCount, averageRating, recommendationRate });
+ console.log(' ReviewService.getReviewStatistics 완료:', { totalCount, averageRating, recommendationRate });
       
       return {
         totalCount,
@@ -145,7 +145,7 @@ export class ReviewService {
       };
 
     } catch (error) {
-      console.error('❌ ReviewService.getReviewStatistics 실패:', error);
+ console.error(' ReviewService.getReviewStatistics 실패:', error);
       return {
         totalCount: 0,
         averageRating: 0,
@@ -169,7 +169,7 @@ export class ReviewService {
       return snapshot.size;
 
     } catch (error) {
-      console.error('전체 리뷰 개수 조회 실패:', error);
+ console.error('전체 리뷰 개수 조회 실패:', error);
       return 0;
     }
   }
@@ -182,33 +182,33 @@ export class ReviewService {
     sortBy: 'latest' | 'rating' | 'helpful' = 'latest'
   ): Promise<{ reviews: Review[]; totalCount: number; totalPages: number; currentPage: number }> {
     try {
-      console.log('🔄 ReviewService.getAllReviews 시작:', { page, pageSize, rating, sortBy });
+ console.log(' ReviewService.getAllReviews 시작:', { page, pageSize, rating, sortBy });
       
       // 총 개수 조회
       const totalCount = await this.getTotalReviewsCount(rating);
       const totalPages = Math.ceil(totalCount / pageSize);
       
-      console.log('📊 총 리뷰 개수:', totalCount, '/ 총 페이지:', totalPages);
+ console.log(' 총 리뷰 개수:', totalCount, '/ 총 페이지:', totalPages);
       
       const reviewsCollection = collection(db, 'reviews');
       let reviewQuery = query(reviewsCollection);
       
       // 평점 필터
       if (rating) {
-        console.log('📊 평점 필터 적용:', rating);
+ console.log(' 평점 필터 적용:', rating);
         reviewQuery = query(reviewQuery, where('rating', '==', rating));
       }
       
       // 단순한 정렬만 사용 (복합 인덱스 문제 방지)
       switch (sortBy) {
         case 'rating':
-          console.log('📈 평점순 정렬 적용');
+ console.log(' 평점순 정렬 적용');
           reviewQuery = query(reviewQuery, orderBy('rating', 'desc'));
           break;
         case 'helpful':
         case 'latest':
         default:
-          console.log('⏰ 정렬 없이 가져오기 (인덱스 생성 완료 전까지)');
+ console.log('⏰ 정렬 없이 가져오기 (인덱스 생성 완료 전까지)');
           // 임시로 정렬 없이 가져오기 (인덱스 생성 완료 전까지)
           break;
       }
@@ -217,9 +217,9 @@ export class ReviewService {
       const offset = (page - 1) * pageSize;
       reviewQuery = query(reviewQuery, limit(pageSize + offset)) as any;
 
-      console.log('📋 Firestore 쿼리 실행...');
+ console.log(' Firestore 쿼리 실행...');
       const snapshot = await getDocs(reviewQuery);
-      console.log('📊 Firestore 응답:', snapshot.size, '개 문서');
+ console.log(' Firestore 응답:', snapshot.size, '개 문서');
       
       // 페이지에 맞는 데이터만 추출
       const allDocs = snapshot.docs.slice(offset);
@@ -253,7 +253,7 @@ export class ReviewService {
         reviews.sort((a, b) => b.rating - a.rating);
       }
 
-      console.log(`✅ ReviewService.getAllReviews 완료: ${reviews.length}개`);
+ console.log(` ReviewService.getAllReviews 완료: ${reviews.length}개`);
       
       return {
         reviews,
@@ -263,9 +263,9 @@ export class ReviewService {
       };
 
     } catch (error) {
-      console.error('❌ ReviewService.getAllReviews 실패:', error);
+ console.error(' ReviewService.getAllReviews 실패:', error);
       // 에러 시 빈 결과 반환
-      console.warn('⚠️ 임시로 빈 결과를 반환합니다.');
+ console.warn(' 임시로 빈 결과를 반환합니다.');
       return {
         reviews: [],
         totalCount: 0,
@@ -315,7 +315,7 @@ export class ReviewService {
       return updatedReview;
 
     } catch (error) {
-      console.error('리뷰 수정 실패:', error);
+ console.error('리뷰 수정 실패:', error);
       throw new Error('리뷰를 수정하는데 실패했습니다.');
     }
   }
@@ -326,10 +326,10 @@ export class ReviewService {
       const reviewDoc = doc(db, 'reviews', reviewId);
       await deleteDoc(reviewDoc);
       
-      console.log(`✅ 리뷰 삭제 완료 - 상품: ${productId}, 리뷰: ${reviewId}`);
+ console.log(` 리뷰 삭제 완료 - 상품: ${productId}, 리뷰: ${reviewId}`);
 
     } catch (error) {
-      console.error('리뷰 삭제 실패:', error);
+ console.error('리뷰 삭제 실패:', error);
       throw new Error('리뷰를 삭제하는데 실패했습니다.');
     }
   }
@@ -376,7 +376,7 @@ export class ReviewService {
       };
 
     } catch (error) {
-      console.error('리뷰 요약 조회 실패:', error);
+ console.error('리뷰 요약 조회 실패:', error);
       throw new Error('리뷰 요약 정보를 불러오는데 실패했습니다.');
     }
   }
@@ -418,7 +418,7 @@ export class ReviewService {
       return reviews;
 
     } catch (error) {
-      console.error('사용자 리뷰 조회 실패:', error);
+ console.error('사용자 리뷰 조회 실패:', error);
       throw new Error('사용자 리뷰를 불러오는데 실패했습니다.');
     }
   }

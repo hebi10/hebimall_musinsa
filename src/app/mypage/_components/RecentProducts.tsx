@@ -101,7 +101,7 @@ export default function RecentProducts() {
         <div className={styles.loading}>최근 본 상품을 불러오는 중...</div>
       ) : recentProducts.length === 0 ? (
         <div className={styles.empty}>
-          <div className={styles.emptyIcon}>👀</div>
+          <div className={styles.emptyIcon}></div>
           <p>최근 본 상품이 없습니다.</p>
           <Link href="/categories" className={styles.shopLink}>
             상품 둘러보기

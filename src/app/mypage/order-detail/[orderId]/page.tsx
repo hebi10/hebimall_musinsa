@@ -108,7 +108,6 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
     return (
       <div className={styles.container}>
         <div className={styles.error}>
-          <div className={styles.errorIcon}>❌</div>
           <h3>오류</h3>
           <p>{error}</p>
           <div className={styles.errorActions}>

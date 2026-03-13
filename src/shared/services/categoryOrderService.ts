@@ -81,11 +81,11 @@ export class CategoryOrderService {
         };
       }
 
-      console.log('⚠️ 문서가 존재하지 않음, 기본값 반환');
+ console.log(' 문서가 존재하지 않음, 기본값 반환');
       // 설정이 없으면 기본값 반환
       return this.createDefaultOrderConfig();
     } catch (error) {
-      console.error('❌ 카테고리 순서 설정 조회 실패:', error);
+ console.error(' 카테고리 순서 설정 조회 실패:', error);
       return this.createDefaultOrderConfig();
     }
   }
@@ -114,21 +114,21 @@ export class CategoryOrderService {
     description?: string
   ): Promise<void> {
     try {
-      console.log('🔄 카테고리 순서 업데이트 시작:', { newOrder, configId, description });
-      console.log('🌍 Firebase 연결 상태 확인...');
+ console.log(' 카테고리 순서 업데이트 시작:', { newOrder, configId, description });
+ console.log(' Firebase 연결 상태 확인...');
       
       // Firebase 연결 상태 테스트
       try {
         const testDocRef = doc(db, 'test', 'connection');
         await getDoc(testDocRef);
-        console.log('✅ Firebase 연결 정상');
+ console.log(' Firebase 연결 정상');
       } catch (connError) {
-        console.error('❌ Firebase 연결 실패:', connError);
+ console.error(' Firebase 연결 실패:', connError);
         throw new Error('Firebase 연결에 실패했습니다.');
       }
       
       const mappedOrder = newOrder.map(name => this.nameToIdMapping[name]).filter(Boolean);
-      console.log('📝 매핑된 순서:', mappedOrder);
+ console.log(' 매핑된 순서:', mappedOrder);
       
       const orderData = {
         order: newOrder,
@@ -138,41 +138,41 @@ export class CategoryOrderService {
         updatedAt: Timestamp.now(),
       };
 
-      console.log('💾 저장할 데이터:', orderData);
+ console.log(' 저장할 데이터:', orderData);
 
       const docRef = doc(db, CATEGORY_ORDER_COLLECTION, configId);
       
       const existingDoc = await getDoc(docRef);
-      console.log('📄 기존 문서 존재:', existingDoc.exists());
+ console.log(' 기존 문서 존재:', existingDoc.exists());
 
       if (existingDoc.exists()) {
-        console.log('🔄 기존 문서 업데이트 중...');
-        console.log('🔍 업데이트 전 데이터:', existingDoc.data());
+ console.log(' 기존 문서 업데이트 중...');
+ console.log(' 업데이트 전 데이터:', existingDoc.data());
         await updateDoc(docRef, orderData);
-        console.log('✅ 문서 업데이트 완료');
+ console.log(' 문서 업데이트 완료');
       } else {
-        console.log('🆕 새 문서 생성 중...');
+ console.log('🆕 새 문서 생성 중...');
         await setDoc(docRef, {
           ...orderData,
           createdAt: Timestamp.now(),
         });
-        console.log('✅ 새 문서 생성 완료');
+ console.log(' 새 문서 생성 완료');
       }
 
       // 저장 확인
-      console.log('🔍 저장 결과 확인 중...');
+ console.log(' 저장 결과 확인 중...');
       const savedDoc = await getDoc(docRef);
       if (savedDoc.exists()) {
-        console.log('✅ 저장 확인됨:', savedDoc.data());
+ console.log(' 저장 확인됨:', savedDoc.data());
       } else {
-        console.error('❌ 저장 실패: 문서가 존재하지 않음');
+ console.error(' 저장 실패: 문서가 존재하지 않음');
         throw new Error('문서 저장이 실패했습니다.');
       }
 
-      console.log('✅ 카테고리 순서 업데이트 완료:', newOrder);
+ console.log(' 카테고리 순서 업데이트 완료:', newOrder);
     } catch (error) {
-      console.error('❌ 카테고리 순서 업데이트 실패:', error);
-      console.error('오류 상세:', {
+ console.error(' 카테고리 순서 업데이트 실패:', error);
+ console.error('오류 상세:', {
         name: error instanceof Error ? error.name : 'Unknown',
         message: error instanceof Error ? error.message : String(error),
         stack: error instanceof Error ? error.stack : undefined
@@ -191,7 +191,7 @@ export class CategoryOrderService {
       const orderConfig = await this.getCategoryOrderConfig();
       
       if (!orderConfig) {
-        console.warn('⚠️ 카테고리 순서 설정을 찾을 수 없습니다.');
+ console.warn(' 카테고리 순서 설정을 찾을 수 없습니다.');
         throw new Error('카테고리 순서 설정을 찾을 수 없습니다.');
       }
 
@@ -233,7 +233,7 @@ export class CategoryOrderService {
       // 설정에 없는 카테고리들은 마지막에 추가
       allCategories.forEach(category => {
         if (!sortedCategories.find(sorted => sorted.id === category.id)) {
-          console.log(`➕ 설정에 없는 카테고리 추가: ${category.name}`);
+ console.log(` 설정에 없는 카테고리 추가: ${category.name}`);
           sortedCategories.push({
             id: category.id,
             name: category.name,
@@ -244,7 +244,7 @@ export class CategoryOrderService {
 
       return sortedCategories;
     } catch (error) {
-      console.error('❌ 정렬된 카테고리 조회 실패:', error);
+ console.error(' 정렬된 카테고리 조회 실패:', error);
       
       // 에러 시 기본 카테고리 반환
       const fallbackCategories = this.defaultCategoryOrder.map((name, index) => ({
@@ -253,7 +253,7 @@ export class CategoryOrderService {
         order: index
       })).filter(cat => cat.id);
       
-      console.log('🔄 기본 카테고리로 fallback:', fallbackCategories);
+ console.log(' 기본 카테고리로 fallback:', fallbackCategories);
       return fallbackCategories;
     }
   }
@@ -275,14 +275,14 @@ export class CategoryOrderService {
       
       // 카테고리별 아이콘과 상품 수 설정 (실제로는 Firebase에서 가져와야 함)
       const categoryIcons: Record<string, string> = {
-        '상의': '👕',
-        '하의': '👖', 
-        '신발': '👟',
-        '스포츠': '⚽',
-        '아웃도어': '🏃',
-        '가방': '👜',
-        '주얼리': '💎',
-        '액세서리': '👑'
+        '상의': '',
+        '하의': '',
+        '신발': '',
+        '스포츠': '',
+        '아웃도어': '',
+        '가방': '',
+        '주얼리': '',
+        '액세서리': ''
       };
 
       // 카테고리별 상품 수 (임시 데이터)
@@ -310,19 +310,19 @@ export class CategoryOrderService {
         name: category.name,
         slug: category.id,
         href: `/categories/${category.id}`,
-        icon: categoryIcons[category.name] || '📦',
+        icon: categoryIcons[category.name] || '',
         image: orderedImages[index] || orderedImages[0],
         count: categoryCounts[category.name] || '100+ 상품',
       }));
     } catch (error) {
-      console.error('메인 페이지 카테고리 조회 실패:', error);
+ console.error('메인 페이지 카테고리 조회 실패:', error);
       
       // 에러 시 기본 카테고리 반환
       return [
-        { id: 'clothing', name: '의류', slug: 'clothing', href: '/categories/clothing', icon: '👕', image: '/category/main_category01.png', count: '2,450+ 상품' },
-        { id: 'bags', name: '가방', slug: 'bags', href: '/categories/bags', icon: '👜', image: '/category/main_category02.png', count: '890+ 상품' },
-        { id: 'accessories', name: '액세서리', slug: 'accessories', href: '/categories/accessories', icon: '💎', image: '/category/main_category03.png', count: '1,200+ 상품' },
-        { id: 'outdoor', name: '아웃도어', slug: 'outdoor', href: '/categories/outdoor', icon: '🏃', image: '/category/main_category04.png', count: '650+ 상품' }
+        { id: 'clothing', name: '의류', slug: 'clothing', href: '/categories/clothing', icon: '', image: '/category/main_category01.png', count: '2,450+ 상품' },
+        { id: 'bags', name: '가방', slug: 'bags', href: '/categories/bags', icon: '', image: '/category/main_category02.png', count: '890+ 상품' },
+        { id: 'accessories', name: '액세서리', slug: 'accessories', href: '/categories/accessories', icon: '', image: '/category/main_category03.png', count: '1,200+ 상품' },
+        { id: 'outdoor', name: '아웃도어', slug: 'outdoor', href: '/categories/outdoor', icon: '', image: '/category/main_category04.png', count: '650+ 상품' }
       ];
     }
   }

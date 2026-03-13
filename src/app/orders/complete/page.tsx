@@ -68,8 +68,8 @@ export default function OrderCompletePage() {
     return (
       <div className={styles.container}>
         <div className={styles.processingContainer}>
-          <div className={styles.successIcon}>✅</div>
-          <h2 className={styles.processingTitle}>주문이 완료되었습니다!</h2>
+          <div className={styles.successIcon}></div>
+          <h2 className={styles.processingTitle}>주문이 완료되었습니다.</h2>
           <p className={styles.processingMessage}>
             주문번호: <strong>{orderResult.orderNumber}</strong>
           </p>
@@ -105,8 +105,8 @@ export default function OrderCompletePage() {
         <div className={styles.completeCard}>
           {/* 성공 메시지 */}
           <div className={styles.successSection}>
-            <div className={styles.successIcon}>✅</div>
-            <h2 className={styles.successTitle}>주문이 완료되었습니다!</h2>
+            <div className={styles.successIcon}></div>
+            <h2 className={styles.successTitle}>주문이 완료되었습니다.</h2>
             <p className={styles.successMessage}>
               주문번호: <strong>{orderResult.orderNumber}</strong>
             </p>
@@ -192,25 +192,25 @@ export default function OrderCompletePage() {
           {/* 액션 버튼들 */}
           <div className={styles.actionButtons}>
             <div className={styles.actionMessage}>
-              <h3>🎉 주문이 성공적으로 완료되었습니다!</h3>
-              <p>주문 상세 정보를 확인하거나 쇼핑을 계속하실 수 있습니다.</p>
+              <h3>주문이 정상적으로 처리되었습니다.</h3>
+              <p>주문 상세 정보를 확인하거나 쇼핑을 계속할 수 있습니다.</p>
             </div>
             <div className={styles.buttonGroup}>
               <Link href="/mypage/order-list" className={styles.primaryButton}>
-                📋 주문 내역 상세 보기
+                주문 내역 보기
               </Link>
               <Link href="/" className={styles.secondaryButton}>
-                🛍️ 쇼핑 계속하기
+                쇼핑 계속하기
               </Link>
             </div>
             <div className={styles.actionNote}>
-              ※ 주문 상태 변경 및 배송 정보는 주문 내역에서 실시간으로 확인하실 수 있습니다.
+              ※ 주문 상태 변경 및 배송 정보는 주문 내역에서 확인하실 수 있습니다.
             </div>
           </div>
 
           {/* 안내 사항 */}
           <div className={styles.noticeSection}>
-            <div className={styles.noticeTitle}>📋 주문 후 안내사항</div>
+            <div className={styles.noticeTitle}>주문 후 안내사항</div>
             <ul className={styles.noticeList}>
               <li><strong>주문 확인:</strong> 주문 후 1-2시간 내에 주문 확인 문자를 발송해드립니다</li>
               <li><strong>배송 준비:</strong> 주문 확인 후 1-2일 내에 배송 준비가 완료됩니다</li>
@@ -222,9 +222,9 @@ export default function OrderCompletePage() {
 
           {/* 추천 상품 섹션 */}
           <div className={styles.recommendSection}>
-            <div className={styles.recommendTitle}>🎯 이런 상품은 어떠세요?</div>
+            <div className={styles.recommendTitle}>추천 상품</div>
             <p className={styles.recommendDescription}>
-              방금 구매하신 상품과 잘 어울리는 추천 상품들입니다
+              함께 보면 좋은 상품입니다
             </p>
             <Link href="/main/recommend" className={styles.recommendButton}>
               추천 상품 보기

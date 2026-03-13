@@ -93,7 +93,7 @@ export default function CartPage() {
         
         <div className={styles.content}>
           <div className={styles.emptyCart}>
-            <div className={styles.emptyIcon}>🛒</div>
+            <div className={styles.emptyIcon}></div>
             <h2 className={styles.emptyTitle}>장바구니가 비어있습니다</h2>
             <p className={styles.emptyDescription}>
               원하는 상품을 장바구니에 담아보세요.<br />
@@ -204,7 +204,7 @@ export default function CartPage() {
             <h3 className={styles.summaryTitle}>주문 요약</h3>
             
             <div className={styles.shippingInfo}>
-              <div className={styles.shippingTitle}>🚚 무료배송 안내</div>
+              <div className={styles.shippingTitle}>무료배송 안내</div>
               <div className={styles.shippingText}>
                 50,000원 이상 구매 시 무료배송<br />
                 {subtotal < 50000 && `${(50000 - subtotal).toLocaleString()}원 더 담으면 무료배송!`}

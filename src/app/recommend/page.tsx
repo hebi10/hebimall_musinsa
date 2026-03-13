@@ -14,11 +14,11 @@ export default function RecommendPage() {
   const [filterType, setFilterType] = useState<'all' | 'rating' | 'review' | 'sale' | 'new'>('all');
 
   const filterOptions = [
-    { value: 'all' as const, label: '전체', icon: '🎯' },
-    { value: 'rating' as const, label: '높은 평점', icon: '⭐' },
-    { value: 'review' as const, label: '리뷰 많은', icon: '💬' },
-    { value: 'sale' as const, label: '할인 상품', icon: '🏷️' },
-    { value: 'new' as const, label: '신상품', icon: '✨' }
+    { value: 'all' as const, label: '전체', icon: '' },
+    { value: 'rating' as const, label: '높은 평점', icon: '' },
+    { value: 'review' as const, label: '리뷰 많은', icon: '' },
+    { value: 'sale' as const, label: '할인 상품', icon: '' },
+    { value: 'new' as const, label: '신상품', icon: '' }
   ];
 
   useEffect(() => {
@@ -128,7 +128,7 @@ export default function RecommendPage() {
         <div className={styles.heroContent}>
           <h1 className={styles.heroTitle}>추천</h1>
           <p className={styles.heroSubtitle}>
-            개인 맞춤 추천 상품을 만나보세요
+            추천 상품 목록입니다
           </p>
         </div>
       </div>
@@ -162,7 +162,7 @@ export default function RecommendPage() {
         {/* Product Grid */}
         {recommendedProducts.length === 0 ? (
           <div className={styles.emptyState}>
-            <div className={styles.emptyIcon}>📭</div>
+            <div className={styles.emptyIcon}></div>
             <h3 className={styles.emptyTitle}>추천 상품이 없습니다</h3>
             <p className={styles.emptyDescription}>
               해당 조건에 맞는 상품이 없습니다.<br />
@@ -202,13 +202,6 @@ export default function RecommendPage() {
                   <div className={styles.imagePlaceholder} style={{ display: product.mainImage ? 'none' : 'flex' }}>
                     <div className={styles.placeholderContent}>
                       <span className={styles.placeholderIcon}>
-                        {product.category === 'accessories' && '💍'}
-                        {product.category === 'bags' && '🎒'}
-                        {product.category === 'bottoms' && '👖'}
-                        {product.category === 'shoes' && '👟'}
-                        {product.category === 'tops' && '👕'}
-                        {product.category === 'clothing' && '👕'}
-                        {!['accessories', 'bags', 'bottoms', 'shoes', 'tops', 'clothing'].includes(product.category) && '📦'}
                       </span>
                       <p className={styles.placeholderText}>이미지 준비중</p>
                     </div>
@@ -245,7 +238,7 @@ export default function RecommendPage() {
                   </div>
                   
                   <div className={styles.ratingWrapper}>
-                    <span className={styles.rating}>⭐ {product.rating}</span>
+                    <span className={styles.rating}>{product.rating}</span>
                     <span className={styles.reviewCount}>({product.reviewCount})</span>
                   </div>
                 </div>

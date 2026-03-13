@@ -37,22 +37,22 @@ export default function OfflinePage() {
 
   const services = [
     {
-      icon: "👗",
+      icon: "",
       title: "스타일링 서비스",
       description: "전문 스타일리스트가 개인 맞춤 코디를 제안해드립니다."
     },
     {
-      icon: "📦",
+      icon: "",
       title: "픽업 서비스",
       description: "온라인 주문 상품을 매장에서 편리하게 픽업하세요."
     },
     {
-      icon: "✂️",
+      icon: "",
       title: "수선 서비스",
       description: "구매하신 의류의 길이나 사이즈 수선을 도와드립니다."
     },
     {
-      icon: "🔄",
+      icon: "",
       title: "교환/반품",
       description: "매장에서 직접 교환이나 반품 처리가 가능합니다."
     }
@@ -74,7 +74,7 @@ export default function OfflinePage() {
           {stores.map(store => (
             <div key={store.id} className={styles.storeCard}>
               <div className={styles.storeImage}>
-                🏪
+
               </div>
               <div className={styles.storeContent}>
                 <h3 className={styles.storeName}>{store.name}</h3>
@@ -82,19 +82,19 @@ export default function OfflinePage() {
                 
                 <div className={styles.storeInfo}>
                   <div className={styles.infoRow}>
-                    <span className={styles.infoIcon}>📍</span>
+                    <span className={styles.infoIcon}></span>
                     <span className={styles.infoText}>{store.address}</span>
                   </div>
                   <div className={styles.infoRow}>
-                    <span className={styles.infoIcon}>📞</span>
+                    <span className={styles.infoIcon}></span>
                     <span className={styles.infoText}>{store.phone}</span>
                   </div>
                   <div className={styles.infoRow}>
-                    <span className={styles.infoIcon}>🕒</span>
+                    <span className={styles.infoIcon}></span>
                     <span className={styles.infoText}>{store.hours}</span>
                   </div>
                   <div className={styles.infoRow}>
-                    <span className={styles.infoIcon}>🚇</span>
+                    <span className={styles.infoIcon}></span>
                     <span className={styles.infoText}>{store.transport}</span>
                   </div>
                 </div>
@@ -123,7 +123,7 @@ export default function OfflinePage() {
         {/* 매장 서비스 */}
         <div className={styles.servicesSection}>
           <h2 className={styles.servicesTitle}>
-            🛍️ 매장 서비스
+            매장 서비스
           </h2>
           <div className={styles.servicesGrid}>
             {services.map((service, index) => (
@@ -139,12 +139,12 @@ export default function OfflinePage() {
         {/* 운영시간 */}
         <div className={styles.hoursSection}>
           <h2 className={styles.hoursTitle}>
-            ⏰ 운영시간
+            운영시간
           </h2>
           <div className={styles.hoursGrid}>
             <div className={styles.hoursCard}>
               <h3 className={styles.hoursCardTitle}>
-                🏪 평일/주말 운영시간
+                평일/주말 운영시간
               </h3>
               <div className={styles.hoursTable}>
                 <div className={styles.hoursRow}>
@@ -168,7 +168,7 @@ export default function OfflinePage() {
 
             <div className={styles.hoursCard}>
               <h3 className={styles.hoursCardTitle}>
-                🎯 특별 서비스 시간
+                특별 서비스 시간
               </h3>
               <div className={styles.hoursTable}>
                 <div className={styles.hoursRow}>
@@ -195,7 +195,7 @@ export default function OfflinePage() {
         {/* 특별 안내사항 */}
         <div className={styles.specialNotice}>
           <h3 className={styles.noticeTitle}>
-            📢 특별 안내사항
+            특별 안내사항
           </h3>
           <p className={styles.noticeText}>
             • 매장 방문 전 재고 확인을 위해 전화 문의를 권장합니다.<br />

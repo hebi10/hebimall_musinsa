@@ -56,17 +56,17 @@ export class CategoryService {
             } as Category);
           }
         } catch (docError) {
-          console.error('❌ 문서 파싱 에러:', doc.id, docError);
+ console.error(' 문서 파싱 에러:', doc.id, docError);
         }
       });
       
       return categories;
     } catch (error) {
-      console.error('❌ 카테고리 조회 에러:', error);
+ console.error(' 카테고리 조회 에러:', error);
       
       if (error instanceof FirestoreError) {
-        console.error('Firestore 에러 코드:', error.code);
-        console.error('Firestore 에러 메시지:', error.message);
+ console.error('Firestore 에러 코드:', error.code);
+ console.error('Firestore 에러 메시지:', error.message);
       }
       
       throw new Error('카테고리를 불러오는데 실패했습니다.');
@@ -96,7 +96,7 @@ export class CategoryService {
       
       return categories;
     } catch (error) {
-      console.error('Error fetching all categories:', error);
+ console.error('Error fetching all categories:', error);
       throw new Error('카테고리를 불러오는데 실패했습니다.');
     }
   }
@@ -119,7 +119,7 @@ export class CategoryService {
       
       return null;
     } catch (error) {
-      console.error('Error fetching category:', error);
+ console.error('Error fetching category:', error);
       throw new Error('카테고리를 불러오는데 실패했습니다.');
     }
   }
@@ -138,7 +138,7 @@ export class CategoryService {
       
       return docRef.id;
     } catch (error) {
-      console.error('Error creating category:', error);
+ console.error('Error creating category:', error);
       throw new Error('카테고리 생성에 실패했습니다.');
     }
   }
@@ -154,7 +154,7 @@ export class CategoryService {
         updatedAt: Timestamp.now(),
       });
     } catch (error) {
-      console.error('Error updating category:', error);
+ console.error('Error updating category:', error);
       throw new Error('카테고리 업데이트에 실패했습니다.');
     }
   }
@@ -168,7 +168,7 @@ export class CategoryService {
         updatedAt: Timestamp.now(),
       });
     } catch (error) {
-      console.error('Error deleting category:', error);
+ console.error('Error deleting category:', error);
       throw new Error('카테고리 삭제에 실패했습니다.');
     }
   }
@@ -185,7 +185,7 @@ export class CategoryService {
       
       return downloadURL;
     } catch (error) {
-      console.error('Error uploading image:', error);
+ console.error('Error uploading image:', error);
       throw new Error('이미지 업로드에 실패했습니다.');
     }
   }
@@ -203,7 +203,7 @@ export class CategoryService {
         await deleteObject(storageRef);
       }
     } catch (error) {
-      console.error('Error deleting image:', error);
+ console.error('Error deleting image:', error);
       // 이미지 삭제 실패는 치명적이지 않으므로 에러를 던지지 않음
     }
   }
@@ -225,7 +225,7 @@ export class CategoryService {
       
       await Promise.all(batch);
     } catch (error) {
-      console.error('Error updating category order:', error);
+ console.error('Error updating category order:', error);
       throw new Error('카테고리 순서 업데이트에 실패했습니다.');
     }
   }
@@ -254,7 +254,7 @@ export class CategoryService {
       
       return null;
     } catch (error) {
-      console.error('Error fetching category by slug:', error);
+ console.error('Error fetching category by slug:', error);
       throw new Error('카테고리를 불러오는데 실패했습니다.');
     }
   }
