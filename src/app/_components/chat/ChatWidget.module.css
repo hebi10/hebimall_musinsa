@@ -9,6 +9,7 @@
 
 /* 채팅 토글 버튼 */
 .chatButton {
+  width: 100px;
   height: 40px;
   padding: 0 16px;
   border-radius: 6px;

@@ -5,8 +5,8 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(3px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -23,19 +23,18 @@
 /* 팝업 메인 */
 .popup {
   background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-  max-width: 540px;
+  border-radius: 10px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  max-width: 420px;
   width: 100%;
-  max-height: 90vh;
+  animation: slideUp 0.2s ease-out;
   overflow: hidden;
-  animation: slideUp 0.25s ease-out;
 }
 
 @keyframes slideUp {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
@@ -48,148 +47,109 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 24px;
-  background: #fafafa;
-  border-bottom: 1px solid #e5e5e5;
-  color: #1a1a1a;
+  padding: 16px 20px;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.logoSection {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
 }
 
 .logoSection h2 {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
   margin: 0;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.4px;
   color: #1a1a1a;
 }
 
 .subtitle {
   font-size: 11px;
-  color: #888888;
+  color: #aaaaaa;
   font-weight: 400;
 }
 
 .closeButton {
   background: transparent;
   border: none;
-  border-radius: 4px;
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
-  color: #999999;
+  font-size: 18px;
+  color: #bbbbbb;
   cursor: pointer;
-  transition: all 0.15s ease;
+  border-radius: 4px;
+  transition: color 0.15s ease;
 }
 
 .closeButton:hover {
-  background: #eeeeee;
-  color: #333333;
+  color: #555555;
 }
 
 /* 메인 컨텐츠 */
 .content {
-  padding: 20px 24px;
-  overflow-y: auto;
-  max-height: calc(90vh - 200px);
-  background: #fafafa;
+  padding: 20px 20px 4px;
 }
 
-/* 프로젝트 요약 */
-.summary {
-  margin-bottom: 20px;
-  padding: 16px;
-  background: #ffffff;
-  border-radius: 8px;
-  border: 1px solid #e8e8e8;
-}
-
-.summaryText {
+/* 한 줄 소개 */
+.intro {
   font-size: 14px;
-  font-weight: 600;
-  color: #1a1a1a;
-  margin: 0 0 6px 0;
+  font-weight: 500;
+  color: #000;
+  margin: 0 0 14px;
+  line-height: 1.6;
 }
 
-.summarySubtext {
-  font-size: 12px;
-  color: #666666;
-  margin: 0;
-  line-height: 1.5;
-}
-
-/* 설계 포인트 섹션 */
-.designSection {
-  margin-bottom: 16px;
-}
-
-.sectionTitle {
-  font-size: 11px;
-  font-weight: 600;
-  color: #888888;
-  margin: 0 0 12px 0;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-}
-
-.designList {
+/* 핵심 안내 목록 */
+.guideList {
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 0 0 16px;
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.designItem {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  padding: 10px 14px;
-  background: #ffffff;
-  border-radius: 6px;
-  border: 1px solid #e8e8e8;
+.guideList li {
+  font-size: 13px;
+  color: #000;
+  line-height: 1.6;
+  padding-left: 12px;
+  position: relative;
 }
 
-.itemTitle {
-  font-size: 12px;
-  font-weight: 600;
-  color: #1a1a1a;
-}
-
-.itemDesc {
-  font-size: 11px;
-  color: #777777;
-  line-height: 1.5;
+.guideList li::before {
+  content: '-';
+  position: absolute;
+  left: 0;
+  color: #000;
 }
 
 /* 참고 사항 */
 .notice {
-  padding: 10px 14px;
-  background: #f5f5f5;
-  border-radius: 6px;
-}
-
-.notice p {
   font-size: 11px;
-  color: #888888;
-  margin: 0;
+  color: #aaaaaa;
+  margin: 0 0 20px;
+  padding-top: 14px;
+  border-top: 1px solid #eeeeee;
   line-height: 1.6;
 }
 
-/* 링크 섹션 */
+/* 외부 링크 */
 .linkSection {
   display: flex;
-  gap: 10px;
-  padding: 0 24px 12px;
-  background: #fafafa;
+  gap: 8px;
+  padding: 0 20px 16px;
 }
 
 .linkButton,
 .linkButtonPrimary {
   flex: 1;
-  padding: 11px 16px;
+  padding: 10px 14px;
   font-size: 12px;
   font-weight: 500;
   text-align: center;
@@ -199,135 +159,74 @@
 }
 
 .linkButton {
-  background: #ffffff;
-  color: #333333;
-  border: 1px solid #ddd;
+  background: #f5f5f5;
+  color: #444444;
+  border: 1px solid #e5e5e5;
 }
 
 .linkButton:hover {
-  background: #f5f5f5;
-  border-color: #ccc;
+  background: #ebebeb;
 }
 
 .linkButtonPrimary {
-  background: #333333;
+  background: #1a1a1a;
   color: #ffffff;
-  border: 1px solid #333333;
+  border: 1px solid #1a1a1a;
 }
 
 .linkButtonPrimary:hover {
-  background: #444444;
+  background: #333333;
 }
 
-/* 하단 액션 버튼 */
+/* 하단 */
 .footer {
   display: flex;
-  gap: 10px;
-  padding: 12px 24px 16px;
-  background: #fafafa;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px 14px;
   border-top: 1px solid #eeeeee;
 }
 
 .dontShowButton {
-  flex: 1;
-  padding: 9px 16px;
   background: transparent;
-  color: #999999;
-  border: 1px solid #ddd;
-  border-radius: 6px;
+  border: none;
+  padding: 0;
   font-size: 11px;
-  font-weight: 500;
+  color: #bbbbbb;
   cursor: pointer;
-  transition: all 0.15s ease;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.15s ease;
 }
 
 .dontShowButton:hover {
-  background: #f0f0f0;
-  color: #666666;
+  color: #888888;
 }
 
 .closeButtonSecondary {
-  flex: 1;
-  padding: 9px 16px;
-  background: #333333;
-  color: #ffffff;
+  padding: 8px 18px;
+  background: #f0f0f0;
+  color: #333333;
   border: none;
   border-radius: 6px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: background 0.15s ease;
 }
 
 .closeButtonSecondary:hover {
-  background: #444444;
+  background: #e5e5e5;
 }
 
-/* 반응형 디자인 */
-@media (max-width: 600px) {
-  .overlay {
-    padding: 16px;
-  }
-
+/* 반응형 */
+@media (max-width: 480px) {
   .popup {
     max-width: 100%;
     border-radius: 10px;
   }
 
-  .header {
-    padding: 16px 20px;
-  }
-
-  .logoSection h2 {
-    font-size: 16px;
-  }
-
-  .subtitle {
-    font-size: 11px;
-    margin-left: 8px;
-  }
-
-  .content {
-    padding: 20px;
-  }
-
-  .designItem {
-    padding: 10px 14px;
-  }
-
-  .itemTitle {
-    font-size: 12px;
-  }
-
-  .itemDesc {
-    font-size: 11px;
-  }
-
   .linkSection {
     flex-direction: column;
-    padding: 0 20px 12px;
-  }
-
-  .footer {
-    padding: 12px 20px 16px;
-  }
-}
-
-@media (max-width: 400px) {
-  .overlay {
-    padding: 12px;
-  }
-
-  .content {
-    padding: 16px;
-  }
-
-  .summary {
-    margin-bottom: 20px;
-    padding-bottom: 16px;
-  }
-
-  .designList {
-    gap: 10px;
   }
 }
