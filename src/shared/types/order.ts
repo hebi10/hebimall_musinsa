@@ -1,6 +1,6 @@
 import { Address } from './user';
 
-export type OrderStatus = 
+export type OrderStatus =
   | '배송완료'
   | '배송중'
   | '주문확인'
@@ -16,7 +16,7 @@ export type OrderStatus =
   | 'returned'
   | 'exchanged';
 
-export type PaymentMethod = 
+export type PaymentMethod =
   | '카드결제'
   | '계좌이체'
   | '무통장입금'
@@ -51,12 +51,11 @@ export interface Order {
   finalAmount: number;
   status: OrderStatus;
   paymentMethod?: PaymentMethod;
-  shippingAddress?: Address;  // deliveryAddress 대신 shippingAddress 사용
-  paymentInfo?: any;  // 결제 정보 (선택적)
+  shippingAddress?: Address;
+  deliveryAddress?: Address;
+  paymentInfo?: any;
   createdAt: Date;
   updatedAt: Date;
-  
-  // 추가 필드들 (선택적)
   trackingNumber?: string;
   deliveryCompany?: string;
   estimatedDeliveryDate?: Date;

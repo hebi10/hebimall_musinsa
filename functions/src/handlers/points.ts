@@ -1,13 +1,7 @@
 import { onRequest } from "firebase-functions/v2/https";
 import * as admin from "firebase-admin";
-import { verifyAuth, AuthError } from "../utils/auth";
+import { verifyAuthContext, requireAdmin, AuthError } from "../utils/auth";
 
-/**
- * POST /points
- *
- * 통합 포인트 API
- * body.action: "add" | "refund" | "use" | "balance" | "history"
- */
 export const points = onRequest(
   {
     cors: true,
@@ -27,72 +21,78 @@ export const points = onRequest(
     }
 
     try {
-      const userId = await verifyAuth(req.headers.authorization);
       const { action, ...payload } = req.body;
 
       switch (action) {
-        case "add":
-          await handleAdd(userId, payload, res);
+        case "add": {
+          const adminContext = await requireAdmin(req.headers.authorization);
+          await handleAdd(adminContext.uid, payload, res);
           return;
-        case "refund":
-          await handleRefund(userId, payload, res);
+        }
+        case "refund": {
+          const adminContext = await requireAdmin(req.headers.authorization);
+          await handleRefund(adminContext.uid, payload, res);
           return;
-        case "use":
-          await handleUse(userId, payload, res);
+        }
+        case "use": {
+          const authContext = await verifyAuthContext(req.headers.authorization);
+          await handleUse(authContext.uid, payload, res);
           return;
-        case "balance":
-          await handleBalance(userId, res);
+        }
+        case "balance": {
+          const authContext = await verifyAuthContext(req.headers.authorization);
+          await handleBalance(authContext.uid, res);
           return;
-        case "history":
-          await handleHistory(userId, payload, res);
+        }
+        case "history": {
+          const authContext = await verifyAuthContext(req.headers.authorization);
+          await handleHistory(authContext.uid, payload, res);
           return;
+        }
         default:
-          res.status(400).json({ success: false, error: `유효하지 않은 action: ${action}` });
+          res.status(400).json({ success: false, error: `Unsupported action: ${action}` });
       }
     } catch (error: any) {
       if (error instanceof AuthError) {
         res.status(error.statusCode).json({ success: false, error: error.message });
         return;
       }
+
       console.error("Points API error:", error);
-      res.status(500).json({ success: false, error: error.message || "서버 내부 오류" });
+      res.status(500).json({ success: false, error: error.message || "Internal server error" });
     }
   }
 );
 
-/* ────────── 포인트 적립 ────────── */
+async function mutateBalance(params: {
+  targetUserId: string;
+  amount: number;
+  type: "earn" | "refund" | "use";
+  description: string;
+  orderId?: string;
+  direction: "increment" | "decrement";
+}) {
+  const { targetUserId, amount, type, description, orderId, direction } = params;
 
-async function handleAdd(
-  userId: string,
-  data: { amount?: number; description?: string; orderId?: string },
-  res: any
-): Promise<void> {
-  const { amount, description, orderId } = data;
-
-  if (!amount || amount <= 0) {
-    res.status(400).json({ success: false, error: "적립할 포인트는 0보다 커야 합니다." });
-    return;
-  }
-  if (!description) {
-    res.status(400).json({ success: false, error: "포인트 적립 사유가 필요합니다." });
-    return;
-  }
-
-  const result = await admin.firestore().runTransaction(async (transaction) => {
-    const userRef = admin.firestore().collection("users").doc(userId);
+  return admin.firestore().runTransaction(async (transaction) => {
+    const userRef = admin.firestore().collection("users").doc(targetUserId);
     const userSnap = await transaction.get(userRef);
 
     if (!userSnap.exists) {
-      throw new Error("사용자 정보를 찾을 수 없습니다.");
+      throw new Error("User document was not found.");
     }
 
     const currentBalance = userSnap.data()?.pointBalance ?? 0;
-    const newBalance = currentBalance + amount;
+    if (direction === "decrement" && currentBalance < amount) {
+      throw new Error(`Insufficient point balance. current=${currentBalance}`);
+    }
+
+    const newBalance =
+      direction === "increment" ? currentBalance + amount : currentBalance - amount;
 
     transaction.update(userRef, { pointBalance: newBalance });
-
     transaction.set(userRef.collection("pointHistory").doc(), {
-      type: "earn",
+      type,
       amount,
       description,
       orderId: orderId || null,
@@ -103,57 +103,70 @@ async function handleAdd(
 
     return { newBalance };
   });
-
-  res.status(200).json({ success: true, data: result });
 }
 
-/* ────────── 포인트 환불 ────────── */
-
-async function handleRefund(
-  userId: string,
-  data: { amount?: number; description?: string; orderId?: string },
+async function handleAdd(
+  actorUserId: string,
+  data: { userId?: string; amount?: number; description?: string; orderId?: string },
   res: any
 ): Promise<void> {
-  const { amount, description, orderId } = data;
+  const { amount, description, orderId, userId } = data;
+  const targetUserId = userId || actorUserId;
 
   if (!amount || amount <= 0) {
-    res.status(400).json({ success: false, error: "환불할 포인트는 0보다 커야 합니다." });
-    return;
-  }
-  if (!orderId) {
-    res.status(400).json({ success: false, error: "주문 ID가 필요합니다." });
+    res.status(400).json({ success: false, error: "amount must be greater than zero." });
     return;
   }
 
-  const result = await admin.firestore().runTransaction(async (transaction) => {
-    const userRef = admin.firestore().collection("users").doc(userId);
-    const userSnap = await transaction.get(userRef);
+  if (!description) {
+    res.status(400).json({ success: false, error: "description is required." });
+    return;
+  }
 
-    if (!userSnap.exists) {
-      throw new Error("사용자 정보를 찾을 수 없습니다.");
-    }
-
-    const currentBalance = userSnap.data()?.pointBalance ?? 0;
-    const newBalance = currentBalance + amount;
-
-    transaction.update(userRef, { pointBalance: newBalance });
-
-    transaction.set(userRef.collection("pointHistory").doc(), {
-      type: "refund",
-      amount,
-      description: description || "포인트 환불",
-      orderId,
-      date: admin.firestore.FieldValue.serverTimestamp(),
-      balanceAfter: newBalance,
-    });
-
-    return { newBalance, refundedAmount: amount };
+  const result = await mutateBalance({
+    targetUserId,
+    amount,
+    type: "earn",
+    description,
+    orderId,
+    direction: "increment",
   });
 
-  res.status(200).json({ success: true, data: result });
+  res.status(200).json({ success: true, data: { ...result, userId: targetUserId } });
 }
 
-/* ────────── 포인트 사용 ────────── */
+async function handleRefund(
+  actorUserId: string,
+  data: { userId?: string; amount?: number; description?: string; orderId?: string },
+  res: any
+): Promise<void> {
+  const { amount, description, orderId, userId } = data;
+  const targetUserId = userId || actorUserId;
+
+  if (!amount || amount <= 0) {
+    res.status(400).json({ success: false, error: "amount must be greater than zero." });
+    return;
+  }
+
+  if (!orderId) {
+    res.status(400).json({ success: false, error: "orderId is required." });
+    return;
+  }
+
+  const result = await mutateBalance({
+    targetUserId,
+    amount,
+    type: "refund",
+    description: description || "Point refund",
+    orderId,
+    direction: "increment",
+  });
+
+  res.status(200).json({
+    success: true,
+    data: { ...result, refundedAmount: amount, userId: targetUserId },
+  });
+}
 
 async function handleUse(
   userId: string,
@@ -163,62 +176,41 @@ async function handleUse(
   const { amount, description, orderId } = data;
 
   if (!amount || amount <= 0) {
-    res.status(400).json({ success: false, error: "사용할 포인트는 0보다 커야 합니다." });
+    res.status(400).json({ success: false, error: "amount must be greater than zero." });
     return;
   }
+
   if (!orderId) {
-    res.status(400).json({ success: false, error: "주문 ID가 필요합니다." });
+    res.status(400).json({ success: false, error: "orderId is required." });
     return;
   }
 
-  const result = await admin.firestore().runTransaction(async (transaction) => {
-    const userRef = admin.firestore().collection("users").doc(userId);
-    const userSnap = await transaction.get(userRef);
-
-    if (!userSnap.exists) {
-      throw new Error("사용자 정보를 찾을 수 없습니다.");
-    }
-
-    const currentBalance = userSnap.data()?.pointBalance ?? 0;
-
-    if (currentBalance < amount) {
-      throw new Error(`보유 포인트가 부족합니다. (보유: ${currentBalance})`);
-    }
-
-    const newBalance = currentBalance - amount;
-
-    transaction.update(userRef, { pointBalance: newBalance });
-
-    transaction.set(userRef.collection("pointHistory").doc(), {
-      type: "use",
-      amount,
-      description: description || "포인트 사용",
-      orderId,
-      date: admin.firestore.FieldValue.serverTimestamp(),
-      balanceAfter: newBalance,
-    });
-
-    return { newBalance, usedAmount: amount };
+  const result = await mutateBalance({
+    targetUserId: userId,
+    amount,
+    type: "use",
+    description: description || "Point use",
+    orderId,
+    direction: "decrement",
   });
 
-  res.status(200).json({ success: true, data: result });
+  res.status(200).json({
+    success: true,
+    data: { ...result, usedAmount: amount, userId },
+  });
 }
-
-/* ────────── 포인트 잔액 조회 ────────── */
 
 async function handleBalance(userId: string, res: any): Promise<void> {
   const userDoc = await admin.firestore().collection("users").doc(userId).get();
 
   if (!userDoc.exists) {
-    res.status(404).json({ success: false, error: "사용자 정보를 찾을 수 없습니다." });
+    res.status(404).json({ success: false, error: "User document was not found." });
     return;
   }
 
   const pointBalance = userDoc.data()?.pointBalance ?? 0;
   res.status(200).json({ success: true, data: { pointBalance } });
 }
-
-/* ────────── 포인트 내역 조회 ────────── */
 
 async function handleHistory(
   userId: string,
@@ -250,10 +242,9 @@ async function handleHistory(
   }
 
   const snapshot = await queryRef.get();
-
-  const history = snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
+  const history = snapshot.docs.map((historyDoc) => ({
+    id: historyDoc.id,
+    ...historyDoc.data(),
   }));
 
   res.status(200).json({
