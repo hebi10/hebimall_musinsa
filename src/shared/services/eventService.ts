@@ -18,6 +18,156 @@ import { Event, EventFilter, EventParticipant } from '../types/event';
 
 const EVENTS_COLLECTION = 'events';
 const EVENT_PARTICIPANTS_COLLECTION = 'eventParticipants';
+const DAY_IN_MS = 1000 * 60 * 60 * 24;
+
+export type EventRuntimeStatus = 'ongoing' | 'upcoming' | 'ended';
+export type EventParticipationErrorCode =
+  | 'already_participated'
+  | 'event_not_found'
+  | 'event_not_started'
+  | 'event_ended'
+  | 'event_inactive'
+  | 'manual_coupon'
+  | 'max_participants'
+  | 'unknown';
+
+const EVENT_PARTICIPATION_ERROR_MESSAGES: Record<
+  Exclude<EventParticipationErrorCode, 'unknown'>,
+  string
+> = {
+  already_participated: '이미 참여한 이벤트입니다.',
+  event_not_found: '존재하지 않는 이벤트입니다.',
+  event_not_started: '아직 시작되지 않은 이벤트입니다.',
+  event_ended: '종료된 이벤트입니다.',
+  event_inactive: '비활성화된 이벤트입니다.',
+  manual_coupon: '수동 쿠폰 이벤트는 직접 참여할 수 없습니다.',
+  max_participants: '참여 인원이 마감되었습니다.',
+};
+
+export class EventParticipationError extends Error {
+  code: EventParticipationErrorCode;
+
+  constructor(
+    code: Exclude<EventParticipationErrorCode, 'unknown'>,
+    message: string = EVENT_PARTICIPATION_ERROR_MESSAGES[code]
+  ) {
+    super(message);
+    this.name = 'EventParticipationError';
+    this.code = code;
+  }
+}
+
+export function getEventParticipationErrorCode(
+  error: unknown
+): EventParticipationErrorCode {
+  if (error instanceof EventParticipationError) {
+    return error.code;
+  }
+
+  if (!(error instanceof Error)) {
+    return 'unknown';
+  }
+
+  switch (error.message) {
+    case EVENT_PARTICIPATION_ERROR_MESSAGES.already_participated:
+      return 'already_participated';
+    case EVENT_PARTICIPATION_ERROR_MESSAGES.event_not_found:
+      return 'event_not_found';
+    case EVENT_PARTICIPATION_ERROR_MESSAGES.event_not_started:
+      return 'event_not_started';
+    case EVENT_PARTICIPATION_ERROR_MESSAGES.event_ended:
+      return 'event_ended';
+    case EVENT_PARTICIPATION_ERROR_MESSAGES.event_inactive:
+      return 'event_inactive';
+    case EVENT_PARTICIPATION_ERROR_MESSAGES.manual_coupon:
+      return 'manual_coupon';
+    case EVENT_PARTICIPATION_ERROR_MESSAGES.max_participants:
+      return 'max_participants';
+    default:
+      return 'unknown';
+  }
+}
+
+export function getEventParticipationErrorMessage(error: unknown): string {
+  const code = getEventParticipationErrorCode(error);
+
+  if (code !== 'unknown') {
+    return EVENT_PARTICIPATION_ERROR_MESSAGES[code];
+  }
+
+  if (error instanceof Error && error.message) {
+    return error.message;
+  }
+
+  return '이벤트 참여 처리에 실패했습니다. 잠시 후 다시 시도해주세요.';
+}
+
+export function getEventStatus(
+  event: Event,
+  referenceDate: Date = new Date()
+): EventRuntimeStatus {
+  if (!event.isActive || referenceDate > event.endDate) {
+    return 'ended';
+  }
+
+  if (referenceDate < event.startDate) {
+    return 'upcoming';
+  }
+
+  return 'ongoing';
+}
+
+export function isOngoingEvent(
+  event: Event,
+  referenceDate: Date = new Date()
+): boolean {
+  return getEventStatus(event, referenceDate) === 'ongoing';
+}
+
+export function getDaysRemaining(
+  event: Event,
+  referenceDate: Date = new Date()
+): number | null {
+  if (!isOngoingEvent(event, referenceDate)) {
+    return null;
+  }
+
+  const remainingMs = event.endDate.getTime() - referenceDate.getTime();
+  return Math.max(0, Math.ceil(remainingMs / DAY_IN_MS));
+}
+
+export function getFeaturedEvent(
+  events: Event[],
+  referenceDate: Date = new Date()
+): Event | undefined {
+  if (events.length === 0) {
+    return undefined;
+  }
+
+  const ongoingEvents = events.filter(event => isOngoingEvent(event, referenceDate));
+
+  if (ongoingEvents.length > 0) {
+    return [...ongoingEvents].sort((left, right) => {
+      const leftDaysRemaining = getDaysRemaining(left, referenceDate) ?? Number.POSITIVE_INFINITY;
+      const rightDaysRemaining = getDaysRemaining(right, referenceDate) ?? Number.POSITIVE_INFINITY;
+
+      if (leftDaysRemaining !== rightDaysRemaining) {
+        return leftDaysRemaining - rightDaysRemaining;
+      }
+
+      const endDateDiff = left.endDate.getTime() - right.endDate.getTime();
+      if (endDateDiff !== 0) {
+        return endDateDiff;
+      }
+
+      return right.createdAt.getTime() - left.createdAt.getTime();
+    })[0];
+  }
+
+  return [...events].sort(
+    (left, right) => right.createdAt.getTime() - left.createdAt.getTime()
+  )[0];
+}
 
 export class EventService {
   // 모든 이벤트 가져오기
@@ -96,7 +246,7 @@ export class EventService {
           createdAt: doc.data().createdAt.toDate(),
           updatedAt: doc.data().updatedAt.toDate(),
         } as Event))
-        .filter(event => event.startDate <= now && event.endDate >= now);
+        .filter(event => isOngoingEvent(event, now));
     } catch (error) {
       console.error('Error getting active events:', error);
       // Firebase 에러가 발생하면 빈 배열 반환 (대시보드가 중단되지 않도록)
@@ -276,35 +426,35 @@ export class EventService {
       // 이미 참여했는지 확인
       const isAlreadyParticipated = await this.checkEventParticipation(eventId, userId);
       if (isAlreadyParticipated) {
-        throw new Error('이미 참여한 이벤트입니다.');
+        throw new EventParticipationError('already_participated');
       }
 
       // 이벤트 정보 확인
       const event = await this.getEventById(eventId);
       if (!event) {
-        throw new Error('존재하지 않는 이벤트입니다.');
+        throw new EventParticipationError('event_not_found');
       }
 
       // 이벤트 상태 확인
       const now = new Date();
       if (now < event.startDate) {
-        throw new Error('아직 시작되지 않은 이벤트입니다.');
+        throw new EventParticipationError('event_not_started');
       }
       if (now > event.endDate) {
-        throw new Error('종료된 이벤트입니다.');
+        throw new EventParticipationError('event_ended');
       }
       if (!event.isActive) {
-        throw new Error('비활성화된 이벤트입니다.');
+        throw new EventParticipationError('event_inactive');
       }
 
       // manual 타입 쿠폰 이벤트는 참여 불가
       if (event.eventType === 'coupon' && event.couponType === 'manual') {
-        throw new Error('수동 쿠폰 이벤트는 직접 참여할 수 없습니다.');
+        throw new EventParticipationError('manual_coupon');
       }
 
       // 최대 참여자 수 확인
       if (event.hasMaxParticipants && event.maxParticipants && event.participantCount >= event.maxParticipants) {
-        throw new Error('참여 인원이 마감되었습니다.');
+        throw new EventParticipationError('max_participants');
       }
 
       // 참여자 추가

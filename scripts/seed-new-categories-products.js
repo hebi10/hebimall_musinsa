@@ -26,7 +26,7 @@ async function seedAllNewProducts() {
     
     console.log('===============================================');
     console.log('🎉 모든 카테고리 상품 생성 완료!');
-    console.log('📊 생성된 상품 수:');
+    console.log('생성된 상품 수:');
     console.log('  - 가방: 10개');
     console.log('  - 아웃도어: 10개');
     console.log('  - 스포츠: 10개');

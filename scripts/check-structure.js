@@ -7,7 +7,7 @@ async function checkFirebaseStructure() {
     
     // 카테고리 확인
     const categoriesSnapshot = await getDocs(collection(db, 'categories'));
-    console.log('📁 Categories 컬렉션:');
+    console.log(' Categories 컬렉션:');
     categoriesSnapshot.forEach(doc => {
       console.log(`  - ${doc.id}: ${doc.data().name}`);
     });
@@ -19,7 +19,7 @@ async function checkFirebaseStructure() {
       const data = doc.data();
     });
     
-    console.log('\n📊 현재 구조 분석:');
+    console.log('\n현재 구조 분석:');
     console.log('✅ 현재: 단일 컬렉션 방식');
     console.log('   - categories/ (카테고리 정보)');
     console.log('   - products/ (모든 상품, category 필드로 분류)');

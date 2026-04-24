@@ -31,9 +31,9 @@ export default function MyPage() {
       <div className={styles.contentArea}>
         <div className={styles.notLoggedIn}>
           <div className={styles.loginPrompt}>
-            <div className={styles.loginIcon}></div>
+            <span className={styles.promptEyebrow}>Member Access</span>
             <h2>로그인이 필요합니다</h2>
-            <p>마이페이지를 이용하려면 로그인해주세요.</p>
+            <p>주문, 쿠폰, 찜한 상품 등 나의 쇼핑 기록을 확인하려면 로그인해주세요.</p>
             <Link href="/auth/login" className={styles.loginButton}>
               로그인하기
             </Link>
@@ -45,84 +45,72 @@ export default function MyPage() {
 
   return (
     <div className={styles.dashboardContainer}>
-      {/* 대시보드 헤더 */}
-      <div className={styles.dashboardHeader}>
-        <h2>나의 쇼핑 현황</h2>
-        <p>최근 활동과 찜한 상품을 확인할 수 있습니다</p>
-      </div>
+      <section className={styles.dashboardHeader}>
+        <span className={styles.eyebrow}>Account Overview</span>
+        <div className={styles.headerBody}>
+          <h2>나의 쇼핑 현황</h2>
+          <p>주문, 관심 상품, 쿠폰 현황을 한 화면에서 확인하고 최근 활동을 이어서 살펴보세요.</p>
+        </div>
+      </section>
 
-      {/* 통계 카드 */}
       <div className={styles.statsGrid}>
-        <div className={styles.statCard}>
-          <div className={styles.statIcon}></div>
-          <div className={styles.statInfo}>
-            <h3>주문내역</h3>
-            <p className={styles.statNumber}>0</p>
-            <Link href="/mypage/order-list" className={styles.statLink}>
-              자세히 보기 →
-            </Link>
-          </div>
-        </div>
+        <Link href="/mypage/order-list" className={styles.statCard}>
+          <span className={styles.statLabel}>주문내역</span>
+          <strong className={styles.statNumber}>0</strong>
+          <span className={styles.statDescription}>주문 현황과 상세 내역 확인</span>
+        </Link>
 
-        <div className={styles.statCard}>
-          <div className={styles.statIcon}></div>
-          <div className={styles.statInfo}>
-            <h3>최근 본 상품</h3>
-            <p className={styles.statNumber}>{recentProducts.length}</p>
-            <Link href="/mypage/recently-viewed" className={styles.statLink}>
-              자세히 보기 →
-            </Link>
-          </div>
-        </div>
+        <Link href="/mypage/recently-viewed" className={styles.statCard}>
+          <span className={styles.statLabel}>최근 본 상품</span>
+          <strong className={styles.statNumber}>{recentProducts.length}</strong>
+          <span className={styles.statDescription}>최근 확인한 상품 다시 보기</span>
+        </Link>
 
-        <div className={styles.statCard}>
-          <div className={styles.statIcon}></div>
-          <div className={styles.statInfo}>
-            <h3>찜한 상품</h3>
-            <p className={styles.statNumber}>{wishlistItems.length}</p>
-            <Link href="/mypage/wishlist" className={styles.statLink}>
-              자세히 보기 →
-            </Link>
-          </div>
-        </div>
+        <Link href="/mypage/wishlist" className={styles.statCard}>
+          <span className={styles.statLabel}>찜한 상품</span>
+          <strong className={styles.statNumber}>{wishlistItems.length}</strong>
+          <span className={styles.statDescription}>관심 상품과 저장 목록 확인</span>
+        </Link>
 
-        <div className={styles.statCard}>
-          <div className={styles.statIcon}></div>
-          <div className={styles.statInfo}>
-            <h3>보유 쿠폰</h3>
-            <p className={styles.statNumber}>0</p>
-            <Link href="/mypage/coupons" className={styles.statLink}>
-              자세히 보기 →
-            </Link>
-          </div>
-        </div>
+        <Link href="/mypage/coupons" className={styles.statCard}>
+          <span className={styles.statLabel}>보유 쿠폰</span>
+          <strong className={styles.statNumber}>0</strong>
+          <span className={styles.statDescription}>사용 가능한 혜택 확인</span>
+        </Link>
       </div>
 
-      {/* 최근 활동 섹션 */}
       <div className={styles.recentActivity}>
-        <div className={styles.activitySection}>
+        <section className={styles.activitySection}>
           <div className={styles.sectionHeader}>
-            <h3>최근 본 상품</h3>
+            <div className={styles.sectionCopy}>
+              <span className={styles.sectionEyebrow}>Recently Viewed</span>
+              <h3>최근 본 상품</h3>
+              <p>최근 확인한 상품을 이어서 살펴보세요.</p>
+            </div>
             <Link href="/mypage/recently-viewed" className={styles.viewAllLink}>
-              전체보기 →
+              전체보기
             </Link>
           </div>
           <div className={styles.compactView}>
-            <RecentProducts />
+            <RecentProducts embedded limit={4} />
           </div>
-        </div>
+        </section>
         
-        <div className={styles.activitySection}>
+        <section className={styles.activitySection}>
           <div className={styles.sectionHeader}>
-            <h3>찜한 상품</h3>
+            <div className={styles.sectionCopy}>
+              <span className={styles.sectionEyebrow}>Wishlist</span>
+              <h3>찜한 상품</h3>
+              <p>관심 있는 상품을 정리해두고 비교해보세요.</p>
+            </div>
             <Link href="/mypage/wishlist" className={styles.viewAllLink}>
-              전체보기 →
+              전체보기
             </Link>
           </div>
           <div className={styles.compactView}>
-            <WishlistProducts />
+            <WishlistProducts embedded limit={4} />
           </div>
-        </div>
+        </section>
       </div>
     </div>
   );

@@ -204,7 +204,7 @@ async function seedAllProductsReviews() {
     
     for (const categoryDoc of categoriesSnapshot.docs) {
       const categoryName = categoryDoc.id;
-      console.log(`\n📁 카테고리: ${categoryName}`);
+      console.log(`\n 카테고리: ${categoryName}`);
       
       // 해당 카테고리의 모든 상품 조회
       const productsSnapshot = await getDocs(collection(db, 'categories', categoryName, 'products'));
@@ -247,7 +247,7 @@ async function seedAllProductsReviews() {
     }
     
     console.log(`\n🎉 리뷰 생성 완료!`);
-    console.log(`📊 최종 결과:`);
+    console.log(`최종 결과:`);
     console.log(`  - 처리된 상품: ${totalProducts}개`);
     console.log(`  - 생성된 리뷰: ${totalReviewsCreated}개`);
     console.log(`  - 상품당 평균 리뷰: ${(totalReviewsCreated / totalProducts).toFixed(1)}개`);

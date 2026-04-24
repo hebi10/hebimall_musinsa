@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import MainBanner from "./_components/MainBanner";
 import ProductSection from "./_components/ProductSection";
@@ -8,105 +9,130 @@ import styles from "./page.module.css";
 export default function Home() {
   return (
     <div className={styles.container}>
-      {/* 메인 배너 */}
       <MainBanner />
 
-      {/* 카테고리 */}
-      <section className={styles.categorySection}>
+      <section className={styles.moodSection}>
         <div className={styles.sectionContainer}>
-          <div className={styles.sectionHeaderLeft}>
-            <h2 className={styles.sectionTitle}>카테고리</h2>
+          <div className={styles.storyIntro}>
+            <div>
+              <span className={styles.eyebrow}>카테고리 셀렉션</span>
+              <h2 className={styles.storyTitle}>무드에 맞춰 먼저 둘러보세요.</h2>
+            </div>
+            <p className={styles.storyDescription}>
+              카테고리 이름보다 분위기와 스타일을 먼저 보고, 원하는 상품군으로
+              자연스럽게 이동할 수 있도록 구성했습니다.
+            </p>
           </div>
 
           <DynamicCategorySection
             maxCategories={4}
-            className={styles.categoryGrid}
+            className={styles.categoryMoodGrid}
           />
         </div>
       </section>
 
-      {/* 추천 상품 */}
-      <FeaturedProducts />
+      <FeaturedProducts
+        eyebrow="추천 셀렉션"
+        title="이번 주 추천 상품"
+        subtitle="메인에서 먼저 둘러보는 편집 셀렉션"
+        description="실루엣, 컬러, 활용도가 좋은 상품만 골라 메인에서 먼저 보여주는 큐레이션입니다."
+        sectionClassName={styles.featuredSection}
+        viewAllLabel="전체 보기"
+      />
 
-      {/* 신상품 */}
-      <div className={styles.productSections}>
-        <ProductSection
-          title="신상품"
-          subtitle="최근 등록된 상품"
-          type="new"
-          maxItems={4}
-          viewAllLink="/products?sort=newest"
-        />
-      </div>
-
-      {/* 세일 안내 */}
-      <section className={styles.saleBanner}>
-        <div className={styles.saleBannerContent}>
-          <div className={styles.saleText}>
-            <h3 className={styles.saleTitle}>시즌오프 할인 중</h3>
-            <p className={styles.saleDescription}>지금 할인 중인 상품을 확인해보세요.</p>
+      <section className={styles.promoBand}>
+        <div className={styles.promoInner}>
+          <div className={styles.promoVisual}>
+            <Image
+              src="/main/mid_season_selection_v1.png"
+              alt="Mid-season selection"
+              fill
+              sizes="(max-width: 1024px) 100vw, 46vw"
+              className={styles.promoImage}
+            />
+            <span className={styles.promoVisualBadge}>한정 셀렉션</span>
           </div>
-          <Link href="/main/sale" className={styles.saleButton}>
-            할인 상품 보기
-          </Link>
+
+          <div className={styles.promoCopy}>
+            <span className={styles.promoEyebrow}>미드 시즌 셀렉션</span>
+            <h2 className={styles.promoTitle}>차분한 톤에 힘을 실은 간절기 셀렉션</h2>
+            <p className={styles.promoDescription}>
+              가볍게 걸치는 아우터와 매일 들기 좋은 가방, 시즌감이 살아 있는
+              상품만 골라 하나의 기획 구간으로 묶었습니다.
+            </p>
+          </div>
+
+          <div className={styles.promoMeta}>
+            <p className={styles.promoNote}>선별 상품 최대 30% 할인</p>
+            <p className={styles.promoList}>
+              간절기 아우터
+              <span className={styles.promoDivider}>/</span>
+              데일리 백
+              <span className={styles.promoDivider}>/</span>
+              한정 수량
+            </p>
+            <Link href="/main/sale" className={styles.promoButton}>
+              세일 보러가기
+            </Link>
+          </div>
         </div>
       </section>
 
-      {/* 베스트셀러 */}
-      <div className={styles.productSections}>
+      <section id="new-arrivals" className={styles.newBand}>
         <ProductSection
-          title="베스트셀러"
-          subtitle="리뷰가 많은 인기 상품"
+          className={styles.bandSection}
+          title="신상품"
+          subtitle="천천히 훑어볼수록 좋은 이번 주 업데이트"
+          description="정적인 그리드보다 실제 매대를 둘러보는 느낌이 들도록 가로 레일 방식으로 구성했습니다."
+          eyebrow="신상품"
+          type="new"
+          maxItems={8}
+          variant="scroll"
+          headerStyle="display"
+          viewAllLink="/products?sort=newest"
+          viewAllLabel="신상품 전체 보기"
+        />
+      </section>
+
+      <section id="best-ranking" className={styles.rankingBand}>
+        <ProductSection
+          className={styles.bandSection}
+          title="베스트 랭킹"
+          subtitle="이번 주 고객 반응이 가장 빠른 상품입니다."
+          eyebrow="베스트 8"
           type="bestseller"
           maxItems={8}
           variant="ranking"
+          headerStyle="bordered"
           viewAllLink="/products?sort=bestseller"
+          viewAllLabel="랭킹 보기"
         />
-      </div>
+      </section>
 
-      {/* 특가 상품 */}
-      <div className={styles.productSections}>
-        <ProductSection
-          title="할인 상품"
-          subtitle="지금 할인 중인 상품"
-          type="sale"
-          maxItems={4}
-          variant="sale"
-          viewAllLink="/main/sale"
-        />
-      </div>
-
-      {/* 서비스 안내 */}
-      <section className={styles.serviceInfo}>
+      <section id="about" className={styles.seasonNote}>
         <div className={styles.sectionContainer}>
-          <div className={styles.serviceGrid}>
-            <div className={styles.serviceItem}>
-              <h4 className={styles.serviceItemTitle}>배송 안내</h4>
-              <p className={styles.serviceItemDesc}>
-                평일 오후 2시 이전 주문 시 당일 발송됩니다.
-                배송은 2~3일 정도 소요됩니다.
-              </p>
+          <div className={styles.seasonInner}>
+            <div className={styles.seasonHeading}>
+              <span className={styles.eyebrow}>브랜드 노트</span>
+              <h2 className={styles.seasonTitle}>
+                매일 입는 옷을 더 차분하게 고르는 방식
+              </h2>
             </div>
-            <div className={styles.serviceItem}>
-              <h4 className={styles.serviceItemTitle}>교환/반품</h4>
-              <p className={styles.serviceItemDesc}>
-                수령 후 7일 이내 접수 가능합니다.
-                상품 하자 시 반품 배송비는 무료입니다.
+
+            <div className={styles.seasonBody}>
+              <p className={styles.seasonDescription}>
+                STYNA는 메인에서부터 차분한 패션 무드가 느껴지도록 뉴트럴한
+                질감, 더 선명한 간격감, 그리고 천천히 둘러보게 되는 리듬으로
+                화면을 정리하고 있습니다.
               </p>
-            </div>
-            <div className={styles.serviceItem}>
-              <h4 className={styles.serviceItemTitle}>고객 문의</h4>
-              <p className={styles.serviceItemDesc}>
-                1:1 문의 또는 채팅 상담을 이용해주세요.
-                평일 10:00~18:00 운영합니다.
-              </p>
-            </div>
-            <div className={styles.serviceItem}>
-              <h4 className={styles.serviceItemTitle}>주문 조회</h4>
-              <p className={styles.serviceItemDesc}>
-                <Link href="/mypage/order-list" className={styles.serviceLink}>마이페이지</Link>에서
-                주문 상태와 배송 현황을 확인할 수 있습니다.
-              </p>
+              <div className={styles.seasonActions}>
+                <Link href="/recommend" className={styles.primaryLink}>
+                  추천 셀렉션 보기
+                </Link>
+                <Link href="/events" className={styles.secondaryLink}>
+                  기획전 보기
+                </Link>
+              </div>
             </div>
           </div>
         </div>

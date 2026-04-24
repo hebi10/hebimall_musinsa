@@ -217,7 +217,7 @@ export default function DynamicCategoryPage({ params }: CategoryPageProps) {
                 </div>
                 {product.isSale && product.saleRate && (
                   <div className={styles.discountBadge}>
-                    {product.saleRate}%
+                    -{product.saleRate}%
                   </div>
                 )}
                 {product.isNew && (

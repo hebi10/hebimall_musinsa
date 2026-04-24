@@ -52,7 +52,7 @@ async function finalTest() {
     console.log(`   ✅ 전체 상품 조회 성공: ${allProducts.length}개`);
 
     // 2. 카테고리별 상품 조회 테스트
-    console.log('\n📁 2. 카테고리별 상품 조회 테스트:');
+    console.log('\n 2. 카테고리별 상품 조회 테스트:');
     const testCategories = ['tops', 'bottoms', 'shoes', 'bags', 'accessories'];
     
     for (const categoryId of testCategories) {
@@ -79,7 +79,7 @@ async function finalTest() {
     console.log('   ✅ 개별 상품: /categories/tops/products/{productId}');
 
     // 4. 데이터베이스 구조 확인
-    console.log('\n📊 4. 데이터베이스 구조:');
+    console.log('\n4. 데이터베이스 구조:');
     
     // products/ 컬렉션 확인 (없어야 함)
     const productsSnapshot = await getDocs(collection(db, 'products'));

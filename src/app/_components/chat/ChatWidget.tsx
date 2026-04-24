@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { useMutation } from '@tanstack/react-query';
+import { usePathname } from 'next/navigation';
 import styles from './ChatWidget.module.css';
 
 // ─── 상수 ──────────────────────────────────────────────
@@ -146,6 +147,7 @@ const ChatWidget: React.FC = () => {
   // UI 상태
   const [isOpen, setIsOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const pathname = usePathname();
 
   // 통합 채팅 상태: idle → menu → ai
   const [chatMode, setChatMode] = useState<ChatMode>('idle');
@@ -160,6 +162,7 @@ const ChatWidget: React.FC = () => {
 
   // 파생 상태
   const isChatActive = chatMode !== 'idle';
+  const isHomePage = pathname === '/';
 
   // ── 마운트 확인 ────────────────────────────────────
   useEffect(() => {
@@ -319,6 +322,10 @@ const ChatWidget: React.FC = () => {
   const isSendDisabled = !inputValue.trim() || isInputDisabled;
 
   // ── 렌더링 ────────────────────────────────────────
+  if (isHomePage) {
+    return null;
+  }
+
   return (
     <div className={styles.chatWidget}>
       {/* 채팅 창 */}
@@ -475,7 +482,7 @@ const ChatWidget: React.FC = () => {
         onClick={() => setIsOpen((prev) => !prev)}
         aria-label={isOpen ? '채팅 닫기' : '채팅 열기'}
       >
-        {isOpen ? '×' : '채팅 상담'}
+        {isOpen ? '×' : '상담'}
       </button>
     </div>
   );

@@ -1,6 +1,6 @@
 .header {
-  background-color: white;
-  border-bottom: 1px solid #e5e7eb;
+  background-color: var(--color-bg-primary);
+  border-bottom: 1px solid var(--line);
 }
 
 .container {
@@ -30,7 +30,7 @@
   align-items: center;
   gap: 0.5rem;
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--text-subtle);
 }
 
 .breadcrumbItem {
@@ -39,17 +39,17 @@
 }
 
 .breadcrumbLink {
-  color: #6b7280;
+  color: var(--text-subtle);
   text-decoration: none;
   transition: color 0.2s;
 }
 
 .breadcrumbLink:hover {
-  color: #374151;
+  color: var(--point);
 }
 
 .breadcrumbCurrent {
-  color: #111827;
+  color: var(--black);
 }
 
 .breadcrumbSeparator {
@@ -59,12 +59,12 @@
 .title {
   font-size: 1.875rem;
   font-weight: bold;
-  color: #111827;
+  color: var(--black);
   margin: 0;
 }
 
 .description {
   margin-top: 0.5rem;
   font-size: 1.125rem;
-  color: #4b5563;
+  color: var(--text-subtle);
 }

@@ -29,7 +29,7 @@ async function testHybridStructure() {
       const data = doc.data();
     });
 
-    console.log('\n📁 2. 카테고리별 상품 조회 (categories/{id}/products/):');
+    console.log('\n 2. 카테고리별 상품 조회 (categories/{id}/products/):');
     
     // 2. 카테고리별 상품 조회
     const categoryTests = ['clothing', 'shoes', 'bags', 'accessories'];

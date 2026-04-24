@@ -69,7 +69,7 @@ async function createBagsCategory() {
     }
 
     console.log('\n🎉 가방 카테고리 및 상품 생성 완료!');
-    console.log(`📊 카테고리: bags`);
+    console.log(`카테고리: bags`);
     console.log(`📦 상품 수: ${addedCount}개`);
     console.log(`🔗 경로: /categories/bags/products`);
 

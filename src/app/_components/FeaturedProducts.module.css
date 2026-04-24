@@ -1,6 +1,6 @@
 .section {
-  padding: 3rem 0;
-  background: #f8f8f8;
+  padding: 4rem 0;
+  background: var(--background);
 }
 
 .container {
@@ -10,41 +10,81 @@
 }
 
 .header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  margin-bottom: 1.25rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 2px solid #172b4d;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(260px, 0.85fr);
+  gap: 1.75rem;
+  align-items: end;
+  margin-bottom: 2rem;
+}
+
+.copyBlock {
+  min-width: 0;
+}
+
+.eyebrow {
+  display: block;
+  margin-bottom: 0.85rem;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-soft);
 }
 
 .title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #172b4d;
   margin: 0;
-  line-height: 1.2;
+  font-family: var(--font-heading), "Noto Serif KR", "Apple Myungjo", serif;
+  font-weight: 600;
+  font-size: clamp(2rem, 3.4vw, 3rem);
+  line-height: 1.08;
+  letter-spacing: -0.032em;
+  text-wrap: balance;
+  color: var(--black);
 }
 
 .subtitle {
-  font-size: 0.85rem;
-  color: #6b778c;
-  margin: 0.25rem 0 0 0;
-  font-weight: 400;
+  margin: 0.8rem 0 0;
+  max-width: 38rem;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--text-subtle);
+}
+
+.headerSide {
+  display: grid;
+  gap: 1rem;
+  justify-items: start;
+}
+
+.description {
+  margin: 0;
+  max-width: 28rem;
+  font-size: 0.94rem;
+  line-height: 1.75;
+  color: var(--text-subtle);
 }
 
 .viewAllButton {
-  color: #6b778c;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0.75rem 1.2rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-white);
+  color: var(--black);
   text-decoration: none;
-  font-weight: 500;
-  font-size: 0.85rem;
-  padding: 0.4rem 0;
-  transition: color 0.15s;
-  white-space: nowrap;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: border-color 0.2s ease, color 0.2s ease,
+    background-color 0.2s ease;
 }
 
 .viewAllButton:hover {
-  color: #172b4d;
+  border-color: var(--point);
+  color: var(--point);
+  background: var(--surface);
 }
 
 .loading {
@@ -57,8 +97,8 @@
 .spinner {
   width: 28px;
   height: 28px;
-  border: 2px solid #dfe1e6;
-  border-top-color: #2b6cb0;
+  border: 2px solid var(--line);
+  border-top-color: var(--point);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -71,22 +111,27 @@
 
 .productGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 1rem;
 }
 
-/* 반응형 */
 @media (max-width: 768px) {
   .section {
-    padding: 2rem 0;
+    padding: 3rem 0;
+  }
+
+  .container {
+    padding: 0 0.75rem;
   }
 
   .header {
-    margin-bottom: 1rem;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
   }
 
   .title {
-    font-size: 1.15rem;
+    font-size: clamp(1.6rem, 8vw, 2.25rem);
   }
 
   .productGrid {
@@ -96,12 +141,15 @@
 }
 
 @media (max-width: 480px) {
-  .productGrid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.5rem;
+  .container {
+    padding: 0 0.625rem;
   }
 
-  .title {
-    font-size: 1.05rem;
+  .viewAllButton {
+    width: 100%;
+  }
+
+  .productGrid {
+    gap: 0.625rem;
   }
 }

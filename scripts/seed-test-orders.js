@@ -167,7 +167,7 @@ async function createTestOrders() {
     }
     
     console.log('🎉 테스트 주문 데이터 생성 완료!');
-    console.log(`📊 총 ${testOrders.length}개의 주문이 생성되었습니다.`);
+    console.log(`총 ${testOrders.length}개의 주문이 생성되었습니다.`);
     console.log(`👤 사용자 ID: ${TEST_USER_ID}`);
     console.log('📝 생성된 주문:');
     testOrders.forEach(order => {

@@ -7,14 +7,7 @@ import styles from './page.module.css';
 export default function RecentlyViewedPage() {
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
-        <h1>최근 본 상품</h1>
-        <p>최근에 확인한 상품들을 다시 살펴보세요</p>
-      </div>
-      
-      <div className={styles.content}>
-        <RecentProducts />
-      </div>
+      <RecentProducts />
     </div>
   );
 }

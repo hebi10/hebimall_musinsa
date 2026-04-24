@@ -1,35 +1,48 @@
 'use client';
 
+import Link from 'next/link';
 import { useProduct } from '@/context/productProvider';
 import ProductCard from '@/app/products/_components/ProductCard';
-import Link from 'next/link';
 import styles from './ProductSection.module.css';
+
+type ProductSectionVariant = 'default' | 'ranking' | 'sale' | 'scroll';
+type ProductSectionHeaderStyle = 'minimal' | 'bordered' | 'display';
 
 interface ProductSectionProps {
   title: string;
   subtitle?: string;
+  description?: string;
+  eyebrow?: string;
   type: 'recommended' | 'new' | 'sale' | 'bestseller';
   showViewAllButton?: boolean;
   maxItems?: number;
-  variant?: 'default' | 'ranking' | 'sale';
+  variant?: ProductSectionVariant;
+  headerStyle?: ProductSectionHeaderStyle;
   viewAllLink?: string;
+  viewAllLabel?: string;
+  className?: string;
 }
 
 export default function ProductSection({
   title,
   subtitle,
+  description,
+  eyebrow,
   type,
   showViewAllButton = true,
   maxItems = 8,
   variant = 'default',
-  viewAllLink = '/recommend'
+  headerStyle = 'minimal',
+  viewAllLink = '/recommend',
+  viewAllLabel = '전체 보기',
+  className = '',
 }: ProductSectionProps) {
   const {
     recommendedProducts,
     newProducts,
     saleProducts,
     bestSellerProducts,
-    loading
+    loading,
   } = useProduct();
 
   const getProducts = () => {
@@ -49,18 +62,58 @@ export default function ProductSection({
 
   const products = getProducts().slice(0, maxItems);
 
+  const sectionClassName = [styles.section, className].filter(Boolean).join(' ');
+  const headerClassName = [
+    styles.header,
+    headerStyle === 'bordered'
+      ? styles.headerBordered
+      : headerStyle === 'display'
+        ? styles.headerDisplay
+        : styles.headerMinimal,
+  ]
+    .filter(Boolean)
+    .join(' ');
+
+  const gridClassName =
+    variant === 'ranking'
+      ? styles.rankingGrid
+      : variant === 'sale'
+        ? styles.saleGrid
+        : variant === 'scroll'
+          ? styles.scrollGrid
+          : styles.productGrid;
+
+  const linkClassName =
+    headerStyle === 'display' ? styles.viewAllButton : styles.viewAllLink;
+
+  const headerContent = (
+    <div className={headerClassName}>
+      <div className={styles.headerCopy}>
+        {eyebrow && <span className={styles.eyebrow}>{eyebrow}</span>}
+        <h2 className={styles.title}>{title}</h2>
+        {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
+      </div>
+
+      {(description || showViewAllButton) && (
+        <div className={styles.headerSide}>
+          {description && <p className={styles.description}>{description}</p>}
+          {showViewAllButton && (
+            <Link href={viewAllLink} className={linkClassName}>
+              {viewAllLabel}
+            </Link>
+          )}
+        </div>
+      )}
+    </div>
+  );
+
   if (loading) {
     return (
-      <section className={styles.section}>
-        <div className={styles.header}>
-          <div>
-            <h2 className={styles.title}>{title}</h2>
-            {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
-          </div>
-        </div>
+      <section className={sectionClassName}>
+        {headerContent}
         <div className={styles.loading}>
           <div className={styles.spinner}></div>
-          <p>상품을 불러오는 중...</p>
+          <p>상품을 불러오는 중입니다...</p>
         </div>
       </section>
     );
@@ -70,31 +123,20 @@ export default function ProductSection({
     return null;
   }
 
-  const gridClass = variant === 'ranking'
-    ? styles.rankingGrid
-    : variant === 'sale'
-    ? styles.saleGrid
-    : styles.productGrid;
-
   return (
-    <section className={styles.section}>
-      <div className={styles.header}>
-        <div>
-          <h2 className={styles.title}>{title}</h2>
-          {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
-        </div>
-        {showViewAllButton && (
-          <Link href={viewAllLink} className={styles.viewAllLink}>
-            전체보기
-          </Link>
-        )}
-      </div>
+    <section className={sectionClassName}>
+      {headerContent}
 
-      <div className={gridClass}>
+      <div className={gridClassName}>
         {products.map((product, index) => (
           <div
             key={product.id}
-            className={variant === 'ranking' ? styles.rankingItem : undefined}
+            className={[
+              variant === 'ranking' ? styles.rankingItem : '',
+              variant === 'scroll' ? styles.scrollItem : '',
+            ]
+              .filter(Boolean)
+              .join(' ')}
           >
             {variant === 'ranking' && (
               <span className={styles.rankNumber}>{index + 1}</span>

@@ -1,13 +1,56 @@
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@import url("https://cdn.jsdelivr.net/npm/pretendard/dist/web/static/pretendard.css");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;600;700&display=swap");
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  color-scheme: light;
+  --font-base: "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+  --font-heading: "Noto Serif KR";
+  --black: #0a0a0a;
+  --text: #1a1a1a;
+  --text-subtle: #6f675f;
+  --text-soft: #978f86;
+  --off-white: #f5f4f0;
+  --surface: #fbfaf7;
+  --surface-raised: #ffffff;
+  --surface-muted: #efebe4;
+  --line: #e7e2db;
+  --line-strong: #d7d0c7;
+  --point: #8f4a43;
+  --point-hover: #743933;
+  --point-soft: #f2e6e1;
+  --success: #3d6651;
+  --warning: #b48733;
+  --error: #b34b45;
+  --hero-one: #63564e;
+  --hero-two: #7a5f56;
+  --hero-three: #4f5654;
+  --category-clothing: #5d564e;
+  --category-bags: #7b6c62;
+  --category-accessories: #4f5654;
+  --category-outdoor: #5f6957;
+  --category-sports: #77644e;
+  --category-shoes: #714f47;
+  --category-jewelry: #6d5d6c;
+  --category-default: #736b64;
+  --swatch-black: #0a0a0a;
+  --swatch-white: #ffffff;
+  --swatch-navy: #253044;
+  --swatch-gray: #8b8178;
+  --swatch-beige: #d9cfbf;
+  --swatch-blue: #4a6178;
+  --swatch-brown: #7b5746;
+  --swatch-khaki: #a79a73;
+  --background: var(--surface);
+  --foreground: var(--text);
+  --radius-xs: 0px;
+  --radius-sm: 2px;
+  --radius-md: 2px;
+  --radius-lg: 2px;
+  --radius-xl: 2px;
+  --radius-pill: 999px;
+  --shadow-sm: 0 6px 16px rgba(10, 10, 10, 0.04);
+  --shadow-md: 0 12px 28px rgba(10, 10, 10, 0.08);
+  --shadow-lg: 0 18px 40px rgba(10, 10, 10, 0.12);
 }
 
 html,
@@ -24,9 +67,17 @@ html {
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-base);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+body,
+button,
+input,
+textarea,
+select {
+  font-family: var(--font-base);
 }
 
 * {
@@ -39,10 +90,4 @@ body {
 a {
   color: inherit;
   text-decoration: none;
-}
-
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
 }

@@ -27,7 +27,7 @@ const qnaRef = collection(db, 'qna');
 const q = query(qnaRef, orderBy('createdAt', 'desc'));
 
 const unsubscribe = onSnapshot(q, (snapshot) => {
-  console.log(`📊 총 ${snapshot.size}개의 QnA가 있습니다.`);
+  console.log(`총 ${snapshot.size}개의 QnA가 있습니다.`);
   
   if (snapshot.size === 0) {
     console.log('📝 아직 QnA가 없습니다. 새로운 QnA를 작성해보세요!');

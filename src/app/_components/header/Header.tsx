@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/context/authProvider";
 import { useCartItemCount } from "@/shared/hooks/useCart";
@@ -11,64 +11,92 @@ interface HeaderCategory {
   id: string;
   name: string;
   href: string;
-  icon: string;
+}
+
+interface HeaderNavItem {
+  label: string;
+  href: string;
+}
+
+const DEFAULT_CATEGORIES: HeaderCategory[] = [
+  { id: "clothing", name: "의류", href: "/categories/clothing" },
+  { id: "bags", name: "가방", href: "/categories/bags" },
+  { id: "accessories", name: "액세서리", href: "/categories/accessories" },
+  { id: "outdoor", name: "아웃도어", href: "/categories/outdoor" },
+];
+
+const SUPPORT_LINKS: HeaderNavItem[] = [
+  { label: "이벤트", href: "/events" },
+  { label: "리뷰", href: "/reviews" },
+  { label: "1:1문의", href: "/cs/inquiry" },
+  { label: "상품문의", href: "/qna" },
+  { label: "고객센터", href: "/cs/faq" },
+];
+
+function toNavLabel(category: HeaderCategory) {
+  return category.name;
 }
 
 export default function Header() {
   const { user, isAdmin, logout } = useAuth();
   const { data: cartItemCount = 0 } = useCartItemCount(user?.uid || null);
-  const [categories, setCategories] = useState<HeaderCategory[]>([]);
-  const [categoriesLoading, setCategoriesLoading] = useState(true);
+  const [categories, setCategories] = useState<HeaderCategory[]>(DEFAULT_CATEGORIES);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
-  // 컴포넌트 마운트 확인
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  // 카테고리 로딩 (새로운 순서 시스템 사용)
   useEffect(() => {
+    let isActive = true;
+
     const loadCategories = async () => {
       try {
-        setCategoriesLoading(true);
         const sortedCategories = await CategoryOrderService.getSortedCategories();
-        
-        // 헤더용 카테고리 데이터 변환
-        const headerCategories: HeaderCategory[] = sortedCategories.map(category => ({
+        const headerCategories: HeaderCategory[] = sortedCategories.map((category) => ({
           id: category.id,
           name: category.name,
           href: `/categories/${category.id}`,
-          icon: ''
         }));
 
-        setCategories(headerCategories);
+        if (isActive && headerCategories.length > 0) {
+          setCategories(headerCategories);
+        }
       } catch (error) {
-        console.error('헤더 카테고리 로딩 실패:', error);
-
-        // 에러 시 기본 카테고리 설정
-        setCategories([
-          { id: 'clothing', name: '의류', href: '/categories/clothing', icon: '' },
-          { id: 'bags', name: '가방', href: '/categories/bags', icon: '' },
-          { id: 'accessories', name: '액세서리', href: '/categories/accessories', icon: '' },
-          { id: 'outdoor', name: '아웃도어', href: '/categories/outdoor', icon: '' }
-        ]);
-      } finally {
-        setCategoriesLoading(false);
+        console.error("헤더 카테고리 로딩 실패:", error);
+        if (isActive) {
+          setCategories(DEFAULT_CATEGORIES);
+        }
       }
     };
 
     loadCategories();
+
+    return () => {
+      isActive = false;
+    };
   }, []);
 
-  // 카테고리 아이콘은 사용하지 않음 (텍스트만 표시)
-
-  // SSR 안전한 장바구니 카운트 표시
   const safeCartItemCount = isMounted ? cartItemCount : 0;
+  const featuredCategories = categories.slice(0, 1);
+  const primaryNavItems: HeaderNavItem[] = [
+    { label: "신상", href: "/#new-arrivals" },
+    { label: "베스트", href: "/#best-ranking" },
+    ...featuredCategories.map((category) => ({
+      label: toNavLabel(category),
+      href: category.href,
+    })),
+    { label: "세일", href: "/main/sale" },
+    { label: "브랜드", href: "/#about" },
+  ].slice(0, 5);
+  const secondaryNavItems: HeaderNavItem[] = [
+    { label: "추천", href: "/recommend" },
+    ...SUPPORT_LINKS.filter((item) => item.label !== "고객센터"),
+  ];
 
   const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
+    setIsMobileMenuOpen((prev) => !prev);
   };
 
   const closeMobileMenu = () => {
@@ -79,76 +107,51 @@ export default function Header() {
     <header className={styles.header}>
       <div className={styles.container}>
         <div className={styles.headerContent}>
-          {/* 로고 */}
           <div className={styles.logo}>
-            <Link href="/" className={styles.logoLink}>
-              STYNA
+            <Link href="/" className={styles.logoLink} aria-label="STYNA home">
+              <span className={styles.logoTopRow}>
+                <span className={styles.logoWordmark}>STYNA</span>
+              </span>
+              <span className={styles.logoMeta}>셀렉트웨어 스토어</span>
             </Link>
           </div>
 
-          {/* 햄버거 메뉴 버튼 (모바일) */}
           <button
             className={styles.mobileMenuButton}
             onClick={toggleMobileMenu}
-            aria-label="메뉴"
+            aria-label="Open menu"
           >
-            <span className={`${styles.hamburgerLine} ${isMobileMenuOpen ? styles.line1Active : ''}`}></span>
-            <span className={`${styles.hamburgerLine} ${isMobileMenuOpen ? styles.line2Active : ''}`}></span>
-            <span className={`${styles.hamburgerLine} ${isMobileMenuOpen ? styles.line3Active : ''}`}></span>
+            <span
+              className={`${styles.hamburgerLine} ${isMobileMenuOpen ? styles.line1Active : ""}`}
+            ></span>
+            <span
+              className={`${styles.hamburgerLine} ${isMobileMenuOpen ? styles.line2Active : ""}`}
+            ></span>
+            <span
+              className={`${styles.hamburgerLine} ${isMobileMenuOpen ? styles.line3Active : ""}`}
+            ></span>
           </button>
 
-          {/* 네비게이션 (데스크톱) */}
-          <nav className={styles.nav}>
+          <nav className={styles.nav} aria-label="Primary">
             <div className={styles.navList}>
-              <Link href="/products" className={styles.navLink}>
-                전체상품
-              </Link>
-              
-              {/* 카테고리 드롭다운 */}
-              <div 
-                className={styles.categoryDropdown}
-                onMouseEnter={() => setIsCategoryOpen(true)}
-                onMouseLeave={() => setIsCategoryOpen(false)}
-              >
-                <Link href="/categories" className={styles.navLink}>
-                  카테고리
+              {primaryNavItems.map((item) => (
+                <Link key={item.label} href={item.href} className={styles.navLink}>
+                  {item.label}
                 </Link>
-                {isCategoryOpen && !categoriesLoading && categories.length > 0 && (
-                  <div className={styles.dropdownMenu}>
-                    {categories.map((category, index) => (
-                      <Link
-                        key={`${category.id}-${index}`}
-                        href={category.href}
-                        className={styles.dropdownItem}
-                      >
-                        {category.name}
-                      </Link>
-                    ))}
-                  </div>
-                )}
+              ))}
+            </div>
+
+            <div className={styles.secondaryNav} aria-label="Quick links">
+              <div className={styles.secondaryNavList}>
+                {secondaryNavItems.map((item) => (
+                  <Link key={item.label} href={item.href} className={styles.secondaryLink}>
+                    {item.label}
+                  </Link>
+                ))}
               </div>
-              <Link href="/recommend" className={styles.navLink}>
-                추천
-              </Link>
-              <Link href="/events" className={styles.navLink}>
-                이벤트
-              </Link>
-              <Link href="/reviews" className={styles.navLink}>
-                리뷰
-              </Link>
-              <Link href="/main/sale" className={styles.navLink}>
-                세일
-              </Link>
-              <Link href="/cs/inquiry" className={styles.navLink}>
-                1:1문의
-              </Link>
-              <Link href="/qna" className={styles.navLink}>
-                QnA
-              </Link>
             </div>
           </nav>
 
-          {/* 사용자 메뉴 (데스크톱) */}
           <div className={styles.userMenu}>
             <Link href="/search" className={styles.userLink}>
               검색
@@ -159,96 +162,133 @@ export default function Header() {
                 <span className={styles.cartBadge}>{safeCartItemCount}</span>
               )}
             </Link>
-            {user && (
-              <Link href="/mypage" className={styles.userLink}>마이페이지</Link>
-            )}
-            {!user && (
-              <Link href="/auth/login" className={styles.userLink}>로그인</Link>
+            {user ? (
+              <Link href="/mypage" className={styles.userLink}>
+                마이페이지
+              </Link>
+            ) : (
+              <Link href="/auth/login" className={styles.userLink}>
+                로그인
+              </Link>
             )}
             {isAdmin && (
-              <Link href="/admin" className={styles.userLink}>Admin</Link>
+              <Link href="/admin" className={styles.userLink}>
+                관리자
+              </Link>
             )}
           </div>
         </div>
 
-        {/* 모바일 메뉴 */}
-        <div className={`${styles.mobileMenu} ${isMobileMenuOpen ? styles.mobileMenuOpen : ''}`}>
+        <div
+          className={`${styles.mobileMenu} ${isMobileMenuOpen ? styles.mobileMenuOpen : ""}`}
+        >
           <div className={styles.mobileMenuContent}>
-            {/* 카테고리 */}
-            <div className={styles.mobileCategory}>
-              <h3 className={styles.mobileCategoryTitle}>카테고리</h3>
-              <div className={styles.mobileCategoryList}>
-                {!categoriesLoading && categories.length > 0 && categories.map((category, index) => (
+            <div className={styles.mobileBrandBlock}>
+              <span className={styles.mobileBrandWordmark}>STYNA</span>
+              <p className={styles.mobileBrandText}>
+                차분한 무드로 정리한 데일리 셀렉트웨어.
+              </p>
+            </div>
+
+            <div className={styles.mobileNavGroup}>
+              <h3 className={styles.mobileGroupTitle}>메인 메뉴</h3>
+              <div className={styles.mobileNavList}>
+                {primaryNavItems.map((item) => (
                   <Link
-                    key={`${category.id}-${index}`}
+                    key={item.label}
+                    href={item.href}
+                    className={styles.mobileNavLink}
+                    onClick={closeMobileMenu}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            <div className={styles.mobileCategory}>
+              <h3 className={styles.mobileGroupTitle}>카테고리</h3>
+              <div className={styles.mobileCategoryList}>
+                {categories.map((category) => (
+                  <Link
+                    key={category.id}
                     href={category.href}
                     className={styles.mobileCategoryItem}
                     onClick={closeMobileMenu}
                   >
-                    {category.name}
+                    {toNavLabel(category)}
                   </Link>
                 ))}
-                {categoriesLoading && (
-                  <div className={styles.loadingText}>카테고리 로딩 중...</div>
-                )}
-                {!categoriesLoading && categories.length === 0 && (
-                  <div className={styles.loadingText}>카테고리를 불러올 수 없습니다.</div>
-                )}
               </div>
             </div>
 
-            {/* 메인 네비게이션 */}
-            <div className={styles.mobileNavList}>
-              <Link href="/products" className={styles.mobileNavLink} onClick={closeMobileMenu}>
-                전체상품
-              </Link>
-              <Link href="/categories" className={styles.mobileNavLink} onClick={closeMobileMenu}>
-                카테고리
-              </Link>
-              <Link href="/recommend" className={styles.mobileNavLink} onClick={closeMobileMenu}>
-                추천
-              </Link>
-              <Link href="/events" className={styles.mobileNavLink} onClick={closeMobileMenu}>
-                이벤트
-              </Link>
-              <Link href="/reviews" className={styles.mobileNavLink} onClick={closeMobileMenu}>
-                리뷰
-              </Link>
-              <Link href="/main/sale" className={styles.mobileNavLink} onClick={closeMobileMenu}>
-                세일
-              </Link>
-              <Link href="/cs/inquiry" className={styles.mobileNavLink} onClick={closeMobileMenu}>
-                1:1문의
-              </Link>
-              <Link href="/qna" className={styles.mobileNavLink} onClick={closeMobileMenu}>
-                QnA
-              </Link>
+            <div className={styles.mobileSupport}>
+              <h3 className={styles.mobileGroupTitle}>고객지원</h3>
+              <div className={styles.mobileSupportList}>
+                {SUPPORT_LINKS.map((item) => (
+                  <Link
+                    key={item.label}
+                    href={item.href}
+                    className={styles.mobileSupportLink}
+                    onClick={closeMobileMenu}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
             </div>
 
-            {/* 사용자 메뉴 */}
             <div className={styles.mobileUserMenu}>
-              <Link href="/search" className={styles.mobileUserLink} onClick={closeMobileMenu}>
+              <Link
+                href="/search"
+                className={styles.mobileUserLink}
+                onClick={closeMobileMenu}
+              >
                 검색
               </Link>
-              <Link href="/orders/cart" className={styles.mobileUserLink} onClick={closeMobileMenu}>
+              <Link
+                href="/orders/cart"
+                className={styles.mobileUserLink}
+                onClick={closeMobileMenu}
+              >
                 장바구니
                 {safeCartItemCount > 0 && (
                   <span className={styles.cartBadge}>{safeCartItemCount}</span>
                 )}
               </Link>
-              {user && (
-                <Link href="/mypage" className={styles.mobileUserLink} onClick={closeMobileMenu}>마이페이지</Link>
-              )}
-              {!user && (
-                <Link href="/auth/login" className={styles.mobileUserLink} onClick={closeMobileMenu}>로그인</Link>
+              {user ? (
+                <Link
+                  href="/mypage"
+                  className={styles.mobileUserLink}
+                  onClick={closeMobileMenu}
+                >
+                  마이페이지
+                </Link>
+              ) : (
+                <Link
+                  href="/auth/login"
+                  className={styles.mobileUserLink}
+                  onClick={closeMobileMenu}
+                >
+                  로그인
+                </Link>
               )}
               {isAdmin && (
-                <Link href="/admin" className={styles.mobileUserLink} onClick={closeMobileMenu}>Admin</Link>
+                <Link
+                  href="/admin"
+                  className={styles.mobileUserLink}
+                  onClick={closeMobileMenu}
+                >
+                  관리자
+                </Link>
               )}
               {user && (
                 <button
                   className={styles.menuItem}
-                  onClick={logout}
+                  onClick={() => {
+                    logout();
+                    closeMobileMenu();
+                  }}
                 >
                   로그아웃
                 </button>
@@ -257,7 +297,6 @@ export default function Header() {
           </div>
         </div>
 
-        {/* 모바일 메뉴 오버레이 */}
         {isMobileMenuOpen && (
           <div className={styles.mobileMenuOverlay} onClick={closeMobileMenu}></div>
         )}

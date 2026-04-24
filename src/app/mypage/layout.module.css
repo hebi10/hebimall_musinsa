@@ -1,191 +1,168 @@
 .container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  background: var(--background);
 }
 
 .content {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem 1rem;
+  padding: 2.5rem 1rem 4rem;
 }
 
 .profileSection {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 20px;
-  padding: 3rem 2rem;
-  margin-bottom: 3rem;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  color: white;
-  position: relative;
-  overflow: hidden;
-}
-
-.profileSection::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
-  pointer-events: none;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+  gap: 1.5rem;
+  align-items: stretch;
+  margin-bottom: 2rem;
+  padding: 1.75rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: linear-gradient(180deg, var(--surface-raised) 0%, var(--off-white) 100%);
 }
 
 .profileHeader {
   display: flex;
-  align-items: center;
-  gap: 2rem;
-  margin-bottom: 2rem;
-  position: relative;
-  z-index: 1;
+  align-items: flex-start;
+  gap: 1.25rem;
 }
 
 .profileAvatar {
-  width: 6rem;
-  height: 6rem;
-  background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1));
-  border: 3px solid rgba(255,255,255,0.3);
+  flex-shrink: 0;
+  width: 4.75rem;
+  height: 4.75rem;
+  border: 1px solid var(--line);
   border-radius: 50%;
+  background: var(--surface);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
-  font-size: 2rem;
-  font-weight: bold;
-  backdrop-filter: blur(10px);
+  color: var(--black);
+  font-family: var(--font-heading), "Noto Serif KR", "Apple Myungjo", serif;
+  font-size: 1.55rem;
+  font-weight: 600;
 }
 
 .profileInfo {
-  flex: 1;
-  position: relative;
-  z-index: 1;
+  display: grid;
+  gap: 0.55rem;
+  align-content: start;
 }
 
 .profileName {
-  font-size: 2rem;
-  font-weight: 800;
-  color: white;
-  margin-bottom: 0.5rem;
+  margin: 0;
+  font-family: var(--font-heading), "Noto Serif KR", "Apple Myungjo", serif;
+  font-size: clamp(1.9rem, 3vw, 2.5rem);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: var(--black);
 }
 
 .profileEmail {
-  color: rgba(255, 255, 255, 0.8);
-  margin-bottom: 1rem;
-  font-size: 1.1rem;
+  margin: 0;
+  font-size: 0.96rem;
+  line-height: 1.7;
+  color: var(--text-subtle);
 }
 
 .membershipLevel {
-  display: inline-block;
-  background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1));
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 50px;
-  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  min-height: 32px;
+  padding: 0 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+  color: var(--text-subtle);
+  font-size: 0.82rem;
   font-weight: 600;
-  border: 1px solid rgba(255,255,255,0.3);
-  backdrop-filter: blur(10px);
+  text-transform: capitalize;
 }
 
 .profileStats {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem;
-  position: relative;
-  z-index: 1;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
 }
 
 .statItem {
-  text-align: center;
-  padding: 1.5rem 1rem;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
+  display: grid;
+  gap: 0.35rem;
+  align-content: center;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+  text-align: left;
 }
 
 .statNumber {
-  font-size: 2rem;
-  font-weight: 800;
-  color: white;
-  margin-bottom: 0.5rem;
+  font-family: var(--font-heading), "Noto Serif KR", "Apple Myungjo", serif;
+  font-size: 1.8rem;
+  font-weight: 600;
+  line-height: 1.05;
+  color: var(--black);
 }
 
 .statLabel {
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.8);
-  font-weight: 500;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-soft);
 }
 
 .quickActions {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem;
-  margin-bottom: 3rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+  margin-bottom: 2rem;
 }
 
 .actionCard {
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-  border-radius: 16px;
-  padding: 2rem 1.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-decoration: none;
+  display: grid;
+  gap: 0.4rem;
+  padding: 1.15rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
   color: inherit;
-  border: 1px solid #e2e8f0;
-  position: relative;
-  overflow: hidden;
-}
-
-.actionCard::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
+  text-decoration: none;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .actionCard:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
-  border-color: #a78bfa;
-}
-
-.actionCard:hover::before {
-  opacity: 0.03;
+  transform: translateY(-2px);
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-sm);
 }
 
 .actionIcon {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
-  position: relative;
-  z-index: 1;
+  font-size: 1.2rem;
+  color: var(--point);
 }
 
 .actionTitle {
-  font-weight: 700;
-  color: #111827;
-  margin-bottom: 0.5rem;
-  position: relative;
-  z-index: 1;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--black);
+  letter-spacing: -0.02em;
 }
 
 .actionDesc {
-  font-size: 0.9rem;
-  color: #6b7280;
-  position: relative;
-  z-index: 1;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--text-subtle);
 }
 
 .mainContent {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 2rem;
+  gap: 1.5rem;
+  align-items: start;
 }
 
 .sidebar {
@@ -193,137 +170,125 @@
 }
 
 .sidebarCard {
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-  border-radius: 16px;
-  padding: 2rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  border: 1px solid #e2e8f0;
+  padding: 1.4rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--off-white);
 }
 
 .sidebarTitle {
-  font-weight: 700;
-  color: #111827;
-  margin-bottom: 1.5rem;
-  font-size: 1.2rem;
+  margin: 0 0 1rem;
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-soft);
 }
 
 .sidebarMenu {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.35rem;
 }
 
 .menuItem {
-  padding: 1rem 1.25rem;
-  border-radius: 12px;
-  color: #6b7280;
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0.85rem 1rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-subtle);
   text-decoration: none;
-  transition: all 0.3s ease;
-  font-weight: 500;
-  position: relative;
-  overflow: hidden;
-  border: 0;
   text-align: left;
-  background-color: rgba(0, 0, 0, 0);
-  font-size: 16px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
 }
 
-.menuItem::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
+button.menuItem {
+  width: 100%;
+  cursor: pointer;
 }
 
 .menuItem:hover {
-  background-color: #f8fafc;
-  color: #111827;
-  transform: translateX(4px);
+  border-color: var(--line);
+  background: var(--surface-raised);
+  color: var(--black);
 }
 
-.menuItem:hover::before {
-  opacity: 0.05;
-}
-
-.menuItem.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  font-weight: 600;
-}
-
-.menuItem.active::before {
-  opacity: 0;
+.active {
+  border-color: var(--black);
+  background: var(--black);
+  color: var(--surface-raised);
 }
 
 .contentArea {
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-  border-radius: 16px;
-  padding: 2.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  border: 1px solid #e2e8f0;
-  min-height: 600px;
+  min-height: 560px;
+  padding: 2rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
 }
 
-/* ========== Mobile First Media Queries ========== */
-
-/* Extra Small Devices (480px and down) */
-@media (max-width: 480px) {
-  .profileName {
-    font-size: 1.5rem;
+@media (max-width: 900px) {
+  .profileSection {
+    grid-template-columns: 1fr;
   }
 }
 
-/* Small to Medium Devices (640px and down) */
 @media (max-width: 640px) {
+  .content {
+    padding: 2rem 0.75rem 3rem;
+  }
+
   .profileHeader {
     flex-direction: column;
-    text-align: center;
-    gap: 1.5rem;
+    gap: 1rem;
   }
 
-  .profileName {
-    font-size: 1.75rem;
-  }
-}
-
-/* Large Screens (640px and up) */
-@media (min-width: 640px) {
-  .content {
-    padding: 2rem 1.5rem;
+  .profileSection {
+    padding: 1.25rem;
   }
 }
 
-/* Large Screens (768px and up) */
 @media (min-width: 768px) {
-  .profileStats {
-    grid-template-columns: repeat(4, 1fr);
+  .quickActions {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
-  .quickActions {
-    grid-template-columns: repeat(3, 1fr);
+  .profileStats {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
-/* Extra Large Screens (1024px and up) */
 @media (min-width: 1024px) {
   .content {
-    padding: 2rem 2rem;
-  }
-
-  .quickActions {
-    grid-template-columns: repeat(4, 1fr);
+    padding: 2.5rem 2rem 4rem;
   }
 
   .mainContent {
-    grid-template-columns: 300px 1fr;
+    grid-template-columns: 280px 1fr;
   }
 
   .sidebar {
     display: block;
+    position: sticky;
+    top: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .content {
+    padding: 1.75rem 0.625rem 2.5rem;
+  }
+
+  .quickActions {
+    grid-template-columns: 1fr;
+  }
+
+  .contentArea {
+    padding: 1.25rem;
   }
 }

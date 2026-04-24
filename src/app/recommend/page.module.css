@@ -170,26 +170,31 @@
   top: 0.625rem;
   left: 0.625rem;
   display: flex;
-  gap: 0.25rem;
+  gap: 0.35rem;
   align-items: flex-start;
+  flex-wrap: wrap;
 }
 
 .saleBadge {
-  background: #e53e3e;
-  color: white;
-  padding: 0.2rem 0.4rem;
-  border-radius: 3px;
-  font-size: 0.6875rem;
+  border: 1px solid rgba(10, 10, 10, 0.46);
+  background: rgba(245, 244, 240, 0.92);
+  color: var(--black);
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.64rem;
   font-weight: 700;
+  letter-spacing: 0.16em;
 }
 
 .newBadge {
-  background: #1a1a1a;
-  color: white;
-  padding: 0.2rem 0.4rem;
-  border-radius: 3px;
-  font-size: 0.6875rem;
+  border: 1px solid rgba(10, 10, 10, 0.18);
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--black);
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.64rem;
   font-weight: 700;
+  letter-spacing: 0.16em;
 }
 
 /* Product Info */

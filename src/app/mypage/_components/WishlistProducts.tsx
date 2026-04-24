@@ -9,7 +9,15 @@ import { WishlistItem } from '@/shared/types/userActivity';
 import Link from 'next/link';
 import styles from './WishlistProducts.module.css';
 
-export default function WishlistProducts() {
+interface WishlistProductsProps {
+  embedded?: boolean;
+  limit?: number;
+}
+
+export default function WishlistProducts({
+  embedded = false,
+  limit,
+}: WishlistProductsProps) {
   const { 
     wishlistItems, 
     loading, 
@@ -24,6 +32,8 @@ export default function WishlistProducts() {
   
   const [productsData, setProductsData] = useState<{ [key: string]: Product }>({});
   const [removing, setRemoving] = useState<string | null>(null);
+  const visibleWishlistItems =
+    typeof limit === 'number' ? wishlistItems.slice(0, limit) : wishlistItems;
 
   useEffect(() => {
     if (user?.uid) {
@@ -95,28 +105,29 @@ export default function WishlistProducts() {
   }
 
   return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-        <h2>찜한 상품</h2>
-        <div className={styles.headerActions}>
-          <span className={styles.count}>{wishlistItems.length}개</span>
-          {wishlistItems.length > 0 && (
-            <button 
-              className={styles.clearButton}
-              onClick={handleClearAll}
-              type="button"
-            >
-              전체 삭제
-            </button>
-          )}
+    <div className={`${styles.container} ${embedded ? styles.embedded : ''}`}>
+      {!embedded ? (
+        <div className={styles.header}>
+          <h2>찜한 상품</h2>
+          <div className={styles.headerActions}>
+            <span className={styles.count}>{wishlistItems.length}개</span>
+            {wishlistItems.length > 0 && (
+              <button 
+                className={styles.clearButton}
+                onClick={handleClearAll}
+                type="button"
+              >
+                전체 삭제
+              </button>
+            )}
+          </div>
         </div>
-      </div>
+      ) : null}
 
       {loading ? (
         <div className={styles.loading}>찜한 상품을 불러오는 중...</div>
       ) : wishlistItems.length === 0 ? (
         <div className={styles.empty}>
-          <div className={styles.emptyIcon}></div>
           <p>찜한 상품이 없습니다.</p>
           <Link href="/categories" className={styles.shopLink}>
             상품 둘러보기
@@ -124,7 +135,7 @@ export default function WishlistProducts() {
         </div>
       ) : (
         <div className={styles.productGrid}>
-          {wishlistItems.map((wishlistItem: WishlistItem) => {
+          {visibleWishlistItems.map((wishlistItem: WishlistItem) => {
             const product = productsData[wishlistItem.productId];
             
             if (!product) {

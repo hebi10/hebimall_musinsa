@@ -265,7 +265,7 @@ async function addClothingProducts() {
     // 먼저 clothing 카테고리 확인
     const categoryDoc = await getDoc(doc(db, 'categories', 'clothing'));
     if (categoryDoc.exists()) {
-      console.log(`📁 카테고리 확인: ${categoryDoc.data().name}`);
+      console.log(` 카테고리 확인: ${categoryDoc.data().name}`);
     }
     
     let addedCount = 0;

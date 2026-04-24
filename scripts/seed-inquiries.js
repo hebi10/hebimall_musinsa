@@ -108,7 +108,7 @@ async function seedInquiries() {
 
     // 추가된 데이터 확인
     const addedInquiries = await inquiriesRef.get();
-    console.log(`📊 총 ${addedInquiries.size}개의 문의가 데이터베이스에 있습니다.`);
+    console.log(`총 ${addedInquiries.size}개의 문의가 데이터베이스에 있습니다.`);
 
     // 카테고리별 통계
     const categoryStats = {};

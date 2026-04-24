@@ -57,8 +57,8 @@ export default function CachedImage({
             display: 'flex', 
             alignItems: 'center', 
             justifyContent: 'center',
-            backgroundColor: '#f8f9fa',
-            color: '#6c757d',
+            backgroundColor: 'var(--color-bg-secondary)',
+            color: 'var(--color-text-secondary)',
             minHeight: '200px'
           }}>
             이미지 준비중
@@ -75,8 +75,8 @@ export default function CachedImage({
           display: 'flex', 
           alignItems: 'center', 
           justifyContent: 'center',
-          backgroundColor: '#f8f9fa',
-          color: '#6c757d',
+          backgroundColor: 'var(--color-bg-secondary)',
+          color: 'var(--color-text-secondary)',
           minHeight: '200px'
         }}>
           로딩중...

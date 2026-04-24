@@ -1,34 +1,55 @@
 .container {
   min-height: 100vh;
-  background: #fff;
+  background: var(--background);
 }
 
-/* -- 공통 섹션 컨테이너 -- */
 .sectionContainer {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1rem;
 }
 
-/* -- 섹션 헤더 (좌측 정렬) -- */
-.sectionHeaderLeft {
-  margin-bottom: 1.25rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 2px solid #172b4d;
+.eyebrow {
+  display: block;
+  margin-bottom: 0.85rem;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-soft);
 }
 
-.sectionTitle {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #172b4d;
+.moodSection {
+  padding: 3.75rem 0 1.25rem;
+  background: var(--background);
+}
+
+.storyIntro {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.8fr);
+  gap: 2rem;
+  align-items: end;
+  margin-bottom: 1.75rem;
+}
+
+.storyTitle {
   margin: 0;
-  letter-spacing: -0.01em;
+  max-width: 13ch;
+  font-family: var(--font-heading), "Noto Serif KR", "Apple Myungjo", serif;
+  font-weight: 600;
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+  color: var(--black);
 }
 
-/* -- 카테고리 섹션 -- */
-.categorySection {
-  padding: 2.5rem 0 1.5rem;
-  background: #fff;
+.storyDescription {
+  margin: 0;
+  max-width: 34rem;
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--text-subtle);
 }
 
 .categoryGrid {
@@ -37,213 +58,410 @@
   gap: 1rem;
 }
 
+.categoryMoodGrid {
+  grid-template-columns: 1.3fr 0.85fr 0.85fr;
+  grid-template-rows: repeat(2, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
 .categoryCard {
   position: relative;
   display: block;
-  text-decoration: none;
-  border-radius: 4px;
   overflow: hidden;
-  background: #fff;
-  border: 1px solid #e8e8e8;
-  transition: border-color 0.15s;
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  background: var(--color-bg-primary);
+  border: 1px solid var(--line);
+  transition: transform 0.25s ease, box-shadow 0.25s ease,
+    border-color 0.25s ease;
 }
 
 .categoryCard:hover {
-  border-color: #172b4d;
+  transform: translateY(-2px);
+  border-color: var(--point);
+  box-shadow: var(--shadow-md);
 }
 
 .categoryImageWrapper {
   position: relative;
   width: 100%;
-  height: 180px;
+  height: 100%;
+  min-height: 180px;
   overflow: hidden;
 }
 
 .categoryImagePlaceholder {
+  position: relative;
   width: 100%;
   height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  position: relative;
   overflow: hidden;
 }
-
-/* 카테고리별 배경 */
-.clothingBg { background: #42526e; }
-.bagsBg { background: #5a6c7d; }
-.accessoriesBg { background: #3d5a80; }
-.outdoorBg { background: #4a6741; }
-.sportsBg { background: #7a6530; }
-.shoesBg { background: #6b3a3a; }
-.jewelryBg { background: #5c3d6e; }
-.defaultBg { background: #6b778c; }
 
 .categoryImage {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.35s ease;
+}
+
+.categoryCard:hover .categoryImage {
+  transform: scale(1.04);
 }
 
 .categoryOverlay {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.2);
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0;
-  transition: opacity 0.15s;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 10, 10, 0.06) 0%,
+    rgba(10, 10, 10, 0.3) 100%
+  );
+  opacity: 1;
+  transition: background-color 0.2s ease;
 }
 
 .categoryCard:hover .categoryOverlay {
-  opacity: 1;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 10, 10, 0.12) 0%,
+    rgba(10, 10, 10, 0.42) 100%
+  );
 }
 
 .categoryIcon {
   font-size: 2rem;
-  color: white;
+  color: var(--color-white);
 }
 
 .categoryInfo {
-  padding: 0.75rem 0.875rem;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 1rem 1.15rem;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 10, 10, 0) 0%,
+    rgba(10, 10, 10, 0.72) 100%
+  );
 }
 
 .categoryLabel {
   display: block;
-  font-size: 0.95rem;
+  margin-bottom: 0.18rem;
+  font-size: 1rem;
   font-weight: 600;
-  color: #172b4d;
-  margin-bottom: 0.15rem;
+  letter-spacing: -0.02em;
+  color: var(--color-white);
 }
 
 .categoryCount {
   font-size: 0.8rem;
-  color: #6b778c;
+  color: rgba(255, 255, 255, 0.72);
 }
 
-/* -- 상품 섹션 래퍼 -- */
-.productSections {
-  padding: 0;
-  background: #fff;
+.categoryMoodGrid .categoryCard:nth-child(1) {
+  grid-column: 1;
+  grid-row: 1 / span 2;
 }
 
-/* -- 세일 배너 -- */
-.saleBanner {
-  background: #f4f5f7;
-  padding: 2rem 0;
-  margin: 1rem 0;
+.categoryMoodGrid .categoryCard:nth-child(2) {
+  grid-column: 2 / span 2;
+  grid-row: 1;
 }
 
-.saleBannerContent {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.categoryMoodGrid .categoryCard:nth-child(3) {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.categoryMoodGrid .categoryCard:nth-child(4) {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+.featuredSection {
+  background: var(--off-white);
+}
+
+.promoBand {
+  margin-top: 1.25rem;
+  padding: clamp(3rem, 6vw, 5rem) 1rem;
+  background: var(--black);
+  color: var(--color-white);
+}
+
+.promoInner {
+  display: grid;
+  grid-template-columns: minmax(300px, 0.95fr) minmax(0, 0.75fr) minmax(240px, 0.55fr);
   gap: 1.5rem;
+  align-items: stretch;
+  max-width: 1280px;
+  margin: 0 auto;
 }
 
-.saleText {
-  flex: 1;
+.promoVisual {
+  position: relative;
+  min-height: 420px;
+  overflow: hidden;
+  border-radius: var(--radius-md);
 }
 
-.saleTitle {
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: #172b4d;
-  margin: 0 0 0.25rem 0;
+.promoVisual::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 10, 10, 0.04) 0%,
+    rgba(10, 10, 10, 0.42) 100%
+  );
 }
 
-.saleDescription {
-  font-size: 0.9rem;
-  color: #6b778c;
-  margin: 0;
+.promoImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-.saleButton {
+.promoVisualBadge {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1;
   display: inline-flex;
   align-items: center;
-  padding: 0.6rem 1.25rem;
-  background: #172b4d;
-  color: #fff;
-  text-decoration: none;
-  border-radius: 4px;
+  min-height: 28px;
+  padding: 0 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--color-white);
+  font-size: 0.68rem;
   font-weight: 600;
-  font-size: 0.85rem;
-  transition: background-color 0.15s;
-  white-space: nowrap;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
 }
 
-.saleButton:hover {
-  background: #0d1b30;
-}
-
-/* -- 서비스 안내 영역 -- */
-.serviceInfo {
-  background: #fff;
-  padding: 2.5rem 0;
-  border-top: 1px solid #e8e8e8;
-}
-
-.serviceGrid {
+.promoCopy {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0;
+  align-content: end;
+  max-width: 28rem;
 }
 
-.serviceItem {
-  padding: 0 1.5rem;
-  border-right: 1px solid #e8e8e8;
+.promoEyebrow {
+  display: block;
+  margin-bottom: 1rem;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.58);
 }
 
-.serviceItem:last-child {
-  border-right: none;
+.promoTitle {
+  margin: 0 0 1rem;
+  font-family: var(--font-heading), "Noto Serif KR", "Apple Myungjo", serif;
+  font-weight: 600;
+  font-size: clamp(2.15rem, 4.8vw, 4.2rem);
+  line-height: 1.08;
+  letter-spacing: -0.034em;
+  text-wrap: balance;
 }
 
-.serviceItemTitle {
+.promoDescription {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.74);
+}
+
+.promoMeta {
+  display: grid;
+  align-content: end;
+  gap: 1rem;
+  justify-items: start;
+}
+
+.promoNote {
+  margin: 0;
+  padding: 0.8rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.05);
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.promoList {
+  margin: 0;
+  font-size: 0.86rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.promoDivider {
+  margin: 0 0.5rem;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.promoButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.85rem 1.3rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: var(--radius-md);
+  background: var(--point);
+  color: var(--color-white);
+  font-size: 0.92rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.promoButton:hover {
+  background: var(--point-hover);
+  border-color: rgba(255, 255, 255, 0.24);
+}
+
+.newBand {
+  padding: 4rem 0 3.5rem;
+  background: var(--background);
+  scroll-margin-top: 6rem;
+}
+
+.rankingBand {
+  padding: 4rem 0;
+  background: var(--off-white);
+  scroll-margin-top: 6rem;
+}
+
+.bandSection {
+  margin: 0 auto;
+}
+
+.seasonNote {
+  padding: 3.75rem 0 4rem;
+  background: linear-gradient(
+    180deg,
+    var(--surface-muted) 0%,
+    var(--off-white) 100%
+  );
+  scroll-margin-top: 6rem;
+}
+
+.seasonInner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.9fr);
+  gap: 2rem;
+  align-items: start;
+}
+
+.seasonHeading {
+  max-width: 32rem;
+}
+
+.seasonTitle {
+  margin: 0;
+  font-family: var(--font-heading), "Noto Serif KR", "Apple Myungjo", serif;
+  font-weight: 600;
+  font-size: clamp(1.8rem, 3.4vw, 3rem);
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+  color: var(--black);
+}
+
+.seasonBody {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.seasonDescription {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--text-subtle);
+}
+
+.seasonActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.primaryLink,
+.secondaryLink,
+.retryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0.75rem 1.2rem;
+  border-radius: var(--radius-md);
+  text-decoration: none;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #172b4d;
-  margin: 0 0 0.4rem 0;
+  transition: background-color 0.2s ease, border-color 0.2s ease,
+    color 0.2s ease;
 }
 
-.serviceItemDesc {
-  font-size: 0.8rem;
-  color: #6b778c;
-  margin: 0;
-  line-height: 1.6;
+.primaryLink,
+.retryButton {
+  border: 1px solid var(--point);
+  background: var(--point);
+  color: var(--color-white);
 }
 
-.serviceLink {
-  color: #2b6cb0;
-  text-decoration: none;
+.primaryLink:hover,
+.retryButton:hover {
+  background: var(--point-hover);
+  border-color: var(--point-hover);
 }
 
-.serviceLink:hover {
-  text-decoration: underline;
+.secondaryLink {
+  border: 1px solid var(--line-strong);
+  background: transparent;
+  color: var(--black);
 }
 
-/* -- 로딩 / 에러 상태 -- */
+.secondaryLink:hover {
+  background: var(--color-white);
+}
+
 .loadingShimmer {
   animation: shimmer 1.5s infinite linear;
-  background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+  background: linear-gradient(
+    90deg,
+    var(--off-white) 25%,
+    var(--line) 50%,
+    var(--off-white) 75%
+  );
   background-size: 200px 100%;
 }
 
 @keyframes shimmer {
-  0% { background-position: -200px 0; }
-  100% { background-position: calc(200px + 100%) 0; }
+  0% {
+    background-position: -200px 0;
+  }
+
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
 }
 
 .categoryCard.loading {
   pointer-events: none;
-  opacity: 0.6;
+  opacity: 0.7;
+}
+
+.loading {
+  pointer-events: none;
 }
 
 .errorContainer {
@@ -251,141 +469,159 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 0.75rem;
   padding: 2rem;
   text-align: center;
-  background: #f4f5f7;
-  border-radius: 4px;
-  border: 1px dashed #dfe1e6;
+  background: var(--off-white);
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius-md);
 }
 
 .errorMessage {
-  color: #de350b;
-  font-size: 0.9rem;
-  margin-bottom: 0.75rem;
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--error);
 }
 
-.retryButton {
-  background: #2b6cb0;
-  color: white;
-  border: none;
-  padding: 0.4rem 1rem;
-  border-radius: 4px;
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: background-color 0.15s;
+.clothingBg {
+  background: var(--category-clothing);
 }
 
-.retryButton:hover {
-  background: #2c5282;
+.bagsBg {
+  background: var(--category-bags);
 }
 
-/* ========== 반응형 ========== */
+.accessoriesBg {
+  background: var(--category-accessories);
+}
+
+.outdoorBg {
+  background: var(--category-outdoor);
+}
+
+.sportsBg {
+  background: var(--category-sports);
+}
+
+.shoesBg {
+  background: var(--category-shoes);
+}
+
+.jewelryBg {
+  background: var(--category-jewelry);
+}
+
+.defaultBg {
+  background: var(--category-default);
+}
 
 @media (max-width: 1024px) {
-  .categoryGrid {
+  .storyIntro,
+  .seasonInner {
+    grid-template-columns: 1fr;
+  }
+
+  .promoInner {
+    grid-template-columns: 1fr;
+  }
+
+  .promoVisual {
+    min-height: 360px;
+  }
+
+  .categoryMoodGrid {
     grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: 280px 180px 180px;
   }
 
-  .saleBannerContent {
-    flex-direction: column;
-    text-align: center;
+  .categoryMoodGrid .categoryCard:nth-child(1) {
+    grid-column: 1 / -1;
+    grid-row: 1;
   }
 
-  .serviceGrid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem 0;
+  .categoryMoodGrid .categoryCard:nth-child(2) {
+    grid-column: 1 / -1;
+    grid-row: 2;
   }
 
-  .serviceItem {
-    border-right: none;
-    padding: 0 1rem;
+  .categoryMoodGrid .categoryCard:nth-child(3) {
+    grid-column: 1;
+    grid-row: 3;
   }
 
-  .serviceItem:nth-child(odd) {
-    border-right: 1px solid #e8e8e8;
+  .categoryMoodGrid .categoryCard:nth-child(4) {
+    grid-column: 2;
+    grid-row: 3;
   }
 }
 
 @media (max-width: 768px) {
-  .categorySection {
-    padding: 2rem 0 1rem;
+  .sectionContainer {
+    padding: 0 0.75rem;
   }
 
-  .sectionHeaderLeft {
-    margin-bottom: 1rem;
+  .moodSection {
+    padding: 2.75rem 0 1rem;
   }
 
-  .sectionTitle {
-    font-size: 1.1rem;
+  .storyIntro {
+    gap: 1rem;
+    margin-bottom: 1.25rem;
   }
 
-  .categoryGrid {
-    grid-template-columns: repeat(2, 1fr);
+  .categoryMoodGrid {
     gap: 0.75rem;
+    grid-template-rows: 220px 160px 160px;
   }
 
-  .categoryImageWrapper {
-    height: 140px;
+  .promoBand,
+  .newBand,
+  .rankingBand,
+  .seasonNote {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
   }
 
-  .categoryInfo {
-    padding: 0.65rem 0.75rem;
-  }
-
-  .categoryLabel {
-    font-size: 0.9rem;
-  }
-
-  .saleBanner {
-    padding: 1.5rem 0;
-  }
-
-  .saleTitle {
-    font-size: 1.05rem;
-  }
-
-  .serviceInfo {
-    padding: 2rem 0;
-  }
-
-  .serviceGrid {
-    grid-template-columns: 1fr;
-    gap: 1.25rem;
-  }
-
-  .serviceItem {
-    border-right: none;
-    padding: 0;
-    padding-bottom: 1.25rem;
-    border-bottom: 1px solid #f0f0f0;
-  }
-
-  .serviceItem:last-child {
-    border-bottom: none;
-    padding-bottom: 0;
-  }
-
-  .serviceItem:nth-child(odd) {
-    border-right: none;
+  .promoMeta {
+    gap: 0.75rem;
   }
 }
 
 @media (max-width: 480px) {
-  .categoryGrid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.5rem;
+  .sectionContainer {
+    padding: 0 0.625rem;
   }
 
-  .saleBannerContent {
-    padding: 0 0.75rem;
+  .categoryMoodGrid {
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+    gap: 0.625rem;
   }
 
-  .saleTitle {
-    font-size: 1rem;
+  .categoryMoodGrid .categoryCard:nth-child(1),
+  .categoryMoodGrid .categoryCard:nth-child(2),
+  .categoryMoodGrid .categoryCard:nth-child(3),
+  .categoryMoodGrid .categoryCard:nth-child(4) {
+    grid-column: auto;
+    grid-row: auto;
   }
 
-  .saleButton {
-    padding: 0.5rem 1rem;
-    font-size: 0.8rem;
+  .categoryImageWrapper {
+    min-height: 180px;
+  }
+
+  .promoVisual {
+    min-height: 300px;
+  }
+
+  .seasonActions {
+    flex-direction: column;
+  }
+
+  .primaryLink,
+  .secondaryLink,
+  .retryButton,
+  .promoButton {
+    width: 100%;
   }
 }

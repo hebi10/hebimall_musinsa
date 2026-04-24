@@ -100,7 +100,7 @@ const categories = [
 ];
 
 async function setupCategories() {
-  console.log('📁 카테고리 데이터 Firebase 설정 시작\n');
+  console.log(' 카테고리 데이터 Firebase 설정 시작\n');
   
   try {
     let addedCount = 0;

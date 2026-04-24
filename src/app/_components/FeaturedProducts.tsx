@@ -1,19 +1,35 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { FeaturedProductService } from '@/shared/services/featuredProductService';
 import { Product } from '@/shared/types/product';
 import ProductCard from '@/app/products/_components/ProductCard';
-import Link from 'next/link';
 import styles from './FeaturedProducts.module.css';
 
-export default function FeaturedProducts() {
+interface FeaturedProductsProps {
+  eyebrow?: string;
+  title?: string;
+  subtitle?: string;
+  description?: string;
+  sectionClassName?: string;
+  viewAllLabel?: string;
+}
+
+export default function FeaturedProducts({
+  eyebrow,
+  title,
+  subtitle,
+  description,
+  sectionClassName = '',
+  viewAllLabel = '전체 보기',
+}: FeaturedProductsProps) {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [config, setConfig] = useState({
-    title: '추천 상품',
-    subtitle: '에디터가 선별한 상품',
-    isActive: true
+    title: '추천 셀렉션',
+    subtitle: '메인에서 먼저 보여드리는 편집 상품입니다.',
+    isActive: true,
   });
 
   useEffect(() => {
@@ -26,20 +42,21 @@ export default function FeaturedProducts() {
 
       const [products, configData] = await Promise.all([
         FeaturedProductService.getFeaturedProducts(),
-        FeaturedProductService.getFeaturedProductConfig()
+        FeaturedProductService.getFeaturedProductConfig(),
       ]);
 
       setFeaturedProducts(products);
 
       if (configData) {
         setConfig({
-          title: configData.title || '추천 상품',
-          subtitle: configData.subtitle || '에디터가 선별한 상품',
-          isActive: configData.isActive
+          title: configData.title || '추천 셀렉션',
+          subtitle:
+            configData.subtitle || '메인에서 먼저 보여드리는 편집 상품입니다.',
+          isActive: configData.isActive,
         });
       }
     } catch (error) {
-      console.error('추천 상품 로딩 실패:', error);
+      console.error('Failed to load featured products:', error);
     } finally {
       setLoading(false);
     }
@@ -49,16 +66,34 @@ export default function FeaturedProducts() {
     return null;
   }
 
+  const sectionClassNameCombined = [styles.section, sectionClassName]
+    .filter(Boolean)
+    .join(' ');
+  const resolvedTitle = title || config.title;
+  const resolvedSubtitle = subtitle || config.subtitle;
+
+  const headerContent = (
+    <div className={styles.header}>
+      <div className={styles.copyBlock}>
+        {eyebrow && <span className={styles.eyebrow}>{eyebrow}</span>}
+        <h2 className={styles.title}>{resolvedTitle}</h2>
+        <p className={styles.subtitle}>{resolvedSubtitle}</p>
+      </div>
+
+      <div className={styles.headerSide}>
+        {description && <p className={styles.description}>{description}</p>}
+        <Link href="/recommend" className={styles.viewAllButton}>
+          {viewAllLabel}
+        </Link>
+      </div>
+    </div>
+  );
+
   if (loading) {
     return (
-      <section className={styles.section}>
+      <section className={sectionClassNameCombined}>
         <div className={styles.container}>
-          <div className={styles.header}>
-            <div>
-              <h2 className={styles.title}>{config.title}</h2>
-              <p className={styles.subtitle}>{config.subtitle}</p>
-            </div>
-          </div>
+          {headerContent}
           <div className={styles.loading}>
             <div className={styles.spinner}></div>
           </div>
@@ -72,17 +107,9 @@ export default function FeaturedProducts() {
   }
 
   return (
-    <section className={styles.section}>
+    <section className={sectionClassNameCombined}>
       <div className={styles.container}>
-        <div className={styles.header}>
-          <div>
-            <h2 className={styles.title}>{config.title}</h2>
-            <p className={styles.subtitle}>{config.subtitle}</p>
-          </div>
-          <Link href="/recommend" className={styles.viewAllButton}>
-            더보기
-          </Link>
-        </div>
+        {headerContent}
 
         <div className={styles.productGrid}>
           {featuredProducts.map((product) => (

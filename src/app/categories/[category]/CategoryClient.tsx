@@ -90,7 +90,7 @@ export default function CategoryClient({ products: initialProducts, category, ca
               )}
               {product.isSale && product.saleRate && (
                 <div className={styles.discountBadge}>
-                  {product.saleRate}%
+                  -{product.saleRate}%
                 </div>
               )}
               {product.isNew && (

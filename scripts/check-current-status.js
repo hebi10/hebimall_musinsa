@@ -20,7 +20,7 @@ async function checkCurrentStatus() {
     
     for (const categoryDoc of categoriesSnapshot.docs) {
       const productsSnapshot = await db.collection('categories').doc(categoryDoc.id).collection('products').get();
-      console.log(`📁 ${categoryDoc.id}: ${productsSnapshot.size}개 상품`);
+      console.log(` ${categoryDoc.id}: ${productsSnapshot.size}개 상품`);
       totalProducts += productsSnapshot.size;
       categoryProducts[categoryDoc.id] = productsSnapshot.size;
     }
@@ -42,7 +42,7 @@ async function checkCurrentStatus() {
     const productsWithReviews = Object.keys(reviewsByProduct).length;
     const avgReviewsPerProduct = reviewsSnapshot.size / totalProducts;
     
-    console.log(`\n📊 현재 현황:`);
+    console.log(`\n현재 현황:`);
     console.log(`  - 전체 상품: ${totalProducts}개`);
     console.log(`  - 전체 리뷰: ${reviewsSnapshot.size}개`);
     console.log(`  - 리뷰가 있는 상품: ${productsWithReviews}개`);

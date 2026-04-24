@@ -20,7 +20,7 @@ async function finalValidation() {
   console.log('=' .repeat(60));
 
   // 1. 카테고리 목록 확인
-  console.log('\n📁 1. 카테고리 목록:');
+  console.log('\n 1. 카테고리 목록:');
   const categoriesSnapshot = await getDocs(collection(db, 'categories'));
   const categories = [];
   
@@ -83,7 +83,7 @@ async function finalValidation() {
   }
 
   // 4. 카테고리별 상품 분포
-  console.log('\n📊 4. 카테고리별 상품 분포:');
+  console.log('\n4. 카테고리별 상품 분포:');
   const categoryCount = {};
   
   allProductsSnapshot.docs.forEach(doc => {

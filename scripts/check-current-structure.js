@@ -19,7 +19,7 @@ async function checkCurrentStructure() {
   console.log('🔍 현재 구조 확인\n');
   
   // 1. 카테고리 목록
-  console.log('📁 카테고리 목록:');
+  console.log(' 카테고리 목록:');
   const categoriesSnapshot = await getDocs(collection(db, 'categories'));
   categoriesSnapshot.docs.forEach(doc => {
     const data = doc.data();
@@ -43,7 +43,7 @@ async function checkCurrentStructure() {
     });
   });
   
-  console.log('\n📊 카테고리별 상품 분포:');
+  console.log('\n카테고리별 상품 분포:');
   Object.entries(categoryCount).forEach(([cat, count]) => {
     console.log(`   ${cat}: ${count}개`);
   });

@@ -172,24 +172,28 @@
   position: absolute;
   top: 0.75rem;
   left: 0.75rem;
-  background: #ef4444;
-  color: white;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: 600;
+  border: 1px solid rgba(10, 10, 10, 0.46);
+  background: rgba(245, 244, 240, 0.92);
+  color: var(--black);
+  padding: 0.28rem 0.58rem;
+  border-radius: 999px;
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
 }
 
 .newBadge {
   position: absolute;
   top: 0.75rem;
   right: 0.75rem;
-  background: #10b981;
-  color: white;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: 600;
+  border: 1px solid rgba(10, 10, 10, 0.18);
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--black);
+  padding: 0.28rem 0.58rem;
+  border-radius: 999px;
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
 }
 
 .productInfo {

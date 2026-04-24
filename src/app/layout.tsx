@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import "../styles/variables.css";
 import Header from "./_components/header/Header";
@@ -7,13 +6,6 @@ import Footer from "./_components/footer/Footer";
 import RootProviders from "./_components/providers/RootProviders";
 import ChatWidget from "./_components/chat/ChatWidget";
 import SiteGuideManager from "./_components/popup/SiteGuideManager";
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  display: "swap",
-  preload: true,
-});
 
 const SITE_URL =
   process.env.NODE_ENV === "production"
@@ -64,7 +56,7 @@ export const metadata: Metadata = {
 
   manifest: "/manifest.json",
 
-  themeColor: "#000000",
+  themeColor: "#0a0a0a",
 
   openGraph: {
     title: "STYNA - 패션 쇼핑몰",
@@ -124,7 +116,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body className={inter.variable}>
+      <body>
         <RootProviders>
           <Header />
           <main style={{ minHeight: "100vh" }}>{children}</main>

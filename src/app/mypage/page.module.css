@@ -1,319 +1,268 @@
-/* 대시보드 컨테이너 */
 .dashboardContainer {
-  padding: 0;
+  display: grid;
+  gap: 2rem;
 }
 
 .dashboardHeader {
-  margin-bottom: 32px;
-  padding-bottom: 16px;
-  border-bottom: 2px solid #f5f5f5;
+  padding-bottom: 1.75rem;
+  border-bottom: 1px solid var(--line);
 }
 
-.dashboardHeader h2 {
-  font-size: 24px;
+.eyebrow {
+  display: block;
+  margin-bottom: 0.9rem;
+  font-size: 0.74rem;
   font-weight: 600;
-  color: #333;
-  margin: 0 0 8px 0;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-soft);
 }
 
-.dashboardHeader p {
-  font-size: 16px;
-  color: #666;
+.headerBody {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(280px, 0.95fr);
+  gap: 1.75rem;
+  align-items: end;
+}
+
+.headerBody h2 {
   margin: 0;
+  max-width: 12ch;
+  font-family: var(--font-heading), "Noto Serif KR", "Apple Myungjo", serif;
+  font-size: clamp(2rem, 4vw, 3.1rem);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+  color: var(--black);
+  text-wrap: balance;
 }
 
-/* 통계 카드 그리드 */
+.headerBody p {
+  margin: 0;
+  max-width: 34rem;
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--text-subtle);
+}
+
 .statsGrid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(200px, 1fr));
-  gap: 20px;
-  margin-bottom: 40px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
 }
 
 .statCard {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 24px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s, box-shadow 0.2s;
+  display: grid;
+  gap: 0.45rem;
+  padding: 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+  color: inherit;
+  text-decoration: none;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .statCard:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-sm);
 }
 
-.statIcon {
-  font-size: 32px;
-  width: 60px;
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #f6f9fc 0%, #e9ecef 100%);
-  border-radius: 12px;
-}
-
-.statInfo {
-  flex: 1;
-}
-
-.statInfo h3 {
-  font-size: 14px;
-  font-weight: 500;
-  color: #666;
-  margin: 0 0 4px 0;
+.statLabel {
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-soft);
 }
 
 .statNumber {
-  font-size: 24px;
-  font-weight: 700;
-  color: #333;
-  margin: 0 0 8px 0;
+  font-family: var(--font-heading), "Noto Serif KR", "Apple Myungjo", serif;
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1.05;
+  color: var(--black);
 }
 
-.statLink {
-  font-size: 12px;
-  color: #007bff;
-  text-decoration: none;
-  font-weight: 500;
-  transition: color 0.2s;
+.statDescription {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--text-subtle);
 }
 
-.statLink:hover {
-  color: #0056b3;
-}
-
-/* 최근 활동 섹션 */
 .recentActivity {
-  display: flex;
-  flex-direction: column;
-  gap: 40px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
 }
 
 .activitySection {
-  background: white;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: grid;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--off-white);
 }
 
 .sectionHeader {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #f5f5f5;
+  gap: 1rem;
 }
 
-.sectionHeader h3 {
-  font-size: 18px;
+.sectionCopy {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.sectionEyebrow {
+  font-size: 0.72rem;
   font-weight: 600;
-  color: #333;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+}
+
+.sectionCopy h3 {
   margin: 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--black);
+  letter-spacing: -0.02em;
+}
+
+.sectionCopy p {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: var(--text-subtle);
 }
 
 .viewAllLink {
-  font-size: 14px;
-  color: #007bff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0.65rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+  color: var(--text);
+  font-size: 0.88rem;
+  font-weight: 600;
   text-decoration: none;
-  font-weight: 500;
-  transition: color 0.2s;
+  white-space: nowrap;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
 .viewAllLink:hover {
-  color: #0056b3;
+  border-color: var(--line-strong);
 }
 
 .compactView {
-  /* 컴팩트 뷰 - 상위 컴포넌트에서 스타일 제어 */
-  max-height: 400px;
-  overflow: hidden;
+  min-width: 0;
 }
 
-/* 기존 로그인 관련 스타일 유지 */
 .contentArea {
-  flex: 1;
-  padding: 24px;
-  background-color: #f8f9fa;
+  min-height: 100%;
 }
 
 .notLoggedIn {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 400px;
+  min-height: 420px;
 }
 
 .loginPrompt {
-  text-align: center;
-  background: white;
-  padding: 60px 40px;
-  border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-  max-width: 400px;
   width: 100%;
+  max-width: 520px;
+  padding: 2.75rem 2rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: linear-gradient(180deg, var(--surface-raised) 0%, var(--off-white) 100%);
+  text-align: center;
 }
 
-.loginIcon {
-  font-size: 64px;
-  margin-bottom: 24px;
+.promptEyebrow {
+  display: block;
+  margin-bottom: 1rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-soft);
 }
 
 .loginPrompt h2 {
-  font-size: 24px;
+  margin: 0 0 0.75rem;
+  font-family: var(--font-heading), "Noto Serif KR", "Apple Myungjo", serif;
+  font-size: clamp(1.7rem, 3.2vw, 2.3rem);
   font-weight: 600;
-  color: #333;
-  margin: 0 0 12px 0;
+  color: var(--black);
 }
 
 .loginPrompt p {
-  font-size: 16px;
-  color: #666;
-  margin: 0 0 32px 0;
-  line-height: 1.5;
+  margin: 0 auto 1.75rem;
+  max-width: 28rem;
+  font-size: 0.98rem;
+  line-height: 1.8;
+  color: var(--text-subtle);
 }
 
 .loginButton {
-  display: inline-block;
-  padding: 14px 32px;
-  background-color: #333;
-  color: white;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.8rem 1.3rem;
+  border: 1px solid var(--point);
+  border-radius: var(--radius-md);
+  background: var(--point);
+  color: var(--surface-raised);
+  font-size: 0.92rem;
+  font-weight: 600;
   text-decoration: none;
-  border-radius: 8px;
-  font-weight: 500;
-  font-size: 16px;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .loginButton:hover {
-  background-color: #555;
+  background: var(--point-hover);
+  border-color: var(--point-hover);
 }
 
-/* 태블릿 반응형 */
-@media (max-width: 1024px) {
-  .statsGrid {
-    grid-template-columns: repeat(2, minmax(180px, 1fr));
-    gap: 16px;
-    margin-bottom: 32px;
-  }
-  
-  .statCard {
-    padding: 20px;
-    gap: 12px;
-  }
-  
-  .statIcon {
-    font-size: 28px;
-    width: 50px;
-    height: 50px;
-  }
-  
-  .statNumber {
-    font-size: 20px;
-  }
-  
-  .activitySection {
-    padding: 20px;
-  }
-  
+@media (max-width: 900px) {
+  .headerBody,
   .recentActivity {
-    gap: 32px;
+    grid-template-columns: 1fr;
   }
 }
 
-/* 모바일 반응형 */
 @media (max-width: 768px) {
   .dashboardContainer {
-    padding: 0;
+    gap: 1.5rem;
   }
-  
+
   .dashboardHeader {
-    margin-bottom: 24px;
+    padding-bottom: 1.5rem;
   }
-  
-  .dashboardHeader h2 {
-    font-size: 20px;
-  }
-  
-  .dashboardHeader p {
-    font-size: 14px;
-  }
-  
+
   .statsGrid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-    margin-bottom: 24px;
+    gap: 0.75rem;
   }
-  
-  .statCard {
-    flex-direction: column;
-    text-align: center;
-    padding: 16px;
-    gap: 8px;
-  }
-  
-  .statIcon {
-    font-size: 24px;
-    width: 40px;
-    height: 40px;
-  }
-  
-  .statNumber {
-    font-size: 18px;
-  }
-  
-  .statInfo h3 {
-    font-size: 12px;
-  }
-  
-  .statLink {
-    font-size: 11px;
-  }
-  
+
   .activitySection {
-    padding: 16px;
-    border-radius: 8px;
+    padding: 1.25rem;
   }
-  
-  .sectionHeader h3 {
-    font-size: 16px;
-  }
-  
-  .viewAllLink {
-    font-size: 12px;
-  }
-  
-  .recentActivity {
-    gap: 24px;
-  }
-  
-  .loginPrompt {
-    padding: 40px 24px;
-    margin: 0 12px;
-  }
-  
-  .loginIcon {
-    font-size: 48px;
-    margin-bottom: 20px;
-  }
-  
-  .loginPrompt h2 {
-    font-size: 20px;
-  }
-  
-  .loginPrompt p {
-    font-size: 14px;
-    margin-bottom: 24px;
-  }
-  
-  .loginButton {
-    padding: 12px 24px;
-    font-size: 14px;
+}
+
+@media (max-width: 640px) {
+  .sectionHeader {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }
 
@@ -321,9 +270,13 @@
   .statsGrid {
     grid-template-columns: 1fr;
   }
-  
-  .statCard {
-    flex-direction: row;
-    text-align: left;
+
+  .loginPrompt {
+    padding: 2.25rem 1.25rem;
+  }
+
+  .viewAllLink,
+  .loginButton {
+    width: 100%;
   }
 }

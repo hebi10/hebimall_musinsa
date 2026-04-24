@@ -116,11 +116,11 @@ export default function ProductCard({
           )}
           {isSale && discountRate > 0 && (
             <span className={`${styles.badge} ${styles.badgeSale}`}>
-              {discountRate}%
+              -{discountRate}%
             </span>
           )}
           {!inStock && (
-            <span className={`${styles.badge} ${styles.badgeOutOfStock}`}>품절</span>
+            <span className={`${styles.badge} ${styles.badgeOutOfStock}`}>SOLD OUT</span>
           )}
         </div>
 

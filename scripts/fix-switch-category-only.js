@@ -26,7 +26,7 @@ async function switchToCategoryOnly() {
     console.log(`   products/ 컬렉션: ${productsSnapshot.size}개 상품`);
 
     // 2. 카테고리별 상품 확인
-    console.log('\n📁 2. 카테고리별 상품 확인:');
+    console.log('\n 2. 카테고리별 상품 확인:');
     const categoriesSnapshot = await getDocs(collection(db, 'categories'));
     let totalCategoryProducts = 0;
     
@@ -45,7 +45,7 @@ async function switchToCategoryOnly() {
       }
     }
 
-    console.log(`\n   📊 총 카테고리별 상품: ${totalCategoryProducts}개`);
+    console.log(`\n   총 카테고리별 상품: ${totalCategoryProducts}개`);
 
     // 3. 기존 products/ 컬렉션 삭제 (선택사항)
     if (productsSnapshot.size > 0) {
@@ -85,7 +85,7 @@ async function switchToCategoryOnly() {
     console.log(`   products/ 컬렉션: ${finalProductsSnapshot.size}개 (삭제됨)`);
     
     // 카테고리별 상품 다시 확인
-    console.log('\n   📁 카테고리별 상품:');
+    console.log('\n    카테고리별 상품:');
     let finalTotalProducts = 0;
     
     for (const categoryDoc of categoriesSnapshot.docs) {
@@ -105,7 +105,7 @@ async function switchToCategoryOnly() {
 
     console.log('\n' + '=' .repeat(60));
     console.log('🎉 카테고리 전용 구조 전환 완료!');
-    console.log('\n📊 최종 결과:');
+    console.log('\n최종 결과:');
     console.log(`   • 기존 products/ 컬렉션: 삭제됨`);
     console.log(`   • 카테고리별 상품: ${finalTotalProducts}개`);
     console.log('\n🚀 이제 다음과 같이 작동합니다:');

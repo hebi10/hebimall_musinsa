@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, useMemo, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useMemo, ReactNode } from 'react';
 import { Event, EventFilter } from '@/shared/types/event';
 import { EventService } from '@/shared/services/eventService';
 
@@ -11,6 +11,7 @@ interface EventContextType {
   currentPage: number;
   eventsPerPage: number;
   loading: boolean;
+  error: string | null;
   setFilter: (filter: EventFilter) => void;
   setCurrentPage: (page: number) => void;
   getEventById: (id: string) => Event | undefined;
@@ -29,9 +30,10 @@ interface EventProviderProps {
 
 export function EventProvider({ children }: EventProviderProps) {
   const [events, setEvents] = useState<Event[]>([]);
-  const [filter, setFilter] = useState<EventFilter>({});
+  const [filter, setFilterState] = useState<EventFilter>({});
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const eventsPerPage = 6;
 
   // Firebase에서 이벤트 데이터 로드
@@ -40,15 +42,23 @@ export function EventProvider({ children }: EventProviderProps) {
   }, []);
 
   const loadEvents = async () => {
+    setLoading(true);
+    setError(null);
+
     try {
-      setLoading(true);
       const eventsData = await EventService.getEvents();
       setEvents(eventsData);
     } catch (error) {
       console.error('Error loading events:', error);
-      // 에러 발생 시 mock 데이터로 fallback
-      const { mockEvents } = await import('@/mocks/event');
-      setEvents(mockEvents);
+
+      try {
+        const { mockEvents } = await import('@/mocks/event');
+        setEvents(mockEvents);
+      } catch (fallbackError) {
+        console.error('Error loading mock events:', fallbackError);
+        setEvents([]);
+        setError('이벤트 정보를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.');
+      }
     } finally {
       setLoading(false);
     }
@@ -76,6 +86,17 @@ export function EventProvider({ children }: EventProviderProps) {
       return true;
     });
   }, [events, filter]);
+
+  const totalFilteredPages = Math.max(1, Math.ceil(filteredEvents.length / eventsPerPage));
+
+  useEffect(() => {
+    setCurrentPage(prev => Math.min(prev, totalFilteredPages));
+  }, [totalFilteredPages]);
+
+  const setFilter = (nextFilter: EventFilter) => {
+    setFilterState(nextFilter);
+    setCurrentPage(1);
+  };
 
   // 이벤트 ID로 이벤트 찾기
   const getEventById = (id: string): Event | undefined => {
@@ -112,7 +133,6 @@ export function EventProvider({ children }: EventProviderProps) {
   // 필터 초기화
   const resetFilter = () => {
     setFilter({});
-    setCurrentPage(1);
   };
 
   const contextValue: EventContextType = {
@@ -122,6 +142,7 @@ export function EventProvider({ children }: EventProviderProps) {
     currentPage,
     eventsPerPage,
     loading,
+    error,
     setFilter,
     setCurrentPage,
     getEventById,

@@ -325,7 +325,7 @@ async function seedAllProductsReviews() {
     
     // 모든 상품 조회
     const allProducts = await getAllProducts();
-    console.log(`\n📊 총 ${allProducts.length}개 상품 발견`);
+    console.log(`\n총 ${allProducts.length}개 상품 발견`);
     console.log(`🎪 총 ${allProducts.length * 3}개의 리뷰를 생성합니다!\n`);
     
     let processedCount = 0;
@@ -354,7 +354,7 @@ async function seedAllProductsReviews() {
     console.log(`\n🎉 리뷰 생성 완료!`);
     console.log(`✅ 성공: ${successCount}개 상품`);
     console.log(`❌ 실패: ${allProducts.length - successCount}개 상품`);
-    console.log(`📊 총 리뷰 수: ${successCount * 3}개`);
+    console.log(`총 리뷰 수: ${successCount * 3}개`);
     
     process.exit(0);
 

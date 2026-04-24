@@ -153,7 +153,7 @@ async function addBulkCategoryProducts() {
         console.log(`   ✅ 배치 ${batchNumber} 완료: ${batchCount}개`);
       }
       
-      console.log(`   📊 ${categoryId}: ${products.length}개 상품 추가 완료`);
+      console.log(`   ${categoryId}: ${products.length}개 상품 추가 완료`);
       
     } catch (error) {
       console.error(`   ❌ ${categoryId} 상품 추가 실패:`, error);
@@ -162,7 +162,7 @@ async function addBulkCategoryProducts() {
 
   console.log('\n' + '=' .repeat(60));
   console.log(`🎉 대량 상품 데이터 추가 완료!`);
-  console.log(`📊 총 추가된 상품: ${totalAdded}개`);
+  console.log(`총 추가된 상품: ${totalAdded}개`);
   console.log('\n📂 카테고리별 상품 수:');
   
   for (const [categoryId, products] of Object.entries(categoryProducts)) {

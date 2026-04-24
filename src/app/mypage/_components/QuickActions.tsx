@@ -17,7 +17,7 @@ export default function QuickActions({ actions }: QuickActionsProps) {
     <div className={styles.quickActions}>
       {actions.map((action) => (
         <Link key={action.title} href={action.href} className={styles.actionCard}>
-          <div className={styles.actionIcon}>{action.icon}</div>
+          {action.icon ? <div className={styles.actionIcon}>{action.icon}</div> : null}
           <div className={styles.actionTitle}>{action.title}</div>
           <div className={styles.actionDesc}>{action.desc}</div>
         </Link>

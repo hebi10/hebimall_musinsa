@@ -1,10 +1,12 @@
 .bannerSection {
-  position: relative;
-  width: 100%;
-  height: 480px;
-  min-height: 380px;
-  max-height: 540px;
+  background: var(--background);
+}
+
+.bannerFrame {
+  margin: 0 auto;
   overflow: hidden;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
 }
 
 .bannerSwiper {
@@ -14,379 +16,406 @@
 
 .bannerSlide {
   position: relative;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  min-height: 660px;
   overflow: hidden;
 }
 
-.bannerBackground {
+.bannerBackdrop {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-}
-
-.bannerOverlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.4);
-  z-index: 2;
+  inset: 0;
+  background:
+    linear-gradient(120deg, rgba(10, 10, 10, 0.12) 0%, rgba(10, 10, 10, 0.38) 55%, rgba(10, 10, 10, 0.1) 100%),
+    radial-gradient(circle at 82% 22%, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 35%);
 }
 
 .bannerContent {
   position: relative;
-  z-index: 3;
-  max-width: 1200px;
-  width: 100%;
-  padding: 0 2rem;
+  z-index: 2;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 1fr);
   align-items: center;
-  height: 100%;
-  gap: 3rem;
+  gap: 1rem;
+  min-height: 660px;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 3.5rem 2.75rem 5.75rem;
 }
 
-.bannerTextSection {
+.copyPanel {
+  display: grid;
+  gap: 1.2rem;
+  max-width: 28rem;
+}
+
+.copyHeader {
   display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.bannerEyebrow {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 0.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.bannerCounterMobile {
+  display: none;
+}
+
+.bannerTitle {
+  margin: 0;
+  max-width: 12ch;
+  font-family: var(--font-heading), "Noto Serif KR", "Apple Myungjo", serif;
+  font-weight: 600;
+  font-size: clamp(1.9rem, 3.6vw, 3.45rem);
+  line-height: 1.12;
+  letter-spacing: -0.028em;
+  text-wrap: balance;
+  color: var(--color-white);
+}
+
+.bannerDescription {
+  margin: 0;
+  max-width: 27rem;
+  font-size: 1.02rem;
+  line-height: 1.9;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.bannerMetaList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.bannerMetaItem {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 0.78rem;
+  line-height: 1;
+}
+
+.bannerActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding-top: 0.35rem;
+}
+
+.primaryAction,
+.secondaryAction {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  min-height: 46px;
+  padding: 0.85rem 1.25rem;
+  text-decoration: none;
+  font-size: 0.92rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  transition: background-color 0.2s ease, border-color 0.2s ease,
+    color 0.2s ease, transform 0.2s ease;
 }
 
-.bannerText {
-  max-width: 100%;
+.primaryAction {
+  gap: 0.45rem;
+  background: var(--color-white);
+  color: var(--black);
+  border: 1px solid var(--color-white);
 }
 
-.bannerModelSection {
+.primaryAction:hover {
+  transform: translateY(-1px);
+  background: var(--off-white);
+}
+
+.secondaryAction {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--color-white);
+}
+
+.secondaryAction:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.32);
+}
+
+.buttonArrow {
+  font-size: 1rem;
+  transition: transform 0.15s ease;
+}
+
+.primaryAction:hover .buttonArrow {
+  transform: translateX(3px);
+}
+
+.visualPanel {
   position: relative;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-end;
-  height: 100%;
+  align-items: flex-end;
+  justify-content: center;
+  min-height: 540px;
+  padding-top: 1rem;
 }
 
 .bannerModelImage {
   position: relative;
   width: 100%;
   height: 100%;
-  max-height: 400px;
+  min-height: 520px;
+  max-height: 520px;
+  filter: drop-shadow(0 28px 42px rgba(10, 10, 10, 0.22));
 }
 
-.mobileButtonWrapper {
-  display: none;
-  margin-top: 1.5rem;
-}
-
-.bannerButtonMobile {
-  display: inline-flex;
+.controlBar {
+  position: absolute;
+  max-width: 1320px;
+  width: calc(100% - 5.5rem);
+  bottom: 1.3rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  display: flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.7rem 1.6rem;
-  background: rgba(255, 255, 255, 0.15);
-  color: #fff;
-  text-decoration: none;
-  border-radius: 4px;
-  font-weight: 500;
-  font-size: 0.9rem;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  transition: background-color 0.2s, border-color 0.2s;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
-.bannerButtonMobile:hover {
-  background: rgba(255, 255, 255, 0.25);
-  border-color: rgba(255, 255, 255, 0.6);
+.controlCounter {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 0.82rem;
 }
 
-.bannerSubtitle {
-  display: block;
-  font-size: 0.8rem;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  margin-bottom: 0.5rem;
-  opacity: 0.7;
+.controlCounter strong {
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: var(--color-white);
 }
 
-.bannerTitle {
-  font-size: clamp(2rem, 4.5vw, 3.25rem);
-  font-weight: 800;
-  line-height: 1.15;
-  margin: 0 0 1rem 0;
-  letter-spacing: -0.02em;
+.controlCenter {
+  flex: 1;
+  display: flex;
+  justify-content: center;
 }
 
-.bannerDescription {
-  font-size: 1.05rem;
-  line-height: 1.6;
-  margin-bottom: 2rem;
-  opacity: 0.9;
-}
-
-.bannerButton {
-  display: inline-flex;
+.swiperPagination {
+  display: flex;
+  gap: 0.5rem;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.7rem 1.6rem;
-  background: rgba(255, 255, 255, 0.15);
-  color: #fff;
-  text-decoration: none;
-  border-radius: 4px;
-  font-weight: 500;
-  font-size: 0.9rem;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  transition: background-color 0.2s, border-color 0.2s;
 }
 
-.bannerButton:hover {
-  background: rgba(255, 255, 255, 0.25);
-  border-color: rgba(255, 255, 255, 0.6);
+.paginationBullet {
+  width: 28px;
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.28);
+  cursor: pointer;
+  transition: width 0.2s ease, background-color 0.2s ease;
 }
 
-.buttonArrow {
-  font-size: 1rem;
-  transition: transform 0.15s;
+.paginationBullet:hover {
+  background: rgba(255, 255, 255, 0.5);
 }
 
-.bannerButton:hover .buttonArrow {
-  transform: translateX(3px);
+:global(.swiper-pagination-bullet-active).paginationBullet {
+  background: var(--color-white);
 }
 
-/* 텍스트 색상 */
-.white {
-  color: white;
+.controlButtons {
+  display: flex;
+  gap: 0.5rem;
 }
 
-.black {
-  color: #172b4d;
-}
-
-/* Navigation 버튼 */
 .swiperButtonPrev,
 .swiperButtonNext {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
+  position: static;
   width: 40px;
   height: 40px;
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 50%;
-  display: flex;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--color-white);
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  z-index: 10;
-  transition: background-color 0.2s;
-}
-
-.swiperButtonPrev {
-  left: 1.5rem;
-}
-
-.swiperButtonNext {
-  right: 1.5rem;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .swiperButtonPrev:hover,
 .swiperButtonNext:hover {
-  background: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 .swiperButtonPrev svg,
 .swiperButtonNext svg {
   width: 18px;
   height: 18px;
-  color: rgba(255, 255, 255, 0.85);
 }
 
-/* Pagination */
-.swiperPagination {
-  position: absolute;
-  bottom: 1.5rem;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 0.5rem;
-  z-index: 10;
-}
-
-.paginationBullet {
-  width: 24px;
-  height: 3px;
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 2px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.paginationBullet:hover {
-  background: rgba(255, 255, 255, 0.6);
-}
-
-:global(.swiper-pagination-bullet-active).paginationBullet {
-  background: white;
-  width: 36px;
-}
-
-/* ── 반응형 ── */
 @media (max-width: 1024px) {
-  .bannerSection {
-    height: 480px;
-    min-height: 380px;
+  .bannerContent {
+    grid-template-columns: minmax(0, 0.84fr) minmax(320px, 1.16fr);
+    min-height: 590px;
+    padding: 2.5rem 2rem 5rem;
+    gap: 1rem;
   }
 
-  .bannerContent {
-    padding: 0 1.5rem;
-    gap: 2rem;
+  .bannerSlide {
+    min-height: 590px;
+  }
+
+  .copyPanel {
+    max-width: 25rem;
   }
 
   .bannerTitle {
-    font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+    font-size: clamp(1.7rem, 3.1vw, 2.8rem);
   }
 
-  .bannerDescription {
-    font-size: 1rem;
-    margin-bottom: 1.5rem;
+  .visualPanel {
+    min-height: 460px;
   }
 
-  .bannerButton {
-    padding: 0.65rem 1.75rem;
-    font-size: 0.9rem;
-  }
-
-  .swiperButtonPrev,
-  .swiperButtonNext {
-    width: 40px;
-    height: 40px;
-  }
-
-  .swiperButtonPrev {
-    left: 1rem;
-  }
-
-  .swiperButtonNext {
-    right: 1rem;
+  .bannerModelImage {
+    min-height: 430px;
+    max-height: 430px;
   }
 }
 
 @media (max-width: 768px) {
-  .bannerSection {
-    height: 420px;
-    min-height: 340px;
+  .bannerSlide {
+    min-height: 620px;
   }
 
   .bannerContent {
-    padding: 0 1rem;
     grid-template-columns: 1fr;
-    gap: 0;
-    justify-items: center;
+    min-height: 620px;
+    padding: 1.25rem 1rem 4.8rem;
+    gap: 1rem;
+    align-items: stretch;
   }
 
-  .bannerTextSection {
-    display: none;
+  .copyPanel {
+    max-width: none;
+    gap: 1rem;
   }
 
-  .bannerModelSection {
-    width: 100%;
-    height: 100%;
-    justify-content: space-between;
-    padding: 1.5rem 0;
+  .copyHeader {
+    align-items: flex-start;
+  }
+
+  .bannerCounterMobile {
+    display: inline-block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  .bannerTitle {
+    max-width: none;
+    font-size: clamp(1.35rem, 6vw, 2rem);
+  }
+
+  .bannerDescription {
+    max-width: none;
+    font-size: 0.95rem;
+  }
+
+  .bannerActions {
+    gap: 0.6rem;
+  }
+
+  .primaryAction,
+  .secondaryAction {
+    flex: 1 1 auto;
+    min-height: 44px;
+  }
+
+  .visualPanel {
+    min-height: 320px;
+    padding-top: 0;
   }
 
   .bannerModelImage {
-    height: 80%;
-    max-height: 280px;
+    min-height: 300px;
+    max-height: 300px;
   }
 
-  .mobileButtonWrapper {
-    display: block;
-  }
-
-  .bannerButton {
-    display: none;
-  }
-
-  .bannerButtonMobile {
-    padding: 0.65rem 1.5rem;
-    font-size: 0.9rem;
-  }
-
-  .swiperButtonPrev,
-  .swiperButtonNext {
-    width: 36px;
-    height: 36px;
-  }
-
-  .swiperButtonPrev {
-    left: 0.75rem;
-  }
-
-  .swiperButtonNext {
-    right: 0.75rem;
-  }
-
-  .swiperButtonPrev svg,
-  .swiperButtonNext svg {
-    width: 18px;
-    height: 18px;
-  }
-
-  .swiperPagination {
+  .controlBar {
+    width: calc(100% - 2rem);
+    left: 1rem;
+    transform: none;
     bottom: 1rem;
   }
 }
 
 @media (max-width: 480px) {
-  .bannerSection {
-    height: 360px;
-    min-height: 300px;
+  .bannerSlide {
+    min-height: 560px;
   }
 
-  .bannerModelSection {
-    padding: 1rem 0;
+  .bannerContent {
+    min-height: 560px;
+    padding: 1rem 0.875rem 4.5rem;
+  }
+
+  .visualPanel {
+    min-height: 280px;
   }
 
   .bannerModelImage {
-    height: 80%;
+    min-height: 260px;
     max-height: 260px;
   }
 
-  .mobileButtonWrapper {
-    margin-top: 0;
+  .bannerEyebrow {
+    font-size: 0.7rem;
   }
 
-  .bannerButtonMobile {
-    padding: 0.6rem 1.25rem;
-    font-size: 0.85rem;
+  .bannerMetaList {
+    gap: 0.4rem;
   }
 
-  .swiperButtonPrev,
-  .swiperButtonNext {
-    width: 32px;
-    height: 32px;
+  .bannerMetaItem {
+    font-size: 0.72rem;
   }
 
-  .swiperButtonPrev {
-    left: 0.5rem;
+  .controlCenter {
+    justify-content: flex-start;
   }
 
-  .swiperButtonNext {
-    right: 0.5rem;
+  .controlCounter {
+    display: none;
   }
 
   .paginationBullet {
-    width: 20px;
-    height: 3px;
+    width: 22px;
   }
 
-  .swiperPagination {
-    gap: 0.4rem;
-    bottom: 0.75rem;
+  :global(.swiper-pagination-bullet-active).paginationBullet {
+    width: 34px;
   }
 }

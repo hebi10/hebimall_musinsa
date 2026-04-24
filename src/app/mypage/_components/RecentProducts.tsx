@@ -8,7 +8,15 @@ import { Product } from '@/shared/types/product';
 import Link from 'next/link';
 import styles from './RecentProducts.module.css';
 
-export default function RecentProducts() {
+interface RecentProductsProps {
+  embedded?: boolean;
+  limit?: number;
+}
+
+export default function RecentProducts({
+  embedded = false,
+  limit,
+}: RecentProductsProps) {
   const { 
     recentProducts, 
     loading, 
@@ -21,6 +29,8 @@ export default function RecentProducts() {
   const { user } = useAuth();
   
   const [productsData, setProductsData] = useState<{ [key: string]: Product }>({});
+  const visibleRecentProducts =
+    typeof limit === 'number' ? recentProducts.slice(0, limit) : recentProducts;
 
   // 모든 최근 본 상품 삭제 확인
   const handleClearAll = async () => {
@@ -80,28 +90,29 @@ export default function RecentProducts() {
   }
 
   return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-        <h2>최근 본 상품</h2>
-        <div className={styles.headerActions}>
-          <span className={styles.count}>{recentProducts.length}개</span>
-          {recentProducts.length > 0 && (
-            <button 
-              className={styles.clearButton}
-              onClick={handleClearAll}
-              type="button"
-            >
-              전체 삭제
-            </button>
-          )}
+    <div className={`${styles.container} ${embedded ? styles.embedded : ''}`}>
+      {!embedded ? (
+        <div className={styles.header}>
+          <h2>최근 본 상품</h2>
+          <div className={styles.headerActions}>
+            <span className={styles.count}>{recentProducts.length}개</span>
+            {recentProducts.length > 0 && (
+              <button 
+                className={styles.clearButton}
+                onClick={handleClearAll}
+                type="button"
+              >
+                전체 삭제
+              </button>
+            )}
+          </div>
         </div>
-      </div>
+      ) : null}
 
       {loading ? (
         <div className={styles.loading}>최근 본 상품을 불러오는 중...</div>
       ) : recentProducts.length === 0 ? (
         <div className={styles.empty}>
-          <div className={styles.emptyIcon}></div>
           <p>최근 본 상품이 없습니다.</p>
           <Link href="/categories" className={styles.shopLink}>
             상품 둘러보기
@@ -109,7 +120,7 @@ export default function RecentProducts() {
         </div>
       ) : (
         <div className={styles.productGrid}>
-          {recentProducts.map((recentProduct) => {
+          {visibleRecentProducts.map((recentProduct) => {
             const product = productsData[recentProduct.productId];
             
             if (!product) {

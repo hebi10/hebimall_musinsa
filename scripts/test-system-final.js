@@ -21,7 +21,7 @@ async function finalSystemTest() {
 
   try {
     // 1. 카테고리별 상품 통계
-    console.log('\n📊 1. 카테고리별 상품 현황:');
+    console.log('\n1. 카테고리별 상품 현황:');
     const categories = ['tops', 'bottoms', 'shoes', 'bags', 'accessories'];
     let totalProducts = 0;
     

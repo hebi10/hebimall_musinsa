@@ -103,7 +103,7 @@ async function migrateProducts() {
         }
       }
       
-      console.log(`  📊 총 ${migratedCount}개 상품 마이그레이션 완료`);
+      console.log(`  총 ${migratedCount}개 상품 마이그레이션 완료`);
     }
     
   } catch (error) {
@@ -151,7 +151,7 @@ async function deleteKoreanDocuments() {
 }
 
 async function verifyResults() {
-  console.log('\n📊 최종 결과 확인...');
+  console.log('\n최종 결과 확인...');
   
   try {
     const categoriesRef = db.collection('categories');

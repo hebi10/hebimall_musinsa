@@ -1,6 +1,6 @@
 .footer {
-  background-color: #f9fafb;
-  border-top: 1px solid #e5e7eb;
+  background-color: var(--off-white);
+  border-top: 1px solid var(--line);
 }
 
 .container {
@@ -18,9 +18,8 @@
 .section h3 {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #111827;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  color: var(--black);
+  letter-spacing: -0.01em;
   margin-bottom: 1rem;
 }
 
@@ -31,20 +30,20 @@
 }
 
 .link {
-  color: #4b5563;
+  color: var(--text-subtle);
   text-decoration: none;
   transition: color 0.2s;
 }
 
 .link:hover {
-  color: #111827;
+  color: var(--point);
 }
 
 .copyright {
   margin-top: 2rem;
   padding-top: 2rem;
-  border-top: 1px solid #e5e7eb;
-  color: #6b7280;
+  border-top: 1px solid var(--line);
+  color: var(--text-subtle);
   font-size: 0.875rem;
   line-height: 1.5rem;
 }

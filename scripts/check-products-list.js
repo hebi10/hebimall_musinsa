@@ -45,7 +45,7 @@ async function listAllProducts() {
       }
     }
     
-    console.log(`\n📊 총 ${allProducts.length}개 상품`);
+    console.log(`\n총 ${allProducts.length}개 상품`);
     
     // 액세서리 카테고리 상품 ID 몇 개 출력
     console.log('\n🔍 액세서리 카테고리 상품 ID 샘플:');

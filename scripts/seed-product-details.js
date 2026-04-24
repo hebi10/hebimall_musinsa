@@ -204,7 +204,7 @@ async function addProductDetails() {
 
   console.log('\n' + '=' .repeat(60));
   console.log(`🎉 상품 상세 정보 추가 완료!`);
-  console.log(`📊 총 업데이트된 상품: ${totalUpdated}개`);
+  console.log(`총 업데이트된 상품: ${totalUpdated}개`);
   
   console.log('\n✨ 추가된 상세 정보:');
   console.log('   • 소재 정보');

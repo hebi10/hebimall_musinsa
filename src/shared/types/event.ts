@@ -1,12 +1,17 @@
+export type EventContent = string;
+export type EventType = 'sale' | 'coupon' | 'special' | 'new';
+export type EventUiVariant = EventType | 'review';
+export type EventCouponType = 'manual' | 'auto';
+
 export interface Event {
   id: string;
   title: string;
   description: string;
-  content: string;
+  content?: EventContent | null;
   bannerImage: string;
   thumbnailImage: string;
-  eventType: 'sale' | 'coupon' | 'special' | 'new';
-  couponType?: 'manual' | 'auto';
+  eventType: EventType;
+  couponType?: EventCouponType;
   startDate: Date;
   endDate: Date;
   isActive: boolean;
@@ -32,7 +37,7 @@ export interface EventParticipant {
 }
 
 export interface EventFilter {
-  eventType?: 'sale' | 'coupon' | 'special' | 'new';
+  eventType?: EventType;
   isActive?: boolean;
   startDate?: Date;
   endDate?: Date;

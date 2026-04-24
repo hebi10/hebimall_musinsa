@@ -1,182 +1,307 @@
 .section {
-  margin: 3rem 0;
-  padding: 0 1rem;
   max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 0 auto;
+  padding: 0 1rem;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
+  gap: 1.75rem;
+}
+
+.headerCopy {
+  min-width: 0;
+  flex: 1;
+}
+
+.headerSide {
+  display: flex;
+  flex-direction: column;
   align-items: flex-end;
-  margin-bottom: 1.25rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 2px solid #172b4d;
+  gap: 0.85rem;
+  max-width: 360px;
+}
+
+.headerMinimal {
+  align-items: end;
+  margin-bottom: 1.5rem;
+}
+
+.headerBordered {
+  align-items: end;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.95rem;
+  border-bottom: 1px solid var(--black);
+}
+
+.headerDisplay {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(240px, 0.85fr);
+  align-items: end;
+  gap: 1.75rem;
+  margin-bottom: 2rem;
+}
+
+.eyebrow {
+  display: block;
+  margin-bottom: 0.85rem;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-soft);
 }
 
 .title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #172b4d;
   margin: 0;
-  letter-spacing: -0.01em;
+  font-family: var(--font-heading), "Noto Serif KR", "Apple Myungjo", serif;
+  font-size: 1.35rem;
+  font-weight: 600;
+  line-height: 1.16;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+  color: var(--black);
+}
+
+.headerDisplay .title {
+  font-size: clamp(1.9rem, 3.4vw, 2.9rem);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
 }
 
 .subtitle {
-  font-size: 0.85rem;
-  color: #6b778c;
-  margin: 0.25rem 0 0 0;
-  font-weight: 400;
+  margin: 0.45rem 0 0;
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: var(--text-subtle);
+}
+
+.headerDisplay .subtitle {
+  margin-top: 0.7rem;
+  max-width: 38rem;
+  font-size: 1rem;
+}
+
+.description {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.75;
+  color: var(--text-subtle);
+}
+
+.viewAllLink,
+.viewAllButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 600;
+  transition: border-color 0.2s ease, color 0.2s ease,
+    background-color 0.2s ease;
 }
 
 .viewAllLink {
-  color: #6b778c;
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 0.85rem;
-  padding: 0.4rem 0;
-  transition: color 0.15s;
-  white-space: nowrap;
+  padding: 0;
+  color: var(--text-subtle);
 }
 
 .viewAllLink:hover {
-  color: #172b4d;
+  color: var(--point);
 }
 
-/* -- 기본 그리드 -- */
-.productGrid {
+.viewAllButton {
+  padding: 0.75rem 1.15rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-white);
+  color: var(--black);
+}
+
+.viewAllButton:hover {
+  border-color: var(--point);
+  color: var(--point);
+}
+
+.productGrid,
+.rankingGrid,
+.saleGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
   gap: 1rem;
 }
 
-/* -- 랭킹 그리드: 좌측에 번호 표시 -- */
+.productGrid,
+.saleGrid {
+  grid-template-columns: repeat(4, 1fr);
+}
+
 .rankingGrid {
-  display: grid;
   grid-template-columns: repeat(4, 1fr);
+}
+
+.scrollGrid {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(260px, 280px);
   gap: 1rem;
+  overflow-x: auto;
+  padding-bottom: 0.75rem;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+
+.scrollGrid::-webkit-scrollbar {
+  height: 6px;
+}
+
+.scrollGrid::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: var(--radius-pill);
+}
+
+.scrollItem {
+  scroll-snap-align: start;
 }
 
 .rankingItem {
   position: relative;
+  --ranking-chip-size: 2.35rem;
+  --ranking-chip-gap: 0.35rem;
 }
 
 .rankNumber {
   position: absolute;
-  top: 8px;
-  left: 8px;
-  z-index: 5;
-  background: #172b4d;
-  color: #fff;
-  width: 26px;
-  height: 26px;
-  border-radius: 4px;
-  display: flex;
+  top: 10%;
+  left: 0.55rem;
+  z-index: 6;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.75rem;
+  min-width: var(--ranking-chip-size);
+  height: var(--ranking-chip-size);
+  padding: 0 0.55rem;
+  border: 1px solid rgba(10, 10, 10, 0.82);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 10px 24px rgba(10, 10, 10, 0.08);
+  color: rgba(10, 10, 10, 0.88);
+  font-size: 0.95rem;
   font-weight: 700;
   line-height: 1;
+  letter-spacing: -0.04em;
+  pointer-events: none;
 }
 
-/* -- 세일 그리드: 2열 넓은 카드 -- */
-.saleGrid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1rem;
-}
-
-/* -- 로딩 -- */
 .loading {
-  text-align: center;
   padding: 2rem 0;
-  color: #6b778c;
+  text-align: center;
+  color: var(--text-subtle);
 }
 
 .spinner {
   width: 28px;
   height: 28px;
-  border: 2px solid #dfe1e6;
-  border-top: 2px solid #2b6cb0;
+  margin: 0 auto 0.75rem;
+  border: 2px solid var(--line);
+  border-top: 2px solid var(--point);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
-  margin: 0 auto 0.75rem;
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* 반응형 */
-@media (max-width: 1024px) {
-  .productGrid {
-    grid-template-columns: repeat(3, 1fr);
+  0% {
+    transform: rotate(0deg);
   }
 
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 1024px) {
+  .productGrid,
   .rankingGrid {
     grid-template-columns: repeat(3, 1fr);
   }
 
   .saleGrid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .scrollGrid {
+    grid-auto-columns: minmax(240px, 260px);
   }
 }
 
 @media (max-width: 768px) {
   .section {
-    margin: 2.5rem 0;
     padding: 0 0.75rem;
   }
 
+  .headerMinimal,
+  .headerBordered,
+  .headerDisplay {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
   .header {
-    margin-bottom: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .headerSide {
+    align-items: flex-start;
+    max-width: none;
   }
 
   .title {
-    font-size: 1.15rem;
+    font-size: 1.2rem;
   }
 
-  .productGrid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.75rem;
+  .headerDisplay .title {
+    font-size: clamp(1.55rem, 8vw, 2.2rem);
   }
 
-  .rankingGrid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.75rem;
-  }
-
+  .productGrid,
+  .rankingGrid,
   .saleGrid {
     grid-template-columns: repeat(2, 1fr);
     gap: 0.75rem;
+  }
+
+  .scrollGrid {
+    gap: 0.75rem;
+    grid-auto-columns: minmax(72vw, 72vw);
   }
 }
 
 @media (max-width: 480px) {
-  .productGrid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.5rem;
+  .section {
+    padding: 0 0.625rem;
   }
 
-  .rankingGrid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.5rem;
+  .scrollGrid {
+    gap: 0.625rem;
+    grid-auto-columns: minmax(78vw, 78vw);
   }
 
-  .saleGrid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.5rem;
+  .viewAllButton {
+    width: 100%;
   }
 
-  .title {
-    font-size: 1.05rem;
+  .rankingItem {
+    --ranking-chip-size: 2rem;
+    --ranking-chip-gap: 0.25rem;
   }
 
   .rankNumber {
-    width: 22px;
-    height: 22px;
-    font-size: 0.65rem;
+    left: 0.35rem;
+    padding: 0 0.45rem;
+    font-size: 0.86rem;
   }
 }

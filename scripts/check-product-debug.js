@@ -90,7 +90,7 @@ async function debugProduct() {
         }
       }
       
-      console.log(`\n📊 총 상품 수: ${allProducts.length}개`);
+      console.log(`\n총 상품 수: ${allProducts.length}개`);
       
       // 타겟 ID와 비슷한 상품 찾기
       const similarProducts = allProducts.filter(p => 

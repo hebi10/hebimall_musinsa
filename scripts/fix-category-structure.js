@@ -19,7 +19,7 @@ class CategoryMigrationService {
   
   // 1. 누락된 카테고리 생성
   static async createMissingCategories() {
-    console.log('📁 누락된 카테고리 생성...\n');
+    console.log(' 누락된 카테고리 생성...\n');
     
     const categories = [
       { id: 'accessories', name: '액세서리' },
@@ -156,7 +156,7 @@ class CategoryMigrationService {
     
     // 카테고리 확인
     const categoriesSnapshot = await getDocs(collection(db, 'categories'));
-    console.log('📁 카테고리 목록:');
+    console.log(' 카테고리 목록:');
     categoriesSnapshot.docs.forEach(doc => {
       const data = doc.data();
     });
@@ -170,7 +170,7 @@ class CategoryMigrationService {
       categoryCount[data.category] = (categoryCount[data.category] || 0) + 1;
     });
 
-    console.log('\n📊 상품 분포:');
+    console.log('\n상품 분포:');
     Object.entries(categoryCount).forEach(([cat, count]) => {
       console.log(`   ${cat}: ${count}개`);
     });

@@ -48,14 +48,14 @@ class ProductMigrationService {
         });
       }
 
-      console.log('\n📊 카테고리별 상품 분포:');
+      console.log('\n카테고리별 상품 분포:');
       Object.entries(categoryCount).forEach(([category, count]) => {
         console.log(`  - ${category}: ${count}개`);
       });
 
       // 카테고리 컬렉션 확인
       const categoriesSnapshot = await db.collection('categories').get();
-      console.log(`\n📁 카테고리 컬렉션: ${categoriesSnapshot.size}개`);
+      console.log(`\n 카테고리 컬렉션: ${categoriesSnapshot.size}개`);
 
       return {
         totalProducts: productsSnapshot.size,
@@ -165,7 +165,7 @@ class ProductMigrationService {
         }
       }
 
-      console.log(`📊 검증 결과:`);
+      console.log(`검증 결과:`);
       console.log(`  - 원본 상품 수: ${originalCount}`);
       console.log(`  - 마이그레이션된 상품 수: ${migratedCount}`);
       console.log(`  - 성공률: ${((migratedCount / originalCount) * 100).toFixed(2)}%`);
@@ -206,7 +206,7 @@ class ProductMigrationService {
         const categoryId = categoryDoc.id;
         const categoryData = categoryDoc.data();
         
-        console.log(`📁 categories/${categoryId}`);
+        console.log(` categories/${categoryId}`);
         console.log(`   이름: ${categoryData.name}`);
         
         // 해당 카테고리의 상품들 조회

@@ -38,7 +38,7 @@ async function fixFeaturedProducts() {
     
     for (const categoryDoc of categoriesSnapshot.docs) {
       const categoryId = categoryDoc.id;
-      console.log(`   📁 ${categoryId} 카테고리 확인 중...`);
+      console.log(`    ${categoryId} 카테고리 확인 중...`);
       
       const productsSnapshot = await getDocs(collection(db, 'categories', categoryId, 'products'));
       console.log(`      └─ ${productsSnapshot.size}개 상품 발견`);

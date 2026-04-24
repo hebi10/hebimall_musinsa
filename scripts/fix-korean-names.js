@@ -115,7 +115,7 @@ async function fixProductCategories() {
 }
 
 async function checkResults() {
-  console.log('\n📊 업데이트 결과 확인...');
+  console.log('\n업데이트 결과 확인...');
   
   try {
     const categoriesRef = db.collection('categories');

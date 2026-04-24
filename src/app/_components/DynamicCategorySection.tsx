@@ -45,7 +45,7 @@ export default function DynamicCategorySection({
           { id: 'clothing', name: '의류', slug: 'clothing', href: '/categories/clothing', icon: '', image: '/category/main_category01.png', count: '' },
           { id: 'bags', name: '가방', slug: 'bags', href: '/categories/bags', icon: '', image: '/category/main_category02.png', count: '' },
           { id: 'accessories', name: '액세서리', slug: 'accessories', href: '/categories/accessories', icon: '', image: '/category/main_category03.png', count: '' },
-          { id: 'outdoor', name: '스포츠', slug: 'outdoor', href: '/categories/sports', icon: '', image: '/category/main_category04.png', count: '' }
+          { id: 'outdoor', name: '아웃도어', slug: 'outdoor', href: '/categories/outdoor', icon: '', image: '/category/main_category04.png', count: '' }
         ]);
       } finally {
         setLoading(false);
