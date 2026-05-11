@@ -1,0 +1,27 @@
+# 품질 게이트/CI 스크립트 정리
+
+## 목적
+- Next 15 프로젝트의 lint는 `next lint` 대신 ESLint CLI와 `eslint.config.mjs`를 기준으로 실행한다.
+- CI는 타입체크, lint, Jest, Functions 빌드를 분리된 스크립트로 검증한다.
+
+## 스크립트
+- `npm run typecheck`: 루트 `tsconfig.json` 기준 TypeScript 검증. `.next`/tsbuildinfo 캐시 흔들림을 피하기 위해 `--incremental false`를 사용한다.
+- `npm run lint`: `eslint .` 실행.
+- `npm run lint:fix`: `eslint . --fix` 실행.
+- `npm test`: Jest 전체 테스트를 `--runInBand`로 실행해 Windows spawn 오류 가능성을 낮춘다.
+- `npm run test:functions`: `functions/__tests__`만 실행.
+- `npm run ci`: `typecheck -> lint -> test -> functions:build` 순서로 실행.
+
+## ESLint 구성
+- `eslint.config.mjs`는 Next 15 문서의 flat config 예시를 따라 `FlatCompat`와 `next/core-web-vitals`, `next/typescript`를 사용한다.
+- 빌드 산출물과 외부 산출물은 lint 대상에서 제외한다.
+  - `.next/**`
+  - `node_modules/**`
+  - `functions/lib/**`
+  - `tmp-edge-profile-single/**`
+  - `public/**`
+
+## 현재 환경 제약
+- 2026-05-11 현재 로컬 샌드박스는 npm registry 접근이 캐시 전용으로 제한되어 `eslint`, `eslint-config-next`, `@eslint/eslintrc` 설치와 `package-lock.json` 갱신이 완료되지 않았다.
+- 따라서 `npm run lint`는 설정/스크립트는 준비됐지만 로컬 `node_modules/.bin/eslint` 부재로 실패한다.
+- 네트워크 가능한 환경에서 `npm install`을 한 번 실행해 lockfile을 갱신한 뒤 `npm run lint`와 `npm run ci`를 다시 확인해야 한다.

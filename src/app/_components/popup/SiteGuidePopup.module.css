@@ -176,7 +176,7 @@
 }
 
 .linkButtonPrimary:hover {
-  background: var(--point);
+  background: var(--action-hover);
 }
 
 /* 하단 */

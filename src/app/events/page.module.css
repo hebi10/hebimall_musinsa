@@ -35,7 +35,6 @@
 .title {
   margin: 0;
   max-width: 10ch;
-  font-family: var(--font-heading), "Noto Serif KR", "Apple Myungjo", serif;
   font-weight: 600;
   font-size: clamp(2rem, 4vw, 3.25rem);
   line-height: 1.12;

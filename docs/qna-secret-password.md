@@ -1,0 +1,32 @@
+# QnA 비밀글 보안 변경
+
+## 작업 대상
+- `src/shared/types/qna.ts`
+- `src/shared/utils/qnaSecret.ts`
+- `src/shared/services/qnaService.ts`
+- `src/shared/services/simpleQnAService.ts`
+- `src/app/qna/page.tsx`
+- `src/app/qna/[id]/page.tsx`
+- `src/app/mypage/qa/page.tsx`
+- `functions/src/handlers/qna.ts`
+- `functions/src/index.ts`
+- `firebase.json`
+- `firestore.rules`
+
+## 변경 내용
+- `QnA` 타입에서 `password` 평문 필드를 제거하고 `passwordHash`, `passwordSalt`로 변경.
+- 클라이언트에서 비밀번호 비교 함수 제거 후 생성/수정 시 해시 저장으로 변경.
+- `/api/qna/verify-secret`은 Cloud Functions로 이동해 비밀글 접근 검증과 조회를 처리.
+- 비밀번호가 일치하는 요청만 비밀글 본문을 반환, `password*` 원문/해시 필드 모두 응답에서 제외.
+- 비밀글 규칙을 `비공개/공개`로 분리하여 Firestore 기본 read는 공개글(`isSecret != true`)만 허용, 작성자/관리자만 비밀글 조회 가능.
+- 기존 평문 데이터는 첫 검증 성공 시 `passwordHash/passwordSalt`로 1회 마이그레이션되고 `password` 필드는 삭제.
+
+## 체크 포인트
+- 2026-05-11 `npx tsc --noEmit --pretty false -p tsconfig.json` 통과.
+- 2026-05-11 `npm test`: 통과. QnA 도메인 테스트에서 salted hash 검증, legacy 평문 마이그레이션 호환, 안전 응답의 password material 제거를 검증.
+- `functions:build`: 성공.
+
+## 마무리 검토
+- `src/app/qna/[id]/page.tsx`는 비밀글인 경우 `QnAService.getQnAWithAccessCheck`로만 본문 조회.
+- `src/app/qna/page.tsx`는 비밀글 목록 노출을 막기 위해 `isSecret:false` 필터 기본 적용.
+- `src/app/mypage/qa/page.tsx`는 사용자 문서 조회로 전환되어 비밀글 직접 조회 의존 제거.

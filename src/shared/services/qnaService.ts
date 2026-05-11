@@ -16,20 +16,62 @@ import {
   Timestamp,
   QueryDocumentSnapshot,
 } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
 import { db } from '@/shared/libs/firebase/firebase';
 import { QnA, CreateQnAData, QnAAnswer, QnAFilter, QnAPagination } from '@/shared/types/qna';
+import { buildQnASecurity } from '@/shared/utils/qnaSecret';
 
 const COLLECTION_NAME = 'qna';
 
+interface QnASecretVerifyResponse {
+  success: boolean;
+  needsPassword?: boolean;
+  qna?: RawQnAFromServer;
+  error?: string;
+}
+
+interface RawQnAFromServer {
+  id: string;
+  userId: string;
+  userEmail: string;
+  userName: string;
+  category: QnA['category'];
+  title: string;
+  content: string;
+  images?: string[];
+  isSecret: boolean;
+  status: QnA['status'];
+  views: number;
+  isNotified: boolean;
+  createdAt: string | Timestamp | Date;
+  updatedAt: string | Timestamp | Date;
+  productId?: string;
+  productName?: string;
+  answer?: {
+    content: string;
+    answeredBy: string;
+    answeredAt: string | Timestamp | Date;
+    isAdmin: boolean;
+  };
+  passwordHash?: string;
+  passwordSalt?: string;
+}
+
+interface QnAAccessResult {
+  success: boolean;
+  qna: QnA | null;
+  needsPassword: boolean;
+  error?: string;
+}
+
 export class QnAService {
-  // QnA 생성
   static async createQnA(
     userId: string,
     userEmail: string,
     userName: string,
     data: CreateQnAData
   ): Promise<string> {
-    const qnaData = {
+    const qnaData: Record<string, unknown> = {
       userId,
       userEmail,
       userName,
@@ -38,7 +80,6 @@ export class QnAService {
       content: data.content,
       images: data.images || [],
       isSecret: data.isSecret,
-      password: data.password,
       status: 'waiting' as const,
       views: 0,
       isNotified: data.isNotified,
@@ -48,11 +89,24 @@ export class QnAService {
       productName: data.productName,
     };
 
+    if (data.isSecret && data.password) {
+      const trimmedPassword = data.password.trim();
+      if (!trimmedPassword) {
+        throw new Error('비밀번호가 비어 있습니다.');
+      }
+
+      const security = await buildQnASecurity(trimmedPassword);
+      qnaData.passwordHash = security.passwordHash;
+      qnaData.passwordSalt = security.passwordSalt;
+    } else if (data.isSecret) {
+      throw new Error('비밀글은 비밀번호가 필요합니다.');
+    }
+
     const docRef = await addDoc(collection(db, COLLECTION_NAME), qnaData);
     return docRef.id;
   }
 
-  // QnA 목록 조회 (페이지네이션 포함)
+  // QnA 목록 조회
   static async getQnAList(
     filters: QnAFilter = {},
     page: number = 1,
@@ -60,7 +114,6 @@ export class QnAService {
   ): Promise<{ qnas: QnA[]; pagination: QnAPagination }> {
     let q = query(collection(db, COLLECTION_NAME));
 
-    // 필터 적용
     if (filters.category) {
       q = query(q, where('category', '==', filters.category));
     }
@@ -77,17 +130,13 @@ export class QnAService {
       q = query(q, where('productId', '==', filters.productId));
     }
 
-    // 정렬 및 페이지네이션
     q = query(q, orderBy('createdAt', 'desc'));
 
-    // 전체 개수 조회
     const countSnapshot = await getCountFromServer(q);
     const totalCount = countSnapshot.data().count;
     const totalPages = Math.ceil(totalCount / limitCount);
 
-    // 페이지네이션 적용 (startAfter 사용)
     if (page > 1) {
-      // 이전 페이지의 마지막 문서를 찾기 위한 쿼리
       const prevPageQuery = query(
         collection(db, COLLECTION_NAME),
         orderBy('createdAt', 'desc'),
@@ -107,7 +156,6 @@ export class QnAService {
     const querySnapshot = await getDocs(q);
     const qnas = querySnapshot.docs.map(doc => this.convertDocToQnA(doc));
 
-    // 검색어 필터링 (클라이언트 사이드)
     let filteredQnas = qnas;
     if (filters.searchTerm) {
       const searchLower = filters.searchTerm.toLowerCase();
@@ -129,13 +177,12 @@ export class QnAService {
     };
   }
 
-  // 특정 QnA 조회 (조회수 증가)
+  // 단일 QnA 조회 (권한 충족 시)
   static async getQnA(qnaId: string, incrementViews: boolean = true): Promise<QnA | null> {
     const docRef = doc(db, COLLECTION_NAME, qnaId);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      // 조회수 증가
       if (incrementViews) {
         await updateDoc(docRef, {
           views: increment(1),
@@ -148,7 +195,54 @@ export class QnAService {
     return null;
   }
 
-  // QnA 답변 추가 (관리자용)
+  // 서버에서 비밀번호 검증 + 접근 토큰 정책을 확인해 QnA 조회
+  static async getQnAWithAccessCheck(
+    qnaId: string,
+    password?: string
+  ): Promise<QnAAccessResult> {
+    const currentUser = getAuth().currentUser;
+    const token = currentUser ? await currentUser.getIdToken() : undefined;
+
+    const response = await fetch('/api/qna/verify-secret', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({
+        qnaId,
+        password,
+      }),
+    });
+
+    const body = await response.json().catch(() => ({}));
+    const parsed = body as QnASecretVerifyResponse;
+
+    if (!response.ok || !parsed.success) {
+      return {
+        success: false,
+        qna: null,
+        needsPassword: false,
+        error: parsed.error || `HTTP ${response.status}`,
+      };
+    }
+
+    if (!parsed.qna) {
+      return {
+        success: true,
+        qna: null,
+        needsPassword: Boolean(parsed.needsPassword),
+        error: parsed.needsPassword ? '비밀번호가 필요합니다.' : '문의글을 찾을 수 없습니다.',
+      };
+    }
+
+    return {
+      success: true,
+      qna: this.normalizeServerQnA(parsed.qna),
+      needsPassword: false,
+    };
+  }
+
   static async answerQnA(
     qnaId: string,
     answer: Omit<QnAAnswer, 'answeredAt'>
@@ -166,7 +260,6 @@ export class QnAService {
     });
   }
 
-  // QnA 상태 업데이트
   static async updateQnAStatus(
     qnaId: string,
     status: QnA['status']
@@ -178,19 +271,50 @@ export class QnAService {
     });
   }
 
-  // QnA 수정
   static async updateQnA(
     qnaId: string,
-    updateData: Partial<Pick<QnA, 'title' | 'content' | 'category' | 'isSecret' | 'password'>>
+    updateData: {
+      title?: string;
+      content?: string;
+      category?: QnA['category'];
+      isSecret?: boolean;
+      password?: string;
+    }
   ): Promise<void> {
     const qnaRef = doc(db, COLLECTION_NAME, qnaId);
-    await updateDoc(qnaRef, {
-      ...updateData,
+    const nextData: Record<string, unknown> = {
       updatedAt: serverTimestamp(),
-    });
+    };
+
+    if (updateData.title !== undefined) {
+      nextData.title = updateData.title;
+    }
+    if (updateData.content !== undefined) {
+      nextData.content = updateData.content;
+    }
+    if (updateData.category !== undefined) {
+      nextData.category = updateData.category;
+    }
+
+    if (updateData.isSecret !== undefined) {
+      nextData.isSecret = updateData.isSecret;
+    }
+
+    if (updateData.password) {
+      const trimmedPassword = updateData.password.trim();
+      if (trimmedPassword) {
+        const security = await buildQnASecurity(trimmedPassword);
+        nextData.passwordHash = security.passwordHash;
+        nextData.passwordSalt = security.passwordSalt;
+      }
+    } else if (updateData.isSecret === false) {
+      nextData.passwordHash = null;
+      nextData.passwordSalt = null;
+    }
+
+    await updateDoc(qnaRef, nextData);
   }
 
-  // QnA 삭제
   static async deleteQnA(qnaId: string): Promise<void> {
     const qnaRef = doc(db, COLLECTION_NAME, qnaId);
     await updateDoc(qnaRef, {
@@ -199,7 +323,6 @@ export class QnAService {
     });
   }
 
-  // 사용자별 QnA 목록
   static async getUserQnAs(userId: string): Promise<QnA[]> {
     const q = query(
       collection(db, COLLECTION_NAME),
@@ -211,7 +334,6 @@ export class QnAService {
     return querySnapshot.docs.map(doc => this.convertDocToQnA(doc));
   }
 
-  // 카테고리별 통계
   static async getQnAStats(): Promise<Record<string, number>> {
     const querySnapshot = await getDocs(collection(db, COLLECTION_NAME));
     const stats: Record<string, number> = {};
@@ -225,7 +347,6 @@ export class QnAService {
     return stats;
   }
 
-  // 최근 QnA 목록 (홈페이지용)
   static async getRecentQnAs(limitCount: number = 5): Promise<QnA[]> {
     const q = query(
       collection(db, COLLECTION_NAME),
@@ -238,14 +359,32 @@ export class QnAService {
     return querySnapshot.docs.map(doc => this.convertDocToQnA(doc));
   }
 
-  // 비밀글 확인
-  static async verifySecretPassword(qnaId: string, password: string): Promise<boolean> {
-    const qna = await this.getQnA(qnaId, false);
-    if (!qna || !qna.isSecret) return false;
-    return qna.password === password;
+  private static normalizeServerQnA(qna: RawQnAFromServer): QnA {
+    return {
+      ...qna,
+      createdAt: this.toDate(qna.createdAt),
+      updatedAt: this.toDate(qna.updatedAt),
+      answer: qna.answer
+        ? {
+            ...qna.answer,
+            answeredAt: this.toDate(qna.answer.answeredAt),
+          }
+        : undefined,
+    } as QnA;
   }
 
-  // Firestore 문서를 QnA 객체로 변환
+  private static toDate(value: string | Timestamp | Date): Date {
+    if (value instanceof Date) {
+      return value;
+    }
+
+    if (value && typeof value === 'object' && 'toDate' in value && typeof value.toDate === 'function') {
+      return value.toDate();
+    }
+
+    return value ? new Date(String(value)) : new Date();
+  }
+
   private static convertDocToQnA(doc: QueryDocumentSnapshot): QnA {
     const data = doc.data();
     return {
@@ -253,10 +392,13 @@ export class QnAService {
       ...data,
       createdAt: data.createdAt?.toDate() || new Date(),
       updatedAt: data.updatedAt?.toDate() || new Date(),
-      answer: data.answer ? {
-        ...data.answer,
-        answeredAt: data.answer.answeredAt?.toDate() || new Date(),
-      } : undefined,
+      answer: data.answer
+        ? {
+            ...data.answer,
+            answeredAt: data.answer.answeredAt?.toDate() || new Date(),
+          }
+        : undefined,
     } as QnA;
   }
+
 }

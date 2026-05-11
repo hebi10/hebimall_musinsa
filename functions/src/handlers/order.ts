@@ -1,0 +1,570 @@
+import { onRequest } from "firebase-functions/v2/https";
+import * as admin from "firebase-admin";
+import { calculateDeliveryFee } from "../domain/orderDomain";
+import { AuthError, verifyAuthContext } from "../utils/auth";
+
+type DeliveryOption = "standard" | "express";
+
+interface RawOrderItem {
+  productId?: unknown;
+  size?: unknown;
+  color?: unknown;
+  quantity?: unknown;
+  id?: unknown;
+}
+
+interface RawCreateOrderRequest {
+  items?: unknown;
+  deliveryAddress?: unknown;
+  paymentMethod?: unknown;
+  deliveryOption?: unknown;
+  selectedCoupon?: unknown;
+  requestedPointAmount?: unknown;
+}
+
+interface NormalizedOrderItem {
+  productId: string;
+  size: string;
+  color: string;
+  quantity: number;
+  cartItemIds: string[];
+}
+
+interface ResolvedOrderItem {
+  productId: string;
+  productName: string;
+  productImage: string;
+  size: string;
+  color: string;
+  quantity: number;
+  price: number;
+  discountAmount: number;
+  brand: string;
+}
+
+interface DeliveryAddress {
+  id: string;
+  name: string;
+  recipient: string;
+  phone: string;
+  address: string;
+  detailAddress: string;
+  zipCode: string;
+  isDefault: boolean;
+}
+
+interface ProductRef {
+  ref: admin.firestore.DocumentReference;
+  data: admin.firestore.DocumentData;
+}
+
+interface CartItemSummary {
+  quantity?: unknown;
+  price?: unknown;
+}
+
+const NO_STORE_HEADERS = {
+  "Cache-Control": "no-store, max-age=0",
+  Pragma: "no-cache",
+  Expires: "0",
+};
+
+const VALID_PAYMENT_METHODS = new Set([
+  "card",
+  "bank",
+  "virtual",
+  "phone",
+  "cash",
+  "card_transfer",
+  "bank_transfer",
+  "virtual_account",
+  "point",
+]);
+
+const USER_COUPON_AVAILABLE_STATUSES = ["사용가능", "available", "ACTIVE"];
+const USER_COUPON_USED_STATUSES = ["사용완료", "used"];
+const USER_COUPON_EXPIRED_STATUSES = ["기간만료", "expired", "만료됨"];
+
+const COUPON_PERCENT_TYPES = ["퍼센트", "percent", "할인율"];
+const COUPON_AMOUNT_TYPES = ["금액", "amount", "할인금액"];
+const COUPON_FREE_SHIPPING_TYPES = ["무료배송", "free_shipping"];
+
+function applyNoStoreHeaders(response: any): void {
+  Object.entries(NO_STORE_HEADERS).forEach(([key, value]) => {
+    response.set(key, value);
+  });
+}
+
+function toStringValue(value: unknown): string {
+  if (typeof value === "string") {
+    return value.trim();
+  }
+  return "";
+}
+
+function toNonNegativeInteger(value: unknown): number {
+  const num = typeof value === "number" ? value : Number(value);
+  if (!Number.isFinite(num)) {
+    return 0;
+  }
+  return Math.max(0, Math.floor(num));
+}
+
+function toNumber(value: unknown, fallback = 0): number {
+  const num = typeof value === "number" ? value : Number(value);
+  if (!Number.isFinite(num)) {
+    return fallback;
+  }
+  return num;
+}
+
+function normalizePaymentMethod(value: unknown): string {
+  const method = toStringValue(value);
+  return method && VALID_PAYMENT_METHODS.has(method) ? method : "card";
+}
+
+function normalizeDeliveryOption(value: unknown): DeliveryOption {
+  const option = toStringValue(value);
+  return option === "express" ? "express" : "standard";
+}
+
+function normalizeBoolean(value: unknown): boolean {
+  return value === true;
+}
+
+function parseDeliveryAddress(value: unknown): DeliveryAddress {
+  if (!value || typeof value !== "object") {
+    throw new Error("deliveryAddress is required.");
+  }
+
+  const payload = value as Record<string, unknown>;
+  const address: DeliveryAddress = {
+    id: toStringValue(payload.id),
+    name: toStringValue(payload.name),
+    recipient: toStringValue(payload.recipient),
+    phone: toStringValue(payload.phone),
+    address: toStringValue(payload.address),
+    detailAddress: toStringValue(payload.detailAddress),
+    zipCode: toStringValue(payload.zipCode),
+    isDefault: normalizeBoolean(payload.isDefault),
+  };
+
+  if (!address.id || !address.name || !address.recipient || !address.phone || !address.address || !address.zipCode) {
+    throw new Error("deliveryAddress is required.");
+  }
+
+  return address;
+}
+
+function parseItems(rawItems: unknown): RawOrderItem[] {
+  if (!Array.isArray(rawItems) || rawItems.length === 0) {
+    return [];
+  }
+
+  return rawItems.filter((item): item is RawOrderItem => !!item && typeof item === "object");
+}
+
+function normalizeItems(rawItems: RawOrderItem[]): NormalizedOrderItem[] {
+  const groupedItems = new Map<string, NormalizedOrderItem>();
+
+  for (const rawItem of rawItems) {
+    const productId = toStringValue(rawItem.productId);
+    if (!productId) {
+      throw new Error("item.productId is required.");
+    }
+
+    const size = toStringValue(rawItem.size) || "default";
+    const color = toStringValue(rawItem.color) || "default";
+    const quantity = toNonNegativeInteger(rawItem.quantity);
+    if (quantity <= 0) {
+      throw new Error(`item.quantity must be greater than 0: ${productId}`);
+    }
+
+    const itemId = toStringValue(rawItem.id) || `${productId}-${size}-${color}`;
+    const key = `${productId}|${size}|${color}`;
+
+    const current = groupedItems.get(key);
+    if (current) {
+      current.quantity += quantity;
+      if (!current.cartItemIds.includes(itemId)) {
+        current.cartItemIds.push(itemId);
+      }
+      continue;
+    }
+
+    groupedItems.set(key, {
+      productId,
+      size,
+      color,
+      quantity,
+      cartItemIds: [itemId],
+    });
+  }
+
+  return Array.from(groupedItems.values());
+}
+
+function parseDate(value: unknown): Date | null {
+  if (value instanceof Date) {
+    return value;
+  }
+
+  if (value && typeof value === "object" && "toDate" in value) {
+    const maybeDate = (value as { toDate: () => Date }).toDate();
+    return maybeDate instanceof Date && Number.isFinite(maybeDate.getTime()) ? maybeDate : null;
+  }
+
+  const date = new Date(toStringValue(value));
+  return Number.isFinite(date.getTime()) ? date : null;
+}
+
+function toTodayString(value: Date): string {
+  return value.toISOString().split("T")[0];
+}
+
+function calculateDiscountedUnitPrice(productData: admin.firestore.DocumentData): number {
+  const price = toNumber(productData.price, 0);
+  if (!Number.isFinite(price) || price <= 0) {
+    return 0;
+  }
+
+  const saleRate = toNumber(productData.saleRate, 0);
+  const discountRate = Math.max(0, Math.min(100, saleRate));
+  const discounted = Math.floor(price * (1 - discountRate / 100));
+  return Math.max(0, Math.min(price, discounted));
+}
+
+function calculateCouponDiscount(totalAmount: number, couponData: admin.firestore.DocumentData): {
+  discount: number;
+  freeShipping: boolean;
+} {
+  const couponType = toStringValue(couponData.type);
+  const couponValue = toNumber(couponData.value, 0);
+
+  if (COUPON_PERCENT_TYPES.includes(couponType)) {
+    return {
+      discount: Math.floor(totalAmount * Math.min(100, Math.max(0, couponValue)) / 100),
+      freeShipping: false,
+    };
+  }
+
+  if (COUPON_AMOUNT_TYPES.includes(couponType)) {
+    return {
+      discount: Math.min(totalAmount, Math.max(0, couponValue)),
+      freeShipping: false,
+    };
+  }
+
+  return {
+    discount: 0,
+    freeShipping: COUPON_FREE_SHIPPING_TYPES.includes(couponType),
+  };
+}
+
+function mapCartTotal(items: Array<Record<string, unknown> | CartItemSummary>): {
+  totalAmount: number;
+  totalItems: number;
+} {
+  let totalAmount = 0;
+  let totalItems = 0;
+
+  for (const item of items) {
+    const data = item as Record<string, unknown>;
+    const quantity = toNonNegativeInteger(data.quantity);
+    const price = toNumber(data.price, 0);
+    totalAmount += quantity * price;
+    totalItems += quantity;
+  }
+
+  return { totalAmount, totalItems };
+}
+
+async function findProductSnapshot(
+  transaction: admin.firestore.Transaction,
+  productId: string
+): Promise<ProductRef | null> {
+  const topLevelRef = admin.firestore().collection("products").doc(productId);
+  const topLevelSnap = await transaction.get(topLevelRef);
+  if (topLevelSnap.exists) {
+    return { ref: topLevelRef, data: topLevelSnap.data() || {} };
+  }
+
+  const categoriesSnap = await transaction.get(admin.firestore().collection("categories"));
+  for (const category of categoriesSnap.docs) {
+    const candidateRef = category.ref.collection("products").doc(productId);
+    const candidateSnap = await transaction.get(candidateRef);
+    if (candidateSnap.exists) {
+      return {
+        ref: candidateRef,
+        data: candidateSnap.data() || {},
+      };
+    }
+  }
+
+  return null;
+}
+
+export const order = onRequest(
+  {
+    cors: true,
+    region: "us-central1",
+    memory: "256MiB",
+    timeoutSeconds: 120,
+  },
+  async (req, res) => {
+    applyNoStoreHeaders(res);
+
+    if (req.method === "OPTIONS") {
+      res.status(204).send("");
+      return;
+    }
+
+    if (req.method !== "POST") {
+      res.status(405).json({ success: false, error: "Method not allowed." });
+      return;
+    }
+
+    try {
+      const authContext = await verifyAuthContext(req.headers.authorization);
+      const payload = req.body as RawCreateOrderRequest;
+
+      const items = normalizeItems(parseItems(payload.items));
+      if (items.length === 0) {
+        res.status(400).json({ success: false, error: "items is required." });
+        return;
+      }
+
+      const deliveryAddress = parseDeliveryAddress(payload.deliveryAddress);
+      const paymentMethod = normalizePaymentMethod(payload.paymentMethod);
+      const deliveryOption = normalizeDeliveryOption(payload.deliveryOption);
+      const selectedCoupon = toStringValue(payload.selectedCoupon);
+      const requestedPointAmount = toNonNegativeInteger(payload.requestedPointAmount);
+
+      const result = await admin.firestore().runTransaction(async (transaction) => {
+        const usersRef = admin.firestore().collection("users");
+        const ordersRef = admin.firestore().collection("orders");
+        const now = admin.firestore.FieldValue.serverTimestamp();
+        const nowDate = new Date();
+
+        const userRef = usersRef.doc(authContext.uid);
+        const userSnap = await transaction.get(userRef);
+        if (!userSnap.exists) {
+          throw new Error("User document was not found.");
+        }
+
+        const userData = userSnap.data() || {};
+        let subtotal = 0;
+        const resolvedItems: ResolvedOrderItem[] = [];
+        const cartItemIdsToRemove = new Set<string>();
+        const productStockDeltas: Array<{ ref: admin.firestore.DocumentReference; nextStock: number }> = [];
+
+        for (const item of items) {
+          const productSnapshot = await findProductSnapshot(transaction, item.productId);
+          if (!productSnapshot) {
+            throw new Error(`Product not found: ${item.productId}`);
+          }
+
+          const productData = productSnapshot.data;
+          const unitPrice = calculateDiscountedUnitPrice(productData);
+          const stock = toNonNegativeInteger(productData.stock);
+          if (stock < item.quantity) {
+            throw new Error(`Insufficient stock for productId: ${item.productId}`);
+          }
+
+          for (const cartItemId of item.cartItemIds) {
+            if (cartItemId) {
+              cartItemIdsToRemove.add(cartItemId);
+            }
+          }
+
+          const productImage = toStringValue(productData.mainImage) || toStringValue(productData.images?.[0]);
+          resolvedItems.push({
+            productId: item.productId,
+            productName: toStringValue(productData.name),
+            productImage,
+            size: item.size,
+            color: item.color,
+            quantity: item.quantity,
+            price: unitPrice,
+            discountAmount: Math.max(0, toNumber(productData.price, 0) - unitPrice),
+            brand: toStringValue(productData.brand),
+          });
+
+          subtotal += unitPrice * item.quantity;
+          productStockDeltas.push({
+            ref: productSnapshot.ref,
+            nextStock: Math.max(0, stock - item.quantity),
+          });
+        }
+
+        let couponDiscount = 0;
+        let couponApplied = false;
+        let couponFreeShipping = false;
+        let userCouponRef: admin.firestore.DocumentReference | null = null;
+
+        if (selectedCoupon) {
+          userCouponRef = admin.firestore().collection("user_coupons").doc(selectedCoupon);
+          const userCouponSnap = await transaction.get(userCouponRef);
+          if (!userCouponSnap.exists) {
+            throw new Error("Coupon not found.");
+          }
+
+          const userCoupon = userCouponSnap.data() || {};
+          if (userCoupon.uid !== authContext.uid) {
+            throw new Error("Cannot use coupon of another user.");
+          }
+
+          const couponCurrentStatus = toStringValue(userCoupon.status);
+          if (!USER_COUPON_AVAILABLE_STATUSES.includes(couponCurrentStatus)) {
+            throw new Error("Coupon is not available.");
+          }
+
+          const couponRef = admin.firestore().collection("coupons").doc(String(userCoupon.couponId));
+          const couponSnap = await transaction.get(couponRef);
+          if (!couponSnap.exists) {
+            throw new Error("Coupon master data not found.");
+          }
+
+          const couponData = couponSnap.data() || {};
+          if (couponData.isActive !== true) {
+            throw new Error("Coupon is inactive.");
+          }
+
+          const expiryDate = parseDate(couponData.expiryDate);
+          if (!expiryDate || expiryDate < nowDate) {
+            transaction.update(userCouponRef, {
+              status: USER_COUPON_EXPIRED_STATUSES[0],
+              expiredDate: toTodayString(nowDate),
+              updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+            });
+            throw new Error("Coupon has expired.");
+          }
+
+          const minimumOrderAmount = Math.max(0, toNumber(couponData.minOrderAmount, 0));
+          if (minimumOrderAmount > 0 && subtotal < minimumOrderAmount) {
+            throw new Error("Coupon minimum order amount is not satisfied.");
+          }
+
+          const couponDiscountData = calculateCouponDiscount(subtotal, couponData);
+          couponDiscount = couponDiscountData.discount;
+          couponFreeShipping = couponDiscountData.freeShipping;
+          couponApplied = true;
+        }
+
+        const totalAfterCoupon = Math.max(0, subtotal - couponDiscount);
+        const deliveryFee = calculateDeliveryFee(totalAfterCoupon, deliveryOption, couponFreeShipping);
+
+        const pointBalance = toNumber(userData.pointBalance, 0);
+        if (requestedPointAmount > pointBalance) {
+          throw new Error("Insufficient point balance.");
+        }
+
+        const payableAmount = Math.max(0, totalAfterCoupon + deliveryFee);
+        if (requestedPointAmount > payableAmount) {
+          throw new Error("Requested point amount is too high.");
+        }
+
+        const orderRef = ordersRef.doc();
+        const orderId = orderRef.id;
+        const orderData = {
+          userId: authContext.uid,
+          orderNumber: `ORD-${toTodayString(nowDate).replace(/-/g, "")}-${orderId.slice(0, 6).toUpperCase()}`,
+          products: resolvedItems,
+          totalAmount: subtotal,
+          discountAmount: couponDiscount,
+          deliveryFee,
+          finalAmount: Math.max(0, payableAmount - requestedPointAmount),
+          pointUsed: requestedPointAmount,
+          status: "pending",
+          paymentMethod,
+          shippingAddress: deliveryAddress,
+          deliveryAddress,
+          createdAt: now,
+          updatedAt: now,
+        };
+
+        transaction.set(orderRef, orderData);
+
+        for (const change of productStockDeltas) {
+          transaction.update(change.ref, { stock: change.nextStock, updatedAt: now });
+        }
+
+        if (couponApplied && userCouponRef) {
+          transaction.update(userCouponRef, {
+            status: USER_COUPON_USED_STATUSES[0],
+            usedDate: toTodayString(nowDate),
+            orderId,
+            updatedAt: now,
+          });
+        }
+
+        if (requestedPointAmount > 0) {
+          const nextPointBalance = pointBalance - requestedPointAmount;
+          transaction.update(userRef, {
+            pointBalance: nextPointBalance,
+            updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+          });
+          transaction.set(userRef.collection("pointHistory").doc(), {
+            type: "use",
+            amount: requestedPointAmount,
+            description: "주문 포인트 사용",
+            orderId,
+            date: now,
+            balanceAfter: nextPointBalance,
+            expired: false,
+          });
+        }
+
+        const cartRef = admin.firestore().collection("carts").doc(authContext.uid);
+        const cartSnap = await transaction.get(cartRef);
+        if (cartSnap.exists && cartItemIdsToRemove.size > 0) {
+          const cartData = cartSnap.data() || {};
+          const cartItems = Array.isArray(cartData.items) ? cartData.items : [];
+          const nextItems = cartItems.filter((item: unknown) => {
+            const cartId = toStringValue((item as Record<string, unknown>)?.id);
+            return !cartId || !cartItemIdsToRemove.has(cartId);
+          });
+
+          if (nextItems.length !== cartItems.length) {
+            const cartSummary = mapCartTotal(nextItems);
+            transaction.update(cartRef, {
+              items: nextItems,
+              totalAmount: cartSummary.totalAmount,
+              totalItems: cartSummary.totalItems,
+              updatedAt: now,
+            });
+          }
+        }
+
+        return {
+          orderId,
+          orderNumber: orderData.orderNumber,
+          totalAmount: orderData.totalAmount,
+          discountAmount: orderData.discountAmount,
+          deliveryFee: orderData.deliveryFee,
+          finalAmount: orderData.finalAmount,
+          pointUsed: orderData.pointUsed,
+          paymentMethod: orderData.paymentMethod,
+          status: orderData.status,
+          createdAt: nowDate.toISOString(),
+          products: resolvedItems,
+          shippingAddress: orderData.shippingAddress,
+          deliveryAddress: orderData.deliveryAddress,
+        };
+      });
+
+      res.status(200).json({
+        success: true,
+        data: result,
+      });
+    } catch (error: any) {
+      if (error instanceof AuthError) {
+        res.status(error.statusCode).json({ success: false, error: error.message });
+        return;
+      }
+
+      console.error("Order API error:", error);
+      res.status(400).json({ success: false, error: error instanceof Error ? error.message : "Internal server error" });
+    }
+  }
+);

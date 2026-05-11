@@ -5,18 +5,49 @@ import {
   getDoc,
   query,
   where,
-  Timestamp,
   writeBatch,
+  orderBy,
+  limit,
+  startAfter,
+  DocumentData,
+  QueryDocumentSnapshot,
+  QueryConstraint,
+  Timestamp,
 } from 'firebase/firestore';
 import { db } from '@/shared/libs/firebase/firebase';
 import { Product, ProductFilter, ProductSort } from '@/shared/types/product';
+
+type ProductStatus = Product['status'];
+
+export interface ProductQueryInput {
+  category?: string;
+  categoryId?: string;
+  brand?: string;
+  status?: ProductStatus;
+  minPrice?: number;
+  maxPrice?: number;
+  minRating?: number;
+  isNew?: boolean;
+  isSale?: boolean;
+  keyword?: string;
+  sort?: ProductSort;
+  limitCount?: number;
+  startAfterDoc?: QueryDocumentSnapshot<DocumentData> | null;
+}
+
+export interface ProductQueryResult {
+  items: Product[];
+  nextCursor?: QueryDocumentSnapshot<DocumentData>;
+  hasMore: boolean;
+}
 
 type ProductPayload = Omit<Product, 'id' | 'createdAt' | 'updatedAt'>;
 
 export class ProductService {
   private static readonly PRODUCTS_COLLECTION = 'products';
-  private static readonly CATEGORIES_COLLECTION = 'categories';
-  private static readonly LEGACY_SUBCOLLECTION = 'products';
+  private static readonly DEFAULT_PAGE_SIZE = 24;
+  private static readonly KEYWORD_SCAN_MULTIPLIER = 3;
+  private static readonly DEFAULT_SORT: ProductSort = { field: 'createdAt', order: 'desc' };
 
   private static normalizeDate(value: unknown): Date {
     if (value instanceof Date) {
@@ -94,41 +125,38 @@ export class ProductService {
     return cleaned;
   }
 
-  private static mergeProducts(primary: Product[], secondary: Product[]): Product[] {
-    const merged = new Map<string, Product>();
+  private static normalizeSort(sort?: ProductSort): ProductSort {
+    if (!sort) {
+      return { ...this.DEFAULT_SORT };
+    }
 
-    secondary.forEach((product) => {
-      merged.set(product.id, product);
+    return sort;
+  }
+
+  private static filterByKeyword(products: Product[], keyword?: string): Product[] {
+    if (!keyword) {
+      return products;
+    }
+
+    const normalizedKeyword = keyword.trim().toLowerCase();
+    if (!normalizedKeyword) {
+      return products;
+    }
+
+    return products.filter((product) => {
+      return (
+        product.name.toLowerCase().includes(normalizedKeyword) ||
+        (product.brand || '').toLowerCase().includes(normalizedKeyword) ||
+        (product.description || '').toLowerCase().includes(normalizedKeyword) ||
+        (product.category || '').toLowerCase().includes(normalizedKeyword) ||
+        product.tags.some((tag) => tag.toLowerCase().includes(normalizedKeyword))
+      );
     });
-
-    primary.forEach((product) => {
-      merged.set(product.id, product);
-    });
-
-    return Array.from(merged.values());
   }
 
   private static async getTopLevelProducts(): Promise<Product[]> {
     const snapshot = await getDocs(collection(db, this.PRODUCTS_COLLECTION));
     return snapshot.docs.map((productDoc) => this.normalizeProduct(productDoc.id, productDoc.data()));
-  }
-
-  private static async getLegacyProducts(): Promise<Product[]> {
-    const categoriesSnapshot = await getDocs(collection(db, this.CATEGORIES_COLLECTION));
-    const products: Product[] = [];
-
-    for (const categoryDoc of categoriesSnapshot.docs) {
-      const categoryId = categoryDoc.id;
-      const categoryProductsSnapshot = await getDocs(
-        collection(db, this.CATEGORIES_COLLECTION, categoryId, this.LEGACY_SUBCOLLECTION)
-      );
-
-      categoryProductsSnapshot.docs.forEach((productDoc) => {
-        products.push(this.normalizeProduct(productDoc.id, productDoc.data(), categoryId));
-      });
-    }
-
-    return products;
   }
 
   private static async getTopLevelProductById(productId: string): Promise<Product | null> {
@@ -140,80 +168,120 @@ export class ProductService {
     return this.normalizeProduct(snapshot.id, snapshot.data());
   }
 
-  private static async getLegacyProductById(productId: string): Promise<Product | null> {
-    const categoriesSnapshot = await getDocs(collection(db, this.CATEGORIES_COLLECTION));
-
-    for (const categoryDoc of categoriesSnapshot.docs) {
-      const categoryId = categoryDoc.id;
-      const snapshot = await getDoc(
-        doc(db, this.CATEGORIES_COLLECTION, categoryId, this.LEGACY_SUBCOLLECTION, productId)
+  static async queryProducts(queryInput: ProductQueryInput = {}): Promise<ProductQueryResult> {
+    try {
+      const sort = this.normalizeSort(queryInput.sort);
+      const pageSize = queryInput.limitCount ?? this.DEFAULT_PAGE_SIZE;
+      const normalizedPageSize = Math.max(1, pageSize);
+      const keyword = queryInput.keyword?.trim();
+      const hasKeyword = Boolean(keyword);
+      const scanMultiplier = hasKeyword ? this.KEYWORD_SCAN_MULTIPLIER : 1;
+      const queryLimit = Math.max(
+        normalizedPageSize + 1,
+        normalizedPageSize * scanMultiplier + 1
       );
 
-      if (snapshot.exists()) {
-        return this.normalizeProduct(snapshot.id, snapshot.data(), categoryId);
+      const constraints: QueryConstraint[] = [];
+      const filters = queryInput.category || queryInput.categoryId;
+
+      if (queryInput.status) {
+        constraints.push(where('status', '==', queryInput.status));
       }
-    }
 
-    return null;
-  }
-
-  private static async getLegacyProductRef(productId: string, categoryId?: string) {
-    if (categoryId) {
-      const exactRef = doc(
-        db,
-        this.CATEGORIES_COLLECTION,
-        categoryId,
-        this.LEGACY_SUBCOLLECTION,
-        productId
-      );
-      const exactSnapshot = await getDoc(exactRef);
-
-      if (exactSnapshot.exists()) {
-        return exactRef;
+      if (filters) {
+        constraints.push(where('categoryId', '==', this.normalizeCategoryId({ categoryId: filters })));
       }
-    }
 
-    const categoriesSnapshot = await getDocs(collection(db, this.CATEGORIES_COLLECTION));
-
-    for (const categoryDoc of categoriesSnapshot.docs) {
-      const candidateRef = doc(
-        db,
-        this.CATEGORIES_COLLECTION,
-        categoryDoc.id,
-        this.LEGACY_SUBCOLLECTION,
-        productId
-      );
-      const candidateSnapshot = await getDoc(candidateRef);
-
-      if (candidateSnapshot.exists()) {
-        return candidateRef;
+      if (queryInput.brand) {
+        constraints.push(where('brand', '==', queryInput.brand));
       }
+
+      if (typeof queryInput.minPrice === 'number') {
+        constraints.push(where('price', '>=', queryInput.minPrice));
+      }
+
+      if (typeof queryInput.maxPrice === 'number') {
+        constraints.push(where('price', '<=', queryInput.maxPrice));
+      }
+
+      if (queryInput.minRating !== undefined) {
+        constraints.push(where('rating', '>=', queryInput.minRating));
+      }
+
+      if (queryInput.isNew !== undefined) {
+        constraints.push(where('isNew', '==', queryInput.isNew));
+      }
+
+      if (queryInput.isSale !== undefined) {
+        constraints.push(where('isSale', '==', queryInput.isSale));
+      }
+
+      constraints.push(orderBy(sort.field, sort.order));
+      constraints.push(orderBy('__name__', sort.order));
+
+      let inspectedCount = 0;
+      let cursor: QueryDocumentSnapshot<DocumentData> | null = queryInput.startAfterDoc || null;
+      let nextCursor: QueryDocumentSnapshot<DocumentData> | null = null;
+      let hasMore = false;
+      let collected: Product[] = [];
+
+      while (true) {
+        const pagedQuery = query(
+          collection(db, this.PRODUCTS_COLLECTION),
+          ...constraints,
+          ...(cursor ? [startAfter(cursor)] : []),
+          limit(queryLimit)
+        );
+
+        const snapshot = await getDocs(pagedQuery);
+        const docs = snapshot.docs;
+
+        if (docs.length === 0) {
+          hasMore = false;
+          break;
+        }
+
+        inspectedCount += docs.length;
+        nextCursor = docs[docs.length - 1];
+
+        const candidates = docs.map((productDoc) =>
+          this.normalizeProduct(productDoc.id, productDoc.data())
+        );
+
+        const filtered = this.filterByKeyword(candidates, keyword);
+        collected = [...collected, ...filtered];
+        cursor = docs[docs.length - 1];
+
+        if (collected.length >= normalizedPageSize || docs.length < queryLimit) {
+          hasMore = collected.length >= normalizedPageSize && docs.length >= queryLimit;
+          break;
+        }
+      }
+
+      if (inspectedCount === 0) {
+        return {
+          items: [],
+          hasMore: false,
+        };
+      }
+
+      return {
+        items: collected.slice(0, normalizedPageSize),
+        nextCursor: hasMore && nextCursor ? nextCursor : undefined,
+        hasMore,
+      };
+    } catch (error) {
+      console.error('Failed to query products:', error);
+      throw new Error('상품 조회에 실패했습니다.');
     }
-
-    return categoryId
-      ? doc(db, this.CATEGORIES_COLLECTION, categoryId, this.LEGACY_SUBCOLLECTION, productId)
-      : null;
-  }
-
-  private static sortByCreatedAtDesc(products: Product[]): Product[] {
-    return [...products].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
   }
 
   static async getAllProducts(): Promise<Product[]> {
     try {
-      const [topLevelProducts, legacyProducts] = await Promise.all([
-        this.getTopLevelProducts(),
-        this.getLegacyProducts(),
-      ]);
-
-      if (topLevelProducts.length === 0) {
-        return legacyProducts;
-      }
-
-      return this.sortByCreatedAtDesc(this.mergeProducts(topLevelProducts, legacyProducts));
+      return await this.getTopLevelProducts();
     } catch (error) {
       console.error('Failed to load products:', error);
-      throw new Error('상품 목록을 불러오지 못했습니다.');
+      throw new Error('상품 목록을 불러오는데 실패했습니다.');
     }
   }
 
@@ -226,14 +294,6 @@ export class ProductService {
 
       const now = Timestamp.now();
       const productRef = doc(collection(db, this.PRODUCTS_COLLECTION));
-      const legacyRef = doc(
-        db,
-        this.CATEGORIES_COLLECTION,
-        categoryId,
-        this.LEGACY_SUBCOLLECTION,
-        productRef.id
-      );
-
       const productData = this.cleanObject({
         ...product,
         category: categoryId,
@@ -245,7 +305,6 @@ export class ProductService {
 
       const batch = writeBatch(db);
       batch.set(productRef, productData);
-      batch.set(legacyRef, productData);
       await batch.commit();
 
       return this.normalizeProduct(productRef.id, productData, categoryId);
@@ -279,20 +338,8 @@ export class ProductService {
 
       const batch = writeBatch(db);
       batch.set(doc(db, this.PRODUCTS_COLLECTION, productId), mergedProduct, { merge: true });
-
-      if (previousCategoryId && previousCategoryId !== nextCategoryId) {
-        batch.delete(
-          doc(db, this.CATEGORIES_COLLECTION, previousCategoryId, this.LEGACY_SUBCOLLECTION, productId)
-        );
-      }
-
-      batch.set(
-        doc(db, this.CATEGORIES_COLLECTION, nextCategoryId, this.LEGACY_SUBCOLLECTION, productId),
-        mergedProduct,
-        { merge: true }
-      );
-
       await batch.commit();
+
       return this.normalizeProduct(productId, mergedProduct, nextCategoryId);
     } catch (error) {
       console.error('Failed to update product:', error);
@@ -307,19 +354,8 @@ export class ProductService {
         throw new Error('상품을 찾을 수 없습니다.');
       }
 
-      const categoryId = existingProduct.categoryId || existingProduct.category;
       const batch = writeBatch(db);
       batch.delete(doc(db, this.PRODUCTS_COLLECTION, productId));
-
-      if (categoryId) {
-        batch.delete(doc(db, this.CATEGORIES_COLLECTION, categoryId, this.LEGACY_SUBCOLLECTION, productId));
-      } else {
-        const legacyRef = await this.getLegacyProductRef(productId);
-        if (legacyRef) {
-          batch.delete(legacyRef);
-        }
-      }
-
       await batch.commit();
     } catch (error) {
       console.error('Failed to delete product:', error);
@@ -329,96 +365,55 @@ export class ProductService {
 
   static async getProductById(productId: string): Promise<Product | null> {
     try {
-      const topLevelProduct = await this.getTopLevelProductById(productId);
-      if (topLevelProduct) {
-        return topLevelProduct;
-      }
-
-      return await this.getLegacyProductById(productId);
+      return await this.getTopLevelProductById(productId);
     } catch (error) {
       console.error('Failed to load product detail:', error);
-      throw new Error('상품 정보를 불러오지 못했습니다.');
+      throw new Error('상품 상세 정보를 불러오는데 실패했습니다.');
     }
   }
 
   static async getProductsByCategory(categorySlug: string, limitCount?: number): Promise<Product[]> {
     try {
-      const topLevelRef = collection(db, this.PRODUCTS_COLLECTION);
-      const topLevelByCategoryId = await getDocs(query(topLevelRef, where('categoryId', '==', categorySlug)));
-      const topLevelByCategory = await getDocs(query(topLevelRef, where('category', '==', categorySlug)));
+      const result = await this.queryProducts({
+        category: categorySlug,
+        status: 'active',
+        sort: { field: 'createdAt', order: 'desc' },
+        limitCount,
+      });
 
-      const topLevelProducts = this.mergeProducts(
-        topLevelByCategoryId.docs.map((productDoc) => this.normalizeProduct(productDoc.id, productDoc.data())),
-        topLevelByCategory.docs.map((productDoc) => this.normalizeProduct(productDoc.id, productDoc.data()))
-      );
-
-      let products = topLevelProducts;
-      if (products.length === 0) {
-        return this.getProductsByCategoryFallback(categorySlug, limitCount);
-      }
-
-      const legacyProducts = await this.getProductsByCategoryFallback(categorySlug);
-      products = this.mergeProducts(products, legacyProducts);
-      products = products.filter((product) => product.status === 'active');
-      products = this.sortByCreatedAtDesc(products);
-
-      if (limitCount) {
-        return products.slice(0, limitCount);
-      }
-
-      return products;
+      return result.items;
     } catch (error) {
       console.error('Failed to load category products:', error);
-      return this.getProductsByCategoryFallback(categorySlug, limitCount);
-    }
-  }
-
-  static async getProductsByCategoryFallback(categorySlug: string, limitCount?: number): Promise<Product[]> {
-    try {
-      const categoryProductsRef = collection(
-        db,
-        this.CATEGORIES_COLLECTION,
-        categorySlug,
-        this.LEGACY_SUBCOLLECTION
-      );
-
-      const snapshot = await getDocs(categoryProductsRef);
-      let products = snapshot.docs
-        .map((productDoc) => this.normalizeProduct(productDoc.id, productDoc.data(), categorySlug))
-        .filter((product) => product.status === 'active');
-
-      products = this.sortByCreatedAtDesc(products);
-      if (limitCount) {
-        return products.slice(0, limitCount);
-      }
-
-      return products;
-    } catch (error) {
-      console.error('Fallback category product load failed:', error);
       return [];
     }
   }
 
   static async getFilteredProducts(filter: ProductFilter): Promise<Product[]> {
     try {
-      const allProducts = await this.getAllProducts();
-
-      return allProducts.filter((product) => {
-        const categoryId = product.categoryId || product.category;
-
-        if (filter.category && categoryId !== filter.category && product.category !== filter.category) return false;
-        if (filter.brand && product.brand !== filter.brand) return false;
-        if (filter.status && product.status !== filter.status) return false;
-        if (filter.minPrice && product.price < filter.minPrice) return false;
-        if (filter.maxPrice && product.price > filter.maxPrice) return false;
-        if (filter.size && !product.sizes.includes(filter.size)) return false;
-        if (filter.color && !product.colors.includes(filter.color)) return false;
-        if (filter.rating && product.rating < filter.rating) return false;
-        if (filter.isNew !== undefined && product.isNew !== filter.isNew) return false;
-        if (filter.isSale !== undefined && product.isSale !== filter.isSale) return false;
-
-        return true;
+      const result = await this.queryProducts({
+        category: filter.category,
+        brand: filter.brand,
+        minPrice: filter.minPrice,
+        maxPrice: filter.maxPrice,
+        minRating: filter.rating,
+        isNew: filter.isNew,
+        isSale: filter.isSale,
+        status: filter.status,
+        sort: { field: 'createdAt', order: 'desc' },
+        limitCount: 1000,
       });
+
+      let products = result.items;
+
+      if (filter.size) {
+        products = products.filter((product) => product.sizes.includes(filter.size!));
+      }
+
+      if (filter.color) {
+        products = products.filter((product) => product.colors.includes(filter.color!));
+      }
+
+      return products;
     } catch (error) {
       console.error('Failed to filter products:', error);
       throw new Error('상품 필터링에 실패했습니다.');
@@ -448,16 +443,13 @@ export class ProductService {
 
   static async searchProducts(searchQuery: string): Promise<Product[]> {
     try {
-      const allProducts = await this.getAllProducts();
-      const normalizedQuery = searchQuery.toLowerCase();
-
-      return allProducts.filter((product) =>
-        product.name.toLowerCase().includes(normalizedQuery) ||
-        product.brand.toLowerCase().includes(normalizedQuery) ||
-        product.description.toLowerCase().includes(normalizedQuery) ||
-        product.category.toLowerCase().includes(normalizedQuery) ||
-        product.tags.some((tag) => tag.toLowerCase().includes(normalizedQuery))
-      );
+      const result = await this.queryProducts({
+        status: 'active',
+        keyword: searchQuery,
+        sort: { field: 'createdAt', order: 'desc' },
+        limitCount: 1000,
+      });
+      return result.items;
     } catch (error) {
       console.error('Failed to search products:', error);
       throw new Error('상품 검색에 실패했습니다.');
@@ -482,11 +474,13 @@ export class ProductService {
 
   static async getNewProducts(limitCount: number = 8): Promise<Product[]> {
     try {
-      const allProducts = await this.getAllProducts();
-      return allProducts
-        .filter((product) => product.isNew && product.status === 'active')
-        .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-        .slice(0, limitCount);
+      const result = await this.queryProducts({
+        status: 'active',
+        isNew: true,
+        sort: { field: 'createdAt', order: 'desc' },
+        limitCount,
+      });
+      return result.items;
     } catch (error) {
       console.error('Failed to load new products:', error);
       return [];
@@ -495,10 +489,13 @@ export class ProductService {
 
   static async getSaleProducts(limitCount: number = 8): Promise<Product[]> {
     try {
-      const allProducts = await this.getAllProducts();
-      return allProducts
-        .filter((product) => product.isSale && product.status === 'active')
-        .slice(0, limitCount);
+      const result = await this.queryProducts({
+        status: 'active',
+        isSale: true,
+        sort: { field: 'createdAt', order: 'desc' },
+        limitCount,
+      });
+      return result.items.filter((product) => product.saleRate && product.saleRate > 0);
     } catch (error) {
       console.error('Failed to load sale products:', error);
       return [];
@@ -507,10 +504,14 @@ export class ProductService {
 
   static async getBestSellerProducts(limitCount: number = 8): Promise<Product[]> {
     try {
-      const allProducts = await this.getAllProducts();
-      return allProducts
-        .filter((product) => product.status === 'active')
-        .sort((a, b) => b.reviewCount - a.reviewCount)
+      const result = await this.queryProducts({
+        status: 'active',
+        sort: { field: 'reviewCount', order: 'desc' },
+        limitCount: Math.max(limitCount * 2, 40),
+      });
+
+      return result.items
+        .filter((product) => product.reviewCount > 0)
         .slice(0, limitCount);
     } catch (error) {
       console.error('Failed to load best seller products:', error);
@@ -520,10 +521,18 @@ export class ProductService {
 
   static async getRecommendedProducts(limitCount: number = 8): Promise<Product[]> {
     try {
-      const allProducts = await this.getAllProducts();
-      return allProducts
-        .filter((product) => product.status === 'active' && product.rating >= 4)
-        .sort((a, b) => b.rating - a.rating)
+      const result = await this.queryProducts({
+        status: 'active',
+        sort: { field: 'createdAt', order: 'desc' },
+        limitCount: 200,
+      });
+      return result.items
+        .filter((product) => product.rating >= 4)
+        .sort((a, b) => {
+          const scoreA = a.rating * 0.4 + Math.min(a.reviewCount / 10, 50) * 0.3 + (a.isNew ? 10 : 0);
+          const scoreB = b.rating * 0.4 + Math.min(b.reviewCount / 10, 50) * 0.3 + (b.isNew ? 10 : 0);
+          return scoreB - scoreA;
+        })
         .slice(0, limitCount);
     } catch (error) {
       console.error('Failed to load recommended products:', error);
@@ -533,8 +542,10 @@ export class ProductService {
 
   static async getCategories(): Promise<string[]> {
     try {
-      const categoriesSnapshot = await getDocs(collection(db, this.CATEGORIES_COLLECTION));
-      return categoriesSnapshot.docs.map((categoryDoc) => categoryDoc.id).sort();
+      const snapshot = await getDocs(collection(db, 'categories'));
+      return snapshot.docs
+        .map((categoryDoc) => categoryDoc.id)
+        .sort();
     } catch (error) {
       console.error('Failed to load categories:', error);
       return ['accessories', 'bags', 'bottoms', 'shoes', 'tops'];
@@ -543,7 +554,7 @@ export class ProductService {
 
   static async getCategoriesWithNames(): Promise<{ id: string; name: string }[]> {
     try {
-      const categoriesSnapshot = await getDocs(collection(db, this.CATEGORIES_COLLECTION));
+      const categoriesSnapshot = await getDocs(collection(db, 'categories'));
       return categoriesSnapshot.docs
         .map((categoryDoc) => ({
           id: categoryDoc.id,
@@ -553,9 +564,9 @@ export class ProductService {
     } catch (error) {
       console.error('Failed to load category names:', error);
       return [
-        { id: 'accessories', name: '악세서리' },
+        { id: 'accessories', name: '액세서리' },
         { id: 'bags', name: '가방' },
-        { id: 'bottoms', name: '하의' },
+        { id: 'bottoms', name: '바지' },
         { id: 'shoes', name: '신발' },
         { id: 'tops', name: '상의' },
       ];

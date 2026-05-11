@@ -61,13 +61,11 @@ export default function DynamicCategorySection({
         {Array.from({ length: maxCategories }).map((_, index) => (
           <div key={index} className={`${styles.categoryCard} ${styles.loading}`}>
             <div className={styles.categoryImageWrapper}>
-              <div className={`${styles.categoryImagePlaceholder} ${styles.loadingShimmer}`}>
-                <span className={styles.categoryIcon}></span>
-              </div>
+              <div className={`${styles.categoryImagePlaceholder} ${styles.loadingShimmer}`}></div>
             </div>
             <div className={styles.categoryInfo}>
               <span className={styles.categoryLabel}>로딩 중...</span>
-              <span className={styles.categoryCount}>-</span>
+              <span className={styles.categoryCount}>상품 수 확인 중</span>
             </div>
           </div>
         ))}
@@ -106,34 +104,16 @@ export default function DynamicCategorySection({
                 style={{ objectFit: 'cover' }}
                 className={styles.categoryImage}
               />
-              <div className={styles.categoryOverlay}>
-                <span className={styles.categoryIcon}>{category.icon}</span>
-              </div>
             </div>
           </div>
           <div className={styles.categoryInfo}>
             <span className={styles.categoryLabel}>{category.name}</span>
-            <span className={styles.categoryCount}>{category.count}</span>
+            <span className={styles.categoryCount}>
+              {category.count || '상품 준비 중'}
+            </span>
           </div>
         </Link>
       ))}
     </div>
   );
-}
-
-// 카테고리별 배경 클래스 반환
-function getCategoryBgClass(categoryName: string): string {
-  const bgClassMap: Record<string, string> = {
-    '의류': styles.clothingBg,
-    '상의': styles.clothingBg,
-    '하의': styles.clothingBg,
-    '가방': styles.bagsBg,
-    '액세서리': styles.accessoriesBg,
-    '아웃도어': styles.outdoorBg,
-    '스포츠': styles.sportsBg,
-    '신발': styles.shoesBg,
-    '주얼리': styles.jewelryBg
-  };
-  
-  return bgClassMap[categoryName] || styles.defaultBg;
 }

@@ -250,6 +250,7 @@ export default function ProductDetailClient({ product }: Props) {
     const orderData = {
       items: [{
         productId: product.id,
+        id: `${product.id}-${selectedSize || ''}-${selectedColor || ''}`,
         productName: product.name,
         productImage: product.images[0],
         brand: product.brand,

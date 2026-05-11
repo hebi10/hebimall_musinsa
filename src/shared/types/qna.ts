@@ -7,14 +7,15 @@ export interface QnA {
   title: string;
   content: string;
   images?: string[];
-  isSecret: boolean; // 비밀글 여부
-  password?: string; // 비밀글 비밀번호
+  isSecret: boolean;
+  passwordHash?: string;
+  passwordSalt?: string;
   status: 'waiting' | 'answered' | 'closed';
   views: number;
-  isNotified: boolean; // 답변 알림 받기
+  isNotified: boolean;
   createdAt: Date;
   updatedAt: Date;
-  productId?: string; // 상품 관련 문의일 경우
+  productId?: string;
   productName?: string;
   answer?: {
     content: string;

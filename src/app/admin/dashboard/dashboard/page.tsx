@@ -35,21 +35,10 @@ interface ActivityData {
 
 export default function AdminDashboardPage() {
   const router = useRouter();
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
   const [currentTime, setCurrentTime] = useState("");
 
   useEffect(() => {
-    // 관리자 권한 체크
-    if (!user) {
-      router.replace("/auth/login");
-      return;
-    }
-
-    if (user.role !== "admin") {
-      router.replace("/");
-      return;
-    }
-
     const updateTime = () => {
       const now = new Date();
       setCurrentTime(now.toLocaleString('ko-KR', {
@@ -65,26 +54,7 @@ export default function AdminDashboardPage() {
     const interval = setInterval(updateTime, 60000);
 
     return () => clearInterval(interval);
-  }, [router, user]);
-
-  // 사용자가 로그인하지 않았거나 관리자가 아닌 경우 로딩 화면 표시
-  if (!user || user.role !== "admin") {
-    return (
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100vh',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        color: 'white',
-        fontSize: '1.2rem'
-      }}>
-        <div style={{ textAlign: 'center' }}>
-          <p>권한을 확인하는 중...</p>
-        </div>
-      </div>
-    );
-  }
+  }, []);
 
   // 로그아웃 핸들러
   const handleLogout = async () => {

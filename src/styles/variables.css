@@ -1,9 +1,9 @@
 :root {
   /* Primary Colors */
-  --color-primary: var(--point);
-  --color-primary-hover: var(--point-hover);
-  --color-primary-dark: var(--black);
-  --color-primary-light: var(--point-soft);
+  --color-primary: var(--action);
+  --color-primary-hover: var(--action-hover);
+  --color-primary-dark: var(--action-hover);
+  --color-primary-light: var(--action-soft);
   
   /* Secondary Colors */
   --color-secondary: var(--surface-muted);
@@ -27,10 +27,10 @@
   --color-gray-900: var(--black);
   
   /* Semantic Colors */
-  --color-blue-500: var(--point);
-  --color-blue-600: var(--point-hover);
+  --color-blue-500: var(--action);
+  --color-blue-600: var(--action-hover);
   --color-red-500: var(--error);
-  --color-red-600: var(--point-hover);
+  --color-red-600: var(--error);
   --color-green-500: var(--success);
   --color-green-600: var(--success);
   --color-yellow-500: var(--warning);

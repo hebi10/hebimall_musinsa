@@ -28,7 +28,6 @@
 .headerBody h2 {
   margin: 0;
   max-width: 12ch;
-  font-family: var(--font-heading), "Noto Serif KR", "Apple Myungjo", serif;
   font-size: clamp(2rem, 4vw, 3.1rem);
   font-weight: 600;
   line-height: 1.12;
@@ -78,7 +77,6 @@
 }
 
 .statNumber {
-  font-family: var(--font-heading), "Noto Serif KR", "Apple Myungjo", serif;
   font-size: 2rem;
   font-weight: 600;
   line-height: 1.05;
@@ -199,7 +197,6 @@
 
 .loginPrompt h2 {
   margin: 0 0 0.75rem;
-  font-family: var(--font-heading), "Noto Serif KR", "Apple Myungjo", serif;
   font-size: clamp(1.7rem, 3.2vw, 2.3rem);
   font-weight: 600;
   color: var(--black);
@@ -219,9 +216,9 @@
   justify-content: center;
   min-height: 44px;
   padding: 0.8rem 1.3rem;
-  border: 1px solid var(--point);
+  border: 1px solid var(--black);
   border-radius: var(--radius-md);
-  background: var(--point);
+  background: var(--black);
   color: var(--surface-raised);
   font-size: 0.92rem;
   font-weight: 600;
@@ -230,8 +227,8 @@
 }
 
 .loginButton:hover {
-  background: var(--point-hover);
-  border-color: var(--point-hover);
+  background: var(--action-hover);
+  border-color: var(--action-hover);
 }
 
 @media (max-width: 900px) {

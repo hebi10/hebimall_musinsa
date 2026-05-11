@@ -140,8 +140,9 @@
 
 .tag {
   padding: var(--spacing-xs) var(--spacing-sm);
-  background: var(--color-accent);
-  color: var(--color-white);
+  border: 1px solid var(--color-border-light);
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
   font-size: 0.75rem;
   font-weight: 500;
   border-radius: var(--border-radius-md);
@@ -332,8 +333,8 @@
 }
 
 .wishlistButton.wishlisted:hover {
-  background: var(--point-hover);
-  border-color: var(--point-hover);
+  background: var(--color-danger);
+  border-color: var(--color-danger);
 }
 
 .wishlistButton:disabled {

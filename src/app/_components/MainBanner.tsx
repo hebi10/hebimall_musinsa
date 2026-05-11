@@ -24,55 +24,51 @@ interface BannerSlide {
   secondaryLink: string;
   image: string;
   imagePosition?: string;
-  backgroundColor: string;
   meta: string[];
 }
 
 const bannerSlides: BannerSlide[] = [
   {
     id: 1,
-    eyebrow: '봄 메인 셀렉션',
-    title: '가볍게 걸치는 간절기 아우터',
+    eyebrow: 'New arrivals',
+    title: '지금 입기 좋은 간절기 아우터',
     description:
-      '지금 입기 좋은 트렌치, 재킷, 셔츠 아우터를 메인 셀렉션으로 묶어 한 번에 볼 수 있게 정리했습니다.',
+      '트렌치, 재킷, 셔츠 아우터를 중심으로 가볍게 입기 좋은 신상품을 모았습니다.',
     primaryLabel: '신상품 보러가기',
     primaryLink: '/products?sort=newest',
-    secondaryLabel: '추천 상품 보기',
+    secondaryLabel: '추천 보기',
     secondaryLink: '/recommend',
-    image: '/main/banner_main01.png',
+    image: '/main/hero_editorial_outer.webp',
     imagePosition: 'center center',
-    backgroundColor: 'linear-gradient(135deg, var(--hero-one) 0%, #3f3732 100%)',
-    meta: ['신상 업데이트', '가벼운 레이어드', '빠른 출고'],
+    meta: ['Trench', 'Jacket', 'Shirt outer'],
   },
   {
     id: 2,
-    eyebrow: '시즌오프 세일',
-    title: '에센셜 라인 시즌 세일',
+    eyebrow: 'Season sale',
+    title: '오래 입는 기본 아이템 세일',
     description:
-      '데일리로 오래 입을 수 있는 니트, 팬츠, 가방만 골라 이번 시즌 세일 구간으로 다시 구성했습니다.',
+      '니트, 팬츠, 가방처럼 자주 손이 가는 아이템을 할인 구간으로 정리했습니다.',
     primaryLabel: '세일 상품 보기',
     primaryLink: '/main/sale',
-    secondaryLabel: '전체 상품 보기',
+    secondaryLabel: '전체 보기',
     secondaryLink: '/products',
-    image: '/main/banner_main02.png',
+    image: '/main/hero_editorial_sale.webp',
     imagePosition: 'center center',
-    backgroundColor: 'linear-gradient(135deg, var(--hero-two) 0%, #453533 100%)',
-    meta: ['최대 30% 할인', '선별 상품', '한정 수량'],
+    meta: ['Up to 30%', 'Knit', 'Daily bag'],
   },
   {
     id: 3,
-    eyebrow: '베스트 랭킹',
-    title: '리뷰로 검증된 이번 주 인기 상품',
+    eyebrow: 'Best ranking',
+    title: '이번 주 많이 선택한 상품',
     description:
-      '구매 반응이 빠르게 이어지는 베스트셀러만 따로 모아 메인에서 바로 비교하고 살펴볼 수 있게 준비했습니다.',
+      '구매와 리뷰 반응이 좋은 상품을 먼저 비교할 수 있게 모았습니다.',
     primaryLabel: '베스트 보기',
     primaryLink: '/products?sort=bestseller',
-    secondaryLabel: '랭킹 구간 이동',
+    secondaryLabel: '랭킹 보기',
     secondaryLink: '/#best-ranking',
-    image: '/main/banner_main03.png',
+    image: '/main/hero_editorial_best.webp',
     imagePosition: 'center center',
-    backgroundColor: 'linear-gradient(135deg, var(--hero-three) 0%, #323836 100%)',
-    meta: ['리뷰 상위', '재구매 다수', '주간 업데이트'],
+    meta: ['Review', 'Weekly', 'Bestseller'],
   },
 ];
 
@@ -113,10 +109,16 @@ export default function MainBanner() {
         >
           {bannerSlides.map((slide, index) => (
             <SwiperSlide key={slide.id}>
-              <div
-                className={styles.bannerSlide}
-                style={{ background: slide.backgroundColor }}
-              >
+              <div className={styles.bannerSlide}>
+                <Image
+                  src={slide.image}
+                  alt={`${slide.title} 배너 이미지`}
+                  fill
+                  priority={index === 0}
+                  sizes="100vw"
+                  className={styles.bannerBackground}
+                  style={{ objectPosition: slide.imagePosition ?? 'center center' }}
+                />
                 <div className={styles.bannerBackdrop}></div>
 
                 <div className={styles.bannerContent}>
@@ -150,22 +152,6 @@ export default function MainBanner() {
                       >
                         {slide.secondaryLabel}
                       </Link>
-                    </div>
-                  </div>
-
-                  <div className={styles.visualPanel}>
-                    <div className={styles.bannerModelImage}>
-                      <Image
-                        src={slide.image}
-                        alt={`${slide.title} 배너 이미지`}
-                        fill
-                        priority={index === 0}
-                        sizes="(max-width: 768px) 88vw, 44vw"
-                        style={{
-                          objectFit: 'contain',
-                          objectPosition: slide.imagePosition ?? 'center center',
-                        }}
-                      />
                     </div>
                   </div>
                 </div>

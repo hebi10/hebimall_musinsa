@@ -55,6 +55,6 @@ export interface ProductFilter {
 }
 
 export interface ProductSort {
-  field: 'price' | 'rating' | 'createdAt' | 'name';
+  field: 'price' | 'rating' | 'createdAt' | 'name' | 'reviewCount';
   order: 'asc' | 'desc';
 }

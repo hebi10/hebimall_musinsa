@@ -42,6 +42,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuthUser();
   const [isAdmin, setIsAdmin] = useState(false);
   const [isUserDataLoading, setIsUserDataLoading] = useState(true);
+  const [adminClaimsLoading, setAdminClaimsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const pathname = usePathname();
@@ -138,21 +139,48 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [user, loading, pathname, router]);
 
-  // 관리자 권한 체크
+  // 관리자 권한 체크: users 문서가 아니라 Firebase Custom Claims만 신뢰한다.
   useEffect(() => {
-    if (user && userData !== undefined) { // userData가 로드 완료되었을 때만
-      if (userData?.role === 'admin') {
-        setIsAdmin(true);
-      } else {
-        console.log('일반 사용자:', userData?.email || 'Unknown');
+    let cancelled = false;
+
+    const loadAdminClaims = async () => {
+      if (!user) {
         setIsAdmin(false);
+        setAdminClaimsLoading(false);
+        return;
       }
-    } else if (!user) {
-      setIsAdmin(false); // 로그아웃 시 권한 리셋
-    }
-    
-    setIsUserDataLoading(userDataLoading || loading);
-  }, [user, userData, userDataLoading, loading]);
+
+      setAdminClaimsLoading(true);
+      try {
+        const tokenResult = await user.getIdTokenResult(true);
+        const claims = tokenResult.claims;
+        const nextIsAdmin = claims.admin === true || claims.role === 'admin';
+
+        if (!cancelled) {
+          setIsAdmin(nextIsAdmin);
+        }
+      } catch (error) {
+        console.error('관리자 권한 토큰 확인 실패:', error);
+        if (!cancelled) {
+          setIsAdmin(false);
+        }
+      } finally {
+        if (!cancelled) {
+          setAdminClaimsLoading(false);
+        }
+      }
+    };
+
+    loadAdminClaims();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [user]);
+
+  useEffect(() => {
+    setIsUserDataLoading(userDataLoading || loading || adminClaimsLoading);
+  }, [userDataLoading, loading, adminClaimsLoading]);
 
   return (
     <AuthContext.Provider value={{ user, login, logout, signUp, userData, loading, isUserDataLoading, isAdmin, error, clearError }}>

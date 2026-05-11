@@ -1,13 +1,12 @@
-'use client';
+﻿'use client';
 
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ProductService } from '@/shared/services/productService';
 import { Product } from '@/shared/types/product';
 import styles from "./page.module.css";
 
 export default function RecommendPage() {
-  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [recommendedProducts, setRecommendedProducts] = useState<Product[]>([]);
@@ -15,91 +14,75 @@ export default function RecommendPage() {
 
   const filterOptions = [
     { value: 'all' as const, label: '전체' },
-    { value: 'rating' as const, label: '높은 평점' },
-    { value: 'review' as const, label: '리뷰 많은' },
-    { value: 'sale' as const, label: '할인 상품' },
-    { value: 'new' as const, label: '신상품' }
+    { value: 'rating' as const, label: '평점' },
+    { value: 'review' as const, label: '리뷰' },
+    { value: 'sale' as const, label: '세일 상품' },
+    { value: 'new' as const, label: '신상품' },
   ];
 
-  useEffect(() => {
-    loadProducts();
-  }, []);
-
-  useEffect(() => {
-    if (products.length > 0) {
-      filterRecommendedProducts();
-    }
-  }, [products, filterType]);
-
-  const loadProducts = async () => {
+  const loadProducts = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-      const allProducts = await ProductService.getAllProducts();
-      setProducts(allProducts);
+
+      let nextProducts: Product[] = [];
+
+      switch (filterType) {
+        case 'all': {
+          nextProducts = await ProductService.getRecommendedProducts(24);
+          break;
+        }
+        case 'rating': {
+          const result = await ProductService.queryProducts({
+            status: 'active',
+            sort: { field: 'rating', order: 'desc' },
+            limitCount: 80,
+          });
+          nextProducts = result.items.filter((product) => product.rating >= 4.3).slice(0, 24);
+          break;
+        }
+        case 'review': {
+          const result = await ProductService.queryProducts({
+            status: 'active',
+            sort: { field: 'createdAt', order: 'desc' },
+            limitCount: 120,
+          });
+          nextProducts = result.items.filter((product) => product.reviewCount >= 10).slice(0, 24);
+          break;
+        }
+        case 'sale': {
+          const result = await ProductService.getSaleProducts(120);
+          nextProducts = result.slice(0, 24);
+          break;
+        }
+        case 'new': {
+          const result = await ProductService.getNewProducts(80);
+          nextProducts = result.slice(0, 24);
+          break;
+        }
+        default:
+          nextProducts = await ProductService.getRecommendedProducts(24);
+      }
+
+      setRecommendedProducts(nextProducts);
     } catch (err) {
-      console.error('상품 로딩 실패:', err);
-      setError('상품을 불러오는데 실패했습니다.');
+      console.error('상품 추천 로드 실패:', err);
+      setError('상품을 불러오지 못했습니다.');
     } finally {
       setLoading(false);
     }
-  };
+  }, [filterType]);
 
-  const filterRecommendedProducts = () => {
-    let filtered: Product[] = [];
-
-    switch (filterType) {
-      case 'all':
-        filtered = products
-          .map((p: Product) => ({
-            ...p,
-            recommendScore: (p.rating * 0.4) +
-                          (Math.min(p.reviewCount / 10, 50) * 0.3) +
-                          ((p.saleRate || 0) * 0.2) +
-                          (p.isNew ? 10 : 0)
-          }))
-          .sort((a: any, b: any) => b.recommendScore - a.recommendScore)
-          .slice(0, 24);
-        break;
-
-      case 'rating':
-        filtered = products
-          .filter((p: Product) => p.rating >= 4.3)
-          .sort((a: Product, b: Product) => b.rating - a.rating)
-          .slice(0, 20);
-        break;
-
-      case 'review':
-        filtered = products
-          .filter((p: Product) => p.reviewCount >= 50)
-          .sort((a: Product, b: Product) => b.reviewCount - a.reviewCount)
-          .slice(0, 20);
-        break;
-
-      case 'sale':
-        filtered = products
-          .filter((p: Product) => p.isSale && p.saleRate && p.saleRate > 0)
-          .sort((a: Product, b: Product) => (b.saleRate || 0) - (a.saleRate || 0))
-          .slice(0, 20);
-        break;
-
-      case 'new':
-        filtered = products
-          .filter((p: Product) => p.isNew)
-          .sort((a: Product, b: Product) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-          .slice(0, 20);
-        break;
-    }
-
-    setRecommendedProducts(filtered);
-  };
+  useEffect(() => {
+    void loadProducts();
+  }, [loadProducts]);
 
   if (loading) {
     return (
       <div className={styles.container}>
         <div className={styles.loadingWrapper}>
           <div className={styles.loadingSpinner}></div>
-          <p>추천 상품을 불러오는 중...</p>
+          <p>추천 상품 목록을 불러오는 중입니다...</p>
         </div>
       </div>
     );
@@ -109,11 +92,8 @@ export default function RecommendPage() {
     return (
       <div className={styles.container}>
         <div className={styles.errorWrapper}>
-          <p>상품을 불러오는데 실패했습니다.</p>
-          <button
-            onClick={() => loadProducts()}
-            className={styles.retryButton}
-          >
+          <p>{error}</p>
+          <button onClick={() => void loadProducts()} className={styles.retryButton}>
             다시 시도
           </button>
         </div>
@@ -123,24 +103,20 @@ export default function RecommendPage() {
 
   return (
     <div className={styles.container}>
-      {/* 페이지 헤더 */}
       <div className={styles.heroSection}>
         <div className={styles.heroContent}>
           <h1 className={styles.heroTitle}>추천</h1>
-          <p className={styles.heroSubtitle}>평점, 리뷰, 할인 기준으로 선별한 상품입니다</p>
+          <p className={styles.heroSubtitle}>평점, 리뷰, 할인율, 신상품 기준으로 큐레이션한 추천 상품입니다.</p>
         </div>
       </div>
 
       <div className={styles.content}>
-        {/* Filter Tabs */}
         <div className={styles.filterSection}>
           <div className={styles.filterTabs}>
             {filterOptions.map((option) => (
               <button
                 key={option.value}
-                className={`${styles.filterTab} ${
-                  filterType === option.value ? styles.active : ''
-                }`}
+                className={`${styles.filterTab} ${filterType === option.value ? styles.active : ''}`}
                 onClick={() => setFilterType(option.value)}
               >
                 {option.label}
@@ -149,41 +125,32 @@ export default function RecommendPage() {
           </div>
         </div>
 
-        {/* Results Info */}
         <div className={styles.resultsHeader}>
           <div className={styles.resultsCount}>
-            총 <span className={styles.count}>{recommendedProducts.length}</span>개 상품
+            결과: <span className={styles.count}>{recommendedProducts.length}</span>개
           </div>
         </div>
 
-        {/* Product Grid */}
         {recommendedProducts.length === 0 ? (
           <div className={styles.emptyState}>
-            <h3 className={styles.emptyTitle}>해당하는 상품이 없습니다</h3>
-            <p className={styles.emptyDescription}>다른 필터를 선택해보세요.</p>
-            <button
-              onClick={() => setFilterType('all')}
-              className={styles.resetButton}
-            >
+            <h3 className={styles.emptyTitle}>추천 상품이 없습니다.</h3>
+            <p className={styles.emptyDescription}>잠시 후 다시 확인해 주세요.</p>
+            <button onClick={() => setFilterType('all')} className={styles.resetButton}>
               전체 보기
             </button>
           </div>
         ) : (
           <div className={styles.productGrid}>
             {recommendedProducts.map((product) => (
-              <Link
-                key={product.id}
-                href={`/products/${product.id}`}
-                className={styles.productCard}
-              >
+              <Link key={product.id} href={`/products/${product.id}`} className={styles.productCard}>
                 <div className={styles.productImageWrapper}>
                   {product.mainImage ? (
                     <img
                       src={product.mainImage}
                       alt={product.name}
                       className={styles.productImage}
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
+                      onError={(event) => {
+                        const target = event.target as HTMLImageElement;
                         target.style.display = 'none';
                         const placeholder = target.nextElementSibling as HTMLElement;
                         if (placeholder) {
@@ -193,19 +160,14 @@ export default function RecommendPage() {
                     />
                   ) : null}
                   <div className={styles.imagePlaceholder} style={{ display: product.mainImage ? 'none' : 'flex' }}>
-                    <p className={styles.placeholderText}>이미지 준비중</p>
+                    <p className={styles.placeholderText}>대표이미지 없음</p>
                   </div>
 
-                  {/* Badges */}
                   <div className={styles.badgeWrapper}>
-                    {product.isSale && product.saleRate && (
-                      <div className={styles.saleBadge}>
-                        -{Math.round(product.saleRate)}%
-                      </div>
-                    )}
-                    {product.isNew && (
-                      <div className={styles.newBadge}>NEW</div>
-                    )}
+                    {product.isSale && product.saleRate ? (
+                      <div className={styles.saleBadge}>-{Math.round(product.saleRate)}%</div>
+                    ) : null}
+                    {product.isNew ? <div className={styles.newBadge}>NEW</div> : null}
                   </div>
                 </div>
 
@@ -214,14 +176,10 @@ export default function RecommendPage() {
                   <h3 className={styles.productName}>{product.name}</h3>
 
                   <div className={styles.priceWrapper}>
-                    {product.originalPrice && product.originalPrice > product.price && (
-                      <span className={styles.originalPrice}>
-                        {product.originalPrice.toLocaleString()}원
-                      </span>
-                    )}
-                    <span className={styles.currentPrice}>
-                      {product.price.toLocaleString()}원
-                    </span>
+                    {product.originalPrice && product.originalPrice > product.price ? (
+                      <span className={styles.originalPrice}>{product.originalPrice.toLocaleString()}원</span>
+                    ) : null}
+                    <span className={styles.currentPrice}>{product.price.toLocaleString()}원</span>
                   </div>
 
                   <div className={styles.ratingWrapper}>

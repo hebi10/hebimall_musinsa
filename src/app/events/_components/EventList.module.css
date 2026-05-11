@@ -12,11 +12,11 @@
   --banner-eyebrow-bg: rgba(255, 255, 255, 0.82);
   --banner-eyebrow-border: rgba(10, 10, 10, 0.08);
   --banner-eyebrow-color: var(--text-soft);
-  --banner-accent: var(--point);
-  --banner-button-bg: var(--point);
-  --banner-button-border: var(--point);
+  --banner-accent: var(--black);
+  --banner-button-bg: var(--black);
+  --banner-button-border: var(--black);
   --banner-button-color: var(--surface-raised);
-  --banner-button-hover: var(--point-hover);
+  --banner-button-hover: var(--action-hover);
   display: grid;
   grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.95fr);
   gap: 1.5rem;
@@ -75,7 +75,6 @@
 
 .bannerTitle {
   margin: 0;
-  font-family: var(--font-heading), "Noto Serif KR", "Apple Myungjo", serif;
   font-size: clamp(2rem, 4vw, 3.2rem);
   font-weight: 600;
   line-height: 1.1;
@@ -134,7 +133,6 @@
 .statNumber {
   display: block;
   margin-bottom: 0.25rem;
-  font-family: var(--font-heading), "Noto Serif KR", "Apple Myungjo", serif;
   font-size: 1.7rem;
   font-weight: 600;
   line-height: 1.1;
@@ -202,7 +200,7 @@
   --accent-pill-color: var(--text);
   --accent-tag-border: var(--line);
   --accent-tag-color: var(--text-subtle);
-  --card-cta-color: var(--point);
+  --card-cta-color: var(--black);
   position: relative;
   display: block;
   overflow: hidden;
@@ -424,46 +422,26 @@
 .saleBannerTheme {
   --banner-surface: #f2ece8;
   --banner-border: #ddd1ca;
-  --banner-accent: #8f4a43;
-  --banner-button-bg: #8f4a43;
-  --banner-button-border: #8f4a43;
-  --banner-button-hover: #743933;
 }
 
 .couponBannerTheme {
   --banner-surface: #f0ece3;
   --banner-border: #ddd6c8;
-  --banner-accent: #796331;
-  --banner-button-bg: #796331;
-  --banner-button-border: #796331;
-  --banner-button-hover: #615028;
 }
 
 .reviewBannerTheme {
   --banner-surface: #f0e8eb;
   --banner-border: #dacfd4;
-  --banner-accent: #7c5163;
-  --banner-button-bg: #7c5163;
-  --banner-button-border: #7c5163;
-  --banner-button-hover: #654151;
 }
 
 .newBannerTheme {
   --banner-surface: #e8efeb;
   --banner-border: #d1ddd6;
-  --banner-accent: #466250;
-  --banner-button-bg: #466250;
-  --banner-button-border: #466250;
-  --banner-button-hover: #394f41;
 }
 
 .specialBannerTheme {
   --banner-surface: #ede8df;
   --banner-border: #d8d1c5;
-  --banner-accent: #6d5c47;
-  --banner-button-bg: #6d5c47;
-  --banner-button-border: #6d5c47;
-  --banner-button-hover: #594b3a;
 }
 
 .saleCardTheme {
@@ -478,7 +456,7 @@
   --accent-pill-color: #7b413b;
   --accent-tag-border: #ddd0c8;
   --accent-tag-color: #8f4a43;
-  --card-cta-color: #8f4a43;
+  --card-cta-color: var(--black);
 }
 
 .couponCardTheme {
@@ -493,7 +471,7 @@
   --accent-pill-color: #6b582a;
   --accent-tag-border: #ddd5c5;
   --accent-tag-color: #796331;
-  --card-cta-color: #796331;
+  --card-cta-color: var(--black);
 }
 
 .reviewCardTheme {
@@ -508,7 +486,7 @@
   --accent-pill-color: #70485a;
   --accent-tag-border: #dccccf;
   --accent-tag-color: #7c5163;
-  --card-cta-color: #7c5163;
+  --card-cta-color: var(--black);
 }
 
 .newCardTheme {
@@ -523,7 +501,7 @@
   --accent-pill-color: #3f5948;
   --accent-tag-border: #cdd8d2;
   --accent-tag-color: #466250;
-  --card-cta-color: #466250;
+  --card-cta-color: var(--black);
 }
 
 .specialCardTheme {
@@ -538,7 +516,7 @@
   --accent-pill-color: #635341;
   --accent-tag-border: #d8d0c4;
   --accent-tag-color: #6d5c47;
-  --card-cta-color: #6d5c47;
+  --card-cta-color: var(--black);
 }
 
 .statePanel {

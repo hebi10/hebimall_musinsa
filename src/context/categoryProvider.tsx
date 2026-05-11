@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
@@ -34,12 +34,11 @@ export function CategoryProvider({ children }: CategoryProviderProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fallback 카테고리 데이터 (한국어 이름 보장 및 자연스러운 순서)
   const fallbackCategories: Category[] = [
     {
       id: 'clothing',
-      name: '상의',
-      description: '상의 카테고리',
+      name: 'clothing',
+      description: 'clothing category',
       icon: '',
       color: '#007bff',
       order: 1,
@@ -49,8 +48,8 @@ export function CategoryProvider({ children }: CategoryProviderProps) {
     },
     {
       id: 'shoes',
-      name: '신발',
-      description: '신발 카테고리',
+      name: 'shoes',
+      description: 'shoes category',
       icon: '',
       color: '#6610f2',
       order: 2,
@@ -60,8 +59,8 @@ export function CategoryProvider({ children }: CategoryProviderProps) {
     },
     {
       id: 'bags',
-      name: '가방',
-      description: '가방 카테고리',
+      name: 'bags',
+      description: 'bags category',
       icon: '',
       color: '#ffc107',
       order: 3,
@@ -71,8 +70,8 @@ export function CategoryProvider({ children }: CategoryProviderProps) {
     },
     {
       id: 'accessories',
-      name: '액세서리',
-      description: '액세서리 카테고리',
+      name: 'accessories',
+      description: 'accessories category',
       icon: '',
       color: '#28a745',
       order: 4,
@@ -83,75 +82,57 @@ export function CategoryProvider({ children }: CategoryProviderProps) {
   ];
 
   const koreanNameMap: { [key: string]: string } = {
-    'clothing': '의류',
-    'shoes': '신발', 
-    'bags': '가방',
-    'Bags': '가방',
-    'accessories': '액세서리',
-    'pants': '하의',
-    'bottoms': '하의',
-    'top': '상의',
-    'tops': '상의',
-    'bag': '가방',
-    'accessory': '액세서리'
+    clothing: '아우터',
+    tops: '상의',
+    bottoms: '하의',
+    shoes: '신발',
+    bags: '가방',
+    accessories: '악세서리',
+    jewelry: '주얼리',
+    outdoor: '아웃도어',
+    sports: '스포츠',
+    pants: '바지',
+    top: '상의',
+    bag: '가방',
+    accessory: '악세서리',
   };
 
   const fetchCategories = async () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       const snapshot = await getDocs(collection(db, 'categories'));
-      const categoryList = snapshot.docs.map(doc => {
-        const data = doc.data();
-        const rawName = data.name || '';
-        
-        const koreanName = koreanNameMap[rawName.toLowerCase()] || 
-                          koreanNameMap[doc.id.toLowerCase()] || 
-                          rawName;
-        
-        return {
-          id: doc.id,
-          name: koreanName,
-          description: data.description || '',
-          order: data.order || 0,
-          isActive: data.isActive ?? true,
-          icon: data.icon || '',
-          color: data.color || '#000000',
-          createdAt: data.createdAt?.toDate() || new Date(),
-          updatedAt: data.updatedAt?.toDate() || new Date(),
-        } as Category;
-      }).filter(category => category.id && category.name); // id와 name이 있는 카테고리만 필터링
-      
-      if (categoryList && categoryList.length > 0) {
-        // 활성 카테고리만 필터링하고 order로 정렬
-        const activeCategories = categoryList
-          .filter(category => category.isActive)
-          .sort((a, b) => a.order - b.order);
-        
-        // 상품이 있는 카테고리와 없는 카테고리 모두 표시하되, 상품 수 정보 추가
-        const categoriesWithInfo: Category[] = [];
-        
-        for (const category of activeCategories) {
-          try {
-            const productsSnapshot = await getDocs(collection(db, 'categories', category.id, 'products'));
-            categoriesWithInfo.push(category);
-          } catch (error) {
-            categoriesWithInfo.push(category);
-          }
-        }
-        
-        setCategories(categoriesWithInfo);
+      const categoryList = snapshot.docs
+        .map((doc) => {
+          const data = doc.data();
+          const rawName = data.name || '';
+          const koreanName =
+            koreanNameMap[rawName.toLowerCase()] || koreanNameMap[doc.id.toLowerCase()] || rawName;
+
+          return {
+            id: doc.id,
+            name: koreanName || doc.id,
+            description: data.description || '',
+            order: data.order || 0,
+            isActive: data.isActive ?? true,
+            icon: data.icon || '',
+            color: data.color || '#000000',
+            createdAt: data.createdAt?.toDate() || new Date(),
+            updatedAt: data.updatedAt?.toDate() || new Date(),
+          } as Category;
+        })
+        .filter((category) => category.id && category.name);
+
+      if (categoryList.length > 0) {
+        setCategories(categoryList.filter((category) => category.isActive).sort((a, b) => a.order - b.order));
       } else {
-        console.log('Firebase 카테고리 없음 - Fallback 사용');
         setCategories(fallbackCategories);
       }
     } catch (err) {
-      console.error('카테고리 불러오기 실패:', err);
-      console.log('Fallback 카테고리 사용');
-      
+      console.error('카테고리 목록 조회 실패:', err);
       setCategories(fallbackCategories);
-      setError(err instanceof Error ? err.message : '카테고리를 불러오는데 실패했습니다. 기본 카테고리를 표시합니다.');
+      setError(err instanceof Error ? err.message : '카테고리 목록 조회 중 오류가 발생했습니다.');
     } finally {
       setLoading(false);
     }
@@ -162,7 +143,7 @@ export function CategoryProvider({ children }: CategoryProviderProps) {
   };
 
   useEffect(() => {
-    fetchCategories();
+    void fetchCategories();
   }, []);
 
   const value: CategoryContextType = {
@@ -172,11 +153,7 @@ export function CategoryProvider({ children }: CategoryProviderProps) {
     refreshCategories,
   };
 
-  return (
-    <CategoryContext.Provider value={value}>
-      {children}
-    </CategoryContext.Provider>
-  );
+  return <CategoryContext.Provider value={value}>{children}</CategoryContext.Provider>;
 }
 
 export function useCategories() {

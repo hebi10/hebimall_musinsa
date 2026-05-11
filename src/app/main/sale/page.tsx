@@ -1,44 +1,44 @@
-'use client';
+﻿'use client';
 
-import { useState, useEffect } from 'react';
-import { useProduct } from '@/context/productProvider';
+import { useState, useEffect, useCallback } from 'react';
 import ProductCard from '@/app/products/_components/ProductCard';
 import PageHeader from '@/app/_components/PageHeader';
+import { ProductService } from '@/shared/services/productService';
 import { Product } from '@/shared/types/product';
 import styles from './page.module.css';
 
 export default function SalePage() {
-  const { 
-    products = [], 
-    loading, 
-    error,
-    loadProducts
-  } = useProduct();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [products, setProducts] = useState<Product[]>([]);
 
-  const [localProducts, setLocalProducts] = useState<Product[]>([]);
+  const loadProducts = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-  useEffect(() => {
-    loadProducts();
-  }, [loadProducts]);
-
-  useEffect(() => {
-    if (products && products.length > 0) {
-      // 할인율이 있는 상품만 필터링
-      const saleProducts = products.filter((product: Product) => 
-        product.isSale && product.saleRate && product.saleRate > 0
-      );
-      setLocalProducts(saleProducts);
+      const saleProducts = await ProductService.getSaleProducts(100);
+      setProducts(saleProducts);
+    } catch (err) {
+      console.error('상품 로드 실패:', err);
+      setError('상품을 불러오지 못했습니다.');
+    } finally {
+      setLoading(false);
     }
-  }, [products]);
+  }, []);
+
+  useEffect(() => {
+    void loadProducts();
+  }, [loadProducts]);
 
   if (loading) {
     return (
       <div className={styles.container}>
-        <PageHeader 
+        <PageHeader
           title="세일"
-          description="할인 중인 상품 목록입니다"
+          description="할인 상품 목록을 한눈에 확인하세요."
         />
-        <div className={styles.loading}>상품을 불러오는 중...</div>
+        <div className={styles.loading}>상품 목록을 불러오는 중입니다...</div>
       </div>
     );
   }
@@ -46,52 +46,46 @@ export default function SalePage() {
   if (error) {
     return (
       <div className={styles.container}>
-        <PageHeader 
+        <PageHeader
           title="세일"
-          description="할인 중인 상품 목록입니다"
+          description="할인 상품 목록을 한눈에 확인하세요."
         />
         <div className={styles.error}>
-          상품을 불러오는 중 오류가 발생했습니다: {error}
+          상품을 불러오지 못했습니다: {error}
         </div>
       </div>
     );
   }
 
-  if (localProducts.length === 0) {
+  if (products.length === 0) {
     return (
       <div className={styles.container}>
-        <PageHeader 
+        <PageHeader
           title="세일"
-          description="할인 중인 상품 목록입니다"
+          description="할인 상품 목록을 한눈에 확인하세요."
         />
-        <div className={styles.empty}>
-          현재 세일 중인 상품이 없습니다.
-        </div>
+        <div className={styles.empty}>현재 할인 상품이 없습니다.</div>
       </div>
     );
   }
 
   return (
     <div className={styles.container}>
-      <PageHeader 
+      <PageHeader
         title="세일"
-        description="특가 상품을 만나보세요" 
+        description="한눈에 할인 상품을 확인하세요."
       />
       
       <div className={styles.content}>
         <div className={styles.saleInfo}>
-          <h2 className={styles.sectionTitle}>
-            할인 상품 ({localProducts.length}개)
-          </h2>
-          <p className={styles.sectionDescription}>
-            현재 할인 중인 상품들입니다.
-          </p>
+          <h2 className={styles.sectionTitle}>할인 상품 ({products.length}개)</h2>
+          <p className={styles.sectionDescription}>현재 할인 상품을 모았습니다.</p>
         </div>
 
         <div className={styles.productGrid}>
-          {localProducts.map((product) => (
-            <ProductCard 
-              key={product.id} 
+          {products.map((product) => (
+            <ProductCard
+              key={product.id}
               id={product.id}
               name={product.name}
               brand={product.brand}

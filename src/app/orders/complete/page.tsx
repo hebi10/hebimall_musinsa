@@ -1,160 +1,207 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import PageHeader from "../../_components/PageHeader";
-import Button from "../../_components/Button";
+import { Order, OrderItem } from "@/shared/types/order";
+import { useAuth } from "@/context/authProvider";
+import { OrderService } from "@/shared/services/orderService";
 import styles from "./page.module.css";
 
-interface OrderResult {
-  orderId: string;
-  orderNumber: string;
-  items: any[];
-  totalAmount: number;
-  deliveryAddress: any;
-  paymentMethod: string;
-  createdAt: Date;
+interface OrderCompleteState {
+  loading: boolean;
+  error: string | null;
+  order: Order | null;
+}
+
+function formatCurrency(value: number) {
+  return `${Number(value || 0).toLocaleString()}원`;
+}
+
+function formatDate(value: Date) {
+  return value?.toLocaleString("ko-KR");
+}
+
+function getPaymentMethodText(method: string | undefined) {
+  switch (method) {
+    case "card":
+      return "카드";
+    case "bank":
+      return "계좌";
+    case "virtual":
+      return "가상계좌";
+    case "phone":
+      return "휴대폰";
+    default:
+      return method || "미지정";
+  }
 }
 
 export default function OrderCompletePage() {
   const router = useRouter();
-  const [orderResult, setOrderResult] = useState<OrderResult | null>(null);
-  const [showFullContent, setShowFullContent] = useState(false);
+  const params = useSearchParams();
+  const { user } = useAuth();
+  const orderId = params.get("orderId");
+  const [state, setState] = useState<OrderCompleteState>({
+    loading: true,
+    error: null,
+    order: null,
+  });
 
   useEffect(() => {
-    // 세션 스토리지에서 주문 결과 가져오기
-    const savedOrderResult = sessionStorage.getItem("orderResult");
-    if (savedOrderResult) {
-      setOrderResult(JSON.parse(savedOrderResult));
-      // 주문 완료 후 세션 스토리지 정리
-      sessionStorage.removeItem("orderResult");
-      
-      // 2초 후에 전체 내용 표시 (로딩 효과)
-      setTimeout(() => {
-        setShowFullContent(true);
-      }, 1000);
-    } else {
-      // 주문 결과가 없으면 홈으로 리다이렉트
-      router.push("/");
-    }
+    const resolveOrderId = async () => {
+      if (orderId) {
+        return orderId;
+      }
 
-    // 브라우저 뒤로가기 방지
-    const handlePopState = (e: PopStateEvent) => {
-      e.preventDefault();
-      window.history.pushState(null, "", window.location.href);
+      const savedOrderResult = sessionStorage.getItem("orderResult");
+      if (!savedOrderResult) {
+        throw new Error("주문번호가 없습니다.");
+      }
+
+      const parsed = JSON.parse(savedOrderResult) as { orderId?: string };
+      const fallbackOrderId = parsed?.orderId;
+      if (!fallbackOrderId) {
+        throw new Error("주문 정보가 없습니다.");
+      }
+
+      return fallbackOrderId;
     };
 
-    window.history.pushState(null, "", window.location.href);
-    window.addEventListener('popstate', handlePopState);
+    const loadOrder = async () => {
+      if (!user) {
+        router.push("/auth/login");
+        return;
+      }
 
-    return () => {
-      window.removeEventListener('popstate', handlePopState);
+      try {
+        const targetOrderId = await resolveOrderId();
+        const order = await OrderService.getOrder(targetOrderId);
+
+        if (!order) {
+          throw new Error("주문을 찾지 못했습니다.");
+        }
+
+        setState({ loading: false, error: null, order });
+        sessionStorage.removeItem("orderResult");
+      } catch (error) {
+        setState({
+          loading: false,
+          error: error instanceof Error ? error.message : "주문 조회에 실패했습니다.",
+          order: null,
+        });
+      }
     };
-  }, [router]);
 
-  if (!orderResult) {
+    loadOrder();
+  }, [orderId, user, router]);
+
+  const order = state.order;
+
+  const itemsSubTotal = useMemo(() => {
+    if (!order) return "0원";
+    return formatCurrency(
+      (order.products || []).reduce((sum: number, item: OrderItem) => {
+        return sum + Number(item.price || 0) * Number(item.quantity || 0);
+      }, 0)
+    );
+  }, [order]);
+
+  if (state.loading) {
     return (
       <div className={styles.container}>
         <div className={styles.loadingContainer}>
           <div className={styles.loadingSpinner}></div>
-          <p>주문 정보를 확인하고 있습니다...</p>
+          <p>주문 정보를 불러오는 중입니다.</p>
         </div>
       </div>
     );
   }
 
-  if (!showFullContent) {
+  if (state.error) {
     return (
       <div className={styles.container}>
         <div className={styles.processingContainer}>
-          <div className={styles.successIcon}></div>
-          <h2 className={styles.processingTitle}>주문이 완료되었습니다.</h2>
-          <p className={styles.processingMessage}>
-            주문번호: <strong>{orderResult.orderNumber}</strong>
-          </p>
-          <div className={styles.loadingSpinner}></div>
-          <p className={styles.processingNote}>주문 상세 정보를 준비하고 있습니다...</p>
+          <h2 className={styles.processingTitle}>주문 처리 실패</h2>
+          <p className={styles.processingNote}>{state.error}</p>
+          <Link href="/" className={styles.secondaryButton}>
+            홈으로
+          </Link>
         </div>
       </div>
     );
   }
 
-  const getPaymentMethodText = (method: string) => {
-    switch (method) {
-      case "card": return "신용카드";
-      case "bank": return "계좌이체";
-      case "virtual": return "무통장입금";
-      case "phone": return "휴대폰 결제";
-      default: return method;
-    }
-  };
+  if (!order) {
+    return null;
+  }
 
   return (
     <div className={styles.container}>
       <PageHeader
         title="주문 완료"
-        description="주문이 성공적으로 완료되었습니다"
+        description="주문이 정상적으로 접수되었습니다."
         breadcrumb={[
-          { label: '홈', href: '/' },
-          { label: '주문 완료' }
+          { label: "home", href: "/" },
+          { label: "주문 완료" },
         ]}
       />
-      
+
       <div className={styles.content}>
         <div className={styles.completeCard}>
-          {/* 성공 메시지 */}
           <div className={styles.successSection}>
-            <div className={styles.successIcon}></div>
-            <h2 className={styles.successTitle}>주문이 완료되었습니다.</h2>
-            <p className={styles.successMessage}>
-              주문번호: <strong>{orderResult.orderNumber}</strong>
-            </p>
+            <div className={styles.successIcon}>✓</div>
+            <h2 className={styles.successTitle}>주문 완료</h2>
+            <p className={styles.successMessage}>주문번호: <strong>{order.orderNumber}</strong></p>
             <p className={styles.successDescription}>
-              주문 확인 및 배송 준비 후 배송이 시작됩니다.<br />
-              주문 상세 정보는 마이페이지에서 확인하실 수 있습니다.
+              주문이 접수되었습니다. 주문 및 배송 상태는 마이페이지에서 확인할 수 있습니다.
             </p>
           </div>
 
-          {/* 주문 정보 */}
           <div className={styles.orderInfo}>
-            <h3 className={styles.sectionTitle}>주문 정보</h3>
-            
+            <h3 className={styles.sectionTitle}>주문 요약</h3>
             <div className={styles.infoGrid}>
               <div className={styles.infoItem}>
                 <span className={styles.infoLabel}>주문번호</span>
-                <span className={styles.infoValue}>{orderResult.orderNumber}</span>
+                <span className={styles.infoValue}>{order.orderNumber}</span>
               </div>
-              
               <div className={styles.infoItem}>
-                <span className={styles.infoLabel}>주문일시</span>
-                <span className={styles.infoValue}>
-                  {new Date(orderResult.createdAt).toLocaleString('ko-KR')}
-                </span>
+                <span className={styles.infoLabel}>주문일</span>
+                <span className={styles.infoValue}>{formatDate(order.createdAt)}</span>
               </div>
-              
               <div className={styles.infoItem}>
-                <span className={styles.infoLabel}>결제금액</span>
-                <span className={styles.infoValue}>
-                  {orderResult.totalAmount.toLocaleString()}원
-                </span>
+                <span className={styles.infoLabel}>상품가 합계</span>
+                <span className={styles.infoValue}>{itemsSubTotal}</span>
               </div>
-              
               <div className={styles.infoItem}>
-                <span className={styles.infoLabel}>결제수단</span>
-                <span className={styles.infoValue}>
-                  {getPaymentMethodText(orderResult.paymentMethod)}
-                </span>
+                <span className={styles.infoLabel}>배송비</span>
+                <span className={styles.infoValue}>{formatCurrency(order.deliveryFee || 0)}</span>
+              </div>
+              <div className={styles.infoItem}>
+                <span className={styles.infoLabel}>쿠폰 할인</span>
+                <span className={styles.infoValue}>-{formatCurrency(order.discountAmount || 0)}</span>
+              </div>
+              <div className={styles.infoItem}>
+                <span className={styles.infoLabel}>포인트 사용</span>
+                <span className={styles.infoValue}>-{formatCurrency(order.pointUsed || 0)}</span>
+              </div>
+              <div className={styles.infoItem}>
+                <span className={styles.infoLabel}>결제 방법</span>
+                <span className={styles.infoValue}>{getPaymentMethodText(order.paymentMethod)}</span>
+              </div>
+              <div className={styles.infoItem}>
+                <span className={styles.infoLabel}>최종 결제 금액</span>
+                <span className={styles.infoValue}>{formatCurrency(order.finalAmount || 0)}</span>
               </div>
             </div>
           </div>
 
-          {/* 주문 상품 */}
           <div className={styles.orderProducts}>
             <h3 className={styles.sectionTitle}>주문 상품</h3>
             <div className={styles.productsList}>
-              {orderResult.items.map((item, index) => (
-                <div key={index} className={styles.productItem}>
+              {(order.products || []).map((item) => (
+                <div key={`${item.productId}-${item.size}-${item.color}`} className={styles.productItem}>
                   <div className={styles.productImage}>
                     <img src={item.productImage} alt={item.productName} />
                   </div>
@@ -162,76 +209,51 @@ export default function OrderCompletePage() {
                     <div className={styles.productBrand}>{item.brand}</div>
                     <div className={styles.productName}>{item.productName}</div>
                     <div className={styles.productOptions}>
-                      {item.color} / {item.size} / 수량 {item.quantity}개
+                      {item.color} / {item.size} / 수량 {item.quantity}
                     </div>
                   </div>
                   <div className={styles.productPrice}>
-                    {(item.price * item.quantity).toLocaleString()}원
+                    {formatCurrency(item.price * item.quantity)}
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* 배송 정보 */}
           <div className={styles.deliveryInfo}>
-            <h3 className={styles.sectionTitle}>배송 정보</h3>
+            <h3 className={styles.sectionTitle}>배송지 정보</h3>
             <div className={styles.addressCard}>
               <div className={styles.addressHeader}>
-                <span className={styles.addressName}>{orderResult.deliveryAddress.name}</span>
+                <span className={styles.addressName}>{order.shippingAddress?.name || order.deliveryAddress?.name}</span>
               </div>
               <div className={styles.addressRecipient}>
-                {orderResult.deliveryAddress.recipient} | {orderResult.deliveryAddress.phone}
+                {(order.shippingAddress?.recipient || order.deliveryAddress?.recipient) || "-"} |{" "}
+                {(order.shippingAddress?.phone || order.deliveryAddress?.phone) || "-"}
               </div>
               <div className={styles.addressLocation}>
-                ({orderResult.deliveryAddress.zipCode}) {orderResult.deliveryAddress.address} {orderResult.deliveryAddress.detailAddress}
+                ({order.shippingAddress?.zipCode || order.deliveryAddress?.zipCode || "-"}){" "}
+                {order.shippingAddress?.address || order.deliveryAddress?.address || "-"}{" "}
+                {order.shippingAddress?.detailAddress || order.deliveryAddress?.detailAddress || ""}
               </div>
             </div>
           </div>
 
-          {/* 액션 버튼들 */}
           <div className={styles.actionButtons}>
-            <div className={styles.actionMessage}>
-              <h3>주문이 정상적으로 처리되었습니다.</h3>
-              <p>주문 상세 정보를 확인하거나 쇼핑을 계속할 수 있습니다.</p>
-            </div>
             <div className={styles.buttonGroup}>
               <Link href="/mypage/order-list" className={styles.primaryButton}>
-                주문 내역 보기
+                주문 목록 보기
               </Link>
               <Link href="/" className={styles.secondaryButton}>
                 쇼핑 계속하기
               </Link>
             </div>
-            <div className={styles.actionNote}>
-              ※ 주문 상태 변경 및 배송 정보는 주문 내역에서 확인하실 수 있습니다.
-            </div>
-          </div>
-
-          {/* 안내 사항 */}
-          <div className={styles.noticeSection}>
-            <div className={styles.noticeTitle}>주문 후 안내사항</div>
-            <ul className={styles.noticeList}>
-              <li><strong>주문 확인:</strong> 주문 후 1-2시간 내에 주문 확인 문자를 발송해드립니다</li>
-              <li><strong>배송 준비:</strong> 주문 확인 후 1-2일 내에 배송 준비가 완료됩니다</li>
-              <li><strong>배송 조회:</strong> 배송 시작 시 운송장 번호를 문자로 안내해드립니다</li>
-              <li><strong>주문 변경/취소:</strong> 배송 준비 전까지만 가능합니다</li>
-              <li><strong>문의 사항:</strong> 고객센터 1588-0000 또는 온라인 문의를 이용해주세요</li>
-            </ul>
-          </div>
-
-          {/* 추천 상품 섹션 */}
-          <div className={styles.recommendSection}>
-            <div className={styles.recommendTitle}>추천 상품</div>
-            <p className={styles.recommendDescription}>
-              함께 보면 좋은 상품입니다
+            <p className={styles.actionNote}>
+              주문/배송 상세 내역은 주문 목록에서 확인할 수 있습니다.
             </p>
-            <Link href="/main/recommend" className={styles.recommendButton}>
-              추천 상품 보기
-            </Link>
           </div>
         </div>
       </div>
     </div>
   );
 }
+

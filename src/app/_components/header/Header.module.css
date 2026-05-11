@@ -1,9 +1,8 @@
 .header {
   position: relative;
   z-index: 50;
-  background: rgba(245, 244, 240, 0.96);
-  border-bottom: 1px solid rgba(215, 208, 199, 0.9);
-  backdrop-filter: blur(18px);
+  background: var(--surface-raised);
+  border-bottom: 1px solid var(--line);
 }
 
 .container {
@@ -59,7 +58,7 @@
 }
 
 .logoLink:hover {
-  color: var(--point);
+  color: var(--black);
 }
 
 .mobileMenuButton {
@@ -122,7 +121,7 @@
 }
 
 .navLink:hover {
-  color: var(--point);
+  color: var(--black);
 }
 
 .secondaryNav {
@@ -311,7 +310,7 @@
 .mobileSupportLink:hover,
 .mobileUserLink:hover,
 .menuItem:hover {
-  color: var(--point);
+  color: var(--black);
 }
 
 .menuItem {

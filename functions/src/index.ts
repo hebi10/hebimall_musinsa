@@ -10,6 +10,9 @@ export { points } from "./handlers/points";
 export { coupon } from "./handlers/coupon";
 export { config } from "./handlers/config";
 export { chat } from "./handlers/chat";
+export { adminUsers } from "./handlers/adminUsers";
+export { qna } from "./handlers/qna";
+export { order } from "./handlers/order";
 
 // ── 크론 ──
 export { expirePoints } from "./cron/expirePoints";

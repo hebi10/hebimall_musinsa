@@ -1,87 +1,167 @@
-'use client';
+﻿'use client';
 
-import { useState, useEffect } from 'react';
-import { useProduct } from '@/context/productProvider';
-import { ProductFilter, ProductSort } from '@/shared/types/product';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { QueryDocumentSnapshot, DocumentData } from 'firebase/firestore';
+import { Product, ProductSort } from '@/shared/types/product';
+import { ProductQueryInput, ProductService } from '@/shared/services/productService';
 import ProductCard from './ProductCard';
 import styles from './ProductList.module.css';
 
+const ITEMS_PER_PAGE = 12;
+const DEFAULT_PRICE_MAX = 1_000_000;
+
+type PageCursor = QueryDocumentSnapshot<DocumentData> | null;
+
+const sortOptions: Array<{ value: string; label: string }> = [
+  { value: 'createdAt-desc', label: '최신순' },
+  { value: 'price-asc', label: '낮은 가격순' },
+  { value: 'price-desc', label: '높은 가격순' },
+  { value: 'rating-desc', label: '평점 높은순' },
+  { value: 'name-asc', label: '이름순' },
+];
+
 export default function ProductList() {
-  const {
-    filteredProducts,
-    categories,
-    loading,
-    error,
-    searchProducts,
-    filterProducts,
-    sortProducts,
-    clearFilters,
-    currentFilter,
-    currentSort,
-    searchQuery,
-    calculateAverageRating,
-  } = useProduct();
+  const [items, setItems] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const [localSearchTerm, setLocalSearchTerm] = useState<string>(searchQuery);
+  const [searchInput, setSearchInput] = useState('');
+  const [searchKeyword, setSearchKeyword] = useState('');
+  const [category, setCategory] = useState('');
+  const [sort, setSort] = useState<ProductSort>({ field: 'createdAt', order: 'desc' });
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(DEFAULT_PRICE_MAX);
+
   const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = 12;
+  const [cursorStack, setCursorStack] = useState<Record<number, PageCursor>>({ 1: null });
+  const [hasMoreByPage, setHasMoreByPage] = useState<Record<number, boolean>>({});
+  const [cacheByPage, setCacheByPage] = useState<Record<number, Product[]>>({});
 
-  // 필터 상태
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
-  const [selectedSort, setSelectedSort] = useState<ProductSort>(currentSort);
-  const [priceRange, setPriceRange] = useState<{ min: number; max: number }>({ min: 0, max: 1000000 });
+  const queryInput = useMemo(
+    (): ProductQueryInput => ({
+      category: category || undefined,
+      keyword: searchKeyword || undefined,
+      status: 'active',
+      minPrice,
+      maxPrice,
+      sort,
+      limitCount: ITEMS_PER_PAGE,
+    }),
+    [category, searchKeyword, minPrice, maxPrice, sort]
+  );
 
-  useEffect(() => {
+  const resetPagination = useCallback(() => {
     setCurrentPage(1);
-  }, [filteredProducts]);
+    setCursorStack({ 1: null });
+    setHasMoreByPage({});
+    setCacheByPage({});
+  }, []);
 
-  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
-  const startIndex = (currentPage - 1) * productsPerPage;
-  const displayedProducts = filteredProducts.slice(startIndex, startIndex + productsPerPage);
+  const loadPage = async (page: number, forceLoad = false) => {
+    if (page < 1) {
+      return;
+    }
 
-  const handleSearch = () => {
-    if (localSearchTerm.trim()) {
-      searchProducts(localSearchTerm);
-    } else {
-      clearFilters();
+    const cached = cacheByPage[page];
+    if (!forceLoad && cached) {
+      setItems(cached);
+      setCurrentPage(page);
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const startAfterDoc = page === 1 ? null : cursorStack[page - 1] || null;
+      const result = await ProductService.queryProducts({
+        ...queryInput,
+        startAfterDoc,
+      });
+
+      setItems(result.items);
+      setCurrentPage(page);
+      setHasMoreByPage((prev) => ({ ...prev, [page]: result.hasMore }));
+      setCacheByPage((prev) => ({ ...prev, [page]: result.items }));
+
+      if (result.nextCursor) {
+        setCursorStack((prev) => ({ ...prev, [page + 1]: result.nextCursor || null }));
+      } else {
+        setCursorStack((prev) => ({ ...prev, [page + 1]: null }));
+      }
+    } catch (err) {
+      console.error('상품 목록 조회 실패:', err);
+      setError(err instanceof Error ? err.message : '상품 목록을 불러오지 못했습니다.');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleCategoryFilter = async (category: string) => {
-    setSelectedCategory(category);
-    const filter: ProductFilter = {
-      ...currentFilter,
-      category: category || undefined
-    };
-    await filterProducts(filter);
+  const loadCategories = useCallback(async () => {
+    try {
+      const categoryList = await ProductService.getCategories();
+      setCategories(categoryList);
+    } catch {
+      setCategories([]);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadCategories();
+  }, [loadCategories]);
+
+  useEffect(() => {
+    resetPagination();
+    void loadPage(1, true);
+  }, [queryInput, resetPagination]);
+
+  const handleSearch = () => {
+    setSearchKeyword(searchInput.trim());
   };
 
-  const handleSort = async (sort: ProductSort) => {
-    setSelectedSort(sort);
-    await sortProducts(sort);
+  const handleSortChange = (value: string) => {
+    const [field, order] = value.split('-') as [ProductSort['field'], ProductSort['order']];
+    setSort({ field, order });
   };
 
-  const handlePriceFilter = async () => {
-    const filter: ProductFilter = {
-      ...currentFilter,
-      minPrice: priceRange.min,
-      maxPrice: priceRange.max
-    };
-    await filterProducts(filter);
+  const applyPriceFilter = () => {
+    const nextMin = Math.max(0, Number.isFinite(minPrice) ? minPrice : 0);
+    const nextMax = Math.max(nextMin, Number.isFinite(maxPrice) ? maxPrice : DEFAULT_PRICE_MAX);
+    setMinPrice(nextMin);
+    setMaxPrice(nextMax);
   };
 
-  const handleClearFilters = () => {
-    setSelectedCategory('');
-    setLocalSearchTerm('');
-    setPriceRange({ min: 0, max: 1000000 });
-    clearFilters();
+  const clearFilters = () => {
+    setSearchInput('');
+    setSearchKeyword('');
+    setCategory('');
+    setSort({ field: 'createdAt', order: 'desc' });
+    setMinPrice(0);
+    setMaxPrice(DEFAULT_PRICE_MAX);
   };
 
-  if (loading) {
+  const moveToPreviousPage = () => {
+    if (currentPage > 1) {
+      void loadPage(currentPage - 1);
+    }
+  };
+
+  const moveToNextPage = () => {
+    if (hasMoreByPage[currentPage]) {
+      void loadPage(currentPage + 1);
+    }
+  };
+
+  const resultCountText = items.length === 0
+    ? '검색 결과가 없습니다.'
+    : `총 ${items.length}개 상품`;
+
+  if (loading && currentPage === 1 && items.length === 0) {
     return (
       <div className={styles.loading}>
         <div className={styles.spinner}></div>
-        <p>상품을 불러오는 중...</p>
+        <p>상품 목록을 불러오는 중입니다...</p>
       </div>
     );
   }
@@ -89,8 +169,8 @@ export default function ProductList() {
   if (error) {
     return (
       <div className={styles.error}>
-        <p>상품을 불러오는데 실패했습니다: {error}</p>
-        <button onClick={() => window.location.reload()} className={styles.retryButton}>
+        <p>상품 목록 로딩 실패: {error}</p>
+        <button onClick={() => void loadPage(1, true)} className={styles.retryButton} type="button">
           다시 시도
         </button>
       </div>
@@ -99,107 +179,82 @@ export default function ProductList() {
 
   return (
     <div className={styles.container}>
-      {/* 통계 정보 */}
       <div className={styles.stats}>
         <div className={styles.statItem}>
-          <div className={styles.statNumber}>{filteredProducts.length}</div>
-          <div className={styles.statLabel}>전체 상품</div>
+          <div className={styles.statNumber}>{items.length}</div>
+          <div className={styles.statLabel}>전체 상품 수</div>
         </div>
         <div className={styles.statItem}>
-          <div className={styles.statNumber}>
-            {filteredProducts.filter(p => p.isNew).length}
-          </div>
+          <div className={styles.statNumber}>{items.filter((product) => product.isNew).length}</div>
           <div className={styles.statLabel}>신상품</div>
         </div>
         <div className={styles.statItem}>
-          <div className={styles.statNumber}>
-            {filteredProducts.filter(p => p.isSale).length}
-          </div>
-          <div className={styles.statLabel}>세일 상품</div>
-        </div>
-        <div className={styles.statItem}>
-          <div className={styles.statNumber}>
-            {calculateAverageRating(filteredProducts)}
-          </div>
-          <div className={styles.statLabel}>평균 평점</div>
+          <div className={styles.statNumber}>{items.filter((product) => product.isSale).length}</div>
+          <div className={styles.statLabel}>세일</div>
         </div>
       </div>
 
-      {/* 검색 및 필터 */}
       <div className={styles.controls}>
         <div className={styles.searchSection}>
           <input
             type="text"
-            placeholder="상품명, 브랜드로 검색..."
-            value={localSearchTerm}
-            onChange={(e) => setLocalSearchTerm(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+            value={searchInput}
+            onChange={(event) => setSearchInput(event.target.value)}
+            onKeyDown={(event) => event.key === 'Enter' && handleSearch()}
+            placeholder="상품명 검색"
             className={styles.searchInput}
           />
-          <button onClick={handleSearch} className={styles.searchButton}>
+          <button onClick={handleSearch} className={styles.searchButton} type="button">
             검색
           </button>
         </div>
 
         <div className={styles.filters}>
-          <select
-            value={selectedCategory}
-            onChange={(e) => handleCategoryFilter(e.target.value)}
-            className={styles.filterSelect}
-          >
+          <select value={category} onChange={(event) => setCategory(event.target.value)} className={styles.filterSelect}>
             <option value="">전체 카테고리</option>
-            {categories.map(category => (
-              <option key={category} value={category}>{category}</option>
+            {categories.map((categoryId) => (
+              <option key={categoryId} value={categoryId}>
+                {categoryId}
+              </option>
             ))}
           </select>
 
-          <select
-            value={`${selectedSort.field}-${selectedSort.order}`}
-            onChange={(e) => {
-              const [field, order] = e.target.value.split('-') as [any, 'asc' | 'desc'];
-              handleSort({ field, order });
-            }}
-            className={styles.sortSelect}
-          >
-            <option value="createdAt-desc">최신순</option>
-            <option value="price-asc">가격 낮은순</option>
-            <option value="price-desc">가격 높은순</option>
-            <option value="rating-desc">평점순</option>
-            <option value="name-asc">이름순</option>
+          <select value={`${sort.field}-${sort.order}`} onChange={(event) => handleSortChange(event.target.value)} className={styles.sortSelect}>
+            {sortOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
           </select>
 
-          <button onClick={handleClearFilters} className={styles.clearButton}>
+          <button onClick={clearFilters} className={styles.clearButton} type="button">
             필터 초기화
           </button>
         </div>
       </div>
 
-      {/* 가격 범위 필터 */}
       <div className={styles.priceFilter}>
-        <label>가격 범위:</label>
+        <label>가격</label>
         <input
           type="number"
-          placeholder="최소 가격"
-          value={priceRange.min}
-          onChange={(e) => setPriceRange({ ...priceRange, min: Number(e.target.value) })}
+          value={minPrice}
+          onChange={(event) => setMinPrice(Number(event.target.value))}
           className={styles.priceInput}
         />
         <span>~</span>
         <input
           type="number"
-          placeholder="최대 가격"
-          value={priceRange.max}
-          onChange={(e) => setPriceRange({ ...priceRange, max: Number(e.target.value) })}
+          value={maxPrice}
+          onChange={(event) => setMaxPrice(Number(event.target.value))}
           className={styles.priceInput}
         />
-        <button onClick={handlePriceFilter} className={styles.applyButton}>
+        <button onClick={applyPriceFilter} className={styles.applyButton} type="button">
           적용
         </button>
       </div>
 
-      {/* 상품 목록 */}
       <div className={styles.productGrid}>
-        {displayedProducts.map(product => (
+        {items.map((product) => (
           <ProductCard
             key={product.id}
             id={product.id}
@@ -212,60 +267,33 @@ export default function ProductList() {
             saleRate={product.saleRate}
             rating={product.rating}
             reviewCount={product.reviewCount}
-            image={product.mainImage || product.images[0]} // 대표 이미지 우선 사용
+            image={product.mainImage || product.images[0]}
             stock={product.stock}
           />
         ))}
       </div>
 
-      {filteredProducts.length === 0 && (
+      {items.length === 0 && (
         <div className={styles.emptyState}>
-          <p>검색 조건에 맞는 상품이 없습니다.</p>
-          <button onClick={handleClearFilters} className={styles.clearButton}>
-            필터 초기화
+          <p>조건에 맞는 상품이 없습니다.</p>
+          <button onClick={clearFilters} className={styles.clearButton} type="button">
+            조건 초기화
           </button>
         </div>
       )}
 
-      {/* 페이지네이션 */}
-      {totalPages > 1 && (
-        <div className={styles.pagination}>
-          <button
-            className={styles.pageButton}
-            onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-            disabled={currentPage === 1}
-          >
-            이전
-          </button>
-          
-          {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-            const pageNumber = Math.max(1, Math.min(totalPages - 4, currentPage - 2)) + i;
-            return (
-              <button
-                key={pageNumber}
-                className={`${styles.pageButton} ${currentPage === pageNumber ? styles.active : ''}`}
-                onClick={() => setCurrentPage(pageNumber)}
-              >
-                {pageNumber}
-              </button>
-            );
-          })}
-          
-          <button
-            className={styles.pageButton}
-            onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-            disabled={currentPage === totalPages}
-          >
-            다음
-          </button>
-        </div>
-      )}
+      <div className={styles.pagination}>
+        <button className={styles.pageButton} onClick={moveToPreviousPage} disabled={currentPage === 1} type="button">
+          이전
+        </button>
+        <span>{`페이지 ${currentPage}`}</span>
+        <button className={styles.pageButton} onClick={moveToNextPage} disabled={!hasMoreByPage[currentPage]} type="button">
+          다음
+        </button>
+      </div>
 
-      {/* 결과 정보 */}
       <div className={styles.resultInfo}>
-        <span>
-          전체 {filteredProducts.length}개 상품 중 {startIndex + 1}-{Math.min(startIndex + productsPerPage, filteredProducts.length)}개 표시
-        </span>
+        <span>{resultCountText}</span>
       </div>
     </div>
   );

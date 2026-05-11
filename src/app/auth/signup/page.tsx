@@ -118,7 +118,6 @@ export default function SignupPage() {
         termsAgree: formData.termsAgree,
         privacyAgree: formData.privacyAgree,
         marketingAgree: formData.marketingAgree,
-        pointBalance: 5000,
         createdAt: serverTimestamp(),
       });
 

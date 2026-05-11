@@ -1,17 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { SimpleQnAService } from '@/shared/services/simpleQnAService';
+import { QnAService } from '@/shared/services/qnaService';
 import { QnA, QnAFilter } from '@/shared/types/qna';
-import { useAuth } from '@/context/authProvider';
 import styles from './page.module.css';
 
 export default function QnAListPage() {
-  const { user } = useAuth();
   const [qnas, setQnas] = useState<QnA[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [filters, setFilters] = useState<QnAFilter>({});
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
@@ -26,21 +23,19 @@ export default function QnAListPage() {
     { value: 'general', label: '일반문의' },
   ];
 
-  // QnA 목록 로드
   const loadQnAs = async () => {
     try {
       setLoading(true);
-      
-      // 임시로 간단한 목록 조회 사용
-      const allQnAs = await SimpleQnAService.getAllQnAs(50);
-      
-      // 클라이언트 사이드 필터링
-      let filteredQnas = allQnAs;
-      
+      setError(null);
+
+      const filters: QnAFilter = { isSecret: false };
       if (selectedCategory !== 'all') {
-        filteredQnas = filteredQnas.filter(qna => qna.category === selectedCategory);
+        filters.category = selectedCategory as QnA['category'];
       }
-      
+
+      const result = await QnAService.getQnAList(filters, 1, 50);
+
+      let filteredQnas = result.qnas;
       if (searchTerm) {
         const searchLower = searchTerm.toLowerCase();
         filteredQnas = filteredQnas.filter(qna =>
@@ -49,21 +44,19 @@ export default function QnAListPage() {
           qna.userName.toLowerCase().includes(searchLower)
         );
       }
-      
+
       setQnas(filteredQnas);
-      setTotalPages(1); // 임시로 페이지네이션 비활성화
+      setTotalPages(result.pagination.totalPages || 1);
     } catch (err) {
-      setError('QnA 목록을 불러오는데 실패했습니다.');
+      setError('QnA 목록을 불러오지 못했습니다.');
       console.error('Error loading QnAs:', err);
     } finally {
       setLoading(false);
     }
   };
 
-  // 통계 로드
   const loadStats = async () => {
     try {
-      // 임시로 로드된 QnA에서 통계 계산
       const statsData: Record<string, number> = {};
       qnas.forEach(qna => {
         statsData[qna.category] = (statsData[qna.category] || 0) + 1;
@@ -84,24 +77,20 @@ export default function QnAListPage() {
     }
   }, [qnas]);
 
-  // 검색 처리
   const handleSearch = () => {
     setCurrentPage(1);
     loadQnAs();
   };
 
-  // 카테고리 변경
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
     setCurrentPage(1);
   };
 
-  // 페이지 변경
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
-  // 날짜 포맷팅
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat('ko-KR', {
       year: 'numeric',
@@ -112,11 +101,10 @@ export default function QnAListPage() {
     }).format(date);
   };
 
-  // 상태 라벨
   const getStatusLabel = (status: string) => {
     switch (status) {
       case 'waiting':
-        return '답변대기';
+        return '대기';
       case 'answered':
         return '답변완료';
       case 'closed':
@@ -126,7 +114,6 @@ export default function QnAListPage() {
     }
   };
 
-  // 카테고리 라벨
   const getCategoryLabel = (category: string) => {
     const found = categories.find(cat => cat.value === category);
     return found ? found.label : category;
@@ -145,14 +132,12 @@ export default function QnAListPage() {
 
   return (
     <div className={styles.container}>
-      {/* 헤더 */}
       <div className={styles.header}>
         <div className={styles.titleSection}>
           <h1 className={styles.title}>QnA</h1>
-          <p className={styles.subtitle}>궁금한 점이 있으시면 언제든 문의해 주세요</p>
+          <p className={styles.subtitle}>문의내역과 답변 현황을 확인할 수 있습니다.</p>
         </div>
-        
-        {/* 통계 */}
+
         <div className={styles.statsGrid}>
           <div className={styles.statCard}>
             <h3>전체 문의</h3>
@@ -161,13 +146,13 @@ export default function QnAListPage() {
             </span>
           </div>
           <div className={styles.statCard}>
-            <h3>답변 대기</h3>
+            <h3>대기중</h3>
             <span className={`${styles.statNumber} ${styles.waiting}`}>
               {qnas.filter(q => q.status === 'waiting').length}
             </span>
           </div>
           <div className={styles.statCard}>
-            <h3>답변 완료</h3>
+            <h3>답변완료</h3>
             <span className={`${styles.statNumber} ${styles.answered}`}>
               {qnas.filter(q => q.status === 'answered').length}
             </span>
@@ -175,12 +160,11 @@ export default function QnAListPage() {
         </div>
       </div>
 
-      {/* 검색 및 필터 */}
       <div className={styles.filterSection}>
         <div className={styles.searchBox}>
           <input
             type="text"
-            placeholder="제목, 내용, 작성자로 검색..."
+            placeholder="제목, 내용, 작성자 검색..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
@@ -209,7 +193,6 @@ export default function QnAListPage() {
         </div>
       </div>
 
-      {/* QnA 목록 */}
       <div className={styles.qnaList}>
         {error && (
           <div className={styles.error}>
@@ -224,7 +207,7 @@ export default function QnAListPage() {
           <div className={styles.empty}>
             <div className={styles.emptyIcon}></div>
             <h3>등록된 QnA가 없습니다</h3>
-            <p>첫 번째 질문을 등록해보세요!</p>
+            <p>원하시는 문의가 있으면 작성해 주세요.</p>
           </div>
         )}
 
@@ -238,9 +221,7 @@ export default function QnAListPage() {
                 <span className={`${styles.status} ${styles[qna.status]}`}>
                   {getStatusLabel(qna.status)}
                 </span>
-                {qna.isSecret && (
-                  <span className={styles.secretBadge}>비밀글</span>
-                )}
+                {qna.isSecret && <span className={styles.secretBadge}>비밀글</span>}
               </div>
               <div className={styles.qnaStats}>
                 <span className={styles.views}>조회 {qna.views}</span>
@@ -273,7 +254,6 @@ export default function QnAListPage() {
         ))}
       </div>
 
-      {/* 페이지네이션 */}
       {totalPages > 1 && (
         <div className={styles.pagination}>
           <button
@@ -306,10 +286,9 @@ export default function QnAListPage() {
         </div>
       )}
 
-      {/* 문의하기 버튼 */}
       <div className={styles.writeSection}>
         <a href="/qna/write" className={styles.writeButton}>
-          문의하기
+          문의 작성
         </a>
       </div>
     </div>

@@ -45,7 +45,7 @@
 }
 
 .breadcrumbLink:hover {
-  color: var(--point);
+  color: var(--black);
 }
 
 .breadcrumbCurrent {

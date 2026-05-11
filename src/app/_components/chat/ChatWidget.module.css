@@ -203,7 +203,7 @@
 .startChatButton {
   width: 100%;
   padding: 0.65rem 1.5rem;
-  background: var(--point);
+  background: var(--black);
   border: none;
   border-radius: var(--radius-md);
   color: var(--color-white);
@@ -214,7 +214,7 @@
 }
 
 .startChatButton:hover {
-  background: var(--point-hover);
+  background: var(--action-hover);
 }
 
 /* 메시지 스타일 */
@@ -321,21 +321,21 @@
 }
 
 .quickButton:hover {
-  border-color: var(--point);
+  border-color: var(--black);
   background: var(--color-white);
-  color: var(--point);
+  color: var(--black);
 }
 
 .quickButton.ai {
-  background: var(--point);
+  background: var(--black);
   color: var(--color-white);
-  border-color: var(--point);
+  border-color: var(--black);
   font-weight: 600;
 }
 
 .quickButton.ai:hover {
-  background: var(--point-hover);
-  border-color: var(--point-hover);
+  background: var(--action-hover);
+  border-color: var(--action-hover);
 }
 
 .quickButton:disabled {
@@ -370,7 +370,7 @@
 }
 
 .messageInput:focus {
-  border-color: var(--point);
+  border-color: var(--black);
 }
 
 .messageInput:disabled {
@@ -395,7 +395,7 @@
 }
 
 .sendButton:hover:not(:disabled) {
-  background: var(--point);
+  background: var(--action-hover);
 }
 
 .sendButton:disabled {

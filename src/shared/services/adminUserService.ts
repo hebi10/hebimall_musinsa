@@ -11,10 +11,43 @@ import {
   serverTimestamp,
   getDoc,
 } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
 import { db } from '@/shared/libs/firebase/firebase';
 import { UserProfile } from '@/shared/types/user';
 
 const COLLECTION_NAME = 'users';
+
+async function getIdToken(): Promise<string> {
+  const user = getAuth().currentUser;
+  if (!user) {
+    throw new Error('로그인이 필요합니다.');
+  }
+
+  return user.getIdToken();
+}
+
+async function callAdminUsersAPI(action: string, data: Record<string, unknown>): Promise<void> {
+  const token = await getIdToken();
+  const response = await fetch('/api/admin/users', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ action, ...data }),
+  });
+
+  let result: { success?: boolean; error?: string } = {};
+  try {
+    result = await response.json();
+  } catch {
+    result = { success: false, error: `HTTP ${response.status}` };
+  }
+
+  if (!response.ok || !result.success) {
+    throw new Error(result.error || '관리자 권한 요청에 실패했습니다.');
+  }
+}
 
 export interface AdminUserData extends UserProfile {
   lastLogin: Date;
@@ -176,11 +209,7 @@ export class AdminUserService {
     role: 'user' | 'admin'
   ): Promise<void> {
     try {
-      const userRef = doc(db, COLLECTION_NAME, userId);
-      await updateDoc(userRef, {
-        role,
-        updatedAt: serverTimestamp(),
-      });
+      await callAdminUsersAPI('setRole', { userId, role });
     } catch (error) {
  console.error('Error updating user role:', error);
       throw error;

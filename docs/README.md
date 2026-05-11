@@ -1,13 +1,20 @@
-# Docs Hub
+﻿# Docs Hub
 
-## 사용 규칙
-- 모든 작업은 먼저 이 문서를 보고 관련 문서를 찾는다.
-- 반드시 아래 목록에서 이번 작업과 직접 관련된 문서만 읽는다.
-- 관련 문서가 없으면 새 문서를 만들고, 이 문서에 같은 형식으로 항목을 추가한다.
-- 작업이 끝나면 이번에 읽은 문서를 결과에 맞게 갱신한다.
-
-## 문서 목록
-- 헤더 스타일 조정 관련 문서 : header-ui.md
-- 이벤트 페이지 흐름 점검 관련 문서 : event-page-review.md
-- 메인 베스트 랭킹 카드 조정 관련 문서 : main-ranking-ui.md
-- 마이페이지 UI 조정 관련 문서 : mypage-ui.md
+## 관련 문서 목록
+- 관리 권한/보안 판정 정리 : security-admin-permission.md
+- 관리자 토큰 통합 정리 : store-admin-token-unification.md
+- 관리자 페이지 권한 검토 : admin-page-review.md
+- 헤더 UI 정리 : header-ui.md
+- 이벤트 페이지 점검 : event-page-review.md
+- 메인 랭킹 UI 점검 : main-ranking-ui.md
+- 마이페이지 UI 점검 : mypage-ui.md
+- 상품 조회 구조 개선 : product-listing-structure.md
+- 디자인 시스템 정리/리팩터 : design-system-refactor.md
+- 디자인 시스템 QA : design-system-qa.md
+- 대시보드 정리 : dashboard.md
+- 쿠폰/포인트 정책 정리 : coupon-system.md
+- 스토리지 구조 정리 : storage-structure.md
+- API 캐시 정책 및 debug 경로 정리 : api-cache-debug-route.md
+- QnA 비밀글 검증 구조 정리 : qna-secret-password.md
+- 주문 생성 서버화 : order-serverization.md
+- 품질 게이트/CI 스크립트 정리 : quality-gates.md

@@ -10,6 +10,7 @@ import {
 } from 'firebase/firestore';
 import { db } from '@/shared/libs/firebase/firebase';
 import { QnA, CreateQnAData } from '@/shared/types/qna';
+import { buildQnASecurity } from '@/shared/utils/qnaSecret';
 
 const COLLECTION_NAME = 'qna';
 
@@ -22,7 +23,7 @@ export class SimpleQnAService {
     data: CreateQnAData
   ): Promise<string> {
     try {
-      const qnaData = {
+      const qnaData: Record<string, unknown> = {
         userId,
         userEmail,
         userName,
@@ -31,7 +32,6 @@ export class SimpleQnAService {
         content: data.content,
         images: data.images || [],
         isSecret: data.isSecret,
-        password: data.password,
         status: 'waiting' as const,
         views: 0,
         isNotified: data.isNotified,
@@ -40,6 +40,17 @@ export class SimpleQnAService {
         productId: data.productId,
         productName: data.productName,
       };
+
+      if (data.isSecret) {
+        const trimmedPassword = data.password?.trim();
+        if (!trimmedPassword) {
+          throw new Error('비밀글은 비밀번호가 필요합니다.');
+        }
+
+        const secret = await buildQnASecurity(trimmedPassword);
+        qnaData.passwordHash = secret.passwordHash;
+        qnaData.passwordSalt = secret.passwordSalt;
+      }
 
       console.log('Creating QnA with data:', qnaData);
       const docRef = await addDoc(collection(db, COLLECTION_NAME), qnaData);

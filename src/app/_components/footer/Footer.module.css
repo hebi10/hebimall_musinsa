@@ -36,7 +36,7 @@
 }
 
 .link:hover {
-  color: var(--point);
+  color: var(--black);
 }
 
 .copyright {

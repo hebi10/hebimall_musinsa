@@ -3,7 +3,15 @@ import { EventService } from './eventService';
 import { UserService } from './adminUserService';
 import { SimpleQnAService } from './simpleQnAService';
 import { InquiryService } from './inquiryService';
+import { OrderService } from './orderService';
+import { ProductService } from './productService';
 import { UserProfile } from '@/shared/types/user';
+import { Coupon } from '@/shared/types/coupon';
+import { Event } from '@/shared/types/event';
+import { QnA } from '@/shared/types/qna';
+import { Inquiry } from '@/shared/types/inquiry';
+import { Order } from '@/shared/types/order';
+import { Product } from '@/shared/types/product';
 
 export interface DashboardStats {
   totalUsers: number;
@@ -35,11 +43,12 @@ export interface DashboardStats {
     revenue: number;
   };
   recentActivities: DashboardActivity[];
-  lowStockProducts: any[];
-  topSellingProducts: any[];
+  lowStockProducts: Product[];
+  topSellingProducts: Product[];
   orderStatusStats: Record<string, number>;
-  revenueByMonth: { month: string; revenue: number; }[];
-  // 데이터 가용성 표시
+  revenueByMonth: { month: string; revenue: number }[];
+  categoryBreakdown: { categoryId: string; value: number }[];
+  categoryBreakdownType: 'sales' | 'products';
   dataAvailability: {
     users: boolean;
     products: boolean;
@@ -61,250 +70,423 @@ export interface DashboardActivity {
 }
 
 export class DashboardService {
-  // 전체 대시보드 통계 가져오기
   static async getDashboardStats(): Promise<DashboardStats> {
-    try {
-      // 병렬로 실제 데이터 가져오기
-      const [
-        coupons,
-        events,
-        users,
-        qnas,
-        inquiries
-      ] = await Promise.all([
-        CouponService.getActiveCoupons().catch(err => {
-          console.warn('쿠폰 데이터 조회 실패:', err);
-          return [];
-        }),
-        EventService.getActiveEvents().catch(err => {
-          console.warn('이벤트 데이터 조회 실패:', err);
-          return [];
-        }),
-        UserService.getAllUsers().catch(err => {
-          console.warn('사용자 데이터 조회 실패:', err);
-          return [];
-        }),
-        SimpleQnAService.getAllQnAs(100).catch(err => {
-          console.warn('QnA 데이터 조회 실패:', err);
-          return [];
-        }),
-        InquiryService.getAllInquiries(100).catch(err => {
-          console.warn('문의 데이터 조회 실패:', err);
-          return [];
-        })
-      ]);
+    const [
+      couponsResult,
+      eventsResult,
+      usersResult,
+      qnasResult,
+      inquiriesResult,
+      productsResult,
+      ordersResult,
+    ] = await Promise.allSettled([
+      CouponService.getActiveCoupons(),
+      EventService.getActiveEvents(),
+      UserService.getAllUsers(),
+      SimpleQnAService.getAllQnAs(100),
+      InquiryService.getAllInquiries(100),
+      ProductService.getAllProducts(),
+      OrderService.getAllOrders(1000),
+    ]);
 
-      // 데이터 가용성 확인
-      const dataAvailability = {
-        users: users.length > 0,
-        products: false, // Mock 데이터 사용 중단
-        coupons: coupons.length > 0,
-        events: events.length > 0,
-        qnas: qnas.length > 0,
-        inquiries: inquiries.length > 0,
-        orders: false // Mock 데이터 사용 중단
-      };
+    const coupons = this.resolveSettledValue(couponsResult, '쿠폰', []);
+    const events = this.resolveSettledValue(eventsResult, '이벤트', []);
+    const users = this.resolveSettledValue(usersResult, '사용자', []);
+    const qnas = this.resolveSettledValue(qnasResult, 'QnA', []);
+    const inquiries = this.resolveSettledValue(inquiriesResult, '문의', []);
+    const products = this.resolveSettledValue(productsResult, '상품', []);
+    const orders = this.resolveSettledValue(ordersResult, '주문', []);
 
-      // QnA 상태별 통계
-      const qnaStats = {
-        waiting: qnas.filter(q => q.status === 'waiting').length,
-        answered: qnas.filter(q => q.status === 'answered').length,
-        closed: qnas.filter(q => q.status === 'closed').length,
-      };
+    const dataAvailability = {
+      users: usersResult.status === 'fulfilled',
+      products: productsResult.status === 'fulfilled',
+      coupons: couponsResult.status === 'fulfilled',
+      events: eventsResult.status === 'fulfilled',
+      qnas: qnasResult.status === 'fulfilled',
+      inquiries: inquiriesResult.status === 'fulfilled',
+      orders: ordersResult.status === 'fulfilled',
+    };
 
-      // 문의 상태별 통계
-      const inquiryStats = {
-        waiting: inquiries.filter(i => i.status === 'waiting').length,
-        answered: inquiries.filter(i => i.status === 'answered').length,
-        closed: inquiries.filter(i => i.status === 'closed').length,
-      };
+    const qnaStats = {
+      waiting: qnas.filter((qna) => qna.status === 'waiting').length,
+      answered: qnas.filter((qna) => qna.status === 'answered').length,
+      closed: qnas.filter((qna) => qna.status === 'closed').length,
+    };
 
-      // 기본 통계 계산
-      const totalUsers = users.length;
-      const totalProducts = 0; // Mock 데이터 중단
-      const totalCoupons = coupons.length;
-      const activeEvents = events.length;
-      const totalQnAs = qnas.length;
-      const totalInquiries = inquiries.length;
-      const totalOrders = 0; // Mock 데이터 중단
-      const totalRevenue = 0; // Mock 데이터 중단
+    const inquiryStats = {
+      waiting: inquiries.filter((inquiry) => inquiry.status === 'waiting').length,
+      answered: inquiries.filter((inquiry) => inquiry.status === 'answered').length,
+      closed: inquiries.filter((inquiry) => inquiry.status === 'closed').length,
+    };
 
-      // 월별 성장률 계산 (실제 데이터가 있을 때만)
-      const monthlyGrowth = {
-        users: dataAvailability.users ? Math.floor(Math.random() * 30) + 5 : 0,
-        products: 0,
-        coupons: dataAvailability.coupons ? Math.floor(Math.random() * 50) + 10 : 0,
-        events: dataAvailability.events ? Math.floor(Math.random() * 10) + 1 : 0,
-        qnas: dataAvailability.qnas ? Math.floor(Math.random() * 20) + 3 : 0,
-        inquiries: dataAvailability.inquiries ? Math.floor(Math.random() * 15) + 2 : 0,
-        orders: 0,
-        revenue: 0,
-      };
+    const categoryBreakdown = this.getCategoryBreakdown(products, orders);
 
-      // 최근 활동 생성 (실제 데이터 기반)
-      const recentActivities = DashboardService.generateRecentActivities(users, coupons, events, qnas, inquiries);
-
-      return {
-        totalUsers,
-        totalProducts,
-        totalCoupons,
-        activeEvents,
-        totalQnAs,
-        totalInquiries,
-        totalOrders,
-        totalRevenue,
-        qnaStats,
-        inquiryStats,
-        monthlyGrowth,
-        recentActivities,
-        lowStockProducts: [], // Mock 데이터 중단
-        topSellingProducts: [], // Mock 데이터 중단
-        orderStatusStats: {}, // Mock 데이터 중단
-        revenueByMonth: [], // Mock 데이터 중단
-        dataAvailability
-      };
-    } catch (error) {
-      console.error('대시보드 통계 가져오기 실패:', error);
-      throw error;
-    }
+    return {
+      totalUsers: users.length,
+      totalProducts: products.length,
+      totalCoupons: coupons.length,
+      activeEvents: events.length,
+      totalQnAs: qnas.length,
+      totalInquiries: inquiries.length,
+      totalOrders: orders.length,
+      totalRevenue: orders.reduce((sum, order) => sum + order.finalAmount, 0),
+      qnaStats,
+      inquiryStats,
+      monthlyGrowth: {
+        users: this.calculateGrowthForCount(users, (user) => user.createdAt),
+        products: this.calculateGrowthForCount(products, (product) => product.createdAt),
+        coupons: this.calculateGrowthForCount(coupons, (coupon) => coupon.createdAt),
+        events: this.calculateGrowthForCount(events, (event) => event.createdAt),
+        qnas: this.calculateGrowthForCount(qnas, (qna) => qna.createdAt),
+        inquiries: this.calculateGrowthForCount(inquiries, (inquiry) => inquiry.createdAt),
+        orders: this.calculateGrowthForCount(orders, (order) => order.createdAt),
+        revenue: this.calculateGrowthForValue(
+          orders,
+          (order) => order.createdAt,
+          (order) => order.finalAmount
+        ),
+      },
+      recentActivities: this.generateRecentActivities(users, coupons, events, qnas, inquiries, orders, products),
+      lowStockProducts: products
+        .filter((product) => product.stock > 0 && product.stock <= 5)
+        .sort((left, right) => left.stock - right.stock)
+        .slice(0, 5),
+      topSellingProducts: this.getTopSellingProducts(products, orders),
+      orderStatusStats: this.getOrderStatusStats(orders),
+      revenueByMonth: this.getRevenueByMonth(orders),
+      categoryBreakdown: categoryBreakdown.data,
+      categoryBreakdownType: categoryBreakdown.type,
+      dataAvailability,
+    };
   }
 
-  // 모든 사용자 가져오기 (UserService 사용)
   static async getAllUsers(): Promise<UserProfile[]> {
     return UserService.getAllUsers();
   }
 
-  // 실시간 통계 업데이트를 위한 폴링
   static async getRealtimeStats(): Promise<Partial<DashboardStats>> {
     try {
-      const [users] = await Promise.all([
-        DashboardService.getAllUsers()
-      ]);
-
-      const totalUsers = users.length;
+      const users = await DashboardService.getAllUsers();
 
       return {
-        totalUsers,
-        totalOrders: 0, // Mock 데이터 중단
-        totalRevenue: 0, // Mock 데이터 중단
-        recentActivities: DashboardService.generateRecentActivities(users, [], [], [], []),
-        dataAvailability: {
-          users: users.length > 0,
-          products: false,
-          coupons: true, // 기존 값 유지
-          events: true, // 기존 값 유지
-          qnas: true, // 기존 값 유지
-          inquiries: true, // 기존 값 유지
-          orders: false
-        }
+        totalUsers: users.length,
       };
     } catch (error) {
-      console.error('실시간 통계 가져오기 실패:', error);
+      console.error('실시간 대시보드 통계 조회 실패:', error);
       throw error;
     }
   }
 
-  // 최근 활동 생성 (실제 데이터 기반)
+  private static resolveSettledValue<T>(
+    result: PromiseSettledResult<T>,
+    label: string,
+    fallback: T
+  ): T {
+    if (result.status === 'fulfilled') {
+      return result.value;
+    }
+
+    console.warn(`${label} 데이터 조회 실패:`, result.reason);
+    return fallback;
+  }
+
+  private static getPeriodBoundaries() {
+    const now = new Date();
+    const currentStart = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const previousStart = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
+
+    return { now, currentStart, previousStart };
+  }
+
+  private static isWithinRange(target: Date, start: Date, end: Date) {
+    const time = target.getTime();
+    return time >= start.getTime() && time < end.getTime();
+  }
+
+  private static calculateGrowthForCount<T>(
+    items: T[],
+    getDate: (item: T) => Date
+  ): number {
+    const { now, currentStart, previousStart } = this.getPeriodBoundaries();
+
+    const current = items.filter((item) =>
+      this.isWithinRange(getDate(item), currentStart, now)
+    ).length;
+
+    const previous = items.filter((item) =>
+      this.isWithinRange(getDate(item), previousStart, currentStart)
+    ).length;
+
+    return this.calculateGrowthRate(current, previous);
+  }
+
+  private static calculateGrowthForValue<T>(
+    items: T[],
+    getDate: (item: T) => Date,
+    getValue: (item: T) => number
+  ): number {
+    const { now, currentStart, previousStart } = this.getPeriodBoundaries();
+
+    const current = items.reduce((sum, item) => {
+      if (!this.isWithinRange(getDate(item), currentStart, now)) {
+        return sum;
+      }
+      return sum + getValue(item);
+    }, 0);
+
+    const previous = items.reduce((sum, item) => {
+      if (!this.isWithinRange(getDate(item), previousStart, currentStart)) {
+        return sum;
+      }
+      return sum + getValue(item);
+    }, 0);
+
+    return this.calculateGrowthRate(current, previous);
+  }
+
+  private static getRevenueByMonth(orders: Order[]): { month: string; revenue: number }[] {
+    const months: { month: string; revenue: number }[] = [];
+    const now = new Date();
+
+    for (let offset = 5; offset >= 0; offset -= 1) {
+      const monthDate = new Date(now.getFullYear(), now.getMonth() - offset, 1);
+      const monthKey = `${monthDate.getFullYear()}-${String(monthDate.getMonth() + 1).padStart(2, '0')}`;
+      months.push({ month: monthKey, revenue: 0 });
+    }
+
+    const monthMap = new Map(months.map((item) => [item.month, item]));
+
+    orders.forEach((order) => {
+      const monthKey = `${order.createdAt.getFullYear()}-${String(order.createdAt.getMonth() + 1).padStart(2, '0')}`;
+      const target = monthMap.get(monthKey);
+      if (target) {
+        target.revenue += order.finalAmount;
+      }
+    });
+
+    return months;
+  }
+
+  private static normalizeOrderStatus(status: string): string {
+    const statusMap: Record<string, string> = {
+      결제대기: 'pending',
+      주문확인: 'confirmed',
+      상품준비중: 'preparing',
+      배송중: 'shipped',
+      배송완료: 'delivered',
+      취소: 'cancelled',
+      교환: 'exchanged',
+      반품: 'returned',
+      pending: 'pending',
+      confirmed: 'confirmed',
+      preparing: 'preparing',
+      shipped: 'shipped',
+      delivered: 'delivered',
+      cancelled: 'cancelled',
+      exchanged: 'exchanged',
+      returned: 'returned',
+    };
+
+    return statusMap[status] || status;
+  }
+
+  private static getOrderStatusStats(orders: Order[]): Record<string, number> {
+    return orders.reduce<Record<string, number>>((accumulator, order) => {
+      const key = this.normalizeOrderStatus(order.status);
+      accumulator[key] = (accumulator[key] || 0) + 1;
+      return accumulator;
+    }, {});
+  }
+
+  private static getCategoryBreakdown(products: Product[], orders: Order[]) {
+    const productCategoryMap = new Map<string, string>();
+    products.forEach((product) => {
+      const categoryId = product.categoryId || product.category;
+      if (categoryId) {
+        productCategoryMap.set(product.id, categoryId);
+      }
+    });
+
+    const salesMap = new Map<string, number>();
+    orders.forEach((order) => {
+      order.products.forEach((item) => {
+        const categoryId = productCategoryMap.get(item.productId);
+        if (!categoryId) {
+          return;
+        }
+        salesMap.set(categoryId, (salesMap.get(categoryId) || 0) + Math.max(item.quantity, 1));
+      });
+    });
+
+    const salesData = this.toTopCategoryData(salesMap);
+    if (salesData.some((item) => item.value > 0)) {
+      return {
+        data: salesData,
+        type: 'sales' as const,
+      };
+    }
+
+    const productCountMap = new Map<string, number>();
+    products.forEach((product) => {
+      const categoryId = product.categoryId || product.category;
+      if (!categoryId) {
+        return;
+      }
+      productCountMap.set(categoryId, (productCountMap.get(categoryId) || 0) + 1);
+    });
+
+    return {
+      data: this.toTopCategoryData(productCountMap),
+      type: 'products' as const,
+    };
+  }
+
+  private static toTopCategoryData(categoryMap: Map<string, number>) {
+    return Array.from(categoryMap.entries())
+      .map(([categoryId, value]) => ({ categoryId, value }))
+      .sort((left, right) => right.value - left.value)
+      .slice(0, 5);
+  }
+
+  private static getTopSellingProducts(products: Product[], orders: Order[]): Product[] {
+    const soldQuantityMap = new Map<string, number>();
+
+    orders.forEach((order) => {
+      order.products.forEach((item) => {
+        soldQuantityMap.set(item.productId, (soldQuantityMap.get(item.productId) || 0) + Math.max(item.quantity, 1));
+      });
+    });
+
+    return [...products]
+      .sort((left, right) => (soldQuantityMap.get(right.id) || 0) - (soldQuantityMap.get(left.id) || 0))
+      .filter((product) => (soldQuantityMap.get(product.id) || 0) > 0)
+      .slice(0, 5);
+  }
+
   private static generateRecentActivities(
-    users: UserProfile[], 
-    coupons: any[], 
-    events: any[],
-    qnas: any[] = [],
-    inquiries: any[] = []
+    users: UserProfile[],
+    coupons: Coupon[],
+    events: Event[],
+    qnas: QnA[],
+    inquiries: Inquiry[],
+    orders: Order[],
+    products: Product[]
   ): DashboardActivity[] {
     const activities: DashboardActivity[] = [];
 
-    // 신규 사용자 활동
-    const recentUsers = users
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-      .slice(0, 3);
-
-    recentUsers.forEach((user, index) => {
-      const hoursAgo = (index + 1) * 2;
-      activities.push({
-        id: `user-${user.id}`,
-        type: 'user',
-        title: '신규 회원가입',
-        description: `새로운 사용자가 가입했습니다. (${user.name})`,
-        timestamp: new Date(Date.now() - hoursAgo * 60 * 60 * 1000),
-        priority: 'low'
+    users
+      .slice()
+      .sort((left, right) => right.createdAt.getTime() - left.createdAt.getTime())
+      .slice(0, 2)
+      .forEach((user) => {
+        activities.push({
+          id: `user-${user.id}`,
+          type: 'user',
+          title: '신규 회원 가입',
+          description: `${user.name} 사용자가 새로 가입했습니다.`,
+          timestamp: user.createdAt,
+          priority: 'low',
+        });
       });
-    });
 
-    // 최근 QnA 활동
-    const recentQnAs = qnas
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-      .slice(0, 2);
-
-    recentQnAs.forEach((qna, index) => {
-      const minutesAgo = (index + 1) * 15;
-      activities.push({
-        id: `qna-${qna.id}`,
-        type: 'user',
-        title: 'QnA 문의 등록',
-        description: `새로운 QnA 문의가 등록되었습니다: ${qna.title.slice(0, 20)}...`,
-        timestamp: new Date(Date.now() - minutesAgo * 60 * 1000),
-        priority: qna.status === 'waiting' ? 'high' : 'medium'
+    orders
+      .slice()
+      .sort((left, right) => right.createdAt.getTime() - left.createdAt.getTime())
+      .slice(0, 2)
+      .forEach((order) => {
+        activities.push({
+          id: `order-${order.id}`,
+          type: 'order',
+          title: '신규 주문 접수',
+          description: `${order.orderNumber} 주문이 접수되었습니다.`,
+          timestamp: order.createdAt,
+          priority: order.status === 'pending' ? 'high' : 'medium',
+        });
       });
-    });
 
-    // 최근 문의 활동
-    const recentInquiries = inquiries
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-      .slice(0, 2);
-
-    recentInquiries.forEach((inquiry, index) => {
-      const minutesAgo = (index + 1) * 10;
-      activities.push({
-        id: `inquiry-${inquiry.id}`,
-        type: 'user',
-        title: '고객 문의 등록',
-        description: `새로운 고객 문의가 등록되었습니다: ${inquiry.title.slice(0, 20)}...`,
-        timestamp: new Date(Date.now() - minutesAgo * 60 * 1000),
-        priority: inquiry.status === 'waiting' ? 'high' : 'medium'
+    qnas
+      .slice()
+      .sort((left, right) => right.createdAt.getTime() - left.createdAt.getTime())
+      .slice(0, 2)
+      .forEach((qna) => {
+        activities.push({
+          id: `qna-${qna.id}`,
+          type: 'user',
+          title: 'QnA 문의 등록',
+          description: `새 QnA 문의가 등록되었습니다. ${qna.title.slice(0, 24)}`,
+          timestamp: qna.createdAt,
+          priority: qna.status === 'waiting' ? 'high' : 'medium',
+        });
       });
-    });
 
-    // 쿠폰 관련 활동
+    inquiries
+      .slice()
+      .sort((left, right) => right.createdAt.getTime() - left.createdAt.getTime())
+      .slice(0, 2)
+      .forEach((inquiry) => {
+        activities.push({
+          id: `inquiry-${inquiry.id}`,
+          type: 'user',
+          title: '1:1 문의 등록',
+          description: `새 고객 문의가 등록되었습니다. ${inquiry.title.slice(0, 24)}`,
+          timestamp: inquiry.createdAt,
+          priority: inquiry.status === 'waiting' ? 'high' : 'medium',
+        });
+      });
+
+    if (products.length > 0) {
+      const latestProduct = [...products].sort(
+        (left, right) => right.createdAt.getTime() - left.createdAt.getTime()
+      )[0];
+
+      activities.push({
+        id: `product-${latestProduct.id}`,
+        type: 'product',
+        title: '최근 등록 상품',
+        description: `${latestProduct.name} 상품이 최근 등록 목록에 있습니다.`,
+        timestamp: latestProduct.createdAt,
+        priority: 'low',
+      });
+    }
+
     if (coupons.length > 0) {
       activities.push({
-        id: 'coupon-activity',
+        id: 'coupon-summary',
         type: 'coupon',
-        title: '쿠폰 시스템 활성',
-        description: `${coupons.length}개의 활성 쿠폰이 운영중입니다.`,
-        timestamp: new Date(Date.now() - 30 * 60 * 1000),
-        priority: 'medium'
+        title: '쿠폰 운영 현황',
+        description: `${coupons.length}개의 활성 쿠폰이 운영 중입니다.`,
+        timestamp: new Date(),
+        priority: 'medium',
       });
     }
 
-    // 이벤트 관련 활동
     if (events.length > 0) {
       activities.push({
-        id: 'event-activity',
+        id: 'event-summary',
         type: 'event',
-        title: '이벤트 진행중',
-        description: `${events.length}개의 이벤트가 현재 진행중입니다.`,
-        timestamp: new Date(Date.now() - 45 * 60 * 1000),
-        priority: 'medium'
+        title: '이벤트 운영 현황',
+        description: `${events.length}개의 활성 이벤트가 진행 중입니다.`,
+        timestamp: new Date(),
+        priority: 'medium',
       });
     }
 
-    // 시스템 상태 체크
-    activities.push({
-      id: 'system-check',
-      type: 'user',
-      title: '시스템 상태 체크',
-      description: '대시보드 데이터가 성공적으로 업데이트되었습니다.',
-      timestamp: new Date(Date.now() - 10 * 60 * 1000),
-      priority: 'low'
-    });
+    if (activities.length === 0) {
+      activities.push({
+        id: 'system-check',
+        type: 'user',
+        title: '시스템 상태 체크',
+        description: '대시보드 데이터를 표시할 수 있는 항목이 아직 없습니다.',
+        timestamp: new Date(),
+        priority: 'low',
+      });
+    }
 
-    return activities.sort((a, b) => 
-      new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-    ).slice(0, 8);
+    return activities
+      .sort((left, right) => right.timestamp.getTime() - left.timestamp.getTime())
+      .slice(0, 8);
   }
 
-  // 시간 형식 유틸리티
   static formatTimeAgo(timestamp: Date): string {
     const now = new Date();
     const diff = now.getTime() - timestamp.getTime();
@@ -318,22 +500,22 @@ export class DashboardService {
     return `${days}일 전`;
   }
 
-  // 숫자 포맷팅
   static formatNumber(num: number): string {
     return new Intl.NumberFormat('ko-KR').format(num);
   }
 
-  // 통화 포맷팅
   static formatCurrency(amount: number): string {
     return new Intl.NumberFormat('ko-KR', {
       style: 'currency',
-      currency: 'KRW'
+      currency: 'KRW',
     }).format(amount);
   }
 
-  // 성장률 계산
   static calculateGrowthRate(current: number, previous: number): number {
-    if (previous === 0) return current > 0 ? 100 : 0;
+    if (previous === 0) {
+      return current > 0 ? 100 : 0;
+    }
+
     return Math.round(((current - previous) / previous) * 100);
   }
 }

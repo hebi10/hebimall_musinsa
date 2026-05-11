@@ -11,7 +11,6 @@ export default function QAPage() {
   const { user } = useAuth();
   const [selectedType, setSelectedType] = useState<string>('전체');
   const [selectedStatus, setSelectedStatus] = useState<string>('전체');
-  const [showNewQAForm, setShowNewQAForm] = useState(false);
   const [qnas, setQnas] = useState<QnA[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -21,45 +20,44 @@ export default function QAPage() {
 
   const getTypeLabel = (type: string) => {
     switch (type) {
-      case 'product': return '상품문의';
-      case 'delivery': return '배송문의';
-      case 'payment': return '결제문의';
-      case 'general': return '일반문의';
-      default: return type;
+      case 'product':
+        return '상품문의';
+      case 'delivery':
+        return '배송문의';
+      case 'payment':
+        return '결제문의';
+      case 'general':
+        return '일반문의';
+      default:
+        return type;
     }
   };
 
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case 'answered': return '답변완료';
-      case 'waiting': return '답변대기';
-      case 'closed': return '종료';
-      default: return status;
+      case 'answered':
+        return '답변완료';
+      case 'waiting':
+        return '대기중';
+      case 'closed':
+        return '종료';
+      default:
+        return status;
     }
   };
 
-  // QnA 목록 로드
   const loadUserQnAs = async () => {
     if (!user?.uid) {
       console.log('User not logged in');
       return;
     }
-    
+
     try {
       setLoading(true);
-      console.log('Loading QnAs for user:', user.uid);
-      
-      // 임시로 모든 QnA를 가져와서 확인
-      const allQnAs = await SimpleQnAService.getAllQnAs(50);
-      console.log('All QnAs:', allQnAs);
-      
-      // 실제 사용자 QnA 필터링
-      const userQnAs = allQnAs.filter(qna => qna.userId === user.uid);
-      console.log('User QnAs:', userQnAs);
-      
+      const userQnAs = await SimpleQnAService.getUserQnAs(user.uid);
       setQnas(userQnAs);
     } catch (err) {
-      setError('문의 내역을 불러오는데 실패했습니다.');
+      setError('문의 목록을 불러오지 못했습니다.');
       console.error('Error loading user QnAs:', err);
     } finally {
       setLoading(false);
@@ -70,21 +68,18 @@ export default function QAPage() {
     loadUserQnAs();
   }, [user]);
 
-  // 필터링된 QnA 목록
   const filteredQAs = qnas.filter(qa => {
     const typeMatch = selectedType === '전체' || qa.category === selectedType;
     const statusMatch = selectedStatus === '전체' || qa.status === selectedStatus;
     return typeMatch && statusMatch;
   });
 
-  // 통계 계산
   const stats = {
     total: qnas.length,
     waiting: qnas.filter(qa => qa.status === 'waiting').length,
     answered: qnas.filter(qa => qa.status === 'answered').length,
   };
 
-  // 날짜 포맷팅
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat('ko-KR', {
       year: 'numeric',
@@ -98,7 +93,7 @@ export default function QAPage() {
       <div className={styles.container}>
         <div className={styles.loading}>
           <div className={styles.spinner}></div>
-          <p>문의 내역을 불러오는 중...</p>
+          <p>문의 목록을 불러오는 중...</p>
         </div>
       </div>
     );
@@ -108,42 +103,33 @@ export default function QAPage() {
     <div className={styles.container}>
       <div className={styles.pageHeader}>
         <h2 className={styles.pageTitle}>1:1 문의</h2>
-        <p className={styles.pageDesc}>궁금한 사항을 문의해보세요. 빠르게 답변해드리겠습니다.</p>
+        <p className={styles.pageDesc}>문의내역과 답변 현황을 확인할 수 있습니다.</p>
       </div>
 
-        {/* Statistics Cards */}
-        <div className={styles.statsGrid}>
-          <div className={styles.statCard}>
-            <div className={styles.statIcon}></div>
-            <div className={styles.statContent}>
-              <div className={styles.statNumber}>{stats.total}</div>
-              <div className={styles.statLabel}>총 문의</div>
-            </div>
-          </div>
-          <div className={styles.statCard}>
-            <div className={styles.statIcon}>⏳</div>
-            <div className={styles.statContent}>
-              <div className={styles.statNumber}>{stats.waiting}</div>
-              <div className={styles.statLabel}>답변 대기</div>
-            </div>
-          </div>
-          <div className={styles.statCard}>
-            <div className={styles.statIcon}></div>
-            <div className={styles.statContent}>
-              <div className={styles.statNumber}>{stats.answered}</div>
-              <div className={styles.statLabel}>답변 완료</div>
-            </div>
-          </div>
-          <div className={styles.statCard}>
-            <div className={styles.statIcon}></div>
-            <div className={styles.statContent}>
-              <div className={styles.statNumber}>2.5시간</div>
-              <div className={styles.statLabel}>평균 답변시간</div>
-            </div>
+      <div className={styles.statsGrid}>
+        <div className={styles.statCard}>
+          <div className={styles.statIcon}></div>
+          <div className={styles.statContent}>
+            <div className={styles.statNumber}>{stats.total}</div>
+            <div className={styles.statLabel}>총 문의</div>
           </div>
         </div>
+        <div className={styles.statCard}>
+          <div className={styles.statIcon}></div>
+          <div className={styles.statContent}>
+            <div className={styles.statNumber}>{stats.waiting}</div>
+            <div className={styles.statLabel}>대기중</div>
+          </div>
+        </div>
+        <div className={styles.statCard}>
+          <div className={styles.statIcon}></div>
+          <div className={styles.statContent}>
+            <div className={styles.statNumber}>{stats.answered}</div>
+            <div className={styles.statLabel}>답변완료</div>
+          </div>
+        </div>
+      </div>
 
-      {/* Filter and New QA Section */}
       <div className={styles.filterSection}>
         <div className={styles.filtersRow}>
           <div className={styles.filterGroup}>
@@ -160,9 +146,9 @@ export default function QAPage() {
               ))}
             </div>
           </div>
-          
+
           <div className={styles.filterGroup}>
-            <label className={styles.filterLabel}>답변 상태</label>
+            <label className={styles.filterLabel}>상태</label>
             <div className={styles.filterButtons}>
               {statusOptions.map((status) => (
                 <button
@@ -180,16 +166,15 @@ export default function QAPage() {
         <div className={styles.newQAButtonContainer}>
           <Link href="/qna/write" className={styles.newQAButton}>
             <span className={styles.buttonIcon}></span>
-            새 문의 작성
+            새 문의
           </Link>
         </div>
       </div>
 
-      {/* QA List */}
       <div className={styles.qaSection}>
         <div className={styles.sectionHeader}>
-          <h3 className={styles.sectionTitle}>문의 내역</h3>
-          <div className={styles.resultCount}>총 {filteredQAs.length}건</div>
+          <h3 className={styles.sectionTitle}>문의 목록</h3>
+          <div className={styles.resultCount}>총 {filteredQAs.length}개</div>
         </div>
 
         <div className={styles.qaList}>
@@ -221,42 +206,29 @@ export default function QAPage() {
                   <h4 className={styles.qaTitle}>{qa.title}</h4>
                   {qa.productName && (
                     <div className={styles.relatedProduct}>
-                      관련 상품: {qa.productName}
+                      상품: {qa.productName}
                     </div>
                   )}
                   <div className={styles.qaQuestion}>
                     <div className={styles.questionLabel}>Q</div>
                     <div className={styles.questionText}>{qa.content}</div>
                   </div>
-                  
-                  {qa.answer && (
-                    <div className={styles.qaAnswer}>
-                      <div className={styles.answerLabel}>A</div>
-                      <div className={styles.answerText}>{qa.answer.content}</div>
-                      <div className={styles.answerInfo}>
-                        답변자: {qa.answer.answeredBy} | {formatDate(qa.answer.answeredAt)}
-                      </div>
-                    </div>
-                  )}
                 </div>
 
                 <div className={styles.qaActions}>
                   <Link href={`/qna/${qa.id}`} className={styles.actionButton}>
                     상세보기
                   </Link>
-                  {qa.status === 'waiting' && (
-                    <button className={styles.actionButton}>수정</button>
-                  )}
                 </div>
               </div>
             ))
           ) : (
             <div className={styles.emptyState}>
               <div className={styles.emptyIcon}></div>
-              <div className={styles.emptyTitle}>문의 내역이 없습니다</div>
-              <div className={styles.emptyDesc}>궁금한 사항이 있으시면 언제든 문의해주세요.</div>
+              <div className={styles.emptyTitle}>문의가 없습니다</div>
+              <div className={styles.emptyDesc}>새 문의를 작성해 주세요.</div>
               <Link href="/qna/write" className={styles.newQAButton}>
-                첫 문의 작성하기
+                새 문의 등록
               </Link>
             </div>
           )}

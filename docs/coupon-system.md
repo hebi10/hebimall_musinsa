@@ -25,7 +25,9 @@ src/shared/types/coupon.ts            # 타입 정의
 src/shared/services/couponService.ts  # 서비스 로직
 src/context/couponProvider.tsx        # Context Provider
 src/app/mypage/coupons/               # 쿠폰 페이지
-functions/src/couponFunctions.ts      # Cloud Functions
+functions/src/handlers/coupon.ts      # Cloud Functions HTTP handler
+functions/src/domain/couponDomain.ts  # 쿠폰 코드/만료/상태 순수 로직
+functions/__tests__/couponDomain.test.ts # 쿠폰 도메인 단위 테스트
 scripts/seed-coupons.ts              # 시드 데이터
 ```
 
@@ -42,10 +44,11 @@ scripts/seed-coupons.ts              # 시드 데이터
 - 사용자 변경 시 자동 갱신
 
 ### Cloud Functions
-- `issueCoupon`: 발급 (중복 검증)
-- `useCoupon`: 사용 (만료일 검증)
-- `registerCoupon`: 코드 기반 쿠폰 등록
-- `cleanupExpiredCoupons`: 만료 쿠폰 정리 (scheduled)
+- `action: "issue"`: 발급 (중복 검증)
+- `action: "use"`: 사용 (만료일 검증)
+- `action: "register"`: 코드 기반 쿠폰 등록
+- `action: "cleanup"`: 만료 쿠폰 정리 (관리자)
+- 코드 정규화, 만료일 일 단위 판정, 사용 가능 상태 판정은 `couponDomain`에서 공통 처리한다.
 
 ## 보안
 
@@ -53,6 +56,9 @@ scripts/seed-coupons.ts              # 시드 데이터
 - 본인 쿠폰만 조회/사용 가능
 - 동일 쿠폰 중복 발급 방지
 - 사용 시 만료일 재검증
+
+## 검증
+- 2026-05-11: `functions/__tests__/couponDomain.test.ts`로 쿠폰 코드 대문자 정규화, UTC 일 단위 만료 판정, 사용 가능 상태 판정을 검증.
 
 ## 미구현
 

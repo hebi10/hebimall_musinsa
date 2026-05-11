@@ -1,0 +1,27 @@
+import {
+  couponHasExpired,
+  isAvailableUserCouponStatus,
+  normalizeCouponCode,
+} from '../src/domain/couponDomain';
+
+describe('coupon domain logic', () => {
+  test('normalizes coupon codes before lookup', () => {
+    expect(normalizeCouponCode(' welcome2026 ')).toBe('WELCOME2026');
+    expect(normalizeCouponCode(undefined)).toBe('');
+  });
+
+  test('detects expired coupon dates using day precision', () => {
+    const today = new Date('2026-05-11T10:00:00.000Z');
+
+    expect(couponHasExpired('2026-05-10', today)).toBe(true);
+    expect(couponHasExpired('2026-05-11', today)).toBe(false);
+    expect(couponHasExpired('2026-05-12', today)).toBe(false);
+  });
+
+  test('accepts known available user coupon statuses', () => {
+    expect(isAvailableUserCouponStatus('사용가능')).toBe(true);
+    expect(isAvailableUserCouponStatus('available')).toBe(true);
+    expect(isAvailableUserCouponStatus('ACTIVE')).toBe(true);
+    expect(isAvailableUserCouponStatus('사용완료')).toBe(false);
+  });
+});

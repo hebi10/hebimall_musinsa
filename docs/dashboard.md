@@ -44,3 +44,9 @@ src/shared/
 - `ErrorBoundary` 컴포넌트로 렌더링 오류 격리
 - 네트워크 오류 시 재시도
 - 기본값 fallback 처리
+
+## 2026-05-11 점검
+
+- `src/app/admin/dashboard/dashboard/page.tsx`의 깨진 한글/JSX를 정상 UTF-8 기준으로 복구.
+- 관리자 접근 제어는 `src/app/admin/layout.tsx`의 `AuthChecking`에 맡기고, 대시보드 내부의 중복 `user.role` 확인은 제거된 상태를 유지.
+- `src/app/admin/dashboard/page.tsx`는 `useEffect`, `useRouter`, `useAuth`를 사용하는 redirect 페이지라 `"use client"` 지시문을 유지해야 한다.

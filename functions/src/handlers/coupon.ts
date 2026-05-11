@@ -1,5 +1,10 @@
 import { onRequest } from "firebase-functions/v2/https";
 import { getFirestore, FieldValue } from "firebase-admin/firestore";
+import {
+  couponHasExpired,
+  isAvailableUserCouponStatus,
+  normalizeCouponCode,
+} from "../domain/couponDomain";
 import { verifyAuth, requireAdmin, AuthError } from "../utils/auth";
 
 function getDb() {
@@ -67,7 +72,7 @@ async function handleRegister(
   data: { couponCode?: string },
   res: any
 ): Promise<void> {
-  const { couponCode } = data;
+  const couponCode = normalizeCouponCode(data.couponCode);
 
   if (!couponCode) {
     res.status(400).json({ success: false, error: "couponCode is required." });
@@ -77,7 +82,7 @@ async function handleRegister(
   const db = getDb();
   const couponQuery = await db
     .collection("coupons")
-    .where("couponCode", "==", couponCode.toUpperCase())
+    .where("couponCode", "==", couponCode)
     .where("isActive", "==", true)
     .where("isDirectAssign", "==", false)
     .get();
@@ -96,8 +101,7 @@ async function handleRegister(
     return;
   }
 
-  const expiryDate = new Date(couponData.expiryDate);
-  if (expiryDate < new Date()) {
+  if (couponHasExpired(couponData.expiryDate)) {
     res.status(410).json({ success: false, error: "Coupon has expired." });
     return;
   }
@@ -222,7 +226,7 @@ async function handleUse(
     return;
   }
 
-  if (userCoupon?.status !== "사용가능") {
+  if (!isAvailableUserCouponStatus(userCoupon?.status)) {
     res.status(409).json({ success: false, error: "Coupon is not available." });
     return;
   }
@@ -234,10 +238,9 @@ async function handleUse(
   }
 
   const couponData = couponDoc.data();
-  const expiryDate = new Date(couponData?.expiryDate);
   const today = new Date();
 
-  if (expiryDate < today) {
+  if (couponHasExpired(couponData?.expiryDate, today)) {
     await db.collection("user_coupons").doc(userCouponId).update({
       status: "기간만료",
       expiredDate: today.toISOString().split("T")[0],
@@ -284,9 +287,7 @@ async function handleCleanup(res: any): Promise<void> {
     }
 
     const couponData = couponDoc.data();
-    const expiryDate = new Date(couponData?.expiryDate);
-
-    if (expiryDate < today) {
+    if (couponHasExpired(couponData?.expiryDate, today)) {
       batch.update(userCouponDoc.ref, {
         status: "기간만료",
         expiredDate: todayStr,

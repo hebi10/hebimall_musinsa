@@ -31,6 +31,18 @@
         "function": "chat"
       },
       {
+        "source": "/api/admin/users",
+        "function": "adminUsers"
+      },
+      {
+        "source": "/api/order",
+        "function": "order"
+      },
+      {
+        "source": "/api/qna/verify-secret",
+        "function": "qna"
+      },
+      {
         "source": "**",
         "function": "nextjsServer"
       }

@@ -48,6 +48,7 @@ export interface Order {
   totalAmount?: number;
   discountAmount?: number;
   deliveryFee?: number;
+  pointUsed?: number;
   finalAmount: number;
   status: OrderStatus;
   paymentMethod?: PaymentMethod;

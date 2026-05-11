@@ -1,6 +1,6 @@
 .container {
   min-height: 100vh;
-  background: var(--background);
+  background: var(--off-white);
 }
 
 .sectionContainer {
@@ -20,8 +20,8 @@
 }
 
 .moodSection {
-  padding: 3.75rem 0 1.25rem;
-  background: var(--background);
+  padding: 2.5rem 0 1rem;
+  background: var(--off-white);
 }
 
 .storyIntro {
@@ -32,23 +32,31 @@
   margin-bottom: 1.75rem;
 }
 
+.storyIntroCompact {
+  display: block;
+  margin-bottom: 1.35rem;
+}
+
+.storyIntroCompact .storyTitle {
+  max-width: none;
+}
+
 .storyTitle {
   margin: 0;
-  max-width: 13ch;
-  font-family: var(--font-heading), "Noto Serif KR", "Apple Myungjo", serif;
+  max-width: 18ch;
   font-weight: 600;
-  font-size: clamp(2rem, 4vw, 3.25rem);
-  line-height: 1.12;
+  font-size: clamp(1.8rem, 3.2vw, 2.75rem);
+  line-height: 1.08;
   letter-spacing: -0.03em;
   text-wrap: balance;
   color: var(--black);
 }
 
 .storyDescription {
-  margin: 0;
-  max-width: 34rem;
-  font-size: 1rem;
-  line-height: 1.8;
+  margin: 0.75rem 0 0;
+  max-width: 30rem;
+  font-size: 0.98rem;
+  line-height: 1.65;
   color: var(--text-subtle);
 }
 
@@ -59,35 +67,36 @@
 }
 
 .categoryMoodGrid {
-  grid-template-columns: 1.3fr 0.85fr 0.85fr;
-  grid-template-rows: repeat(2, minmax(220px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.875rem;
 }
 
 .categoryCard {
   position: relative;
-  display: block;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  height: 100%;
   overflow: hidden;
   text-decoration: none;
+  color: inherit;
   border-radius: var(--radius-md);
-  background: var(--color-bg-primary);
+  background: var(--surface-raised);
   border: 1px solid var(--line);
-  transition: transform 0.25s ease, box-shadow 0.25s ease,
-    border-color 0.25s ease;
+  transition: transform 0.25s ease, border-color 0.25s ease;
 }
 
 .categoryCard:hover {
   transform: translateY(-2px);
-  border-color: var(--point);
-  box-shadow: var(--shadow-md);
+  border-color: var(--line-strong);
 }
 
 .categoryImageWrapper {
   position: relative;
   width: 100%;
   height: 100%;
-  min-height: 180px;
+  min-height: 240px;
   overflow: hidden;
+  background: var(--off-white);
 }
 
 .categoryImagePlaceholder {
@@ -108,117 +117,61 @@
   transform: scale(1.04);
 }
 
-.categoryOverlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(
-    180deg,
-    rgba(10, 10, 10, 0.06) 0%,
-    rgba(10, 10, 10, 0.3) 100%
-  );
-  opacity: 1;
-  transition: background-color 0.2s ease;
-}
-
-.categoryCard:hover .categoryOverlay {
-  background: linear-gradient(
-    180deg,
-    rgba(10, 10, 10, 0.12) 0%,
-    rgba(10, 10, 10, 0.42) 100%
-  );
-}
-
-.categoryIcon {
-  font-size: 2rem;
-  color: var(--color-white);
-}
-
 .categoryInfo {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  padding: 1rem 1.15rem;
-  background: linear-gradient(
-    180deg,
-    rgba(10, 10, 10, 0) 0%,
-    rgba(10, 10, 10, 0.72) 100%
-  );
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.5rem 1rem;
+  align-items: end;
+  align-content: start;
+  min-height: 74px;
+  padding: 0.95rem 1rem 1rem;
+  background: var(--surface-raised);
+  border-top: 1px solid var(--line);
 }
 
 .categoryLabel {
   display: block;
-  margin-bottom: 0.18rem;
   font-size: 1rem;
   font-weight: 600;
   letter-spacing: -0.02em;
-  color: var(--color-white);
+  color: var(--black);
 }
 
 .categoryCount {
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.72);
-}
-
-.categoryMoodGrid .categoryCard:nth-child(1) {
-  grid-column: 1;
-  grid-row: 1 / span 2;
-}
-
-.categoryMoodGrid .categoryCard:nth-child(2) {
-  grid-column: 2 / span 2;
-  grid-row: 1;
-}
-
-.categoryMoodGrid .categoryCard:nth-child(3) {
-  grid-column: 2;
-  grid-row: 2;
-}
-
-.categoryMoodGrid .categoryCard:nth-child(4) {
-  grid-column: 3;
-  grid-row: 2;
+  justify-self: end;
+  font-size: 0.84rem;
+  line-height: 1.5;
+  color: var(--text-subtle);
 }
 
 .featuredSection {
+  padding: 3.25rem 0 2rem;
   background: var(--off-white);
+  scroll-margin-top: 6rem;
 }
 
 .promoBand {
-  margin-top: 1.25rem;
-  padding: clamp(3rem, 6vw, 5rem) 1rem;
-  background: var(--black);
-  color: var(--color-white);
+  padding: clamp(2.75rem, 5vw, 4.5rem) 1rem;
+  background: var(--off-white);
+  color: var(--black);
 }
 
 .promoInner {
   display: grid;
-  grid-template-columns: minmax(300px, 0.95fr) minmax(0, 0.75fr) minmax(240px, 0.55fr);
-  gap: 1.5rem;
-  align-items: stretch;
-  max-width: 1280px;
+  grid-template-columns: minmax(300px, 0.95fr) minmax(320px, 0.9fr);
+  gap: clamp(1.5rem, 4vw, 4rem);
+  align-items: center;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
 .promoVisual {
   position: relative;
-  min-height: 420px;
+  min-height: 390px;
   overflow: hidden;
   border-radius: var(--radius-md);
-}
-
-.promoVisual::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(10, 10, 10, 0.04) 0%,
-    rgba(10, 10, 10, 0.42) 100%
-  );
+  border: 1px solid var(--line);
+  background: var(--surface-raised);
 }
 
 .promoImage {
@@ -228,28 +181,25 @@
 }
 
 .promoVisualBadge {
-  position: absolute;
-  top: 1rem;
-  left: 1rem;
-  z-index: 1;
-  display: inline-flex;
-  align-items: center;
-  min-height: 28px;
-  padding: 0 0.75rem;
-  border: 1px solid rgba(255, 255, 255, 0.38);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--color-white);
-  font-size: 0.68rem;
+  display: inline-block;
+  width: fit-content;
+  margin-bottom: 0.9rem;
+  color: var(--text-soft);
+  font-size: 0.74rem;
   font-weight: 600;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
 }
 
 .promoCopy {
   display: grid;
-  align-content: end;
-  max-width: 28rem;
+  align-content: center;
+  justify-items: start;
+  max-width: 32rem;
+}
+
+.promoCopyCompact {
+  max-width: 32rem;
 }
 
 .promoEyebrow {
@@ -259,53 +209,32 @@
   font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.58);
+  color: var(--text-soft);
 }
 
 .promoTitle {
-  margin: 0 0 1rem;
-  font-family: var(--font-heading), "Noto Serif KR", "Apple Myungjo", serif;
+  margin: 0 0 1.1rem;
   font-weight: 600;
-  font-size: clamp(2.15rem, 4.8vw, 4.2rem);
+  font-size: clamp(2rem, 4.2vw, 3.85rem);
   line-height: 1.08;
   letter-spacing: -0.034em;
   text-wrap: balance;
+  color: var(--black);
 }
 
 .promoDescription {
   margin: 0;
   font-size: 1rem;
   line-height: 1.8;
-  color: rgba(255, 255, 255, 0.74);
-}
-
-.promoMeta {
-  display: grid;
-  align-content: end;
-  gap: 1rem;
-  justify-items: start;
-}
-
-.promoNote {
-  margin: 0;
-  padding: 0.8rem 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.05);
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.88);
+  color: var(--text-subtle);
 }
 
 .promoList {
-  margin: 0;
-  font-size: 0.86rem;
+  margin: 0 0 1.4rem;
+  max-width: 28rem;
+  font-size: 0.98rem;
   line-height: 1.7;
-  color: rgba(255, 255, 255, 0.65);
-}
-
-.promoDivider {
-  margin: 0 0.5rem;
-  color: rgba(255, 255, 255, 0.3);
+  color: var(--text-subtle);
 }
 
 .promoButton {
@@ -314,9 +243,9 @@
   justify-content: center;
   min-height: 44px;
   padding: 0.85rem 1.3rem;
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  border: 1px solid var(--black);
   border-radius: var(--radius-md);
-  background: var(--point);
+  background: var(--black);
   color: var(--color-white);
   font-size: 0.92rem;
   font-weight: 600;
@@ -325,18 +254,18 @@
 }
 
 .promoButton:hover {
-  background: var(--point-hover);
-  border-color: rgba(255, 255, 255, 0.24);
+  background: var(--action-hover);
+  border-color: var(--action-hover);
 }
 
 .newBand {
-  padding: 4rem 0 3.5rem;
-  background: var(--background);
+  padding: 3rem 0 2.75rem;
+  background: var(--off-white);
   scroll-margin-top: 6rem;
 }
 
 .rankingBand {
-  padding: 4rem 0;
+  padding: 3rem 0 4rem;
   background: var(--off-white);
   scroll-margin-top: 6rem;
 }
@@ -345,58 +274,6 @@
   margin: 0 auto;
 }
 
-.seasonNote {
-  padding: 3.75rem 0 4rem;
-  background: linear-gradient(
-    180deg,
-    var(--surface-muted) 0%,
-    var(--off-white) 100%
-  );
-  scroll-margin-top: 6rem;
-}
-
-.seasonInner {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.9fr);
-  gap: 2rem;
-  align-items: start;
-}
-
-.seasonHeading {
-  max-width: 32rem;
-}
-
-.seasonTitle {
-  margin: 0;
-  font-family: var(--font-heading), "Noto Serif KR", "Apple Myungjo", serif;
-  font-weight: 600;
-  font-size: clamp(1.8rem, 3.4vw, 3rem);
-  line-height: 1.12;
-  letter-spacing: -0.03em;
-  text-wrap: balance;
-  color: var(--black);
-}
-
-.seasonBody {
-  display: grid;
-  gap: 1.25rem;
-}
-
-.seasonDescription {
-  margin: 0;
-  font-size: 1rem;
-  line-height: 1.8;
-  color: var(--text-subtle);
-}
-
-.seasonActions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-}
-
-.primaryLink,
-.secondaryLink,
 .retryButton {
   display: inline-flex;
   align-items: center;
@@ -404,34 +281,21 @@
   min-height: 42px;
   padding: 0.75rem 1.2rem;
   border-radius: var(--radius-md);
-  text-decoration: none;
   font-size: 0.9rem;
   font-weight: 600;
   transition: background-color 0.2s ease, border-color 0.2s ease,
     color 0.2s ease;
 }
 
-.primaryLink,
 .retryButton {
-  border: 1px solid var(--point);
-  background: var(--point);
+  border: 1px solid var(--black);
+  background: var(--black);
   color: var(--color-white);
 }
 
-.primaryLink:hover,
 .retryButton:hover {
-  background: var(--point-hover);
-  border-color: var(--point-hover);
-}
-
-.secondaryLink {
-  border: 1px solid var(--line-strong);
-  background: transparent;
-  color: var(--black);
-}
-
-.secondaryLink:hover {
-  background: var(--color-white);
+  background: var(--action-hover);
+  border-color: var(--action-hover);
 }
 
 .loadingShimmer {
@@ -516,8 +380,7 @@
 }
 
 @media (max-width: 1024px) {
-  .storyIntro,
-  .seasonInner {
+  .storyIntro {
     grid-template-columns: 1fr;
   }
 
@@ -531,27 +394,10 @@
 
   .categoryMoodGrid {
     grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: 280px 180px 180px;
   }
 
-  .categoryMoodGrid .categoryCard:nth-child(1) {
-    grid-column: 1 / -1;
-    grid-row: 1;
-  }
-
-  .categoryMoodGrid .categoryCard:nth-child(2) {
-    grid-column: 1 / -1;
-    grid-row: 2;
-  }
-
-  .categoryMoodGrid .categoryCard:nth-child(3) {
-    grid-column: 1;
-    grid-row: 3;
-  }
-
-  .categoryMoodGrid .categoryCard:nth-child(4) {
-    grid-column: 2;
-    grid-row: 3;
+  .categoryImageWrapper {
+    min-height: 230px;
   }
 }
 
@@ -571,20 +417,15 @@
 
   .categoryMoodGrid {
     gap: 0.75rem;
-    grid-template-rows: 220px 160px 160px;
   }
 
   .promoBand,
   .newBand,
-  .rankingBand,
-  .seasonNote {
+  .rankingBand {
     padding-top: 3rem;
     padding-bottom: 3rem;
   }
 
-  .promoMeta {
-    gap: 0.75rem;
-  }
 }
 
 @media (max-width: 480px) {
@@ -598,28 +439,20 @@
     gap: 0.625rem;
   }
 
-  .categoryMoodGrid .categoryCard:nth-child(1),
-  .categoryMoodGrid .categoryCard:nth-child(2),
-  .categoryMoodGrid .categoryCard:nth-child(3),
-  .categoryMoodGrid .categoryCard:nth-child(4) {
-    grid-column: auto;
-    grid-row: auto;
+  .categoryCard {
+    grid-template-rows: auto auto;
+    height: auto;
   }
 
   .categoryImageWrapper {
-    min-height: 180px;
+    height: 200px;
+    min-height: 200px;
   }
 
   .promoVisual {
     min-height: 300px;
   }
 
-  .seasonActions {
-    flex-direction: column;
-  }
-
-  .primaryLink,
-  .secondaryLink,
   .retryButton,
   .promoButton {
     width: 100%;

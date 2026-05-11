@@ -13,11 +13,6 @@ export interface AuthContext {
   isAdmin: boolean;
 }
 
-async function resolveUserRole(uid: string): Promise<string | undefined> {
-  const userDoc = await admin.firestore().collection("users").doc(uid).get();
-  return userDoc.exists ? userDoc.data()?.role : undefined;
-}
-
 export async function verifyAuthContext(authHeader: string | undefined): Promise<AuthContext> {
   if (!authHeader?.startsWith("Bearer ")) {
     throw new AuthError(401, "Authentication token is required.");
@@ -27,7 +22,7 @@ export async function verifyAuthContext(authHeader: string | undefined): Promise
 
   try {
     const decodedToken = await admin.auth().verifyIdToken(token);
-    const role = (decodedToken.role as string | undefined) || (await resolveUserRole(decodedToken.uid));
+    const role = decodedToken.role as string | undefined;
     const isAdmin = decodedToken.admin === true || role === "admin";
 
     return {

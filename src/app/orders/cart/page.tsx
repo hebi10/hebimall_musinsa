@@ -152,7 +152,18 @@ export default function OrderCartPage() {
     }
     
     const orderData = {
-      items: selectedItems,
+      items: selectedItems.map((item) => ({
+        productId: item.productId,
+        id: item.id,
+        size: item.size,
+        color: item.color,
+        quantity: item.quantity,
+        productName: item.productName,
+        productImage: item.productImage,
+        brand: item.brand,
+        price: item.price,
+        discountAmount: item.discountAmount,
+      })),
       subtotal,
       couponDiscount,
       deliveryFee,

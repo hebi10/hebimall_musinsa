@@ -13,7 +13,7 @@
 .button:focus-visible {
   outline: 2px solid transparent;
   outline-offset: 2px;
-  box-shadow: 0 0 0 2px var(--point-soft);
+  box-shadow: 0 0 0 2px var(--action-soft);
 }
 
 .button:disabled {
@@ -28,7 +28,7 @@
 }
 
 .primary:hover {
-  background-color: var(--point);
+  background-color: var(--action-hover);
 }
 
 .secondary {

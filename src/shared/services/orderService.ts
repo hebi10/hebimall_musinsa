@@ -1,7 +1,6 @@
 import {
   collection,
   doc,
-  addDoc,
   getDoc,
   getDocs,
   updateDoc,
@@ -11,8 +10,74 @@ import {
   limit,
   serverTimestamp,
 } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
 import { db } from '@/shared/libs/firebase/firebase';
 import { Order, OrderStatus } from '@/shared/types/order';
+
+interface CreateOrderItemRequest {
+  id?: string;
+  productId: string;
+  size?: string;
+  color?: string;
+  quantity: number;
+}
+
+export interface CreateOrderRequest {
+  items: CreateOrderItemRequest[];
+  deliveryAddress: {
+    id: string;
+    name: string;
+    recipient: string;
+    phone: string;
+    address: string;
+    detailAddress: string;
+    zipCode: string;
+    isDefault?: boolean;
+  };
+  paymentMethod: string;
+  deliveryOption: string;
+  selectedCoupon?: string;
+  requestedPointAmount?: number;
+}
+
+export interface CreateOrderResponse {
+  orderId: string;
+  orderNumber: string;
+  totalAmount: number;
+  discountAmount: number;
+  deliveryFee: number;
+  finalAmount: number;
+  pointUsed: number;
+  paymentMethod: string;
+  status: OrderStatus;
+}
+
+async function getIdToken(): Promise<string> {
+  const user = getAuth().currentUser;
+  if (!user) {
+    throw new Error('로그인이 필요합니다.');
+  }
+  return user.getIdToken();
+}
+
+async function callOrdersAPI(payload: CreateOrderRequest): Promise<CreateOrderResponse> {
+  const token = await getIdToken();
+  const res = await fetch('/api/order', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const data = await res.json();
+  if (!data.success) {
+    throw new Error(data.error || '주문 생성 API 오류가 발생했습니다.');
+  }
+
+  return data.data as CreateOrderResponse;
+}
 
 export class OrderService {
   private static readonly COLLECTION_NAME = 'orders';
@@ -46,20 +111,9 @@ export class OrderService {
     } as Order;
   }
 
-  static async createOrder(orderData: Omit<Order, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
+  static async createOrder(orderData: CreateOrderRequest): Promise<CreateOrderResponse> {
     try {
-      const shippingAddress = orderData.shippingAddress || orderData.deliveryAddress;
-      const order = {
-        ...orderData,
-        shippingAddress,
-        deliveryAddress: orderData.deliveryAddress || shippingAddress,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-      };
-
-      const docRef = await addDoc(collection(db, this.COLLECTION_NAME), order);
-      console.log('Order created:', docRef.id);
-      return docRef.id;
+      return await callOrdersAPI(orderData);
     } catch (error) {
       console.error('Failed to create order:', error);
       throw error;

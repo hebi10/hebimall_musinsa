@@ -38,7 +38,6 @@
   align-items: center;
   justify-content: center;
   color: var(--black);
-  font-family: var(--font-heading), "Noto Serif KR", "Apple Myungjo", serif;
   font-size: 1.55rem;
   font-weight: 600;
 }
@@ -51,7 +50,6 @@
 
 .profileName {
   margin: 0;
-  font-family: var(--font-heading), "Noto Serif KR", "Apple Myungjo", serif;
   font-size: clamp(1.9rem, 3vw, 2.5rem);
   font-weight: 600;
   line-height: 1.1;
@@ -100,7 +98,6 @@
 }
 
 .statNumber {
-  font-family: var(--font-heading), "Noto Serif KR", "Apple Myungjo", serif;
   font-size: 1.8rem;
   font-weight: 600;
   line-height: 1.05;
@@ -142,7 +139,7 @@
 
 .actionIcon {
   font-size: 1.2rem;
-  color: var(--point);
+  color: var(--black);
 }
 
 .actionTitle {

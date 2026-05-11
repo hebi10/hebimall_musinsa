@@ -1,6 +1,6 @@
 .container {
   min-height: 100vh;
-  background-color: #f9fafb;
+  background-color: var(--off-white);
 }
 
 .content {
@@ -16,9 +16,10 @@
 }
 
 .completeCard {
-  background-color: white;
-  border-radius: 1rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  background-color: var(--surface-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
   overflow: hidden;
 }
 
@@ -26,26 +27,14 @@
 .successSection {
   text-align: center;
   padding: 3rem 2rem;
-  background: linear-gradient(135deg, #10b981, #059669);
-  color: white;
+  background-color: var(--surface-muted);
+  border-bottom: 1px solid var(--line);
+  color: var(--black);
 }
 
 .successIcon {
   font-size: 4rem;
   margin-bottom: 1rem;
-  animation: bounce 2s infinite;
-}
-
-@keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {
-    transform: translateY(0);
-  }
-  40% {
-    transform: translateY(-10px);
-  }
-  60% {
-    transform: translateY(-5px);
-  }
 }
 
 .successTitle {
@@ -61,31 +50,33 @@
 }
 
 .successMessage strong {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: var(--surface-raised);
+  border: 1px solid var(--line);
   padding: 0.25rem 0.5rem;
-  border-radius: 0.25rem;
+  border-radius: var(--radius-md);
+  color: var(--black);
 }
 
 .successDescription {
   font-size: 0.95rem;
   line-height: 1.6;
-  opacity: 0.9;
+  color: var(--text-subtle);
   margin: 0;
 }
 
 /* 주문 정보 섹션 */
 .orderInfo {
   padding: 2rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--line);
 }
 
 .sectionTitle {
   font-size: 1.25rem;
   font-weight: bold;
-  color: #111827;
+  color: var(--black);
   margin: 0 0 1.5rem 0;
   padding-bottom: 0.75rem;
-  border-bottom: 2px solid #e5e7eb;
+  border-bottom: 1px solid var(--line);
 }
 
 .infoGrid {
@@ -105,25 +96,26 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
-  background-color: #f9fafb;
-  border-radius: 0.5rem;
+  background-color: var(--off-white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
 }
 
 .infoLabel {
   font-weight: 500;
-  color: #6b7280;
+  color: var(--text-subtle);
 }
 
 .infoValue {
   font-weight: 600;
-  color: #111827;
+  color: var(--black);
   text-align: right;
 }
 
 /* 주문 상품 섹션 */
 .orderProducts {
   padding: 2rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--line);
 }
 
 .productsList {
@@ -137,18 +129,18 @@
   align-items: center;
   gap: 1rem;
   padding: 1rem;
-  border: 1px solid #f3f4f6;
-  border-radius: 0.5rem;
-  background-color: #fafafa;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background-color: var(--off-white);
 }
 
 .productImage {
   width: 4rem;
   height: 4rem;
-  border-radius: 0.375rem;
+  border-radius: var(--radius-md);
   overflow: hidden;
   flex-shrink: 0;
-  background-color: #e5e7eb;
+  background-color: var(--surface-muted);
 }
 
 .productImage img {
@@ -164,25 +156,25 @@
 
 .productBrand {
   font-size: 0.75rem;
-  color: #6b7280;
+  color: var(--text-subtle);
   margin-bottom: 0.25rem;
 }
 
 .productName {
   font-weight: 500;
-  color: #111827;
+  color: var(--black);
   margin-bottom: 0.25rem;
   line-height: 1.4;
 }
 
 .productOptions {
   font-size: 0.75rem;
-  color: #6b7280;
+  color: var(--text-subtle);
 }
 
 .productPrice {
   font-weight: 600;
-  color: #111827;
+  color: var(--black);
   text-align: right;
   flex-shrink: 0;
 }
@@ -190,14 +182,14 @@
 /* 배송 정보 섹션 */
 .deliveryInfo {
   padding: 2rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--line);
 }
 
 .addressCard {
   padding: 1.5rem;
-  background-color: #f9fafb;
-  border-radius: 0.5rem;
-  border: 1px solid #e5e7eb;
+  background-color: var(--off-white);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
 }
 
 .addressHeader {
@@ -206,22 +198,23 @@
 
 .addressName {
   font-weight: 600;
-  color: #111827;
-  background-color: #e0e7ff;
+  color: var(--black);
+  background-color: var(--surface-muted);
+  border: 1px solid var(--line);
   padding: 0.25rem 0.75rem;
-  border-radius: 0.25rem;
+  border-radius: var(--radius-md);
   font-size: 0.875rem;
 }
 
 .addressRecipient {
   font-size: 0.95rem;
-  color: #374151;
+  color: var(--black);
   margin-bottom: 0.5rem;
 }
 
 .addressLocation {
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--text-subtle);
   line-height: 1.5;
 }
 
@@ -240,8 +233,8 @@
 .loadingSpinner {
   width: 3rem;
   height: 3rem;
-  border: 4px solid #e5e7eb;
-  border-top: 4px solid #3b82f6;
+  border: 4px solid var(--line);
+  border-top: 4px solid var(--black);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin: 1rem 0;
@@ -255,34 +248,35 @@
 .processingTitle {
   font-size: 1.75rem;
   font-weight: bold;
-  color: #10b981;
+  color: var(--black);
   margin: 1rem 0 0.5rem 0;
 }
 
 .processingMessage {
   font-size: 1.125rem;
-  color: #374151;
+  color: var(--text-subtle);
   margin: 0 0 2rem 0;
 }
 
 .processingMessage strong {
-  background-color: #f3f4f6;
+  background-color: var(--surface-muted);
+  border: 1px solid var(--line);
   padding: 0.25rem 0.5rem;
-  border-radius: 0.25rem;
-  color: #111827;
+  border-radius: var(--radius-md);
+  color: var(--black);
 }
 
 .processingNote {
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--text-subtle);
   margin: 1rem 0 0 0;
 }
 
 /* 개선된 액션 버튼들 */
 .actionButtons {
   padding: 2.5rem 2rem;
-  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
-  border-top: 3px solid #e2e8f0;
+  background-color: var(--off-white);
+  border-top: 1px solid var(--line);
   text-align: center;
 }
 
@@ -293,13 +287,13 @@
 .actionMessage h3 {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #10b981;
+  color: var(--black);
   margin: 0 0 0.5rem 0;
 }
 
 .actionMessage p {
   font-size: 1rem;
-  color: #6b7280;
+  color: var(--text-subtle);
   margin: 0;
   line-height: 1.5;
 }
@@ -320,62 +314,56 @@
 
 .actionNote {
   font-size: 0.875rem;
-  color: #9ca3af;
-  font-style: italic;
+  color: var(--text-soft);
   margin: 0;
 }
 
 .primaryButton {
   min-width: 200px;
-  background: linear-gradient(135deg, #10b981, #059669);
-  color: white;
+  background-color: var(--black);
+  color: var(--surface-raised);
   padding: 1rem 1.5rem;
-  border-radius: 0.75rem;
+  border: 1px solid var(--black);
+  border-radius: var(--radius-md);
   font-weight: 600;
   text-decoration: none;
   display: inline-block;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
+  transition: background-color 0.2s ease;
 }
 
 .primaryButton:hover {
-  background: linear-gradient(135deg, #059669, #047857);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 8px rgba(16, 185, 129, 0.3);
+  background-color: var(--action-hover);
 }
 
 .secondaryButton {
   min-width: 200px;
-  background-color: white;
-  color: #374151;
+  background-color: var(--surface-raised);
+  color: var(--black);
   padding: 1rem 1.5rem;
-  border: 2px solid #d1d5db;
-  border-radius: 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
   font-weight: 500;
   text-decoration: none;
   display: inline-block;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .secondaryButton:hover {
-  background-color: #f9fafb;
-  border-color: #9ca3af;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: var(--surface-muted);
+  border-color: var(--line-strong);
 }
 
 /* 안내 사항 */
 .noticeSection {
   padding: 2rem;
-  background-color: #fef3c7;
-  border-bottom: 1px solid #e5e7eb;
+  background-color: var(--surface-muted);
+  border-top: 1px solid var(--line);
 }
 
 .noticeTitle {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #92400e;
+  color: var(--black);
   margin-bottom: 1rem;
 }
 
@@ -383,7 +371,7 @@
   margin: 0;
   padding-left: 1.5rem;
   font-size: 0.875rem;
-  color: #78350f;
+  color: var(--text-subtle);
   line-height: 1.6;
 }
 
@@ -392,43 +380,44 @@
 }
 
 .noticeList strong {
-  color: #92400e;
+  color: var(--black);
 }
 
 /* 추천 상품 섹션 */
 .recommendSection {
   padding: 2rem;
   text-align: center;
-  background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+  background-color: var(--off-white);
+  border-top: 1px solid var(--line);
 }
 
 .recommendTitle {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #0369a1;
+  color: var(--black);
   margin-bottom: 0.5rem;
 }
 
 .recommendDescription {
   font-size: 0.875rem;
-  color: #0284c7;
+  color: var(--text-subtle);
   margin: 0 0 1.5rem 0;
   line-height: 1.5;
 }
 
 .recommendButton {
   display: inline-block;
-  background-color: #3b82f6;
-  color: white;
+  background-color: var(--black);
+  color: var(--surface-raised);
   padding: 0.75rem 2rem;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-md);
   font-weight: 500;
   text-decoration: none;
   transition: background-color 0.2s;
 }
 
 .recommendButton:hover {
-  background-color: #2563eb;
+  background-color: var(--action-hover);
 }
 
 /* 반응형 디자인 */

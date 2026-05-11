@@ -4,7 +4,7 @@
 :root {
   color-scheme: light;
   --font-base: "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
-  --font-heading: "Noto Serif KR";
+  --font-heading: "Noto Serif KR", "Apple Myungjo", serif;
   --black: #0a0a0a;
   --text: #1a1a1a;
   --text-subtle: #6f675f;
@@ -15,6 +15,9 @@
   --surface-muted: #efebe4;
   --line: #e7e2db;
   --line-strong: #d7d0c7;
+  --action: var(--black);
+  --action-hover: #262626;
+  --action-soft: rgba(10, 10, 10, 0.08);
   --point: #8f4a43;
   --point-hover: #743933;
   --point-soft: #f2e6e1;

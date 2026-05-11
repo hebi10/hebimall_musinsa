@@ -5,8 +5,6 @@
 .bannerFrame {
   margin: 0 auto;
   overflow: hidden;
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md);
 }
 
 .bannerSwiper {
@@ -16,35 +14,43 @@
 
 .bannerSlide {
   position: relative;
-  min-height: 660px;
+  min-height: 620px;
   overflow: hidden;
+  background: #211c19;
+}
+
+.bannerBackground {
+  z-index: 0;
+  object-fit: cover;
 }
 
 .bannerBackdrop {
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(120deg, rgba(10, 10, 10, 0.12) 0%, rgba(10, 10, 10, 0.38) 55%, rgba(10, 10, 10, 0.1) 100%),
-    radial-gradient(circle at 82% 22%, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 35%);
+  z-index: 1;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.18) 0%,
+    rgba(0, 0, 0, 0.06) 42%,
+    rgba(0, 0, 0, 0.08) 100%
+  );
 }
 
 .bannerContent {
   position: relative;
   z-index: 2;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(300px, 1fr);
+  display: flex;
   align-items: center;
-  gap: 1rem;
-  min-height: 660px;
+  min-height: 620px;
   max-width: 1320px;
   margin: 0 auto;
-  padding: 3.5rem 2.75rem 5.75rem;
+  padding: 3.25rem 2.75rem 5.25rem;
 }
 
 .copyPanel {
   display: grid;
-  gap: 1.2rem;
-  max-width: 28rem;
+  gap: 1.05rem;
+  width: min(100%, 33rem);
 }
 
 .copyHeader {
@@ -55,17 +61,12 @@
 }
 
 .bannerEyebrow {
-  display: inline-flex;
-  align-items: center;
-  min-height: 30px;
-  padding: 0 0.8rem;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
+  display: inline-block;
   color: rgba(255, 255, 255, 0.9);
-  font-size: 0.74rem;
+  font-size: 0.76rem;
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
 }
 
 .bannerCounterMobile {
@@ -74,41 +75,47 @@
 
 .bannerTitle {
   margin: 0;
-  max-width: 12ch;
-  font-family: var(--font-heading), "Noto Serif KR", "Apple Myungjo", serif;
+  max-width: 13ch;
+  font-family: var(--font-base);
   font-weight: 600;
-  font-size: clamp(1.9rem, 3.6vw, 3.45rem);
-  line-height: 1.12;
-  letter-spacing: -0.028em;
+  font-size: clamp(2.35rem, 4.7vw, 4.45rem);
+  line-height: 1.02;
+  letter-spacing: -0.04em;
   text-wrap: balance;
   color: var(--color-white);
 }
 
 .bannerDescription {
   margin: 0;
-  max-width: 27rem;
+  max-width: 29rem;
   font-size: 1.02rem;
-  line-height: 1.9;
-  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.75;
+  color: rgba(255, 255, 255, 0.82);
 }
 
 .bannerMetaList {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.65rem;
 }
 
 .bannerMetaItem {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  min-height: 30px;
-  padding: 0 0.85rem;
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.bannerMetaItem:not(:last-child)::after {
+  content: "";
+  display: inline-block;
+  width: 3px;
+  height: 3px;
+  margin-left: 0.65rem;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.88);
-  font-size: 0.78rem;
-  line-height: 1;
+  background: rgba(255, 255, 255, 0.42);
 }
 
 .bannerActions {
@@ -163,24 +170,6 @@
 
 .primaryAction:hover .buttonArrow {
   transform: translateX(3px);
-}
-
-.visualPanel {
-  position: relative;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  min-height: 540px;
-  padding-top: 1rem;
-}
-
-.bannerModelImage {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  min-height: 520px;
-  max-height: 520px;
-  filter: drop-shadow(0 28px 42px rgba(10, 10, 10, 0.22));
 }
 
 .controlBar {
@@ -277,14 +266,12 @@
 
 @media (max-width: 1024px) {
   .bannerContent {
-    grid-template-columns: minmax(0, 0.84fr) minmax(320px, 1.16fr);
-    min-height: 590px;
+    min-height: 560px;
     padding: 2.5rem 2rem 5rem;
-    gap: 1rem;
   }
 
   .bannerSlide {
-    min-height: 590px;
+    min-height: 560px;
   }
 
   .copyPanel {
@@ -292,16 +279,7 @@
   }
 
   .bannerTitle {
-    font-size: clamp(1.7rem, 3.1vw, 2.8rem);
-  }
-
-  .visualPanel {
-    min-height: 460px;
-  }
-
-  .bannerModelImage {
-    min-height: 430px;
-    max-height: 430px;
+    font-size: clamp(2rem, 4.4vw, 3.8rem);
   }
 }
 
@@ -310,12 +288,23 @@
     min-height: 620px;
   }
 
+  .bannerBackground {
+    object-position: 68% center !important;
+  }
+
+  .bannerBackdrop {
+    background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.5) 0%,
+      rgba(0, 0, 0, 0.22) 48%,
+      rgba(0, 0, 0, 0.44) 100%
+    );
+  }
+
   .bannerContent {
-    grid-template-columns: 1fr;
     min-height: 620px;
     padding: 1.25rem 1rem 4.8rem;
-    gap: 1rem;
-    align-items: stretch;
+    align-items: flex-start;
   }
 
   .copyPanel {
@@ -336,7 +325,7 @@
 
   .bannerTitle {
     max-width: none;
-    font-size: clamp(1.35rem, 6vw, 2rem);
+    font-size: clamp(2rem, 9vw, 3rem);
   }
 
   .bannerDescription {
@@ -352,16 +341,6 @@
   .secondaryAction {
     flex: 1 1 auto;
     min-height: 44px;
-  }
-
-  .visualPanel {
-    min-height: 320px;
-    padding-top: 0;
-  }
-
-  .bannerModelImage {
-    min-height: 300px;
-    max-height: 300px;
   }
 
   .controlBar {
@@ -380,15 +359,6 @@
   .bannerContent {
     min-height: 560px;
     padding: 1rem 0.875rem 4.5rem;
-  }
-
-  .visualPanel {
-    min-height: 280px;
-  }
-
-  .bannerModelImage {
-    min-height: 260px;
-    max-height: 260px;
   }
 
   .bannerEyebrow {
