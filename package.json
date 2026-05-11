@@ -27,6 +27,16 @@
     "migrate:firestore:products:dry-run": "node scripts/firestore-products-v2-migration.js migrate",
     "migrate:firestore:products:execute": "node scripts/firestore-products-v2-migration.js migrate --execute",
     "migrate:firestore:validate": "node scripts/firestore-products-v2-migration.js validate",
+    "migrate:product-images:analyze": "node scripts/product-image-webp-migration.js analyze",
+    "migrate:product-images:dry-run": "node scripts/product-image-webp-migration.js migrate",
+    "migrate:product-images:execute": "node scripts/product-image-webp-migration.js migrate --execute",
+    "migrate:product-images:delete-originals": "node scripts/product-image-webp-migration.js delete-originals --latest-log",
+    "migrate:product-images:validate": "node scripts/product-image-webp-migration.js validate",
+    "migrate:content-images:analyze": "node scripts/content-image-webp-migration.js analyze",
+    "migrate:content-images:dry-run": "node scripts/content-image-webp-migration.js migrate",
+    "migrate:content-images:execute": "node scripts/content-image-webp-migration.js migrate --execute",
+    "migrate:content-images:delete-originals": "node scripts/content-image-webp-migration.js delete-originals",
+    "migrate:content-images:validate": "node scripts/content-image-webp-migration.js validate",
     "test": "jest --runInBand",
     "test:functions": "jest --runInBand functions/__tests__",
     "test:watch": "jest --watch"
@@ -42,6 +52,7 @@
     "next": "^15.5.7",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "sharp": "^0.34.5",
     "swiper": "^12.0.1"
   },
   "devDependencies": {

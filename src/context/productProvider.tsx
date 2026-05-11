@@ -324,19 +324,16 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       setLoading(true);
       setError(null);
 
-      const [recommendedProducts, newProducts, saleProducts, bestSellerProducts, categories, brands] = await Promise.all([
-        ProductService.getRecommendedProducts(),
-        ProductService.getNewProducts(),
-        ProductService.getSaleProducts(),
-        ProductService.getBestSellerProducts(),
+      const [homePageProducts, categories, brands] = await Promise.all([
+        ProductService.getHomePageProducts(),
         ProductService.getCategories(),
         ProductService.getBrands()
       ]);
 
-      setRecommendedProducts(recommendedProducts);
-      setNewProducts(newProducts);
-      setSaleProducts(saleProducts);
-      setBestSellerProducts(bestSellerProducts);
+      setRecommendedProducts(homePageProducts.recommendedProducts);
+      setNewProducts(homePageProducts.newProducts);
+      setSaleProducts(homePageProducts.saleProducts);
+      setBestSellerProducts(homePageProducts.bestSellerProducts);
       setCategories(categories);
       setBrands(brands);
 

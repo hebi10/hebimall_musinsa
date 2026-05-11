@@ -85,7 +85,13 @@ export class CategoryOrderService {
       // 설정이 없으면 기본값 반환
       return this.createDefaultOrderConfig();
     } catch (error) {
- console.error(' 카테고리 순서 설정 조회 실패:', error);
+      const errorCode = typeof error === 'object' && error !== null && 'code' in error
+        ? String((error as { code?: unknown }).code)
+        : '';
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.warn(
+        `카테고리 순서 설정을 불러오지 못해 기본 순서를 사용합니다.${errorCode ? ` (${errorCode})` : ''} ${errorMessage}`
+      );
       return this.createDefaultOrderConfig();
     }
   }

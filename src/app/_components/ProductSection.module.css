@@ -8,6 +8,7 @@
   display: flex;
   justify-content: space-between;
   gap: 1.75rem;
+  min-width: 0;
 }
 
 .headerCopy {
@@ -20,6 +21,7 @@
   flex-direction: column;
   align-items: flex-end;
   gap: 0.85rem;
+  min-width: 0;
 }
 
 .headerMinimal {
@@ -29,9 +31,9 @@
 
 .headerBordered {
   align-items: end;
-  margin-bottom: 1.5rem;
-  padding-bottom: 0.95rem;
-  border-bottom: 1px solid var(--black);
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #13233a;
 }
 
 .headerDisplay {
@@ -54,8 +56,8 @@
 
 .title {
   margin: 0;
-  font-size: 1.35rem;
-  font-weight: 600;
+  font-size: 1.08rem;
+  font-weight: 700;
   line-height: 1.16;
   letter-spacing: -0.02em;
   text-wrap: balance;
@@ -69,8 +71,8 @@
 }
 
 .subtitle {
-  margin: 0.45rem 0 0;
-  font-size: 0.92rem;
+  margin: 0.35rem 0 0;
+  font-size: 0.8rem;
   line-height: 1.7;
   color: var(--text-subtle);
 }
@@ -93,10 +95,10 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 40px;
+  min-height: 28px;
   text-decoration: none;
-  font-size: 0.88rem;
-  font-weight: 600;
+  font-size: 0.8rem;
+  font-weight: 500;
   transition: border-color 0.2s ease, color 0.2s ease,
     background-color 0.2s ease;
 }
@@ -172,8 +174,8 @@
 
 .rankNumber {
   position: absolute;
-  top: 10%;
-  left: 0.55rem;
+  top: 0.5rem;
+  left: 0.5rem;
   z-index: 6;
   display: inline-flex;
   align-items: center;
@@ -181,12 +183,11 @@
   min-width: var(--ranking-chip-size);
   height: var(--ranking-chip-size);
   padding: 0 0.55rem;
-  border: 1px solid rgba(10, 10, 10, 0.82);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.96);
-  box-shadow: 0 10px 24px rgba(10, 10, 10, 0.08);
-  color: rgba(10, 10, 10, 0.88);
-  font-size: 0.95rem;
+  border: 1px solid #0a1628;
+  border-radius: 2px;
+  background: #0a1628;
+  color: #fff;
+  font-size: 0.78rem;
   font-weight: 700;
   line-height: 1;
   letter-spacing: -0.04em;
@@ -222,11 +223,11 @@
 @media (max-width: 1024px) {
   .productGrid,
   .rankingGrid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
   }
 
   .saleGrid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(4, 1fr);
   }
 
   .scrollGrid {
@@ -278,9 +279,26 @@
   }
 }
 
+@media (max-width: 900px) {
+  .productGrid,
+  .rankingGrid,
+  .saleGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+}
+
 @media (max-width: 480px) {
   .section {
     padding: 0 0.625rem;
+  }
+
+  .headerBordered {
+    gap: 0.65rem;
+  }
+
+  .headerSide {
+    width: 100%;
   }
 
   .scrollGrid {
@@ -288,8 +306,10 @@
     grid-auto-columns: minmax(78vw, 78vw);
   }
 
-  .viewAllButton {
+  .viewAllButton,
+  .viewAllLink {
     width: 100%;
+    justify-content: flex-start;
   }
 
   .rankingItem {

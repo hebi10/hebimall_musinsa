@@ -36,7 +36,10 @@
 - 관리자 판정은 custom claim 기반으로 통일되어 `user.role` 직접 신뢰 동작 제거.
 - admin 경로는 로딩/미로그인/권한 없음 상태로 분기되는 가드 동작 적용.
 - 기존 사용자 정보 조회, 포인트 조회/관리 흐름은 유지.
+- 2026-05-11: 메인 카테고리 순서 설정용 `categoryOrder/{configId}`는 공개 읽기, 관리자 쓰기 규칙을 추가했다. 상품/카테고리 공개 노출 데이터와 같은 공개 화면 설정으로 취급한다.
+- 2026-05-11: 배포 전 환경에서 `categoryOrder` 권한 오류가 나도 기본 카테고리 순서로 fallback하며, 개발 콘솔의 red error를 줄이기 위해 조회 실패 로그를 warning으로 낮췄다.
 
 ## 남은 확인
 - 일반 계정으로 `/admin` 접속 시 Unauthorized UI 분기와 비로그인 이동 UX는 통합 점검 필요.
 - Firestore Emulator 또는 배포 환경에서 실제 규칙 self-update 차단 테스트 수행 필요.
+- `categoryOrder` 공개 읽기 반영을 위해 `firebase deploy --only firestore:rules` 실행 필요.

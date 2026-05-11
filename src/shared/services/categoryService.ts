@@ -20,6 +20,10 @@ import {
   StorageError 
 } from 'firebase/storage';
 import { db, storage } from '@/shared/libs/firebase/firebase';
+import {
+  getOptimizedWebpStorageFileName,
+  optimizeImageForUpload,
+} from '@/shared/libs/firebase/imageOptimization';
 import { 
   Category, 
   CreateCategoryRequest, 
@@ -177,10 +181,13 @@ export class CategoryService {
   static async uploadCategoryImage(file: File, categoryId: string): Promise<string> {
     try {
       const timestamp = Date.now();
-      const fileName = `${categoryId}_${timestamp}_${file.name}`;
+      const optimizedFile = await optimizeImageForUpload(file);
+      const fileName = getOptimizedWebpStorageFileName(file.name, `${categoryId}_${timestamp}`);
       const storageRef = ref(storage, `categories/${fileName}`);
       
-      const snapshot = await uploadBytes(storageRef, file);
+      const snapshot = await uploadBytes(storageRef, optimizedFile, {
+        contentType: optimizedFile.type,
+      });
       const downloadURL = await getDownloadURL(snapshot.ref);
       
       return downloadURL;

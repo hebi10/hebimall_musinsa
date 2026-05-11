@@ -14,6 +14,10 @@ import {
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { db, storage } from '../libs/firebase/firebase';
+import {
+  getOptimizedWebpStorageFileName,
+  optimizeImageForUpload,
+} from '../libs/firebase/imageOptimization';
 import { Event, EventFilter, EventParticipant } from '../types/event';
 
 const EVENTS_COLLECTION = 'events';
@@ -339,10 +343,13 @@ export class EventService {
   static async uploadImage(file: File, path: string): Promise<string> {
     try {
       const timestamp = Date.now();
-      const fileName = `${timestamp}_${file.name}`;
+      const optimizedFile = await optimizeImageForUpload(file);
+      const fileName = getOptimizedWebpStorageFileName(file.name, timestamp);
       const imageRef = ref(storage, `${path}/${fileName}`);
       
-      await uploadBytes(imageRef, file);
+      await uploadBytes(imageRef, optimizedFile, {
+        contentType: optimizedFile.type,
+      });
       const downloadURL = await getDownloadURL(imageRef);
       
       return downloadURL;

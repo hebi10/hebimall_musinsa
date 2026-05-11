@@ -41,6 +41,20 @@ export interface ProductQueryResult {
   hasMore: boolean;
 }
 
+export interface HomePageProductGroups {
+  recommendedProducts: Product[];
+  newProducts: Product[];
+  saleProducts: Product[];
+  bestSellerProducts: Product[];
+}
+
+interface HomePageProductLimits {
+  recommended?: number;
+  new?: number;
+  sale?: number;
+  bestSeller?: number;
+}
+
 type ProductPayload = Omit<Product, 'id' | 'createdAt' | 'updatedAt'>;
 
 export class ProductService {
@@ -152,6 +166,57 @@ export class ProductService {
         product.tags.some((tag) => tag.toLowerCase().includes(normalizedKeyword))
       );
     });
+  }
+
+  private static getActiveProducts(products: Product[]): Product[] {
+    return products.filter((product) => product.status === 'active');
+  }
+
+  private static sortByCreatedAtDesc(products: Product[]): Product[] {
+    return [...products].sort((a, b) => {
+      const createdAtDiff = b.createdAt.getTime() - a.createdAt.getTime();
+      return createdAtDiff !== 0 ? createdAtDiff : b.id.localeCompare(a.id);
+    });
+  }
+
+  private static sortByReviewCountDesc(products: Product[]): Product[] {
+    return [...products].sort((a, b) => {
+      const reviewCountDiff = b.reviewCount - a.reviewCount;
+      if (reviewCountDiff !== 0) {
+        return reviewCountDiff;
+      }
+
+      const createdAtDiff = b.createdAt.getTime() - a.createdAt.getTime();
+      return createdAtDiff !== 0 ? createdAtDiff : b.id.localeCompare(a.id);
+    });
+  }
+
+  private static selectNewProducts(products: Product[], limitCount: number): Product[] {
+    return this.sortByCreatedAtDesc(products.filter((product) => product.isNew)).slice(0, limitCount);
+  }
+
+  private static selectSaleProducts(products: Product[], limitCount: number): Product[] {
+    return this.sortByCreatedAtDesc(
+      products.filter((product) => product.isSale && product.saleRate && product.saleRate > 0)
+    ).slice(0, limitCount);
+  }
+
+  private static selectBestSellerProducts(products: Product[], limitCount: number): Product[] {
+    return this.sortByReviewCountDesc(
+      products.filter((product) => product.reviewCount > 0)
+    ).slice(0, limitCount);
+  }
+
+  private static selectRecommendedProducts(products: Product[], limitCount: number): Product[] {
+    return products
+      .filter((product) => product.rating >= 4)
+      .sort((a, b) => {
+        const scoreA = a.rating * 0.4 + Math.min(a.reviewCount / 10, 50) * 0.3 + (a.isNew ? 10 : 0);
+        const scoreB = b.rating * 0.4 + Math.min(b.reviewCount / 10, 50) * 0.3 + (b.isNew ? 10 : 0);
+        const scoreDiff = scoreB - scoreA;
+        return scoreDiff !== 0 ? scoreDiff : b.createdAt.getTime() - a.createdAt.getTime();
+      })
+      .slice(0, limitCount);
   }
 
   private static async getTopLevelProducts(): Promise<Product[]> {
@@ -472,15 +537,31 @@ export class ProductService {
     }
   }
 
+  static async getHomePageProducts(limits: HomePageProductLimits = {}): Promise<HomePageProductGroups> {
+    try {
+      const products = this.getActiveProducts(await this.getTopLevelProducts());
+
+      return {
+        recommendedProducts: this.selectRecommendedProducts(products, limits.recommended ?? 8),
+        newProducts: this.selectNewProducts(products, limits.new ?? 8),
+        saleProducts: this.selectSaleProducts(products, limits.sale ?? 8),
+        bestSellerProducts: this.selectBestSellerProducts(products, limits.bestSeller ?? 8),
+      };
+    } catch (error) {
+      console.error('Failed to load home page products:', error);
+      return {
+        recommendedProducts: [],
+        newProducts: [],
+        saleProducts: [],
+        bestSellerProducts: [],
+      };
+    }
+  }
+
   static async getNewProducts(limitCount: number = 8): Promise<Product[]> {
     try {
-      const result = await this.queryProducts({
-        status: 'active',
-        isNew: true,
-        sort: { field: 'createdAt', order: 'desc' },
-        limitCount,
-      });
-      return result.items;
+      const products = this.getActiveProducts(await this.getTopLevelProducts());
+      return this.selectNewProducts(products, limitCount);
     } catch (error) {
       console.error('Failed to load new products:', error);
       return [];
@@ -489,13 +570,8 @@ export class ProductService {
 
   static async getSaleProducts(limitCount: number = 8): Promise<Product[]> {
     try {
-      const result = await this.queryProducts({
-        status: 'active',
-        isSale: true,
-        sort: { field: 'createdAt', order: 'desc' },
-        limitCount,
-      });
-      return result.items.filter((product) => product.saleRate && product.saleRate > 0);
+      const products = this.getActiveProducts(await this.getTopLevelProducts());
+      return this.selectSaleProducts(products, limitCount);
     } catch (error) {
       console.error('Failed to load sale products:', error);
       return [];
@@ -504,15 +580,8 @@ export class ProductService {
 
   static async getBestSellerProducts(limitCount: number = 8): Promise<Product[]> {
     try {
-      const result = await this.queryProducts({
-        status: 'active',
-        sort: { field: 'reviewCount', order: 'desc' },
-        limitCount: Math.max(limitCount * 2, 40),
-      });
-
-      return result.items
-        .filter((product) => product.reviewCount > 0)
-        .slice(0, limitCount);
+      const products = this.getActiveProducts(await this.getTopLevelProducts());
+      return this.selectBestSellerProducts(products, limitCount);
     } catch (error) {
       console.error('Failed to load best seller products:', error);
       return [];
@@ -521,19 +590,8 @@ export class ProductService {
 
   static async getRecommendedProducts(limitCount: number = 8): Promise<Product[]> {
     try {
-      const result = await this.queryProducts({
-        status: 'active',
-        sort: { field: 'createdAt', order: 'desc' },
-        limitCount: 200,
-      });
-      return result.items
-        .filter((product) => product.rating >= 4)
-        .sort((a, b) => {
-          const scoreA = a.rating * 0.4 + Math.min(a.reviewCount / 10, 50) * 0.3 + (a.isNew ? 10 : 0);
-          const scoreB = b.rating * 0.4 + Math.min(b.reviewCount / 10, 50) * 0.3 + (b.isNew ? 10 : 0);
-          return scoreB - scoreA;
-        })
-        .slice(0, limitCount);
+      const products = this.getActiveProducts(await this.getTopLevelProducts());
+      return this.selectRecommendedProducts(products, limitCount);
     } catch (error) {
       console.error('Failed to load recommended products:', error);
       return [];

@@ -1,5 +1,6 @@
 import { storage } from './firebase';
 import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from 'firebase/storage';
+import { optimizeImageForUpload } from './imageOptimization';
 
 /**
  * 상품 이미지를 카테고리별로 구조화된 경로에 업로드합니다
@@ -23,15 +24,16 @@ export const uploadProductImages = async (
       throw new Error('Firebase Storage가 초기화되지 않았습니다.');
     }
 
-    const uploadPromises = files.map((file, index) => {
+    const uploadPromises = files.map(async (file, index) => {
+      const optimizedFile = await optimizeImageForUpload(file);
+
       return new Promise<string>((resolve, reject) => {
         // 카테고리를 영어로 변환 (한글 경로 문제 방지)
         const categoryPath = getCategoryPath(category);
         
-        // 파일명 생성: timestamp_index_originalName
+        // 파일명 생성: timestamp_index_q75.webp
         const timestamp = Date.now();
-        const fileExtension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
-        const fileName = `${timestamp}_${index}.${fileExtension}`;
+        const fileName = `${timestamp}_${index}_q75.webp`;
         
         // 구조화된 경로: images/{category}/{productId}/{filename}
         const filePath = `images/${categoryPath}/${productId}/${fileName}`;
@@ -39,7 +41,9 @@ export const uploadProductImages = async (
  console.log(` 업로드 경로: ${filePath}`);
         
         const storageRef = ref(storage, filePath);
-        const uploadTask = uploadBytesResumable(storageRef, file);
+        const uploadTask = uploadBytesResumable(storageRef, optimizedFile, {
+          contentType: optimizedFile.type,
+        });
         
         uploadTask.on(
           'state_changed',

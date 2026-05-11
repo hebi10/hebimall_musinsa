@@ -17,6 +17,20 @@ service firebase.storage {
         request.resource.contentType.matches('image/.*');
     }
 
+    match /categories/{filename} {
+      allow read: if true;
+      allow write: if isAdmin() &&
+        request.resource.size < 5 * 1024 * 1024 &&
+        request.resource.contentType.matches('image/.*');
+    }
+
+    match /events/{type}/{filename} {
+      allow read: if true;
+      allow write: if isAdmin() &&
+        request.resource.size < 5 * 1024 * 1024 &&
+        request.resource.contentType.matches('image/.*');
+    }
+
     match /{allPaths=**} {
       allow read, write: if false;
     }
