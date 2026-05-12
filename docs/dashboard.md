@@ -62,3 +62,10 @@ src/shared/
 - `/admin` 루트 대시보드의 카테고리 차트에서 `Math.random()` 임시 값을 제거했다.
 - 차트는 `DashboardService.getCategoryBreakdown()` 결과를 사용하며 주문 판매량이 있으면 판매량, 없으면 등록 상품 수를 표시한다.
 - 카테고리명 조회 실패 시에도 집계 ID를 표시하고 임의 숫자는 만들지 않는다.
+
+## 2026-05-12 배포 런타임 오류 수정
+
+- `/admin` 호스팅 페이지에서 `Cannot read properties of undefined (reading 'resolveSettledValue')` 오류가 발생했다.
+- 원인은 React Query에 `DashboardService.getDashboardStats` 정적 메서드 참조를 그대로 넘겨 호출 컨텍스트의 `this`가 사라진 것이다.
+- `DashboardService` 내부 정적 호출을 클래스명 기준으로 바꾸고, `useDashboardQuery`의 `queryFn`은 래퍼 함수로 호출하도록 정리했다.
+- 분리 호출 회귀 테스트 `src/shared/services/dashboardService.test.ts`를 추가했다.

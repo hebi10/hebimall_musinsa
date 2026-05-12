@@ -229,10 +229,6 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
     );
   }
 
-  const discountPrice = product.originalPrice && product.originalPrice > product.price 
-    ? product.originalPrice - product.price 
-    : 0;
-
   return (
     <div className={styles.container}>
       <div className={styles.breadcrumb}>

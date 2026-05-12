@@ -1,26 +1,27 @@
 ### commit message
-- `fix: separate deploy build from lint gate`
+- `fix: stabilize admin dashboard query binding`
 
 ### 인수인계 (최대 3개)
-1. 구매 흐름 보정 계획 작성
-   - `docs/superpowers/plans/2026-05-12-purchase-flow-fix.md`에 실행 계획을 저장.
-   - 범위는 상품 상세 구매 진입점 복구, 장바구니/checkout 금액 계산 통합, 검증/문서 갱신.
+1. 관리자 대시보드 배포 오류 원인
+   - `/admin` 호스팅 화면의 `resolveSettledValue` 오류는 React Query가 `DashboardService.getDashboardStats`를 분리 호출하며 static 메서드 내부 `this`가 끊겨 발생.
+   - 로컬 회귀 테스트에서 같은 오류를 재현했다.
 
-2. 계획의 핵심 방향
-   - 서버 주문 생성(`/api/order`)은 최종 확정 지점으로 유지.
-   - 클라이언트는 `orderPricing` 순수 유틸로 예상 금액만 계산하고 서버 요청 총액은 보내지 않음.
-   - `/categories/[category]/products/[productId]`도 실제 장바구니/바로구매 흐름에 연결.
+2. 수정 내용
+   - `DashboardService` 내부 정적 헬퍼 호출을 `DashboardService.*`로 바꿔 호출 컨텍스트 의존을 제거.
+   - `useDashboardQuery`의 `queryFn`은 `() => DashboardService.getDashboardStats()` 래퍼로 명시 호출.
+   - `src/shared/services/dashboardService.test.ts`에 분리 호출 회귀 테스트 추가.
 
-3. 문서 허브 갱신
-   - `docs/README.md`에 구매 흐름 보정 작업 계획 항목을 추가.
-   - `next.config.ts`에서 배포 빌드 내부 lint를 비활성화하고 `npm run lint`/`ci`는 별도 품질 게이트로 유지.
-   - `docs/quality-gates.md`에 `npm install` 이후 발생한 Next build lint 차단과 분리 방식을 기록.
+3. 배포 반영
+   - 현재 코드는 수정됐지만 호스팅 페이지에는 재빌드/재배포 후 반영된다.
+   - 배포 전 관리자 계정으로 `/admin` 진입을 한 번 확인하면 된다.
 
 ### 검증
 - `npm run typecheck`: 통과.
-- `npm run build`: `Skipping linting` 확인 후 현재 샌드박스의 Next worker `spawn EPERM`으로 중단.
+- `npm test -- --runTestsByPath src/shared/services/dashboardService.test.ts`: 통과.
+- `npx eslint src/shared/services/dashboardService.ts src/shared/services/dashboardService.test.ts src/shared/hooks/useDashboardQuery.ts`: 통과.
+- `npm run build`: 컴파일 성공 후 현재 환경의 Next worker `spawn EPERM` 제약으로 중단.
 
 ### 남은 작업 (최대 3개)
-1. 계획 Task 1부터 TDD 순서로 구현.
-2. 구현 후 `npm test -- --runTestsByPath src/shared/utils/orderPricing.test.ts`, `npm run typecheck`, `npm run functions:build` 확인.
-3. 인증 테스트 계정으로 상품 상세 → 장바구니/바로구매 → checkout → complete E2E 확인.
+1. `npm run deploy:firebase` 또는 기존 배포 절차로 호스팅 재배포.
+2. 배포 후 관리자 계정으로 `/admin`에서 대시보드 카드/차트 로딩 확인.
+3. 전체 lint 부채가 정리되면 `npm run ci` 재확인.

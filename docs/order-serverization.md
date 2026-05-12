@@ -55,3 +55,9 @@
 - `/orders/complete`에서 `useSearchParams()`를 쓰는 실제 콘텐츠를 `Suspense` 하위 컴포넌트로 분리해 Next 15 prerender 오류를 막았다.
 - 루트 `themeColor`는 `metadata`가 아니라 `viewport` export에서 설정한다.
 - `npm run typecheck`는 통과했고, `npm run build`는 이 환경의 Next worker `spawn EPERM` 제약으로 중단됐다.
+
+## 2026-05-12 구매 흐름 보정
+- 두 상품 상세 경로(`/products/[productId]`, `/categories/[category]/products/[productId]`)의 장바구니/바로구매 진입 동작을 맞췄다.
+- 장바구니와 checkout의 예상 금액 계산을 `src/shared/utils/orderPricing.ts`로 통합했다.
+- checkout은 이미 할인된 상품 단가에서 상품 할인액을 다시 차감하지 않고, 서버 주문 생성은 기존처럼 Functions에서 최종 재계산한다.
+- `src/app/categories/[category]/products/[productId]/page.test.tsx`로 카테고리 상세의 장바구니/바로구매 동작을 회귀 테스트한다.

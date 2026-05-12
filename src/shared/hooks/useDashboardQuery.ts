@@ -14,7 +14,7 @@ export const dashboardKeys = {
 export function useDashboardStats() {
   return useQuery({
     queryKey: dashboardKeys.stats(),
-    queryFn: DashboardService.getDashboardStats,
+    queryFn: () => DashboardService.getDashboardStats(),
     staleTime: 2 * 60 * 1000, // 2분
     refetchInterval: 5 * 60 * 1000, // 5분마다 자동 새로고침
   });
@@ -24,7 +24,7 @@ export function useDashboardStats() {
 export function useRealtimeDashboardStats() {
   return useQuery({
     queryKey: dashboardKeys.realtime(),
-    queryFn: DashboardService.getRealtimeStats,
+    queryFn: () => DashboardService.getRealtimeStats(),
     staleTime: 30 * 1000, // 30초
     refetchInterval: 60 * 1000, // 1분마다 자동 새로고침
   });

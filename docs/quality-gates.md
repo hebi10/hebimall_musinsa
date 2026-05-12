@@ -18,6 +18,7 @@
   - `.next/**`
   - `node_modules/**`
   - `functions/lib/**`
+  - `functions/.next/**`
   - `tmp-edge-profile-single/**`
   - `public/**`
 
@@ -35,3 +36,8 @@
 - `npm install` 후 ESLint가 설치되면 `next build` 내부 lint가 기존 전체 lint 오류를 배포 차단 오류로 처리한다.
 - `next.config.ts`에서 `eslint.ignoreDuringBuilds`를 켜서 배포 빌드는 컴파일/타입 검사를 우선 통과시키고, lint 품질 게이트는 `npm run lint`와 `npm run ci`에서 별도로 확인한다.
 - 이 설정 후 `npm run build`는 `Skipping linting`까지 확인됐고, 현재 샌드박스에서는 이후 타입 검사 단계가 기존 Next worker `spawn EPERM` 환경 제약으로 중단된다.
+
+## 2026-05-12 Jest/ESLint 확인
+- Jest 설정은 TSX 테스트와 `@/` alias를 처리하도록 `ts-jest` transform과 `moduleNameMapper`를 루트 `src` 기준으로 맞췄다.
+- `functions/.next/**` 산출물을 ESLint 제외 대상에 추가해 Functions 빌드 부산물이 lint 입력으로 들어오지 않게 했다.
+- `npm run lint`는 실행 가능해졌지만 기존 전체 lint 부채로 실패한다. 구매 흐름 보정 범위에서는 새 unused 경고를 제거했고, 전체 lint 정리는 별도 작업이 필요하다.

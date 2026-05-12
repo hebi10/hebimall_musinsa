@@ -9,6 +9,7 @@ const eslintConfig = [
     ignores: [
       '.next/**',
       'node_modules/**',
+      'functions/.next/**',
       'functions/lib/**',
       'tmp-edge-profile-single/**',
       'public/**',

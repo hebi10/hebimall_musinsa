@@ -89,13 +89,13 @@ export class DashboardService {
       OrderService.getAllOrders(1000),
     ]);
 
-    const coupons = this.resolveSettledValue(couponsResult, '쿠폰', []);
-    const events = this.resolveSettledValue(eventsResult, '이벤트', []);
-    const users = this.resolveSettledValue(usersResult, '사용자', []);
-    const qnas = this.resolveSettledValue(qnasResult, 'QnA', []);
-    const inquiries = this.resolveSettledValue(inquiriesResult, '문의', []);
-    const products = this.resolveSettledValue(productsResult, '상품', []);
-    const orders = this.resolveSettledValue(ordersResult, '주문', []);
+    const coupons = DashboardService.resolveSettledValue(couponsResult, '쿠폰', []);
+    const events = DashboardService.resolveSettledValue(eventsResult, '이벤트', []);
+    const users = DashboardService.resolveSettledValue(usersResult, '사용자', []);
+    const qnas = DashboardService.resolveSettledValue(qnasResult, 'QnA', []);
+    const inquiries = DashboardService.resolveSettledValue(inquiriesResult, '문의', []);
+    const products = DashboardService.resolveSettledValue(productsResult, '상품', []);
+    const orders = DashboardService.resolveSettledValue(ordersResult, '주문', []);
 
     const dataAvailability = {
       users: usersResult.status === 'fulfilled',
@@ -119,7 +119,7 @@ export class DashboardService {
       closed: inquiries.filter((inquiry) => inquiry.status === 'closed').length,
     };
 
-    const categoryBreakdown = this.getCategoryBreakdown(products, orders);
+    const categoryBreakdown = DashboardService.getCategoryBreakdown(products, orders);
 
     return {
       totalUsers: users.length,
@@ -133,27 +133,27 @@ export class DashboardService {
       qnaStats,
       inquiryStats,
       monthlyGrowth: {
-        users: this.calculateGrowthForCount(users, (user) => user.createdAt),
-        products: this.calculateGrowthForCount(products, (product) => product.createdAt),
-        coupons: this.calculateGrowthForCount(coupons, (coupon) => coupon.createdAt),
-        events: this.calculateGrowthForCount(events, (event) => event.createdAt),
-        qnas: this.calculateGrowthForCount(qnas, (qna) => qna.createdAt),
-        inquiries: this.calculateGrowthForCount(inquiries, (inquiry) => inquiry.createdAt),
-        orders: this.calculateGrowthForCount(orders, (order) => order.createdAt),
-        revenue: this.calculateGrowthForValue(
+        users: DashboardService.calculateGrowthForCount(users, (user) => user.createdAt),
+        products: DashboardService.calculateGrowthForCount(products, (product) => product.createdAt),
+        coupons: DashboardService.calculateGrowthForCount(coupons, (coupon) => coupon.createdAt),
+        events: DashboardService.calculateGrowthForCount(events, (event) => event.createdAt),
+        qnas: DashboardService.calculateGrowthForCount(qnas, (qna) => qna.createdAt),
+        inquiries: DashboardService.calculateGrowthForCount(inquiries, (inquiry) => inquiry.createdAt),
+        orders: DashboardService.calculateGrowthForCount(orders, (order) => order.createdAt),
+        revenue: DashboardService.calculateGrowthForValue(
           orders,
           (order) => order.createdAt,
           (order) => order.finalAmount
         ),
       },
-      recentActivities: this.generateRecentActivities(users, coupons, events, qnas, inquiries, orders, products),
+      recentActivities: DashboardService.generateRecentActivities(users, coupons, events, qnas, inquiries, orders, products),
       lowStockProducts: products
         .filter((product) => product.stock > 0 && product.stock <= 5)
         .sort((left, right) => left.stock - right.stock)
         .slice(0, 5),
-      topSellingProducts: this.getTopSellingProducts(products, orders),
-      orderStatusStats: this.getOrderStatusStats(orders),
-      revenueByMonth: this.getRevenueByMonth(orders),
+      topSellingProducts: DashboardService.getTopSellingProducts(products, orders),
+      orderStatusStats: DashboardService.getOrderStatusStats(orders),
+      revenueByMonth: DashboardService.getRevenueByMonth(orders),
       categoryBreakdown: categoryBreakdown.data,
       categoryBreakdownType: categoryBreakdown.type,
       dataAvailability,
@@ -207,17 +207,17 @@ export class DashboardService {
     items: T[],
     getDate: (item: T) => Date
   ): number {
-    const { now, currentStart, previousStart } = this.getPeriodBoundaries();
+    const { now, currentStart, previousStart } = DashboardService.getPeriodBoundaries();
 
     const current = items.filter((item) =>
-      this.isWithinRange(getDate(item), currentStart, now)
+      DashboardService.isWithinRange(getDate(item), currentStart, now)
     ).length;
 
     const previous = items.filter((item) =>
-      this.isWithinRange(getDate(item), previousStart, currentStart)
+      DashboardService.isWithinRange(getDate(item), previousStart, currentStart)
     ).length;
 
-    return this.calculateGrowthRate(current, previous);
+    return DashboardService.calculateGrowthRate(current, previous);
   }
 
   private static calculateGrowthForValue<T>(
@@ -225,23 +225,23 @@ export class DashboardService {
     getDate: (item: T) => Date,
     getValue: (item: T) => number
   ): number {
-    const { now, currentStart, previousStart } = this.getPeriodBoundaries();
+    const { now, currentStart, previousStart } = DashboardService.getPeriodBoundaries();
 
     const current = items.reduce((sum, item) => {
-      if (!this.isWithinRange(getDate(item), currentStart, now)) {
+      if (!DashboardService.isWithinRange(getDate(item), currentStart, now)) {
         return sum;
       }
       return sum + getValue(item);
     }, 0);
 
     const previous = items.reduce((sum, item) => {
-      if (!this.isWithinRange(getDate(item), previousStart, currentStart)) {
+      if (!DashboardService.isWithinRange(getDate(item), previousStart, currentStart)) {
         return sum;
       }
       return sum + getValue(item);
     }, 0);
 
-    return this.calculateGrowthRate(current, previous);
+    return DashboardService.calculateGrowthRate(current, previous);
   }
 
   private static getRevenueByMonth(orders: Order[]): { month: string; revenue: number }[] {
@@ -292,7 +292,7 @@ export class DashboardService {
 
   private static getOrderStatusStats(orders: Order[]): Record<string, number> {
     return orders.reduce<Record<string, number>>((accumulator, order) => {
-      const key = this.normalizeOrderStatus(order.status);
+      const key = DashboardService.normalizeOrderStatus(order.status);
       accumulator[key] = (accumulator[key] || 0) + 1;
       return accumulator;
     }, {});
@@ -318,7 +318,7 @@ export class DashboardService {
       });
     });
 
-    const salesData = this.toTopCategoryData(salesMap);
+    const salesData = DashboardService.toTopCategoryData(salesMap);
     if (salesData.some((item) => item.value > 0)) {
       return {
         data: salesData,
@@ -336,7 +336,7 @@ export class DashboardService {
     });
 
     return {
-      data: this.toTopCategoryData(productCountMap),
+      data: DashboardService.toTopCategoryData(productCountMap),
       type: 'products' as const,
     };
   }
