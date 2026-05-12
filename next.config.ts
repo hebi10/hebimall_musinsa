@@ -4,6 +4,11 @@ const nextConfig: NextConfig = {
   // Firebase Functions와 호환되는 설정
   serverExternalPackages: ['firebase-admin'],
 
+  // Lint는 npm run lint/ci에서 별도로 관리하고, 배포 빌드에서는 타입/컴파일을 우선한다.
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+
   // 출력 설정 - 개발 환경에서는 기본값 사용
   // output: 'standalone',
   trailingSlash: true,

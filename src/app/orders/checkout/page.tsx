@@ -5,8 +5,10 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import PageHeader from "../../_components/PageHeader";
 import { useAuth } from "@/context/authProvider";
+import { useCoupon } from "@/context/couponProvider";
 import { usePoint } from "@/context/pointProvider";
 import { OrderService } from "@/shared/services/orderService";
+import { calculateOrderPreview } from "@/shared/utils/orderPricing";
 import styles from "./page.module.css";
 
 interface CheckoutItem {
@@ -26,6 +28,13 @@ interface CheckoutDraft {
   items: CheckoutItem[];
   selectedCoupon?: string;
   deliveryOption: "standard" | "express";
+  pricingPreview?: {
+    subtotal: number;
+    productDiscountAmount: number;
+    couponDiscount: number;
+    deliveryFee: number;
+    finalAmount: number;
+  };
 }
 
 interface DeliveryAddress {
@@ -46,16 +55,10 @@ const paymentMethods = [
   { value: "phone", label: "phone" },
 ] as const;
 
-const getDeliveryFee = (subtotal: number, option: CheckoutDraft["deliveryOption"]) => {
-  if (option === "express") {
-    return 5000;
-  }
-  return subtotal >= 50000 ? 0 : 3000;
-};
-
 export default function CheckoutPage() {
   const router = useRouter();
   const { user, userData } = useAuth();
+  const { userCoupons } = useCoupon();
   const { pointBalance } = usePoint();
 
   const [orderData, setOrderData] = useState<CheckoutDraft | null>(null);
@@ -112,6 +115,7 @@ export default function CheckoutPage() {
       items: parsed.items,
       selectedCoupon: parsed.selectedCoupon,
       deliveryOption: parsed.deliveryOption === "express" ? "express" : "standard",
+      pricingPreview: parsed.pricingPreview,
     });
   }, [router]);
 
@@ -122,26 +126,33 @@ export default function CheckoutPage() {
     }
   }, [addresses]);
 
-  const subtotal = useMemo(() => {
-    if (!orderData) return 0;
-    return orderData.items.reduce(
-      (sum, item) => sum + Math.max(0, item.price) * item.quantity,
-      0
-    );
-  }, [orderData]);
+  const selectedCouponView = userCoupons?.find((coupon) => coupon.id === orderData?.selectedCoupon) || null;
+  const orderPreview = useMemo(() => {
+    if (!orderData) {
+      return null;
+    }
 
-  const discountAmount = useMemo(() => {
-    if (!orderData) return 0;
-    return orderData.items.reduce(
-      (sum, item) => sum + Math.max(0, item.discountAmount ?? 0) * item.quantity,
-      0
-    );
-  }, [orderData]);
+    return calculateOrderPreview({
+      items: orderData.items.map((item) => ({
+        productId: item.productId,
+        price: item.price,
+        discountAmount: item.discountAmount,
+        quantity: item.quantity,
+        isAvailable: true,
+      })),
+      deliveryOption: orderData.deliveryOption,
+      selectedCoupon: selectedCouponView,
+      requestedPointAmount: usePoints,
+      pointBalance,
+    });
+  }, [orderData, selectedCouponView, usePoints, pointBalance]);
 
-  const deliveryFee = orderData ? getDeliveryFee(subtotal - discountAmount, orderData.deliveryOption) : 0;
-  const estimatedTotal = Math.max(0, subtotal - discountAmount + deliveryFee);
-  const maxUsablePoints = Math.min(pointBalance, estimatedTotal);
-  const finalAmount = Math.max(0, estimatedTotal - usePoints);
+  const subtotal = orderPreview?.subtotal ?? 0;
+  const discountAmount = orderPreview?.productDiscountAmount ?? 0;
+  const couponDiscount = orderPreview?.couponDiscount ?? 0;
+  const deliveryFee = orderPreview?.deliveryFee ?? 0;
+  const maxUsablePoints = orderPreview?.maxUsablePoints ?? 0;
+  const finalAmount = orderPreview?.finalAmount ?? 0;
 
   const handlePointChange = (raw: string) => {
     const parsed = Number(raw);
@@ -185,8 +196,8 @@ export default function CheckoutPage() {
         },
         paymentMethod,
         deliveryOption: orderData.deliveryOption,
-        selectedCoupon: orderData.selectedCoupon,
-        requestedPointAmount: usePoints,
+        selectedCoupon: orderPreview?.usableCoupon?.id || undefined,
+        requestedPointAmount: orderPreview?.pointUsed ?? usePoints,
       });
 
       sessionStorage.setItem("orderResult", JSON.stringify({ orderId: response.orderId }));
@@ -290,6 +301,12 @@ export default function CheckoutPage() {
                 <span>상품 할인</span>
                 <span>-{discountAmount.toLocaleString()}원</span>
               </div>
+              {couponDiscount > 0 && (
+                <div className={styles.summaryItem}>
+                  <span>쿠폰 할인</span>
+                  <span>-{couponDiscount.toLocaleString()}원</span>
+                </div>
+              )}
               <div className={styles.summaryItem}>
                 <span>배송비</span>
                 <span>{deliveryFee ? `${deliveryFee.toLocaleString()}원` : "무료"}</span>

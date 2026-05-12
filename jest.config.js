@@ -4,10 +4,19 @@ module.exports = {
 
   preset: "ts-jest",
 
+  transform: {
+    "^.+\\.(ts|tsx)$": ["ts-jest", {
+      tsconfig: {
+        jsx: "react-jsx",
+        module: "commonjs",
+      },
+    }],
+  },
+
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
 
   moduleNameMapper: {
-    "^@/(.*)$": "<rootDir>/$1",
+    "^@/(.*)$": "<rootDir>/src/$1",
   },
 
   testPathIgnorePatterns: [

@@ -1,14 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import PageHeader from "../../_components/PageHeader";
 import Button from "../../_components/Button";
 import { useAuth } from "@/context/authProvider";
 import { useCoupon } from "@/context/couponProvider";
-import { useCart, useUpdateCartItem, useRemoveFromCart, useClearCart } from "@/shared/hooks/useCart";
+import { useCart, useUpdateCartItem, useRemoveFromCart } from "@/shared/hooks/useCart";
 import { CartItem } from "@/shared/types/cart";
+import {
+  calculateOrderPreview,
+  getCouponAvailability,
+} from "@/shared/utils/orderPricing";
 import styles from "./page.module.css";
 
 // 장바구니 아이템에 선택 상태 추가
@@ -19,13 +23,12 @@ interface CartItemWithSelection extends CartItem {
 export default function OrderCartPage() {
   const router = useRouter();
   const { user, userData } = useAuth();
-  const { userCoupons, calculateDiscount } = useCoupon();
+  const { userCoupons } = useCoupon();
   
   // Firebase 장바구니 데이터 가져오기
   const { data: cart, isLoading: cartLoading, error: cartError } = useCart(user?.uid || null);
   const updateCartItemMutation = useUpdateCartItem();
   const removeFromCartMutation = useRemoveFromCart();
-  const clearCartMutation = useClearCart();
   
   // 장바구니 아이템에 선택 상태 추가
   const [cartItems, setCartItems] = useState<CartItemWithSelection[]>([]);
@@ -121,28 +124,23 @@ export default function OrderCartPage() {
 
   // 주문 계산
   const selectedItems = cartItems.filter(item => item.selected && item.isAvailable);
-  const subtotal = selectedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const totalDiscountAmount = selectedItems.reduce((sum, item) => sum + (item.discountAmount * item.quantity), 0);
-  
-  // 배송비 계산
-  const deliveryFee = deliveryOption === "express" ? 5000 : (subtotal >= 50000 ? 0 : 3000);
-  
-  // 쿠폰 할인
-  const couponDiscount = selectedCoupon && userCoupons ? (() => {
-    const coupon = userCoupons.find(c => c.id === selectedCoupon);
-    if (!coupon) return 0;
-    
-    // 쿠폰 할인 계산
-    if (coupon.coupon.type === '할인율') {
-      return Math.floor(subtotal * (coupon.coupon.value / 100));
-    } else if (coupon.coupon.type === '할인금액') {
-      return Math.min(coupon.coupon.value, subtotal);
-    }
-    return 0;
-  })() : 0;
-  
-  // 최종 금액
-  const finalAmount = subtotal - couponDiscount + deliveryFee;
+  const selectedCouponView = userCoupons?.find(coupon => coupon.id === selectedCoupon) || null;
+  const orderPreview = useMemo(
+    () => calculateOrderPreview({
+      items: selectedItems,
+      deliveryOption,
+      selectedCoupon: selectedCouponView,
+      requestedPointAmount: 0,
+      pointBalance: 0,
+    }),
+    [selectedItems, deliveryOption, selectedCouponView]
+  );
+
+  const subtotal = orderPreview.subtotal;
+  const totalDiscountAmount = orderPreview.productDiscountAmount;
+  const couponDiscount = orderPreview.couponDiscount;
+  const deliveryFee = orderPreview.deliveryFee;
+  const finalAmount = orderPreview.finalAmount;
 
   // 주문하기
   const handleCheckout = () => {
@@ -168,7 +166,14 @@ export default function OrderCartPage() {
       couponDiscount,
       deliveryFee,
       finalAmount,
-      selectedCoupon,
+      selectedCoupon: orderPreview.usableCoupon?.id || "",
+      pricingPreview: {
+        subtotal: orderPreview.subtotal,
+        productDiscountAmount: orderPreview.productDiscountAmount,
+        couponDiscount: orderPreview.couponDiscount,
+        deliveryFee: orderPreview.deliveryFee,
+        finalAmount: orderPreview.finalAmount,
+      },
       deliveryOption
     };
     
@@ -410,13 +415,26 @@ export default function OrderCartPage() {
                   className={styles.couponDropdown}
                 >
                   <option value="">쿠폰을 선택해주세요</option>
-                  {userCoupons?.filter(coupon => coupon.status === '사용가능').map(coupon => (
-                    <option key={coupon.id} value={coupon.id}>
-                      {coupon.coupon.name} - {coupon.coupon.type === '할인율' 
-                        ? `${coupon.coupon.value}%` 
-                        : `${coupon.coupon.value.toLocaleString()}원`} 할인
-                    </option>
-                  ))}
+                  {userCoupons?.map(coupon => {
+                    const availability = getCouponAvailability(coupon, subtotal);
+                    const suffix = !availability.usable
+                      ? availability.reason === "minimum"
+                        ? ` - ${coupon.coupon.minOrderAmount?.toLocaleString()}원 이상 사용`
+                        : availability.reason === "expired"
+                          ? " - 만료"
+                          : " - 사용 불가"
+                      : "";
+
+                    return (
+                      <option key={coupon.id} value={coupon.id} disabled={!availability.usable}>
+                        {coupon.coupon.name} - {coupon.coupon.type === '할인율'
+                          ? `${coupon.coupon.value}%`
+                          : coupon.coupon.type === '무료배송'
+                            ? '무료배송'
+                            : `${coupon.coupon.value.toLocaleString()}원`} 할인{suffix}
+                      </option>
+                    );
+                  })}
                 </select>
                 <Link href="/mypage/coupons" className={styles.couponLink}>
                   쿠폰함 보기

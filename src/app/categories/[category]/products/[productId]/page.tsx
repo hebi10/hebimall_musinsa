@@ -2,6 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/authProvider';
+import { useAddToCart } from '@/shared/hooks/useCart';
 import { ProductService } from '@/shared/services/productService';
 import { Product } from '@/shared/types/product';
 import { getCategoryName } from '@/shared/utils/categoryUtils';
@@ -15,6 +18,9 @@ interface ProductDetailPageProps {
 }
 
 export default function ProductDetailPage({ params }: ProductDetailPageProps) {
+  const router = useRouter();
+  const { user } = useAuth();
+  const addToCartMutation = useAddToCart();
   const [product, setProduct] = useState<Product | null>(null);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -25,6 +31,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
   const [category, setCategory] = useState<string>('');
   const [productId, setProductId] = useState<string>('');
   const [categoryDisplayName, setCategoryDisplayName] = useState<string>('');
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
 
   // params 비동기 처리
   useEffect(() => {
@@ -102,8 +109,14 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
     loadProductData();
   }, [category, productId]);
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (!product) return;
+
+    if (!user) {
+      alert('로그인이 필요합니다.');
+      router.push('/auth/login');
+      return;
+    }
 
     if (product.sizes.length > 0 && !selectedSize) {
       alert('사이즈를 선택해주세요.');
@@ -115,17 +128,81 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
       return;
     }
 
-    // 장바구니 추가 로직
-    console.log('장바구니 추가:', {
-      productId: product.id,
-      name: product.name,
-      price: product.price,
-      size: selectedSize,
-      color: selectedColor,
-      quantity
-    });
+    if (product.stock === 0 || quantity > product.stock) {
+      alert('재고가 부족합니다.');
+      return;
+    }
 
-    alert('장바구니에 추가되었습니다!');
+    setIsAddingToCart(true);
+    try {
+      await addToCartMutation.mutateAsync({
+        userId: user.uid,
+        product,
+        request: {
+          productId: product.id,
+          size: selectedSize || '',
+          color: selectedColor || '',
+          quantity,
+        },
+      });
+
+      alert('장바구니에 추가되었습니다.');
+      if (confirm('장바구니로 이동하시겠습니까?')) {
+        router.push('/orders/cart');
+      }
+    } catch (error) {
+      console.error('장바구니 추가 실패:', error);
+      alert('장바구니 추가에 실패했습니다. 다시 시도해주세요.');
+    } finally {
+      setIsAddingToCart(false);
+    }
+  };
+
+  const handleBuyNow = () => {
+    if (!product) return;
+
+    if (!user) {
+      alert('로그인이 필요합니다.');
+      router.push('/auth/login');
+      return;
+    }
+
+    if (product.sizes.length > 0 && !selectedSize) {
+      alert('사이즈를 선택해주세요.');
+      return;
+    }
+
+    if (product.colors.length > 0 && !selectedColor) {
+      alert('색상을 선택해주세요.');
+      return;
+    }
+
+    if (product.stock === 0 || quantity > product.stock) {
+      alert('재고가 부족합니다.');
+      return;
+    }
+
+    const orderData = {
+      items: [{
+        productId: product.id,
+        id: `${product.id}-${selectedSize || ''}-${selectedColor || ''}`,
+        productName: product.name,
+        productImage: product.mainImage || product.images?.[0] || '',
+        brand: product.brand,
+        size: selectedSize || '',
+        color: selectedColor || '',
+        quantity,
+        price: product.price,
+        discountAmount: product.originalPrice && product.originalPrice > product.price
+          ? product.originalPrice - product.price
+          : 0,
+      }],
+      selectedCoupon: '',
+      deliveryOption: 'standard',
+    };
+
+    sessionStorage.setItem('orderData', JSON.stringify(orderData));
+    router.push('/orders/checkout');
   };
 
   if (loading) {
@@ -289,12 +366,13 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
           <div className={styles.actions}>
             <button 
               onClick={handleAddToCart}
-              disabled={product.stock === 0}
+              disabled={product.stock === 0 || isAddingToCart}
               className={`${styles.addToCartButton} ${product.stock === 0 ? styles.disabled : ''}`}
             >
-              장바구니 담기
+              {isAddingToCart ? '담는 중...' : '장바구니 담기'}
             </button>
             <button 
+              onClick={handleBuyNow}
               disabled={product.stock === 0}
               className={`${styles.buyNowButton} ${product.stock === 0 ? styles.disabled : ''}`}
             >

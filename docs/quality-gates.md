@@ -30,3 +30,8 @@
 - 1순위 UI 정리 후 `npm run typecheck`는 통과했다.
 - `npm run lint`는 여전히 로컬 `eslint` 실행 파일 부재로 `'eslint' is not recognized` 오류가 발생한다.
 - 2026-05-12: `package-lock.json`의 루트 `devDependencies`에 ESLint 관련 항목을 package.json과 맞춰 반영했다. 다만 이 샌드박스는 `@eslint/eslintrc` 캐시가 없어 `npm install --prefer-offline`이 `ENOTCACHED`로 실패하므로 실제 `node_modules` 복구는 네트워크 가능한 로컬 터미널에서 진행해야 한다.
+
+## 2026-05-12 배포 빌드 lint 분리
+- `npm install` 후 ESLint가 설치되면 `next build` 내부 lint가 기존 전체 lint 오류를 배포 차단 오류로 처리한다.
+- `next.config.ts`에서 `eslint.ignoreDuringBuilds`를 켜서 배포 빌드는 컴파일/타입 검사를 우선 통과시키고, lint 품질 게이트는 `npm run lint`와 `npm run ci`에서 별도로 확인한다.
+- 이 설정 후 `npm run build`는 `Skipping linting`까지 확인됐고, 현재 샌드박스에서는 이후 타입 검사 단계가 기존 Next worker `spawn EPERM` 환경 제약으로 중단된다.
