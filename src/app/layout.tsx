@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import "../styles/variables.css";
 import Header from "./_components/header/Header";
@@ -56,8 +56,6 @@ export const metadata: Metadata = {
 
   manifest: "/manifest.json",
 
-  themeColor: "#0a0a0a",
-
   openGraph: {
     title: "STYNA - 패션 쇼핑몰",
     description:
@@ -107,6 +105,10 @@ export const metadata: Metadata = {
   alternates: {
     canonical: SITE_URL,
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0a0a0a",
 };
 
 export default function RootLayout({

@@ -128,3 +128,49 @@
     font-size: 1rem;
   }
 }
+
+/* Admin-wide neutral operations tone */
+.container {
+  background: var(--off-white);
+}
+
+.header {
+  text-align: left;
+  max-width: 800px;
+  margin: 0 auto 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--black);
+}
+
+.header h1,
+.results h3 {
+  color: var(--black);
+}
+
+.header p {
+  color: var(--text-subtle);
+}
+
+.content,
+.warning,
+.results,
+.results li {
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+}
+
+.content {
+  border: 1px solid var(--line);
+}
+
+.seedButton {
+  background: var(--black);
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+}
+
+.seedButton:hover:not(:disabled) {
+  background: var(--action-hover);
+  transform: none;
+  box-shadow: none;
+}

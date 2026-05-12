@@ -223,3 +223,50 @@
 .container {
   animation: fadeInScale 0.3s ease-out;
 }
+
+/* Admin-wide neutral operations tone */
+.container {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.header {
+  background: var(--surface-raised);
+  color: var(--black);
+  border-bottom-color: var(--line);
+}
+
+.title,
+.breadcrumb,
+.breadcrumb span,
+.separator {
+  color: var(--black);
+  text-shadow: none;
+}
+
+.breadcrumb span:hover,
+.closeButton:hover {
+  background: var(--off-white);
+  color: var(--black);
+}
+
+.backButton {
+  background: var(--black);
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+}
+
+.backButton:hover {
+  background: var(--action-hover);
+  transform: none;
+  box-shadow: none;
+}
+
+.closeButton {
+  background: var(--surface-raised);
+  border: 1px solid var(--line);
+  color: var(--black);
+  border-radius: var(--radius-sm);
+}

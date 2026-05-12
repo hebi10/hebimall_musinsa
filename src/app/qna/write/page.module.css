@@ -283,3 +283,78 @@
     min-width: auto;
   }
 }
+
+/* 2nd priority clean board tone */
+.pageTitle,
+.label,
+.checkboxText,
+.authorTitle,
+.authorValue,
+.loginRequired h2 {
+  color: var(--black);
+}
+
+.pageDesc,
+.fieldHelp,
+.authorLabel,
+.loginRequired p {
+  color: var(--text-subtle);
+}
+
+.input,
+.select,
+.textarea,
+.passwordField,
+.authorInfo,
+.errorMessage,
+.cancelButton,
+.submitButton,
+.loginButton {
+  border-radius: var(--radius-sm);
+}
+
+.input,
+.select,
+.textarea,
+.authorInfo {
+  border-color: var(--line);
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+  border-color: var(--black);
+  box-shadow: 0 0 0 2px var(--action-soft);
+}
+
+.checkbox {
+  accent-color: var(--black);
+}
+
+.passwordField,
+.authorInfo {
+  background: var(--off-white);
+  border-left: 1px solid var(--line);
+}
+
+.submitButton,
+.loginButton {
+  background: var(--black);
+  color: var(--surface-raised);
+  font-weight: 700;
+}
+
+.submitButton:hover:not(:disabled),
+.loginButton:hover {
+  background: var(--action-hover);
+}
+
+.cancelButton {
+  background: var(--surface-raised);
+  border: 1px solid var(--line);
+  color: var(--black);
+}
+
+.cancelButton:hover:not(:disabled) {
+  background: var(--off-white);
+}

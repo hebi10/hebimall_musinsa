@@ -517,3 +517,107 @@
     font-size: 0.8rem;
   }
 }
+
+/* 2nd priority clean board tone */
+.container {
+  max-width: 960px;
+}
+
+.title,
+.statNumber,
+.titleLink,
+.empty h3 {
+  color: var(--black);
+}
+
+.subtitle,
+.qnaStats,
+.date,
+.qnaDetails,
+.empty {
+  color: var(--text-subtle);
+}
+
+.statCard,
+.filterSection,
+.qnaItem,
+.answerPreview,
+.error {
+  background: var(--surface-raised);
+  border-color: var(--line);
+  border-radius: var(--radius-sm);
+}
+
+.qnaItem:first-child,
+.qnaItem:last-child,
+.qnaItem:only-child {
+  border-radius: var(--radius-sm);
+}
+
+.qnaItem:hover {
+  background: var(--off-white);
+}
+
+.searchInput,
+.searchButton,
+.categoryButton,
+.pageButton,
+.writeButton,
+.retryButton {
+  border-radius: var(--radius-sm);
+}
+
+.searchInput:focus {
+  border-color: var(--black);
+  box-shadow: 0 0 0 2px var(--action-soft);
+}
+
+.searchButton,
+.categoryButton.active,
+.pageButton.active,
+.writeButton,
+.retryButton {
+  background: var(--black);
+  border-color: var(--black);
+  color: var(--surface-raised);
+}
+
+.searchButton:hover,
+.writeButton:hover,
+.retryButton:hover {
+  background: var(--action-hover);
+}
+
+.categoryButton:hover,
+.pageButton:hover:not(:disabled),
+.titleLink:hover,
+.product,
+.product:hover {
+  border-color: var(--black);
+  color: var(--black);
+}
+
+.category,
+.status,
+.secretBadge,
+.category.product,
+.category.delivery,
+.category.payment,
+.category.general,
+.status.waiting,
+.status.answered,
+.status.closed,
+.answerPreview {
+  background: var(--off-white);
+  color: var(--black);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+
+.answerPreview {
+  border-left: 1px solid var(--line);
+}
+
+.answerLabel {
+  color: var(--black);
+}

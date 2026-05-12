@@ -678,3 +678,32 @@
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   }
 }
+
+/* 2nd priority clean event listing tone */
+.mainBanner,
+.bannerImage,
+.bannerEyebrow,
+.featuredCta,
+.statItem,
+.filterButton,
+.eventCard,
+.typeBadge,
+.statusBadge,
+.eventAccentTag,
+.eventMeta,
+.eventDiscount,
+.statePanel,
+.pageButton {
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+}
+
+.mainBanner {
+  background: var(--surface-raised);
+}
+
+.eventCard:hover,
+.eventCard:hover .eventImage {
+  transform: none;
+  box-shadow: none;
+}

@@ -230,3 +230,85 @@
 .iconRotated {
   transform: rotate(180deg);
 }
+
+/* 2nd priority clean board tone */
+.inquiryContainer {
+  max-width: 960px;
+  padding: 2rem 1rem 4rem;
+}
+
+.tab.active,
+.tab:hover {
+  color: var(--black);
+  border-bottom-color: var(--black);
+}
+
+.inquiryForm,
+.inquiryItem,
+.formNote {
+  background: var(--surface-raised);
+  border-color: var(--line);
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+}
+
+.inquiryHeader,
+.formNote {
+  background: var(--off-white);
+}
+
+.inquiryHeader:hover {
+  background: var(--surface-muted);
+}
+
+.label,
+.titleText,
+.sectionTitle,
+.questionText,
+.answerText {
+  color: var(--black);
+}
+
+.input,
+.select,
+.textarea {
+  border-color: var(--line);
+  border-radius: var(--radius-sm);
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+  border-color: var(--black);
+  box-shadow: 0 0 0 2px var(--action-soft);
+}
+
+.submitButton {
+  background: var(--black);
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+}
+
+.submitButton:hover {
+  background: var(--action-hover);
+}
+
+.status,
+.category {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+
+.category,
+.statusWaiting,
+.statusCompleted {
+  background: var(--off-white);
+  color: var(--black);
+}
+
+.inquiryMeta,
+.answeredBy,
+.noInquiries,
+.formNote {
+  color: var(--text-subtle);
+}

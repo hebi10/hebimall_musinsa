@@ -557,3 +557,58 @@
     height: 44px;
   }
 }
+
+/* 2nd priority clean board tone */
+.statItem,
+.filterButton,
+.sortSelect,
+.reviewItem,
+.option,
+.recommended,
+.helpfulButton,
+.productLink,
+.pageButton,
+.productImage,
+.error,
+.retryButton {
+  border-radius: var(--radius-sm, 2px);
+}
+
+.statItem,
+.reviewItem {
+  background: var(--surface-raised, #fff);
+  border: 1px solid var(--line, #e5e7eb);
+}
+
+.reviewItem:hover {
+  box-shadow: none;
+}
+
+.statNumber,
+.productName:hover,
+.helpfulButton:hover,
+.productLink,
+.pageButton:hover:not(.disabled) {
+  color: var(--black, #111);
+}
+
+.filterButton:hover,
+.helpfulButton:hover,
+.productLink,
+.pageButton:hover:not(.disabled) {
+  border-color: var(--black, #111);
+}
+
+.filterButton.active,
+.pageButton.active,
+.retryButton {
+  background: var(--black, #111);
+  border-color: var(--black, #111);
+  color: var(--surface-raised, #fff);
+}
+
+.productLink:hover,
+.retryButton:hover {
+  background: var(--action-hover, #333);
+  color: var(--surface-raised, #fff);
+}

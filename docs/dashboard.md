@@ -50,3 +50,15 @@ src/shared/
 - `src/app/admin/dashboard/dashboard/page.tsx`의 깨진 한글/JSX를 정상 UTF-8 기준으로 복구.
 - 관리자 접근 제어는 `src/app/admin/layout.tsx`의 `AuthChecking`에 맡기고, 대시보드 내부의 중복 `user.role` 확인은 제거된 상태를 유지.
 - `src/app/admin/dashboard/page.tsx`는 `useEffect`, `useRouter`, `useAuth`를 사용하는 redirect 페이지라 `"use client"` 지시문을 유지해야 한다.
+
+## 2026-05-12 디자인 톤 정리
+
+- 대시보드 데이터 레이어와 표시 로직은 변경하지 않고 CSS만 보정했다.
+- `src/app/admin/dashboard/dashboard/page.module.css`의 그라데이션 배경, 글래스 카드, 컬러별 통계 카드, 그라데이션 빠른 액션을 중립 운영툴 톤으로 낮췄다.
+- 관리자 공통 레이아웃에서 하위 페이지의 버튼/입력/카드/모달까지 검정 CTA와 2px radius 기준으로 덮도록 했다.
+
+## 2026-05-12 운영 지표 정리
+
+- `/admin` 루트 대시보드의 카테고리 차트에서 `Math.random()` 임시 값을 제거했다.
+- 차트는 `DashboardService.getCategoryBreakdown()` 결과를 사용하며 주문 판매량이 있으면 판매량, 없으면 등록 상품 수를 표시한다.
+- 카테고리명 조회 실패 시에도 집계 ID를 표시하고 임의 숫자는 만들지 않는다.

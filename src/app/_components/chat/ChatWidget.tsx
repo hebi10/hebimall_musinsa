@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { usePathname } from 'next/navigation';
+import Link from 'next/link';
 import styles from './ChatWidget.module.css';
 
 // ─── 상수 ──────────────────────────────────────────────
@@ -14,46 +14,28 @@ const MAX_HISTORY_LENGTH = 5;
 const MAX_TEXTAREA_HEIGHT = 80;
 
 const QUICK_BUTTONS = [
-  '1. 주문/배송',
-  '2. 반품/교환',
-  '3. 쿠폰/할인',
-  '4. 사이즈 가이드',
-  '5. 결제 방법 안내',
-  '6. 회원 혜택 정보',
+  '주문/배송',
+  '교환/반품',
+  '상품 문의',
+  '쿠폰/혜택',
+  '상담원 연결',
 ] as const;
 
-const INITIAL_BOT_TEXT = `안녕하세요! STYNA 고객지원팀입니다.
+const INITIAL_BOT_TEXT = `STYNA 실시간 상담입니다.
 
-어떤 도움이 필요하신가요? 아래 번호를 선택하거나 직접 문의해 주세요:
+문의 목적을 선택하거나 바로 메시지를 남겨주세요.
+운영시간 외 문의는 1:1 문의로도 접수할 수 있습니다.`;
 
-1. 주문/배송 문의
-2. 반품/교환 안내
-3. 쿠폰/할인 혜택
-4. 사이즈 가이드
-5. 결제 방법 안내
-6. 회원 혜택 정보
+const CONNECT_REQUEST_TEXT = `상담 연결 요청을 접수했습니다.
 
-상담원연결 - AI 상담원과 1:1 맞춤 상담
-
-번호를 입력하시거나 궁금한 점을 직접 말씀해 주세요!`;
-
-const AI_CONNECTED_TEXT = `AI 상담원과 연결되었습니다.
-
-무엇을 도와드릴까요?
-
-다음 내용을 문의하실 수 있습니다:
-- 상품 추천
-- 주문/배송 안내
-- 고객 지원
-- 문제 해결
-
-채팅창에 메시지를 입력해주세요.`;
+평일 10:00~18:00에는 순차적으로 확인합니다.
+운영시간 외에는 1:1 문의를 남겨주시면 다음 영업일에 답변드리겠습니다.`;
 
 const ERROR_TEXT =
   '죄송합니다. 일시적인 문제가 발생했습니다. 잠시 후 다시 시도해 주시거나 고객센터(sevim0104@naver.com)로 연락해 주세요.';
 
 // ─── 타입 ──────────────────────────────────────────────
-export type ChatMode = 'idle' | 'menu' | 'ai';
+export type ChatMode = 'idle' | 'active';
 
 export interface ChatMessage {
   id: string;
@@ -76,7 +58,17 @@ interface ChatAPIResponse {
 // ─── 유틸리티 함수 ─────────────────────────────────────
 function isAgentConnectCommand(text: string): boolean {
   const normalized = text.trim().toLowerCase();
-  return normalized === '상담원연결' || normalized === '상담원 연결';
+  const compact = normalized.replace(/\s+/g, '');
+
+  if (compact === '상담원' + '연결') return true;
+
+  return [
+    '상담원 연결',
+    '상담 연결',
+    '상담원',
+    '실시간 상담',
+    '담당자 연결',
+  ].includes(normalized);
 }
 
 function createMessage(text: string, sender: 'user' | 'bot'): ChatMessage {
@@ -147,9 +139,8 @@ const ChatWidget: React.FC = () => {
   // UI 상태
   const [isOpen, setIsOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
-  const pathname = usePathname();
 
-  // 통합 채팅 상태: idle → menu → ai
+  // 통합 채팅 상태: idle → active
   const [chatMode, setChatMode] = useState<ChatMode>('idle');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
@@ -162,7 +153,6 @@ const ChatWidget: React.FC = () => {
 
   // 파생 상태
   const isChatActive = chatMode !== 'idle';
-  const isHomePage = pathname === '/';
 
   // ── 마운트 확인 ────────────────────────────────────
   useEffect(() => {
@@ -218,10 +208,8 @@ const ChatWidget: React.FC = () => {
     if (chatMutation.isPending) return '답변 작성 중...';
 
     switch (chatMode) {
-      case 'ai':
-        return '맞춤형 AI 상담 연결됨';
-      case 'menu':
-        return '상담원 연결을 위해 "상담원연결" 버튼을 클릭해주세요';
+      case 'active':
+        return '문의 목적 선택 또는 직접 입력';
       default:
         return '채팅 상담을 시작해보세요';
     }
@@ -229,21 +217,20 @@ const ChatWidget: React.FC = () => {
 
   // ── 채팅 시작 ─────────────────────────────────────
   const startChat = useCallback(() => {
-    setChatMode('menu');
+    setChatMode('active');
     setMessages([createMessage(INITIAL_BOT_TEXT, 'bot')]);
 
     setTimeout(() => {
-      if (inputRef.current && isOpen) inputRef.current.focus();
+      inputRef.current?.focus();
     }, 100);
-  }, [isOpen]);
+  }, []);
 
   // ── 채팅 리셋 ─────────────────────────────────────
   const resetChat = useCallback(() => {
-    setChatMode('idle');
-    setMessages([]);
     setInputValue('');
     chatMutation.reset();
-  }, [chatMutation]);
+    startChat();
+  }, [chatMutation, startChat]);
 
   // ── 공통 메시지 전송 코어 ─────────────────────────
   const sendMessageCore = useCallback(
@@ -252,18 +239,18 @@ const ChatWidget: React.FC = () => {
 
       const isConnect = isAgentConnectCommand(messageText);
 
-      // 상담원연결: API 호출 없이 즉시 AI 모드 전환 + 안내 메시지 표시
+      // 상담 연결 요청은 API 호출 없이 접수 안내를 먼저 표시한다.
       if (isConnect) {
-        setChatMode('ai');
+        setChatMode('active');
         setMessages((prev) => [
           ...prev,
           createMessage(messageText, 'user'),
-          createMessage(AI_CONNECTED_TEXT, 'bot'),
+          createMessage(CONNECT_REQUEST_TEXT, 'bot'),
         ]);
         return;
       }
 
-      const shouldUseAI = chatMode === 'ai';
+      const shouldUseAI = chatMode === 'active';
 
       // Optimistic: 사용자 메시지 즉시 추가
       setMessages((prev) => [...prev, createMessage(messageText, 'user')]);
@@ -279,10 +266,9 @@ const ChatWidget: React.FC = () => {
 
   // ── 텍스트 입력 → 전송 ────────────────────────────
   const sendMessage = useCallback(() => {
-    if (chatMode !== 'ai') return;
     sendMessageCore(inputValue.trim());
     setInputValue('');
-  }, [chatMode, inputValue, sendMessageCore]);
+  }, [inputValue, sendMessageCore]);
 
   // ── 빠른 선택 버튼 → 전송 ─────────────────────────
   const handleQuickButton = useCallback(
@@ -296,7 +282,7 @@ const ChatWidget: React.FC = () => {
   // ── 키보드 이벤트 ─────────────────────────────────
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
-      if (e.key === 'Enter' && !e.shiftKey && chatMode === 'ai') {
+      if (e.key === 'Enter' && !e.shiftKey && chatMode === 'active') {
         e.preventDefault();
         sendMessage();
       }
@@ -307,25 +293,27 @@ const ChatWidget: React.FC = () => {
   // ── 입력 변경 + 자동 높이 ─────────────────────────
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      if (chatMode !== 'ai') return;
       setInputValue(e.target.value);
 
       const textarea = e.target;
       textarea.style.height = 'auto';
       textarea.style.height = `${Math.min(textarea.scrollHeight, MAX_TEXTAREA_HEIGHT)}px`;
     },
-    [chatMode],
+    [],
   );
 
   // ── 파생 disabled 상태 ────────────────────────────
-  const isInputDisabled = chatMutation.isPending || chatMode !== 'ai';
+  const isInputDisabled = chatMutation.isPending || chatMode === 'idle';
   const isSendDisabled = !inputValue.trim() || isInputDisabled;
 
-  // ── 렌더링 ────────────────────────────────────────
-  if (isHomePage) {
-    return null;
-  }
+  const toggleChat = useCallback(() => {
+    if (!isOpen && chatMode === 'idle') {
+      startChat();
+    }
+    setIsOpen((prev) => !prev);
+  }, [chatMode, isOpen, startChat]);
 
+  // ── 렌더링 ────────────────────────────────────────
   return (
     <div className={styles.chatWidget}>
       {/* 채팅 창 */}
@@ -334,7 +322,7 @@ const ChatWidget: React.FC = () => {
         <div className={styles.chatHeader}>
           <div>
             <h3 className={styles.chatTitle}>
-              {chatMode === 'ai' ? 'AI 상담원' : '고객상담'}
+              실시간 상담
             </h3>
             <p className={styles.chatSubtitle}>
               {isMounted ? subtitleText : '채팅 상담을 시작해보세요'}
@@ -379,11 +367,7 @@ const ChatWidget: React.FC = () => {
                   </div>
                   <div className={styles.feature}>
                     <span className={styles.featureIcon}>●</span>
-                    <span>AI 상담 연결</span>
-                  </div>
-                  <div className={styles.feature}>
-                    <span className={styles.featureIcon}>●</span>
-                    <span>FAQ 안내</span>
+                    <span>상품 문의 접수</span>
                   </div>
                 </div>
                 <button className={styles.startChatButton} onClick={startChat}>
@@ -422,26 +406,28 @@ const ChatWidget: React.FC = () => {
           <div ref={messagesEndRef} />
         </div>
 
-        {/* 빠른 선택 버튼 (menu 모드에서만) */}
-        {chatMode === 'menu' && (
+        {/* 빠른 선택 버튼 */}
+        {isChatActive && (
           <div className={styles.quickButtons}>
             {QUICK_BUTTONS.map((label) => (
               <button
                 key={label}
-                className={styles.quickButton}
+                className={`${styles.quickButton} ${label === '상담원 연결' ? styles.connect : ''}`}
                 onClick={() => handleQuickButton(label)}
                 disabled={chatMutation.isPending}
               >
                 {label}
               </button>
             ))}
-            <button
-              className={`${styles.quickButton} ${styles.ai}`}
-              onClick={() => handleQuickButton('상담원연결')}
-              disabled={chatMutation.isPending}
-            >
-              상담원연결
-            </button>
+          </div>
+        )}
+
+        {isChatActive && (
+          <div className={styles.supportActions}>
+            <Link href="/mypage/order-list">주문내역</Link>
+            <Link href="/orders/delivery">배송조회</Link>
+            <Link href="/cs/inquiry">1:1 문의</Link>
+            <Link href="/qna">상품문의</Link>
           </div>
         )}
 
@@ -456,9 +442,9 @@ const ChatWidget: React.FC = () => {
                 onChange={handleInputChange}
                 onKeyDown={handleKeyDown}
                 placeholder={
-                  chatMode === 'ai'
+                  chatMode === 'active'
                     ? '메시지를 입력하세요...'
-                    : '상담원 연결 후 이용 가능합니다'
+                    : '상담을 시작해 주세요'
                 }
                 disabled={isInputDisabled}
                 rows={1}
@@ -479,10 +465,10 @@ const ChatWidget: React.FC = () => {
       {/* 채팅 토글 버튼 */}
       <button
         className={`${styles.chatButton} ${isOpen ? styles.open : ''}`}
-        onClick={() => setIsOpen((prev) => !prev)}
+        onClick={toggleChat}
         aria-label={isOpen ? '채팅 닫기' : '채팅 열기'}
       >
-        {isOpen ? '×' : '상담'}
+        {isOpen ? '×' : '실시간 상담'}
       </button>
     </div>
   );

@@ -1,27 +1,27 @@
 ### commit message
-- `style: refine mobile storefront layout`
+- `fix: harden admin operations flows`
 
 ### 인수인계 (최대 3개)
-1. 메인 모바일 diff 코멘트 반영
-   - 신상품 섹션 `전체보기`는 bordered 헤더 우측에 유지되도록 보정.
-   - 베스트셀러 랭킹 카드에만 `badgePlacement="belowRank"`를 넘겨 순위와 할인율 배지 충돌을 분리.
-   - 모바일 배너 전용 `hero_editorial_*_mobile.webp` 3장을 추가하고 768px 이하에서 사용.
+1. 관리자 운영 지표/주문
+   - `/admin` 카테고리 차트의 랜덤 값을 제거하고 실제 `categoryBreakdown` 집계로 표시.
+   - 주문 상태 변경은 `/api/order` 관리자 `updateStatus` 액션으로 이동하고 상태 전이/이력 기록을 추가.
 
-2. 하단 모바일 정리
-   - 서비스 안내는 640px 이하에서 1열 리스트형으로 전환.
-   - 푸터 링크는 640px 이하에서 compact 2열 그리드와 작은 간격으로 정리.
+2. 관리자 쿠폰/내비
+   - 쿠폰 마스터 생성/수정/삭제성 작업은 `/api/coupon` 관리자 액션으로 이동.
+   - 삭제는 발급 이력 보존을 위해 비활성화/보관 처리로 변경.
+   - 관리자 내비에 active 상태와 모바일 메뉴 토글/오버레이 닫기를 추가.
 
-3. 기존 작업 보존
-   - 작업 전부터 있던 인증/마이페이지/검색/문서 변경은 되돌리지 않음.
-   - 이번 작업은 메인 모바일 레이아웃과 관련 문서 갱신에 한정.
+3. 기존 변경 보존
+   - 작업 전부터 있던 상담/팝업/채팅/구매 흐름 점검 문맥은 되돌리지 않음.
+   - 카테고리/마이그레이션성 관리자 도구의 직접 Firestore 작업은 이번 범위에서 유지.
 
 ### 검증
 - `npm run typecheck`: 통과.
+- `npm --prefix functions run build`: 통과.
 - `npm run test -- --runInBand`: 통과, 8 suites / 54 tests.
-- `git diff --check`: 통과.
-- `npm run lint`: 실패. 로컬 `eslint` 실행 파일 부재.
+- `git diff --check`: 통과. 줄바꿈 경고만 출력.
 
 ### 남은 작업 (최대 3개)
-1. 네트워크 가능한 터미널에서 `npm install` 후 `npm run lint`, `npm run ci` 재확인.
-2. 실제 브라우저에서 390px, 484px, 768px 메인 화면 배너/상품/푸터 확인.
-3. 이전 피드백의 Firebase 인덱스/규칙 배포 여부를 콘솔에서 최종 확인.
+1. 실제 관리자 계정으로 주문 상태 변경과 쿠폰 생성/수정/비활성화 end-to-end 확인.
+2. 카테고리/마이그레이션성 관리자 도구의 직접 Firestore 쓰기 경계 재검토.
+3. 네트워크/의존성 문제가 있으면 `npm install` 후 lint/ci 재확인.

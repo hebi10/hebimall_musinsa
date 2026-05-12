@@ -120,3 +120,51 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* 2nd priority clean board tone */
+.noticeContainer {
+  max-width: 960px;
+  padding: 2rem 1rem 4rem;
+}
+
+.noticeItem:hover {
+  margin: 0;
+  padding: 1.5rem 0;
+  border-radius: 0;
+  background-color: var(--off-white);
+}
+
+.noticeTitle,
+.noticeContent {
+  color: var(--black);
+}
+
+.noticeDate,
+.noticePreview,
+.noResults {
+  color: var(--text-subtle);
+}
+
+.important,
+.pageButton.active {
+  background: var(--black);
+  border-color: var(--black);
+  color: var(--surface-raised);
+  border-radius: var(--radius-sm);
+}
+
+.searchInput,
+.pageButton {
+  border-color: var(--line);
+  border-radius: var(--radius-sm);
+}
+
+.searchInput:focus {
+  border-color: var(--black);
+  box-shadow: 0 0 0 2px var(--action-soft);
+}
+
+.pageButton:hover {
+  border-color: var(--black);
+  background: var(--off-white);
+}

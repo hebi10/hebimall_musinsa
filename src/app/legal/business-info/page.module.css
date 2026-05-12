@@ -5,9 +5,9 @@
 }
 
 .section {
-  background: white;
-  border: 1px solid #e1e5e9;
-  border-radius: 8px;
+  background: var(--surface-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
   padding: 2rem;
   margin-bottom: 2rem;
 }
@@ -15,9 +15,9 @@
 .title {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #333;
+  color: var(--black);
   margin-bottom: 1.5rem;
-  border-bottom: 2px solid #007bff;
+  border-bottom: 1px solid var(--black);
   padding-bottom: 0.5rem;
 }
 
@@ -30,33 +30,33 @@
 
 .infoLabel {
   font-weight: 500;
-  color: #333;
+  color: var(--black);
   padding: 0.5rem 0;
 }
 
 .infoValue {
-  color: #666;
+  color: var(--text-subtle);
   padding: 0.5rem 0;
 }
 
 .highlight {
-  color: #007bff;
+  color: var(--black);
   font-weight: 500;
 }
 
 .note {
-  background: #f8f9fa;
-  border: 1px solid #e1e5e9;
-  border-radius: 4px;
+  background: var(--off-white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
   padding: 1rem;
   margin-top: 1rem;
   font-size: 0.9rem;
-  color: #6c757d;
+  color: var(--text-subtle);
 }
 
 .divider {
   height: 1px;
-  background: #e1e5e9;
+  background: var(--line);
   margin: 1.5rem 0;
 }
 

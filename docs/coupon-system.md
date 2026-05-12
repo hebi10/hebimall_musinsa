@@ -48,6 +48,9 @@ scripts/seed-coupons.ts              # 시드 데이터
 - `action: "use"`: 사용 (만료일 검증)
 - `action: "register"`: 코드 기반 쿠폰 등록
 - `action: "cleanup"`: 만료 쿠폰 정리 (관리자)
+- `action: "adminCreate"`: 쿠폰 마스터 생성 (관리자)
+- `action: "adminUpdate"`: 쿠폰 마스터 수정 (관리자)
+- `action: "adminArchive"`: 쿠폰 마스터 비활성화/보관 (관리자)
 - 코드 정규화, 만료일 일 단위 판정, 사용 가능 상태 판정은 `couponDomain`에서 공통 처리한다.
 
 ## 보안
@@ -59,9 +62,9 @@ scripts/seed-coupons.ts              # 시드 데이터
 
 ## 검증
 - 2026-05-11: `functions/__tests__/couponDomain.test.ts`로 쿠폰 코드 대문자 정규화, UTC 일 단위 만료 판정, 사용 가능 상태 판정을 검증.
+- 2026-05-12: 구매 흐름 점검에서 서버 주문 생성의 쿠폰 소유자/상태/활성/만료/최소 주문금액 검증을 확인했다. 다만 `/orders/cart` 화면의 쿠폰 선택/예상 금액은 상태만 필터링해 최소 주문금액, 만료, 무료배송 쿠폰 조건과 불일치할 수 있다.
+- 2026-05-12: 관리자 쿠폰 생성/수정/비활성화는 `/api/coupon` Function 액션을 통해 수행하도록 변경했다. 이미 발급된 이력 보존을 위해 관리 화면의 삭제는 `isActive: false` 보관 처리로 동작한다.
 
 ## 미구현
 
-- 쿠폰 코드 시스템
-- 관리자 쿠폰 생성 페이지
 - 만료 임박 알림

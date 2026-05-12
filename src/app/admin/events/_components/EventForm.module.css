@@ -279,3 +279,45 @@
     grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
   }
 }
+
+/* Admin-wide neutral operations tone */
+.section,
+.textarea,
+.contentTextarea,
+.select,
+.dateInput,
+.imagePreview,
+.categoryContainer,
+.categoryItem,
+.selectedCategories,
+.radioLabel,
+.couponCodeInput {
+  border-radius: var(--radius-sm);
+}
+
+.section {
+  box-shadow: none;
+}
+
+.textarea:focus,
+.contentTextarea:focus,
+.select:focus,
+.dateInput:focus {
+  border-color: var(--black);
+  box-shadow: 0 0 0 2px var(--action-soft);
+}
+
+.checkbox,
+.radio,
+.categoryItem input[type="checkbox"] {
+  accent-color: var(--black);
+}
+
+.radioLabel input[type="radio"]:checked + span {
+  color: var(--black);
+}
+
+.couponCodeInput {
+  border-left-color: var(--black);
+  background-color: var(--off-white);
+}

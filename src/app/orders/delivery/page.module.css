@@ -213,6 +213,78 @@
   background: #0056b3;
 }
 
+/* 2nd priority clean commerce tone */
+.deliveryContainer {
+  max-width: 960px;
+  padding: 2rem 1rem 4rem;
+}
+
+.searchSection,
+.resultSection,
+.deliveryInfo,
+.note {
+  background: var(--surface-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+}
+
+.deliveryHeader,
+.note {
+  background: var(--off-white);
+}
+
+.searchTitle,
+.label,
+.orderNumber,
+.infoLabel,
+.historyTitle,
+.historyStatus {
+  color: var(--black);
+}
+
+.deliveryMeta,
+.infoValue,
+.historyTime,
+.noResult,
+.note {
+  color: var(--text-subtle);
+}
+
+.input {
+  border-color: var(--line);
+  border-radius: var(--radius-sm);
+}
+
+.input:focus {
+  border-color: var(--black);
+  box-shadow: 0 0 0 2px var(--action-soft);
+}
+
+.searchButton,
+.loginButton {
+  background: var(--black);
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+}
+
+.searchButton:hover,
+.loginButton:hover {
+  background: var(--action-hover);
+}
+
+.status {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+
+.statusPreparing,
+.statusShipping,
+.statusDelivered {
+  background: var(--off-white);
+  color: var(--black);
+}
+
 @media (max-width: 768px) {
   .searchForm {
     flex-direction: column;

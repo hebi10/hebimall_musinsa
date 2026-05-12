@@ -483,3 +483,36 @@
     margin-top: 0.5rem;
   }
 }
+
+/* 2nd priority clean commerce tone */
+.completeCard,
+.successMessage strong,
+.infoItem,
+.productItem,
+.productImage,
+.addressCard,
+.addressName,
+.processingMessage strong,
+.primaryButton,
+.secondaryButton,
+.recommendButton {
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+}
+
+.successSection,
+.actionButtons,
+.noticeSection,
+.recommendSection {
+  background-color: var(--surface-raised);
+}
+
+.successIcon {
+  font-size: 3rem;
+}
+
+.primaryButton,
+.secondaryButton,
+.recommendButton {
+  font-weight: 700;
+}

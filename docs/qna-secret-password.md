@@ -30,3 +30,8 @@
 - `src/app/qna/[id]/page.tsx`는 비밀글인 경우 `QnAService.getQnAWithAccessCheck`로만 본문 조회.
 - `src/app/qna/page.tsx`는 비밀글 목록 노출을 막기 위해 `isSecret:false` 필터 기본 적용.
 - `src/app/mypage/qa/page.tsx`는 사용자 문서 조회로 전환되어 비밀글 직접 조회 의존 제거.
+
+## 2026-05-12 QnA UI 톤 정리
+- QnA 목록/상세/작성 화면은 기존 접근 제어와 비밀글 검증 흐름을 유지하고 CSS만 보정했다.
+- 파랑 CTA, 컬러 카테고리 배지, 둥근 안내 박스를 메인 상품 매대와 같은 검정 액션, 2px radius, 얇은 보더 중심으로 낮췄다.
+- 비밀글 비밀번호 모달과 작성 폼도 같은 입력 focus/버튼 톤을 사용한다.

@@ -52,6 +52,18 @@ export const coupon = onRequest(
           await requireAdmin(req.headers.authorization);
           await handleCleanup(res);
           return;
+        case "adminCreate":
+          await requireAdmin(req.headers.authorization);
+          await handleAdminCreate(payload, res);
+          return;
+        case "adminUpdate":
+          await requireAdmin(req.headers.authorization);
+          await handleAdminUpdate(payload, res);
+          return;
+        case "adminArchive":
+          await requireAdmin(req.headers.authorization);
+          await handleAdminArchive(payload, res);
+          return;
         default:
           res.status(400).json({ success: false, error: `Unsupported action: ${action}` });
       }
@@ -66,6 +78,147 @@ export const coupon = onRequest(
     }
   }
 );
+
+function ensureString(value: unknown): string {
+  return typeof value === "string" ? value.trim() : "";
+}
+
+function ensureNumber(value: unknown, fallback = 0): number {
+  const nextValue = typeof value === "number" ? value : Number(value);
+  return Number.isFinite(nextValue) ? nextValue : fallback;
+}
+
+function ensureBoolean(value: unknown, fallback = false): boolean {
+  return typeof value === "boolean" ? value : fallback;
+}
+
+function normalizeCouponType(value: unknown): "할인금액" | "할인율" | "무료배송" {
+  if (value === "할인율" || value === "무료배송") {
+    return value;
+  }
+  return "할인금액";
+}
+
+function buildCouponAdminData(data: Record<string, unknown>, partial = false): Record<string, unknown> {
+  const nextData: Record<string, unknown> = {};
+
+  const name = ensureString(data.name);
+  if (name || !partial) {
+    if (!name) throw new Error("coupon name is required.");
+    nextData.name = name;
+  }
+
+  if (data.type !== undefined || !partial) {
+    nextData.type = normalizeCouponType(data.type);
+  }
+
+  if (data.value !== undefined || !partial) {
+    const value = Math.max(0, ensureNumber(data.value));
+    if (nextData.type === "할인율" && value > 100) {
+      throw new Error("discount rate cannot exceed 100.");
+    }
+    nextData.value = value;
+  }
+
+  if (data.minOrderAmount !== undefined || !partial) {
+    nextData.minOrderAmount = Math.max(0, ensureNumber(data.minOrderAmount));
+  }
+
+  const expiryDate = ensureString(data.expiryDate);
+  if (expiryDate || !partial) {
+    if (!expiryDate || Number.isNaN(new Date(expiryDate).getTime())) {
+      throw new Error("valid expiryDate is required.");
+    }
+    nextData.expiryDate = expiryDate;
+  }
+
+  if (data.description !== undefined || !partial) {
+    nextData.description = ensureString(data.description);
+  }
+
+  if (data.isActive !== undefined || !partial) {
+    nextData.isActive = ensureBoolean(data.isActive, true);
+  }
+
+  if (data.isDirectAssign !== undefined || !partial) {
+    nextData.isDirectAssign = ensureBoolean(data.isDirectAssign, false);
+  }
+
+  const isDirectAssign = ensureBoolean(nextData.isDirectAssign ?? data.isDirectAssign, false);
+  const couponCode = normalizeCouponCode(data.couponCode);
+  if (!isDirectAssign && (couponCode || !partial)) {
+    if (!couponCode) throw new Error("couponCode is required for code coupons.");
+    nextData.couponCode = couponCode;
+  }
+  if (isDirectAssign) {
+    nextData.couponCode = "";
+  }
+
+  if (data.usageLimit !== undefined || !partial) {
+    nextData.usageLimit = Math.max(1, Math.floor(ensureNumber(data.usageLimit, 1)));
+  }
+
+  if (data.usedCount !== undefined) {
+    nextData.usedCount = Math.max(0, Math.floor(ensureNumber(data.usedCount)));
+  } else if (!partial) {
+    nextData.usedCount = 0;
+  }
+
+  return nextData;
+}
+
+async function handleAdminCreate(data: Record<string, unknown>, res: any): Promise<void> {
+  const db = getDb();
+  const couponData = buildCouponAdminData(data, false);
+  const docRef = await db.collection("coupons").add({
+    ...couponData,
+    createdAt: FieldValue.serverTimestamp(),
+    updatedAt: FieldValue.serverTimestamp(),
+  });
+
+  res.status(200).json({
+    success: true,
+    data: { couponId: docRef.id },
+  });
+}
+
+async function handleAdminUpdate(data: Record<string, unknown>, res: any): Promise<void> {
+  const couponId = ensureString(data.couponId);
+  if (!couponId) {
+    res.status(400).json({ success: false, error: "couponId is required." });
+    return;
+  }
+
+  const updateData = buildCouponAdminData(data, true);
+  await getDb().collection("coupons").doc(couponId).update({
+    ...updateData,
+    updatedAt: FieldValue.serverTimestamp(),
+  });
+
+  res.status(200).json({
+    success: true,
+    data: { couponId },
+  });
+}
+
+async function handleAdminArchive(data: Record<string, unknown>, res: any): Promise<void> {
+  const couponId = ensureString(data.couponId);
+  if (!couponId) {
+    res.status(400).json({ success: false, error: "couponId is required." });
+    return;
+  }
+
+  await getDb().collection("coupons").doc(couponId).update({
+    isActive: false,
+    archivedAt: FieldValue.serverTimestamp(),
+    updatedAt: FieldValue.serverTimestamp(),
+  });
+
+  res.status(200).json({
+    success: true,
+    data: { couponId, archived: true },
+  });
+}
 
 async function handleRegister(
   userId: string,

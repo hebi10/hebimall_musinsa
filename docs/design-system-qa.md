@@ -39,3 +39,22 @@
 - 상단 배너는 기존 세로 모델 이미지를 별도 배치하지 않고, 생성한 editorial 배너 이미지를 `Image fill` 배경으로 쓰도록 변경했다.
 - 로컬 `next dev`는 현재 환경에서 `spawn EPERM`으로 실행되지 않아 브라우저 렌더링 확인은 하지 못했다.
 - `next build`는 컴파일 단계는 통과했지만 Next 타입 검증 워커 실행 단계에서 같은 `spawn EPERM`으로 실패했다.
+
+## 2026-05-12 2순위 화면 QA 메모
+- 주문, 고객센터/커뮤니티, 이벤트 상세는 기능 로직 변경 없이 CSS override 중심으로 메인 톤을 확산했다.
+- 주요 확인 기준은 `2px radius`, 무그림자 카드, 검정 CTA, 중립 배지, 리스트/표 중심 구조다.
+- 실제 브라우저에서는 `/orders/delivery`, `/support/offline`, `/events/[eventId]`처럼 기존 장식이 강했던 화면을 우선 확인한다.
+- `npm run typecheck`와 `git diff --check`는 통과했다.
+- `npm run lint`는 로컬에서 `eslint` 실행 파일을 찾지 못해 실패했다.
+- `npm run build`는 CSS/Next 컴파일 단계는 통과했지만, 이후 lint/type worker 생성에서 `spawn EPERM`으로 실패했다.
+
+## 2026-05-12 관리자 3순위 QA 메모
+- 관리자 영역은 기능 로직 변경 없이 CSS override 중심으로 운영툴 톤을 정리했다.
+- `npm run typecheck`와 `git diff --check`는 통과했다.
+- `npm run build`는 CSS/Next 컴파일 단계 통과 후 기존과 같은 `spawn EPERM`으로 실패했다.
+- `npm run lint`는 로컬 `eslint` 실행 파일 부재로 실패했다.
+
+## 2026-05-12 전체 페이지 잔여 확인
+- 전체 CSS 스캔에서 404와 법적 고지 화면에 이전 보라/파랑 CTA와 큰 카드 톤이 남아 있어 추가 보정했다.
+- 이후 `npm run typecheck`와 `git diff --check`는 다시 통과했다.
+- 스캔에 남는 다수 항목은 기존 선언을 하단 override로 덮는 구조의 잔여 코드이며, 실제 반영 여부는 브라우저 캡처로 최종 확인이 필요하다.

@@ -14,12 +14,20 @@ interface RawOrderItem {
 }
 
 interface RawCreateOrderRequest {
+  action?: unknown;
   items?: unknown;
   deliveryAddress?: unknown;
   paymentMethod?: unknown;
   deliveryOption?: unknown;
   selectedCoupon?: unknown;
   requestedPointAmount?: unknown;
+}
+
+interface RawUpdateOrderStatusRequest {
+  action?: unknown;
+  orderId?: unknown;
+  status?: unknown;
+  reason?: unknown;
 }
 
 interface NormalizedOrderItem {
@@ -88,6 +96,27 @@ const USER_COUPON_EXPIRED_STATUSES = ["기간만료", "expired", "만료됨"];
 const COUPON_PERCENT_TYPES = ["퍼센트", "percent", "할인율"];
 const COUPON_AMOUNT_TYPES = ["금액", "amount", "할인금액"];
 const COUPON_FREE_SHIPPING_TYPES = ["무료배송", "free_shipping"];
+const VALID_ORDER_STATUSES = new Set([
+  "pending",
+  "confirmed",
+  "preparing",
+  "shipped",
+  "delivered",
+  "cancelled",
+  "returned",
+  "exchanged",
+]);
+
+const ALLOWED_ORDER_STATUS_TRANSITIONS: Record<string, string[]> = {
+  pending: ["confirmed", "cancelled"],
+  confirmed: ["preparing", "shipped", "cancelled"],
+  preparing: ["shipped", "cancelled"],
+  shipped: ["delivered", "returned", "exchanged"],
+  delivered: ["returned", "exchanged"],
+  cancelled: [],
+  returned: [],
+  exchanged: [],
+};
 
 function applyNoStoreHeaders(response: any): void {
   Object.entries(NO_STORE_HEADERS).forEach(([key, value]) => {
@@ -126,6 +155,14 @@ function normalizePaymentMethod(value: unknown): string {
 function normalizeDeliveryOption(value: unknown): DeliveryOption {
   const option = toStringValue(value);
   return option === "express" ? "express" : "standard";
+}
+
+function normalizeOrderStatus(value: unknown): string {
+  const status = toStringValue(value);
+  if (!VALID_ORDER_STATUSES.has(status)) {
+    throw new Error("Invalid order status.");
+  }
+  return status;
 }
 
 function normalizeBoolean(value: unknown): boolean {
@@ -325,6 +362,13 @@ export const order = onRequest(
     }
 
     try {
+      const action = toStringValue((req.body as RawCreateOrderRequest).action);
+
+      if (action === "updateStatus") {
+        await handleAdminOrderStatusUpdate(req.body as RawUpdateOrderStatusRequest, req.headers.authorization, res);
+        return;
+      }
+
       const authContext = await verifyAuthContext(req.headers.authorization);
       const payload = req.body as RawCreateOrderRequest;
 
@@ -568,3 +612,70 @@ export const order = onRequest(
     }
   }
 );
+
+async function handleAdminOrderStatusUpdate(
+  payload: RawUpdateOrderStatusRequest,
+  authorization: string | undefined,
+  res: any
+): Promise<void> {
+  const authContext = await verifyAuthContext(authorization);
+  if (!authContext.isAdmin) {
+    throw new AuthError(403, "Admin privileges are required.");
+  }
+
+  const orderId = toStringValue(payload.orderId);
+  const nextStatus = normalizeOrderStatus(payload.status);
+  const reason = toStringValue(payload.reason);
+
+  if (!orderId) {
+    res.status(400).json({ success: false, error: "orderId is required." });
+    return;
+  }
+
+  const result = await admin.firestore().runTransaction(async (transaction) => {
+    const orderRef = admin.firestore().collection("orders").doc(orderId);
+    const orderSnap = await transaction.get(orderRef);
+
+    if (!orderSnap.exists) {
+      throw new Error("Order not found.");
+    }
+
+    const orderData = orderSnap.data() || {};
+    const currentStatus = toStringValue(orderData.status) || "pending";
+    const allowedNextStatuses = ALLOWED_ORDER_STATUS_TRANSITIONS[currentStatus] || [];
+
+    if (currentStatus !== nextStatus && !allowedNextStatuses.includes(nextStatus)) {
+      throw new Error(`Invalid status transition: ${currentStatus} -> ${nextStatus}`);
+    }
+
+    const now = admin.firestore.FieldValue.serverTimestamp();
+    const statusHistoryEntry = {
+      from: currentStatus,
+      to: nextStatus,
+      reason,
+      changedBy: authContext.uid,
+      changedAt: admin.firestore.Timestamp.now(),
+    };
+
+    const updateData: Record<string, unknown> = {
+      status: nextStatus,
+      updatedAt: now,
+      statusHistory: admin.firestore.FieldValue.arrayUnion(statusHistoryEntry),
+    };
+
+    if (nextStatus === "cancelled") {
+      updateData.cancelReason = reason || "관리자 상태 변경";
+      updateData.cancelledAt = now;
+    }
+
+    transaction.update(orderRef, updateData);
+
+    return {
+      orderId,
+      previousStatus: currentStatus,
+      status: nextStatus,
+    };
+  });
+
+  res.status(200).json({ success: true, data: result });
+}

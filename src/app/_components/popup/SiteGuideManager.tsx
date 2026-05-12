@@ -1,54 +1,19 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { usePathname } from 'next/navigation';
 import SiteGuidePopup from './SiteGuidePopup';
 import styles from './SiteGuideManager.module.css';
-
-const STORAGE_KEY = 'hebimall_site_guide_hidden';
-const HIDE_DURATION = 7 * 24 * 60 * 60 * 1000; // 7일 (밀리초)
 
 const SiteGuideManager: React.FC = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
-  const pathname = usePathname();
-  const isHomePage = pathname === '/';
 
   // 클라이언트 사이드에서만 실행
   useEffect(() => {
     setIsClient(true);
-    if (isHomePage) {
-      setIsPopupOpen(false);
-      return;
-    }
-
-    // 로컬스토리지에서 숨김 상태 확인
-    const hiddenData = localStorage.getItem(STORAGE_KEY);
-    
-    if (hiddenData) {
-      const { timestamp } = JSON.parse(hiddenData);
-      const now = Date.now();
-      
-      // 7일이 지났으면 다시 표시
-      if (now - timestamp > HIDE_DURATION) {
-        localStorage.removeItem(STORAGE_KEY);
-        setIsPopupOpen(true);
-      }
-    } else {
-      // 처음 방문하는 경우 팝업 표시
-      setIsPopupOpen(true);
-    }
-  }, [isHomePage]);
+  }, []);
 
   const handleClosePopup = () => {
-    setIsPopupOpen(false);
-  };
-
-  const handleDontShowAgain = () => {
-    const hideData = {
-      timestamp: Date.now(),
-    };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(hideData));
     setIsPopupOpen(false);
   };
 
@@ -57,7 +22,7 @@ const SiteGuideManager: React.FC = () => {
   };
 
   // 서버 사이드 렌더링에서는 아무것도 렌더링하지 않음
-  if (!isClient || isHomePage) {
+  if (!isClient) {
     return null;
   }
 
@@ -76,7 +41,6 @@ const SiteGuideManager: React.FC = () => {
       <SiteGuidePopup
         isOpen={isPopupOpen}
         onClose={handleClosePopup}
-        onDontShowAgain={handleDontShowAgain}
       />
     </>
   );

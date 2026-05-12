@@ -420,3 +420,123 @@
     padding: 1.5rem;
   }
 }
+
+/* 2nd priority clean support tone */
+.container {
+  background: var(--off-white);
+  padding: 2rem 1rem 4rem;
+}
+
+.pageHeader {
+  margin-bottom: 2rem;
+  padding: 1.5rem 0 1rem;
+  text-align: left;
+  background: transparent;
+  color: var(--black);
+  border-bottom: 1px solid var(--black);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.pageHeader::before,
+.storeImage::after {
+  display: none;
+}
+
+.pageTitle {
+  font-size: 1.35rem;
+  text-shadow: none;
+}
+
+.pageDescription {
+  color: var(--text-subtle);
+  font-size: 0.95rem;
+  opacity: 1;
+}
+
+.storeCard,
+.servicesSection,
+.hoursSection,
+.serviceItem,
+.hoursCard,
+.specialNotice {
+  background: var(--surface-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+}
+
+.storeCard:hover,
+.serviceItem:hover {
+  transform: none;
+  box-shadow: none;
+  border-color: var(--line-strong);
+  background: var(--surface-raised);
+}
+
+.storeImage {
+  background: var(--surface-muted);
+  color: var(--black);
+}
+
+.storeName,
+.servicesTitle,
+.serviceTitle,
+.hoursTitle,
+.hoursCardTitle,
+.dayLabel {
+  color: var(--black);
+}
+
+.storeType,
+.infoIcon,
+.noticeTitle {
+  color: var(--black);
+  letter-spacing: 0;
+}
+
+.infoText,
+.serviceDescription,
+.timeLabel,
+.noticeText {
+  color: var(--text-subtle);
+}
+
+.feature {
+  background: var(--off-white);
+  color: var(--black);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+
+.actionButton {
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+}
+
+.primaryAction {
+  background: var(--black);
+  color: var(--surface-raised);
+}
+
+.primaryAction:hover {
+  background: var(--action-hover);
+  transform: none;
+  box-shadow: none;
+}
+
+.secondaryAction {
+  background: var(--surface-raised);
+  color: var(--black);
+  border: 1px solid var(--line);
+}
+
+.secondaryAction:hover {
+  background: var(--off-white);
+  color: var(--black);
+  transform: none;
+}
+
+.specialNotice {
+  background: var(--off-white);
+}

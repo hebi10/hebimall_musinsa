@@ -8,9 +8,7 @@ import {
   query, 
   where, 
   orderBy, 
-  addDoc,
   updateDoc,
-  deleteDoc,
   serverTimestamp
 } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
@@ -84,12 +82,8 @@ export class CouponService {
    */
   static async createCoupon(couponData: Omit<Coupon, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
     try {
-      const docRef = await addDoc(collection(db, 'coupons'), {
-        ...couponData,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp()
-      });
-      return docRef.id;
+      const result = await callCouponAPI('adminCreate', couponData);
+      return result.couponId;
     } catch (error) {
  console.error('쿠폰 생성 실패:', error);
       throw new Error('쿠폰 생성에 실패했습니다.');
@@ -102,7 +96,7 @@ export class CouponService {
   static async updateCoupon(couponId: string, updateData: Partial<Coupon>): Promise<void> {
     try {
       // undefined 값들을 제거한 클린 데이터 생성
-      const cleanedData: any = {};
+      const cleanedData: Record<string, unknown> = {};
       
       Object.entries(updateData).forEach(([key, value]) => {
         if (value !== undefined) {
@@ -110,10 +104,9 @@ export class CouponService {
         }
       });
       
-      const docRef = doc(db, 'coupons', couponId);
-      await updateDoc(docRef, {
+      await callCouponAPI('adminUpdate', {
+        couponId,
         ...cleanedData,
-        updatedAt: serverTimestamp()
       });
     } catch (error) {
  console.error('쿠폰 수정 실패:', error);
@@ -126,8 +119,7 @@ export class CouponService {
    */
   static async deleteCoupon(couponId: string): Promise<void> {
     try {
-      const docRef = doc(db, 'coupons', couponId);
-      await deleteDoc(docRef);
+      await callCouponAPI('adminArchive', { couponId });
     } catch (error) {
  console.error('쿠폰 삭제 실패:', error);
       throw new Error('쿠폰 삭제에 실패했습니다.');

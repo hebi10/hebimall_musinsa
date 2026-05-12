@@ -68,3 +68,20 @@
 .retryButton:hover {
   background: #2c5282;
 }
+
+/* Admin-wide neutral operations tone */
+.errorContent,
+.errorDetails,
+.retryButton {
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+}
+
+.retryButton {
+  background: var(--black);
+  color: var(--surface-raised);
+}
+
+.retryButton:hover {
+  background: var(--action-hover);
+}

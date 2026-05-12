@@ -23,7 +23,7 @@ function DashboardContent() {
   const { user } = useAuth();
   const { stats, loading, error, lastUpdated, refresh, isRefreshing } = useDashboardData();
   const { formatNumber, formatCurrency, formatTimeAgo } = useDashboardFormatters();
-  const [categoryChartData, setCategoryChartData] = useState<Array<{label: string; value: number}>>([]);
+  const [categoryNames, setCategoryNames] = useState<Record<string, string>>({});
   const [isCachedData, setIsCachedData] = useState(false);
   
   // QnA 데이터 상태
@@ -43,29 +43,18 @@ function DashboardContent() {
     }
   }, [lastUpdated]);
 
-  // 카테고리 차트 데이터 로드
+  // 카테고리 이름 매핑 로드
   useEffect(() => {
-    const loadCategoryData = async () => {
+    const loadCategoryNames = async () => {
       try {
-        const categoryNames = await getCategoryNames();
-        const chartData = Object.entries(categoryNames).slice(0, 5).map(([id, name]) => ({
-          label: name,
-          value: Math.floor(Math.random() * 500) + 50 // 임시 랜덤 데이터
-        }));
-        setCategoryChartData(chartData);
+        setCategoryNames(await getCategoryNames());
       } catch (error) {
-        console.error('카테고리 데이터 로드 실패:', error);
-        // 기본값 설정
-        setCategoryChartData([
-          { label: '상의', value: Math.floor(Math.random() * 500) + 200 },
-          { label: '하의', value: Math.floor(Math.random() * 400) + 150 },
-          { label: '신발', value: Math.floor(Math.random() * 300) + 100 },
-          { label: '액세서리', value: Math.floor(Math.random() * 200) + 50 }
-        ]);
+        console.error('카테고리 이름 로드 실패:', error);
+        setCategoryNames({});
       }
     };
 
-    loadCategoryData();
+    loadCategoryNames();
   }, []);
 
   // QnA 통계 로드
@@ -135,6 +124,16 @@ function DashboardContent() {
     label: getStatusText(status),
     value: count
   }));
+
+  const categoryChartData = stats.categoryBreakdown.map((item) => ({
+    label: categoryNames[item.categoryId] || item.categoryId,
+    value: item.value,
+  }));
+
+  const categoryChartTitle =
+    stats.categoryBreakdownType === 'sales'
+      ? '카테고리별 판매량'
+      : '카테고리별 등록 상품 수';
 
   return (
     <div className={styles.dashboard}>
@@ -337,12 +336,12 @@ function DashboardContent() {
           )}
 
           {/* 카테고리 차트 - 상품 데이터가 있을 때만 */}
-          {stats.dataAvailability.products && (
+          {stats.dataAvailability.products && categoryChartData.length > 0 && (
             <div className={styles.chartCard}>
               <Chart
                 data={categoryChartData}
                 type="bar"
-                title="카테고리별 상품 판매량"
+                title={categoryChartTitle}
                 width={500}
                 height={250}
               />

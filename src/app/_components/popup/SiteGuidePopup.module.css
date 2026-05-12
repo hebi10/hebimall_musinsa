@@ -1,17 +1,13 @@
 /* 오버레이 */
 .overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(3px);
+  inset: 0;
+  background: rgba(10, 10, 10, 0.48);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 10000;
-  padding: 20px;
+  padding: 1rem;
   animation: fadeIn 0.2s ease-out;
 }
 
@@ -23,10 +19,10 @@
 /* 팝업 메인 */
 .popup {
   background: var(--color-white);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md);
-  border: 1px solid var(--line);
-  max-width: 420px;
+  border-radius: 2px;
+  box-shadow: 0 12px 28px rgba(10, 10, 10, 0.14);
+  border: 1px solid var(--black);
+  max-width: 400px;
   width: 100%;
   animation: slideUp 0.2s ease-out;
   overflow: hidden;
@@ -48,8 +44,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--line);
+  padding: 0.9rem 1rem;
+  background: var(--black);
+  border-bottom: 1px solid var(--black);
+  color: var(--color-white);
 }
 
 .logoSection {
@@ -59,68 +57,79 @@
 }
 
 .logoSection h2 {
-  font-size: 15px;
+  font-size: 0.95rem;
   font-weight: 700;
   margin: 0;
-  letter-spacing: 0.4px;
-  color: var(--black);
+  letter-spacing: 0;
+  color: var(--color-white);
 }
 
 .subtitle {
-  font-size: 11px;
-  color: var(--text-soft);
-  font-weight: 400;
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.72);
+  font-weight: 500;
 }
 
 .closeButton {
   background: transparent;
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.18);
   width: 26px;
   height: 26px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 18px;
-  color: var(--text-soft);
+  color: var(--color-white);
   cursor: pointer;
-  border-radius: var(--radius-md);
-  transition: color 0.15s ease;
+  border-radius: 2px;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
 .closeButton:hover {
-  color: var(--black);
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.32);
 }
 
 /* 메인 컨텐츠 */
 .content {
-  padding: 20px 20px 4px;
+  padding: 1rem 1rem 0.25rem;
 }
 
 /* 한 줄 소개 */
 .intro {
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 0.88rem;
+  font-weight: 700;
   color: var(--black);
-  margin: 0 0 14px;
-  line-height: 1.6;
+  margin: 0 0 0.8rem;
+  line-height: 1.55;
 }
 
 /* 핵심 안내 목록 */
 .guideList {
   list-style: none;
   padding: 0;
-  margin: 0 0 16px;
+  margin: 0 0 1rem;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0;
 }
 
 .guideList li {
-  font-size: 13px;
+  font-size: 0.8rem;
   color: var(--black);
   line-height: 1.6;
-  padding-left: 12px;
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.65rem 0 0.65rem 0.85rem;
   position: relative;
+  border-top: 1px solid var(--line);
+}
+
+.guideList strong {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--black);
 }
 
 .guideList li::before {
@@ -132,10 +141,10 @@
 
 /* 참고 사항 */
 .notice {
-  font-size: 11px;
+  font-size: 0.72rem;
   color: var(--text-soft);
-  margin: 0 0 20px;
-  padding-top: 14px;
+  margin: 0 0 1rem;
+  padding-top: 0.85rem;
   border-top: 1px solid var(--line);
   line-height: 1.6;
 }
@@ -143,30 +152,32 @@
 /* 외부 링크 */
 .linkSection {
   display: flex;
-  gap: 8px;
-  padding: 0 20px 16px;
+  gap: 0.5rem;
+  padding: 0 1rem 1rem;
 }
 
 .linkButton,
 .linkButtonPrimary {
   flex: 1;
-  padding: 10px 14px;
-  font-size: 12px;
-  font-weight: 500;
+  min-height: 38px;
+  padding: 0.65rem 0.85rem;
+  font-size: 0.78rem;
+  font-weight: 700;
   text-align: center;
   text-decoration: none;
-  border-radius: var(--radius-md);
+  border-radius: 2px;
   transition: all 0.15s ease;
 }
 
 .linkButton {
-  background: var(--off-white);
-  color: var(--text-subtle);
-  border: 1px solid var(--line);
+  background: var(--color-white);
+  color: var(--black);
+  border: 1px solid var(--line-strong);
 }
 
 .linkButton:hover {
-  background: var(--surface-muted);
+  border-color: var(--black);
+  background: var(--color-white);
 }
 
 .linkButtonPrimary {
@@ -183,16 +194,18 @@
 .footer {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 12px 20px 14px;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 0.8rem 1rem;
   border-top: 1px solid var(--line);
+  background: var(--off-white);
 }
 
 .dontShowButton {
   background: transparent;
   border: none;
   padding: 0;
-  font-size: 11px;
+  font-size: 0.72rem;
   color: var(--text-soft);
   cursor: pointer;
   text-decoration: underline;
@@ -205,29 +218,47 @@
 }
 
 .closeButtonSecondary {
-  padding: 8px 18px;
-  background: var(--off-white);
+  min-height: 32px;
+  padding: 0.45rem 1rem;
+  background: var(--color-white);
   color: var(--black);
-  border: none;
-  border-radius: var(--radius-md);
-  font-size: 12px;
-  font-weight: 500;
+  border: 1px solid var(--line-strong);
+  border-radius: 2px;
+  font-size: 0.76rem;
+  font-weight: 700;
   cursor: pointer;
   transition: background 0.15s ease;
 }
 
 .closeButtonSecondary:hover {
-  background: var(--surface-muted);
+  border-color: var(--black);
+  background: var(--color-white);
 }
 
 /* 반응형 */
 @media (max-width: 480px) {
+  .overlay {
+    align-items: flex-end;
+    padding: 0.75rem;
+  }
+
   .popup {
     max-width: 100%;
-    border-radius: var(--radius-md);
+    max-height: calc(100dvh - 1.5rem);
+    border-radius: 2px;
   }
 
   .linkSection {
     flex-direction: column;
+  }
+
+  .footer {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .dontShowButton {
+    align-self: flex-start;
   }
 }

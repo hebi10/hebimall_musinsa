@@ -445,3 +445,50 @@
     width: 100%;
   }
 }
+
+/* Admin-wide neutral operations tone */
+.modalContainer,
+.closeButton,
+.formGroup input,
+.formGroup select,
+.formGroup textarea,
+.imageUpload,
+.progressBar,
+.imageGuide,
+.imageItem,
+.imageOrder,
+.deleteImageButton,
+.cancelButton,
+.submitButton,
+.tag {
+  border-radius: var(--radius-sm);
+}
+
+.formGroup input:focus,
+.formGroup select:focus,
+.formGroup textarea:focus {
+  border-color: var(--black);
+  box-shadow: 0 0 0 2px var(--action-soft);
+}
+
+.imageUpload:hover,
+.imageItem:hover,
+.imageItem.mainImage {
+  border-color: var(--black);
+}
+
+.progressFill,
+.imageOrder,
+.imageOrder.mainImageBadge,
+.submitButton {
+  background: var(--black);
+  color: var(--surface-raised);
+}
+
+.submitButton:hover:not(:disabled) {
+  background: var(--action-hover);
+}
+
+.imageGuide {
+  border-left-color: var(--black);
+}

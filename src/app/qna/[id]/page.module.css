@@ -492,3 +492,101 @@
     width: 100%;
   }
 }
+
+/* 2nd priority clean board tone */
+.breadcrumb span:last-child,
+.modalHeader h3,
+.title,
+.questionSection h3,
+.answerSection h3 {
+  color: var(--black);
+}
+
+.loading,
+.breadcrumb,
+.modalContent p,
+.metaInfo,
+.answerMeta,
+.content,
+.answerContent {
+  color: var(--text-subtle);
+}
+
+.error,
+.modal,
+.qnaCard,
+.answerSection,
+.waitingAnswer {
+  background: var(--surface-raised);
+  border-color: var(--line);
+  border-radius: var(--radius-sm);
+}
+
+.answerSection,
+.waitingAnswer {
+  border-left: 1px solid var(--line);
+}
+
+.passwordInput,
+.attachedImage,
+.backButton,
+.retryButton,
+.cancelButton,
+.submitButton,
+.listButton,
+.editButton {
+  border-radius: var(--radius-sm);
+}
+
+.passwordInput:focus {
+  border-color: var(--black);
+  box-shadow: 0 0 0 2px var(--action-soft);
+}
+
+.retryButton,
+.submitButton,
+.editButton {
+  background: var(--black);
+  color: var(--surface-raised);
+}
+
+.retryButton:hover,
+.submitButton:hover:not(:disabled),
+.editButton:hover {
+  background: var(--action-hover);
+}
+
+.backButton,
+.cancelButton,
+.listButton {
+  background: var(--surface-raised);
+  border: 1px solid var(--line);
+  color: var(--black);
+}
+
+.backButton:hover,
+.cancelButton:hover,
+.listButton:hover {
+  background: var(--off-white);
+}
+
+.category,
+.status,
+.secretBadge,
+.category.product,
+.category.delivery,
+.category.payment,
+.category.general,
+.status.waiting,
+.status.answered,
+.status.closed {
+  background: var(--off-white);
+  color: var(--black);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+
+.spinner {
+  border-color: var(--line);
+  border-top-color: var(--black);
+}

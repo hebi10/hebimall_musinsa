@@ -53,3 +53,20 @@
     justify-content: flex-start;
   }
 }
+
+/* Admin-wide neutral operations tone */
+.navItem {
+  border-radius: var(--radius-sm);
+}
+
+.navItem:hover {
+  background-color: var(--off-white);
+  color: var(--black);
+}
+
+.navItem.active,
+.navItem.active:hover {
+  background-color: var(--black);
+  border-color: var(--black);
+  color: var(--surface-raised);
+}

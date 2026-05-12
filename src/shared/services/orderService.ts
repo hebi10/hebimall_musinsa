@@ -79,6 +79,23 @@ async function callOrdersAPI(payload: CreateOrderRequest): Promise<CreateOrderRe
   return data.data as CreateOrderResponse;
 }
 
+async function callOrderAdminAPI(payload: Record<string, unknown>): Promise<void> {
+  const token = await getIdToken();
+  const res = await fetch('/api/order', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || !data.success) {
+    throw new Error(data.error || '주문 관리자 요청에 실패했습니다.');
+  }
+}
+
 export class OrderService {
   private static readonly COLLECTION_NAME = 'orders';
 
@@ -191,10 +208,10 @@ export class OrderService {
 
   static async updateOrderStatus(orderId: string, status: OrderStatus): Promise<void> {
     try {
-      const orderRef = doc(db, this.COLLECTION_NAME, orderId);
-      await updateDoc(orderRef, {
+      await callOrderAdminAPI({
+        action: 'updateStatus',
+        orderId,
         status,
-        updatedAt: serverTimestamp(),
       });
     } catch (error) {
       console.error('Failed to update order status:', error);

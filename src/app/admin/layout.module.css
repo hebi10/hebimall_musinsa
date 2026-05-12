@@ -20,6 +20,9 @@
   padding: 1.25rem 1.5rem;
   border-bottom: 1px solid var(--line);
   background-color: var(--surface-raised);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .logo h2 {
@@ -78,11 +81,44 @@
   z-index: 10;
 }
 
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
 .header h1 {
   font-size: 1rem;
   font-weight: 600;
   margin: 0;
   color: var(--black);
+}
+
+.menuButton,
+.sidebarClose {
+  display: none;
+  border: 1px solid var(--line);
+  background: var(--surface-raised);
+  color: var(--black);
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.menuButton {
+  width: 34px;
+  height: 34px;
+  font-size: 1rem;
+}
+
+.sidebarClose {
+  width: 30px;
+  height: 30px;
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.mobileOverlay {
+  display: none;
 }
 
 .userInfo {
@@ -134,6 +170,193 @@
   background: var(--text-soft);
 }
 
+/* Admin-wide neutral operations tone */
+.adminContainer {
+  --admin-surface: var(--surface-raised);
+  --admin-muted: var(--off-white);
+  --admin-line: var(--line);
+  --admin-line-strong: var(--line-strong);
+  --admin-text: var(--black);
+  --admin-subtle: var(--text-subtle);
+  --admin-focus: var(--action-soft);
+}
+
+.adminContainer :global([class*="Card"]),
+.adminContainer :global([class*="card"]),
+.adminContainer :global([class*="Panel"]),
+.adminContainer :global([class*="panel"]),
+.adminContainer :global([class*="Section"]),
+.adminContainer :global([class*="section"]),
+.adminContainer :global([class*="Modal"]),
+.adminContainer :global([class*="modalContainer"]),
+.adminContainer :global([class*="Table"]),
+.adminContainer :global([class*="table"]) {
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+  border-color: var(--admin-line);
+}
+
+.adminContainer :global([class*="container"]),
+.adminContainer :global([class*="dashboard"]) {
+  background: var(--admin-muted);
+}
+
+.adminContainer :global([class*="header"]),
+.adminContainer :global([class*="Header"]) {
+  background: var(--admin-surface);
+  border-color: var(--admin-line);
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.adminContainer :global([class*="Card"]),
+.adminContainer :global([class*="card"]),
+.adminContainer :global([class*="Panel"]),
+.adminContainer :global([class*="panel"]),
+.adminContainer :global([class*="Section"]),
+.adminContainer :global([class*="section"]) {
+  background: var(--admin-surface);
+  backdrop-filter: none;
+}
+
+.adminContainer :global([class*="Card"]::before),
+.adminContainer :global([class*="card"]::before) {
+  background: var(--admin-text);
+}
+
+.adminContainer :global([class*="blue"]),
+.adminContainer :global([class*="purple"]),
+.adminContainer :global([class*="cyan"]),
+.adminContainer :global([class*="orange"]),
+.adminContainer :global([class*="green"]) {
+  --card-color: var(--admin-text) !important;
+}
+
+.adminContainer :global(button),
+.adminContainer :global([class*="Button"]),
+.adminContainer :global([class*="button"]),
+.adminContainer :global([class*="Btn"]) {
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+  transform: none;
+}
+
+.adminContainer :global([class*="submitButton"]),
+.adminContainer :global([class*="saveButton"]),
+.adminContainer :global([class*="syncButton"]),
+.adminContainer :global([class*="retryButton"]),
+.adminContainer :global([class*="actionButton"]),
+.adminContainer :global([class*="addButton"]),
+.adminContainer :global([class*="seedButton"]),
+.adminContainer :global([class*="uploadButton"]),
+.adminContainer :global([class*="pageButton"][class*="active"]) {
+  background: var(--admin-text);
+  border: 1px solid var(--admin-text);
+  color: var(--admin-surface);
+}
+
+.adminContainer :global([class*="submitButton"]:hover),
+.adminContainer :global([class*="saveButton"]:hover),
+.adminContainer :global([class*="syncButton"]:hover),
+.adminContainer :global([class*="retryButton"]:hover),
+.adminContainer :global([class*="actionButton"]:hover),
+.adminContainer :global([class*="addButton"]:hover),
+.adminContainer :global([class*="seedButton"]:hover),
+.adminContainer :global([class*="uploadButton"]:hover) {
+  background: var(--action-hover);
+  border-color: var(--action-hover);
+  box-shadow: none;
+  transform: none;
+}
+
+.adminContainer :global([class*="cancelButton"]),
+.adminContainer :global([class*="backButton"]),
+.adminContainer :global([class*="secondary"]),
+.adminContainer :global([class*="closeButton"]) {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-line);
+  color: var(--admin-text);
+}
+
+.adminContainer :global([class*="deleteButton"]),
+.adminContainer :global([class*="removeButton"]) {
+  background: var(--admin-surface);
+  border: 1px solid #f1b8b8;
+  color: var(--error);
+}
+
+.adminContainer :global(input),
+.adminContainer :global(select),
+.adminContainer :global(textarea) {
+  border-color: var(--admin-line);
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+  accent-color: var(--admin-text);
+}
+
+.adminContainer :global(input:focus),
+.adminContainer :global(select:focus),
+.adminContainer :global(textarea:focus) {
+  border-color: var(--admin-text);
+  box-shadow: 0 0 0 2px var(--admin-focus);
+  outline: none;
+}
+
+.adminContainer :global([class*="Badge"]),
+.adminContainer :global([class*="badge"]),
+.adminContainer :global([class*="Status"]),
+.adminContainer :global([class*="status"]),
+.adminContainer :global([class*="Tag"]),
+.adminContainer :global([class*="tag"]) {
+  border-radius: var(--radius-sm);
+}
+
+.adminContainer :global([class*="adminBadge"]),
+.adminContainer :global([class*="categoryBadge"]),
+.adminContainer :global([class*="imageOrder"]),
+.adminContainer :global([class*="rank"]) {
+  background: var(--admin-text);
+  color: var(--admin-surface);
+  border-color: var(--admin-text);
+}
+
+.adminContainer :global([class*="Title"]),
+.adminContainer :global([class*="title"]),
+.adminContainer :global([class*="Name"]),
+.adminContainer :global([class*="name"]) {
+  color: var(--admin-text);
+  -webkit-text-fill-color: currentColor;
+  background: none;
+  text-shadow: none;
+}
+
+.adminContainer :global([class*="Subtitle"]),
+.adminContainer :global([class*="subtitle"]),
+.adminContainer :global([class*="Description"]),
+.adminContainer :global([class*="description"]),
+.adminContainer :global([class*="Meta"]),
+.adminContainer :global([class*="meta"]) {
+  color: var(--admin-subtle);
+}
+
+.adminContainer :global([class*="navLink"]:hover),
+.adminContainer :global([class*="navItem"]:hover),
+.adminContainer :global([class*="navLink"][class*="active"]),
+.adminContainer :global([class*="navItem"][class*="active"]) {
+  background: var(--admin-muted);
+  border-color: var(--admin-text);
+  color: var(--admin-text);
+}
+
+.adminContainer :global([class*="Icon"]),
+.adminContainer :global([class*="icon"]) {
+  box-shadow: none;
+}
+
+.logoutBtn {
+  border-radius: var(--radius-sm);
+}
+
 @media (max-width: 1024px) {
   .sidebar {
     width: 200px;
@@ -145,8 +368,18 @@
 }
 
 @media (max-width: 768px) {
+  .mobileOverlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 1990;
+    border: 0;
+    background: rgba(10, 10, 10, 0.36);
+    cursor: default;
+  }
+
   .sidebar {
-    width: 100%;
+    width: min(84vw, 320px);
     position: fixed;
     height: 100vh;
     z-index: 2000;
@@ -168,7 +401,14 @@
   
   .header {
     padding: 1rem;
-    position: relative;
+    position: sticky;
+  }
+
+  .menuButton,
+  .sidebarClose {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
   
   .header h1 {

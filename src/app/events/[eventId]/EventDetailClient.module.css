@@ -934,3 +934,178 @@
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+/* 2nd priority clean event detail tone */
+.container {
+  --page-bg: var(--off-white);
+  --hero-bg: var(--surface-raised);
+  --hero-spot-1: transparent;
+  --hero-spot-2: transparent;
+  --type-badge-bg: var(--black);
+  --hero-eyebrow-color: var(--text-subtle);
+  --meta-surface: var(--off-white);
+  --meta-border: var(--line);
+  --primary-cta-surface: var(--surface-raised);
+  --primary-cta-border: var(--line);
+  --primary-cta-button-bg: var(--black);
+  --primary-cta-button-color: var(--surface-raised);
+  --panel-bg: var(--surface-raised);
+  --panel-border: var(--line);
+  --panel-shadow: none;
+  --panel-strong-shadow: none;
+  --accent-gradient: var(--black);
+  --accent-soft-bg: var(--off-white);
+  --accent-soft-color: var(--black);
+  --accent-pill-bg: var(--off-white);
+  --list-item-bg: var(--off-white);
+  --list-item-border: var(--line);
+  --bottom-cta-bg: var(--surface-raised);
+  --bottom-cta-button-bg: var(--black);
+  --bottom-cta-button-color: var(--surface-raised);
+}
+
+.breadcrumb,
+.breadcrumbLink,
+.breadcrumbCurrent {
+  color: var(--text-subtle);
+}
+
+.breadcrumbLink:hover,
+.eventTitle,
+.metaValue,
+.sectionTitle,
+.contentTitle,
+.richContent h2,
+.richContent h3,
+.richContent h4,
+.richContent strong,
+.benefitValue,
+.summaryBlock strong {
+  color: var(--black);
+}
+
+.heroSection {
+  background: var(--surface-raised);
+  color: var(--black);
+  padding: 2rem 1rem 4rem;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--black);
+}
+
+.heroSection::before,
+.heroSection::after,
+.sectionTitle::after {
+  display: none;
+}
+
+.typeBadge,
+.statusBadge,
+.heroEyebrow,
+.metaItem,
+.participateSection,
+.participateButton,
+.ctaFeedback,
+.bannerImageContainer,
+.benefitCard,
+.benefitIcon,
+.eventContent,
+.urgencyText,
+.guidelinesSection,
+.infoPanel,
+.guidelinesList li,
+.summaryBlock p,
+.ctaContent,
+.ctaButton {
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+}
+
+.typeBadge,
+.statusBadge.active,
+.statusBadge.ended,
+.statusBadge.upcoming {
+  background: var(--black);
+  color: var(--surface-raised);
+}
+
+.heroEyebrow,
+.metaLabel,
+.maxParticipants,
+.primaryCtaEyebrow,
+.secondaryCtaEyebrow,
+.benefitTitle {
+  color: var(--text-subtle);
+}
+
+.eventDescription,
+.primaryCtaDescription,
+.contentText,
+.richContent,
+.orderedList,
+.summaryBlock span,
+.ctaText p {
+  color: var(--text-subtle);
+}
+
+.metaItem,
+.participateSection,
+.bannerImageContainer,
+.benefitCard,
+.eventContent,
+.guidelinesSection,
+.infoPanel,
+.guidelinesList li,
+.summaryBlock p,
+.ctaContent {
+  background: var(--surface-raised);
+  border: 1px solid var(--line);
+  backdrop-filter: none;
+}
+
+.participateButton:hover,
+.benefitCard:hover,
+.ctaButton:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.participateComplete {
+  background: var(--black);
+  color: var(--surface-raised);
+}
+
+.ctaFeedbackSuccess,
+.ctaFeedbackInfo,
+.ctaFeedbackError,
+.urgencyText {
+  background: var(--off-white);
+  border: 1px solid var(--line);
+  color: var(--black);
+}
+
+.bannerSection {
+  margin-top: -2.5rem;
+}
+
+.detailsSection {
+  background: var(--off-white);
+}
+
+.sectionTitle {
+  margin-bottom: 1.5rem;
+  text-align: left;
+  font-size: 1.35rem;
+}
+
+.guidelinesList li:hover {
+  border-color: var(--line-strong);
+}
+
+.guidelinesList li::before,
+.orderedList li::marker {
+  color: var(--black);
+}
+
+.ctaText {
+  color: var(--black);
+}

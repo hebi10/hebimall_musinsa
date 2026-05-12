@@ -613,3 +613,33 @@
     height: 2rem;
   }
 }
+
+/* 2nd priority clean commerce tone */
+.orderItems,
+.paymentSummary,
+.benefitInfo,
+.emptyCart,
+.deliveryOption,
+.couponDropdown,
+.couponLink {
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+}
+
+.itemImage,
+.quantityControl,
+.removeButton,
+.checkoutButton,
+.backButton {
+  border-radius: var(--radius-sm);
+}
+
+.orderItems,
+.summaryContent {
+  padding: 1.25rem;
+}
+
+.checkoutButton,
+.backButton {
+  font-weight: 700;
+}

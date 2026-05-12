@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import PageHeader from "../../_components/PageHeader";
@@ -38,7 +38,7 @@ function getPaymentMethodText(method: string | undefined) {
   }
 }
 
-export default function OrderCompletePage() {
+function OrderCompleteContent() {
   const router = useRouter();
   const params = useSearchParams();
   const { user } = useAuth();
@@ -257,3 +257,19 @@ export default function OrderCompletePage() {
   );
 }
 
+export default function OrderCompletePage() {
+  return (
+    <Suspense
+      fallback={
+        <div className={styles.container}>
+          <div className={styles.loadingContainer}>
+            <div className={styles.loadingSpinner}></div>
+            <p>주문 정보를 불러오는 중입니다.</p>
+          </div>
+        </div>
+      }
+    >
+      <OrderCompleteContent />
+    </Suspense>
+  );
+}

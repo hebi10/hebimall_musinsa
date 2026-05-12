@@ -114,15 +114,15 @@ export default function AdminCouponsPage() {
   };
 
   const handleDeleteCoupon = async (couponId: string) => {
-    if (!confirm('정말로 이 쿠폰을 삭제하시겠습니까?')) return;
+    if (!confirm('이 쿠폰을 비활성화하시겠습니까? 이미 발급된 쿠폰 이력은 유지됩니다.')) return;
 
     try {
       await CouponService.deleteCoupon(couponId);
       await loadData(); // 데이터 새로고침
-      alert('쿠폰이 삭제되었습니다.');
+      alert('쿠폰이 비활성화되었습니다.');
     } catch (error) {
       console.error('Error deleting coupon:', error);
-      alert('쿠폰 삭제에 실패했습니다.');
+      alert('쿠폰 비활성화에 실패했습니다.');
     }
   };
 
@@ -237,7 +237,7 @@ export default function AdminCouponsPage() {
                       수정
                     </button>
                     <button onClick={() => handleDeleteCoupon(coupon.id)} className={styles.deleteBtn}>
-                      삭제
+                      비활성화
                     </button>
                   </div>
                 </div>

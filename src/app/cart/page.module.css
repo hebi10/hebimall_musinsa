@@ -322,3 +322,29 @@
   color: var(--text-subtle);
   line-height: 1.4;
 }
+
+/* 2nd priority clean commerce tone */
+.cartItems,
+.orderSummary,
+.emptyCart,
+.shippingInfo {
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+}
+
+.itemImage,
+.quantityControl,
+.checkoutButton,
+.continueShoppingButton {
+  border-radius: var(--radius-sm);
+}
+
+.cartItems,
+.orderSummary {
+  padding: 1.25rem;
+}
+
+.checkoutButton,
+.continueShoppingButton {
+  font-weight: 700;
+}

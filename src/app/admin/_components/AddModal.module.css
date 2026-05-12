@@ -476,3 +476,57 @@
     height: 100px;
   }
 }
+
+/* Admin-wide neutral operations tone */
+.modalContainer,
+.closeButton,
+.formGroup input,
+.formGroup select,
+.formGroup textarea,
+.imageUpload,
+.cancelButton,
+.submitButton,
+.progressBar,
+.imageOrder,
+.deleteImageButton,
+.section,
+.tag,
+.imageItem,
+.imageGuide {
+  border-radius: var(--radius-sm);
+}
+
+.formGroup input:focus,
+.formGroup select:focus,
+.formGroup textarea:focus {
+  border-color: var(--black);
+  box-shadow: 0 0 0 2px var(--action-soft);
+}
+
+.imageUpload:hover,
+.imageItem:hover,
+.imageItem.mainImage {
+  border-color: var(--black);
+}
+
+.submitButton,
+.progressFill,
+.imageOrder,
+.imageOrder.mainImageBadge {
+  background: var(--black);
+  color: var(--surface-raised);
+}
+
+.submitButton:hover {
+  background: var(--action-hover);
+}
+
+.cancelButton {
+  background: var(--surface-raised);
+  border: 1px solid var(--line);
+  color: var(--black);
+}
+
+.imageGuide {
+  border-left-color: var(--black);
+}

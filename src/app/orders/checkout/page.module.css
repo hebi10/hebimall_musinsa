@@ -568,3 +568,36 @@
     gap: 0.5rem;
   }
 }
+
+/* 2nd priority clean commerce tone */
+.section,
+.paymentSummary,
+.termsSection,
+.noticeSection,
+.orderItem,
+.addressOption,
+.addAddressButton,
+.paymentMethod,
+.pointInput input,
+.maxButton {
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+}
+
+.itemImage,
+.defaultBadge,
+.checkoutButton,
+.backButton {
+  border-radius: var(--radius-sm);
+}
+
+.section,
+.summaryContent {
+  padding: 1.25rem;
+}
+
+.checkoutButton,
+.backButton,
+.maxButton {
+  font-weight: 700;
+}

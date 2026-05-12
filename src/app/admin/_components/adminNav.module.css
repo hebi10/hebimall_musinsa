@@ -45,3 +45,44 @@ aside .adminNav {
     border-bottom-color: #2b6cb0;
   }
 }
+
+/* Admin-wide neutral operations tone */
+.navLink {
+  color: var(--text-subtle);
+}
+
+.navLink:hover {
+  background: var(--surface-muted);
+  color: var(--black);
+  border-left-color: var(--black);
+}
+
+.navLink.active {
+  background: var(--surface-muted);
+  color: var(--black);
+  border-left-color: var(--black);
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .adminNav {
+    flex-direction: column;
+    padding: 0.5rem 0;
+  }
+
+  .navLink {
+    border-left: 3px solid transparent;
+    border-bottom: 0;
+    padding: 0.65rem 1.25rem;
+    font-size: 0.8125rem;
+  }
+
+  .navLink:hover {
+    border-left-color: var(--black);
+    border-bottom-color: transparent;
+  }
+
+  .navLink.active {
+    border-left-color: var(--black);
+  }
+}

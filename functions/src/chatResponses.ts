@@ -5,6 +5,7 @@ type MenuKey =
   | 'agent'
   | 'order'
   | 'return'
+  | 'product'
   | 'coupon'
   | 'size'
   | 'payment'
@@ -13,9 +14,19 @@ type MenuKey =
   | 'default';
 
 function matchMenu(lower: string): MenuKey {
-  if (lower === '상담원연결' || lower === '상담원 연결') return 'agent';
+  const compact = lower.replace(/\s+/g, '');
+
+  if (
+    compact === '상담원' + '연결' ||
+    lower === '상담원 연결' ||
+    lower === '상담 연결' ||
+    lower === '상담원' ||
+    lower === '실시간 상담' ||
+    lower === '담당자 연결'
+  ) return 'agent';
   if (lower === '1' || lower.includes('1. 주문') || lower.includes('주문') || lower.includes('배송')) return 'order';
   if (lower === '2' || lower.includes('2. 반품') || lower.includes('반품') || lower.includes('교환')) return 'return';
+  if (lower.includes('상품 문의') || lower.includes('상품문의') || lower.includes('상품 질문')) return 'product';
   if (lower === '3' || lower.includes('3. 쿠폰') || lower.includes('쿠폰') || lower.includes('할인')) return 'coupon';
   if (lower === '4' || lower.includes('4. 사이즈') || lower.includes('사이즈') || lower.includes('크기')) return 'size';
   if (lower === '5' || lower.includes('5. 결제') || lower.includes('결제') || lower.includes('카드')) return 'payment';
@@ -25,7 +36,10 @@ function matchMenu(lower: string): MenuKey {
 }
 
 const RESPONSES: Record<MenuKey, string> = {
-  agent: `상담원 연결 요청을 확인했습니다. 잠시만 기다려 주세요.`,
+  agent: `상담 연결 요청을 확인했습니다.
+
+평일 10:00~18:00에는 순차적으로 확인합니다.
+운영시간 외에는 1:1 문의를 남겨주시면 다음 영업일에 답변드리겠습니다.`,
 
   order: `주문 · 배송 안내
 
@@ -51,6 +65,16 @@ const RESPONSES: Record<MenuKey, string> = {
 
 고객센터: sevim0104@naver.com`,
 
+  product: `상품 문의 안내
+
+상품 상세 페이지의 상품문의 또는 QnA에서 문의를 남길 수 있습니다.
+색상, 사이즈, 재입고, 소재 정보처럼 상품별 확인이 필요한 내용은 상품명을 함께 남겨주세요.
+
+빠른 확인 경로
+- 상품문의: 하단 상품문의 바로가기
+- 1:1 문의: 고객센터 > 1:1 문의
+- 운영시간: 평일 10:00~18:00`,
+
   coupon: `쿠폰 · 할인 혜택 안내
 
 현재 진행 중인 혜택
@@ -71,7 +95,7 @@ const RESPONSES: Record<MenuKey, string> = {
 - 수령 후 7일 이내 무료 교환 1회 가능
 - 왕복 배송비 무료
 
-정확한 사이즈 상담은 상담원연결을 입력해 주시면 안내드립니다.`,
+정확한 사이즈 상담은 상담 연결 버튼을 이용해 문의해 주세요.`,
 
   payment: `결제 방법 안내
 
@@ -86,7 +110,7 @@ const RESPONSES: Record<MenuKey, string> = {
 결제 보안: SSL 암호화 및 개인정보 보호 적용
 
 결제 오류 발생 시 고객센터(sevim0104@naver.com) 또는
-상담원연결을 입력해 문의해 주세요.`,
+상담 연결 버튼으로 문의해 주세요.`,
 
   member: `회원 혜택 안내
 
@@ -101,7 +125,7 @@ const RESPONSES: Record<MenuKey, string> = {
 - 플래티넘: 구매액 3% 적립 + 생일 쿠폰 20%
 - VIP: 구매액 5% 적립 + 생일 쿠폰 25%, 신상품 우선 구매
 
-더 자세한 혜택은 상담원연결을 통해 확인하세요.`,
+더 자세한 혜택은 상담 연결을 통해 확인하세요.`,
 
   greeting: `안녕하세요, STYNA 고객 지원팀입니다.
 
@@ -114,7 +138,7 @@ const RESPONSES: Record<MenuKey, string> = {
 5. 결제 방법 안내
 6. 회원 혜택 정보
 
-1:1 맞춤 상담을 원하시면 "상담원연결"을 입력해 주세요.`,
+상담이 필요하면 상담 연결 버튼을 선택해 주세요.`,
 
   default: `문의 내용을 확인했습니다.
 
@@ -123,7 +147,7 @@ const RESPONSES: Record<MenuKey, string> = {
 1. 주문 · 배송  2. 반품 · 교환  3. 쿠폰 · 할인
 4. 사이즈 가이드  5. 결제 방법  6. 회원 혜택
 
-1:1 맞춤 상담: "상담원연결" 입력
+1:1 맞춤 상담: 상담 연결 버튼 선택
 고객센터: sevim0104@naver.com (평일 09:00 ~ 18:00)`,
 };
 

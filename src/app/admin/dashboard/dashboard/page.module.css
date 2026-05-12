@@ -475,3 +475,88 @@
     font-size: 0.9rem;
   }
 }
+
+/* Admin-wide neutral operations tone */
+.container {
+  background: var(--off-white);
+}
+
+.container::before {
+  display: none;
+}
+
+.adminHeader,
+.statCard,
+.dashboardCard,
+.activityItem,
+.userInfo {
+  background: var(--surface-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.adminTitle {
+  background: none;
+  color: var(--black);
+  -webkit-text-fill-color: currentColor;
+}
+
+.navLink,
+.navLink:hover,
+.navLink.active,
+.userInfo {
+  color: var(--black);
+}
+
+.navLink:hover,
+.navLink.active {
+  background: var(--off-white);
+}
+
+.statCard {
+  --card-color: var(--black);
+}
+
+.statCard:hover,
+.logoutButton:hover,
+.actionButton:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.statIcon,
+.activityIcon,
+.actionButton,
+.actionButton.secondary,
+.actionButton.tertiary {
+  background: var(--black);
+  color: var(--surface-raised);
+}
+
+.actionButton,
+.orderStatus,
+.activityIcon,
+.statIcon {
+  border-radius: var(--radius-sm);
+}
+
+.ordersTable tr:hover,
+.activityItem {
+  background: var(--off-white);
+}
+
+.orderStatus.shipping,
+.orderStatus.completed,
+.orderStatus.pending,
+.statChange,
+.statChange.negative {
+  background: var(--off-white);
+  border: 1px solid var(--line);
+  color: var(--black);
+}
+
+.activityItem {
+  border-left-color: var(--black);
+}
