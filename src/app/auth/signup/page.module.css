@@ -375,3 +375,84 @@
   margin-bottom: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
+
+/* 메인 쇼핑 화면과 맞춘 절제형 회원가입 UI */
+.container {
+  background: var(--off-white);
+  align-items: flex-start;
+  overflow: visible;
+  border-radius: 0;
+  padding: 3rem 1rem 5rem;
+}
+
+.floatingShape {
+  display: none;
+}
+
+.signupCard {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  box-shadow: none;
+  animation: none;
+}
+
+.title {
+  color: #111;
+  background: none;
+  -webkit-text-fill-color: currentColor;
+}
+
+.subtitle,
+.loginText {
+  color: #697386;
+}
+
+.input,
+.select,
+.radioItem,
+.agreementGroup {
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.input:focus,
+.select:focus {
+  border-color: var(--black);
+  box-shadow: 0 0 0 2px var(--action-soft);
+  transform: none;
+}
+
+.radioItem:hover,
+.radioItem:has(input[type="radio"]:checked) {
+  border-color: var(--black);
+  background: var(--off-white);
+}
+
+.radioItem input[type="radio"]:checked + span,
+.linkButton,
+.loginLink {
+  color: var(--black);
+}
+
+.submitButton {
+  background: var(--black);
+  border-radius: 2px;
+  box-shadow: none;
+}
+
+.submitButton::before {
+  display: none;
+}
+
+.submitButton:hover {
+  background: var(--action-hover);
+  transform: none;
+  box-shadow: none;
+}
+
+.firebaseError {
+  border-radius: 2px;
+  box-shadow: none;
+}

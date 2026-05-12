@@ -154,6 +154,7 @@ export default function ProductSection({
               reviewCount={product.reviewCount}
               image={product.mainImage || product.images[0]}
               stock={product.stock}
+              badgePlacement={variant === 'ranking' ? 'belowRank' : 'default'}
             />
           </div>
         ))}

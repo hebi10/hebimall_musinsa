@@ -253,9 +253,27 @@
     align-items: flex-start;
   }
 
+  .headerBordered {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
   .headerSide {
     align-items: flex-start;
     max-width: none;
+  }
+
+  .headerBordered .headerSide {
+    flex: 0 0 auto;
+    align-items: flex-end;
+    max-width: 42%;
+  }
+
+  .headerBordered .viewAllLink {
+    justify-content: flex-end;
+    white-space: nowrap;
   }
 
   .title {
@@ -301,6 +319,11 @@
     width: 100%;
   }
 
+  .headerBordered .headerSide {
+    width: auto;
+    max-width: none;
+  }
+
   .scrollGrid {
     gap: 0.625rem;
     grid-auto-columns: minmax(78vw, 78vw);
@@ -310,6 +333,11 @@
   .viewAllLink {
     width: 100%;
     justify-content: flex-start;
+  }
+
+  .headerBordered .viewAllLink {
+    width: auto;
+    justify-content: flex-end;
   }
 
   .rankingItem {

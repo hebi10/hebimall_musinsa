@@ -22,6 +22,7 @@ interface ProductCardProps {
   rating?: number;
   reviewCount?: number;
   stock?: number;
+  badgePlacement?: 'default' | 'belowRank';
 }
 
 export default function ProductCard({
@@ -37,6 +38,7 @@ export default function ProductCard({
   rating,
   reviewCount,
   stock = 0,
+  badgePlacement = 'default',
 }: ProductCardProps) {
   const { calculateDiscountPrice } = useProduct();
   const { wishlistItems, addToWishlist, removeFromWishlist } = useUserActivity();
@@ -96,7 +98,15 @@ export default function ProductCard({
   };
 
   return (
-    <Link href={`/products/${id}`} className={styles.card}>
+    <Link
+      href={`/products/${id}`}
+      className={[
+        styles.card,
+        badgePlacement === 'belowRank' ? styles.cardBadgeBelowRank : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
+    >
       <div className={styles.imageContainer}>
         <CachedImage
           src={image}

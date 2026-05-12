@@ -23,6 +23,7 @@ interface BannerSlide {
   secondaryLabel: string;
   secondaryLink: string;
   image: string;
+  mobileImage?: string;
   imagePosition?: string;
   meta: string[];
 }
@@ -39,6 +40,7 @@ const bannerSlides: BannerSlide[] = [
     secondaryLabel: '전체상품',
     secondaryLink: '/products',
     image: '/main/hero_editorial_outer_fixed.webp',
+    mobileImage: '/main/hero_editorial_outer_mobile.webp',
     imagePosition: 'center top',
     meta: ['Up to 70%', 'Outer', 'Daily wear'],
   },
@@ -53,6 +55,7 @@ const bannerSlides: BannerSlide[] = [
     secondaryLabel: '카테고리',
     secondaryLink: '/products',
     image: '/main/hero_editorial_sale_fixed.webp',
+    mobileImage: '/main/hero_editorial_sale_mobile.webp',
     imagePosition: 'center top',
     meta: ['New', 'Weekly update', 'STYNA'],
   },
@@ -67,6 +70,7 @@ const bannerSlides: BannerSlide[] = [
     secondaryLabel: '랭킹 보기',
     secondaryLink: '/recommend?filter=review',
     image: '/main/hero_editorial_best_fixed.webp',
+    mobileImage: '/main/hero_editorial_best_mobile.webp',
     imagePosition: 'center top',
     meta: ['Ranking', 'Review', 'Bestseller'],
   },
@@ -116,9 +120,20 @@ export default function MainBanner() {
                   fill
                   priority={index === 0}
                   sizes="100vw"
-                  className={styles.bannerBackground}
+                  className={`${styles.bannerBackground} ${styles.desktopBackground}`}
                   style={{ objectPosition: slide.imagePosition ?? 'center center' }}
                 />
+                {slide.mobileImage && (
+                  <Image
+                    src={slide.mobileImage}
+                    alt=""
+                    fill
+                    priority={index === 0}
+                    sizes="100vw"
+                    className={`${styles.bannerBackground} ${styles.mobileBackground}`}
+                    aria-hidden="true"
+                  />
+                )}
                 <div className={styles.bannerBackdrop}></div>
 
                 <div className={styles.bannerContent}>

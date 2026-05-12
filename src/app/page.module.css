@@ -280,6 +280,37 @@
   }
 }
 
+@media (max-width: 640px) {
+  .serviceInfo {
+    padding-top: 2.2rem;
+    padding-bottom: 2rem;
+  }
+
+  .serviceGrid {
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding-top: 0;
+  }
+
+  .serviceItem {
+    padding: 1rem 0;
+    border-bottom: 1px solid #dedede;
+  }
+
+  .serviceItem:first-child {
+    padding-top: 0;
+  }
+
+  .serviceItem:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .serviceItem h2 {
+    margin-bottom: 0.4rem;
+  }
+}
+
 @media (max-width: 900px) {
   .categoryGrid,
   .categoryMoodGrid {

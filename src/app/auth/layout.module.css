@@ -1,15 +1,19 @@
 .authContainer {
   min-height: 100vh;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  background: #ffffff;
+  background: var(--off-white);
   padding: 3rem 1rem;
 }
 
 .authCard {
   width: 100%;
   max-width: 420px;
+  padding: 2rem;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 2px;
 }
 
 .logoSection {

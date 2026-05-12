@@ -595,3 +595,106 @@
   margin-bottom: 2rem;
   line-height: 1.6;
 }
+
+/* 메인 상품 매대 기준의 절제형 쿠폰 UI */
+.pageHeader,
+.statCard,
+.filterSection,
+.registrationForm,
+.couponsSection,
+.couponCard,
+.errorContainer {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  box-shadow: none;
+}
+
+.pageHeader {
+  color: #111;
+  text-align: left;
+  padding: 1.4rem 0 0.9rem;
+  border-width: 0 0 1px;
+  border-color: #13233a;
+}
+
+.pageTitle,
+.sectionTitle,
+.statNumber,
+.formTitle,
+.couponName,
+.emptyTitle {
+  color: #0a1628;
+}
+
+.pageDesc,
+.statLabel,
+.formNote,
+.minOrder,
+.couponDescription,
+.emptyDesc {
+  color: #697386;
+}
+
+.statIcon,
+.filterButton.active,
+.registrationButton,
+.registerButton,
+.resultCount,
+.useCouponButton {
+  background: var(--black);
+  color: #fff;
+  border-color: var(--black);
+  box-shadow: none;
+}
+
+.statIcon,
+.filterButton,
+.registrationButton,
+.registrationForm,
+.registerButton,
+.resultCount,
+.couponType,
+.couponStatus,
+.useCouponButton,
+.formInput {
+  border-radius: 2px;
+}
+
+.statCard:hover,
+.registrationButton:hover,
+.registerButton:hover,
+.couponCard:hover,
+.useCouponButton:hover {
+  transform: none;
+  box-shadow: none;
+  border-color: var(--black);
+}
+
+.filterButton,
+.formInput {
+  border: 1px solid var(--line);
+}
+
+.filterButton:hover,
+.formInput:focus {
+  border-color: var(--black);
+  color: #111;
+  box-shadow: 0 0 0 2px var(--action-soft);
+}
+
+.couponType,
+.couponFooter,
+.couponStatus.status-사용가능,
+.couponStatus.status-사용완료,
+.couponStatus.status-기간만료 {
+  background: var(--off-white);
+}
+
+.couponValue {
+  color: #111;
+}
+
+.spinner {
+  border-top-color: var(--black);
+}

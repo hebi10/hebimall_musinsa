@@ -311,3 +311,75 @@
     flex-direction: column;
   }
 }
+
+/* 메인 쇼핑 화면과 맞춘 절제형 인증 UI */
+.container {
+  background: var(--off-white);
+  overflow: visible;
+}
+
+.container::before,
+.submitButton::before {
+  display: none;
+}
+
+.formWrapper {
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  box-shadow: none;
+  animation: none;
+}
+
+.title {
+  color: #111;
+  background: none;
+  -webkit-text-fill-color: currentColor;
+}
+
+.subtitle,
+.footerText,
+.note,
+.successMessage p {
+  color: #697386;
+}
+
+.input {
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: #fff;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.input:focus {
+  border-color: var(--black);
+  box-shadow: 0 0 0 2px var(--action-soft);
+}
+
+.submitButton,
+.loginButton {
+  background: var(--black);
+  border-radius: 2px;
+  box-shadow: none;
+}
+
+.submitButton:hover,
+.loginButton:hover {
+  background: var(--action-hover);
+  transform: none;
+  box-shadow: none;
+}
+
+.retryButton {
+  color: var(--black);
+  border: 1px solid var(--black);
+  border-radius: 2px;
+}
+
+.retryButton:hover {
+  background: var(--black);
+  transform: none;
+}
+
+.loginLink {
+  color: var(--black);
+}

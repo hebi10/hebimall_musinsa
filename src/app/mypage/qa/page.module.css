@@ -627,3 +627,126 @@
   margin-bottom: 2rem;
   line-height: 1.6;
 }
+
+/* 메인 상품 매대 기준의 절제형 Q&A UI */
+.pageHeader,
+.statCard,
+.filterSection,
+.newQAForm,
+.qaSection,
+.qaCard,
+.relatedProduct,
+.answerText,
+.errorMessage {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  box-shadow: none;
+}
+
+.pageHeader {
+  color: #111;
+  text-align: left;
+  padding: 1.4rem 0 0.9rem;
+  border-width: 0 0 1px;
+  border-color: #13233a;
+}
+
+.pageTitle,
+.sectionTitle,
+.statNumber,
+.formTitle,
+.qaTitle,
+.emptyTitle {
+  color: #0a1628;
+}
+
+.pageDesc,
+.statLabel,
+.qaDate,
+.questionText,
+.answerText,
+.emptyDesc,
+.qaViews,
+.answerInfo {
+  color: #697386;
+}
+
+.statIcon,
+.filterButton.active,
+.newQAButton,
+.submitButton,
+.resultCount,
+.questionLabel,
+.answerLabel,
+.actionButton:hover,
+.retryButton {
+  background: var(--black);
+  color: #fff;
+  border-color: var(--black);
+  box-shadow: none;
+}
+
+.statIcon,
+.filterButton,
+.newQAButton,
+.newQAForm,
+.formInput,
+.formSelect,
+.formTextarea,
+.cancelButton,
+.submitButton,
+.resultCount,
+.qaType,
+.qaStatus,
+.questionLabel,
+.answerLabel,
+.actionButton,
+.retryButton {
+  border-radius: 2px;
+}
+
+.statCard:hover,
+.newQAButton:hover,
+.submitButton:hover,
+.qaCard:hover,
+.actionButton:hover {
+  transform: none;
+  box-shadow: none;
+  border-color: var(--black);
+}
+
+.filterButton,
+.cancelButton,
+.actionButton {
+  border: 1px solid var(--line);
+  background: #fff;
+  color: #111;
+}
+
+.filterButton:hover,
+.cancelButton:hover,
+.formInput:focus,
+.formSelect:focus,
+.formTextarea:focus {
+  border-color: var(--black);
+  color: #111;
+  box-shadow: 0 0 0 2px var(--action-soft);
+}
+
+.qaType,
+.qaStatus.status-답변완료,
+.qaStatus.status-답변대기 {
+  background: var(--off-white);
+  color: #111;
+  border-color: var(--line);
+}
+
+.status-답변완료 .statusDot,
+.status-답변대기 .statusDot {
+  box-shadow: none;
+}
+
+.spinner {
+  border-top-color: var(--black);
+}

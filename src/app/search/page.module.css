@@ -89,7 +89,7 @@
   padding: 10px 20px;
   background: white;
   border: 1px solid #d1d5db;
-  border-radius: 25px;
+  border-radius: 2px;
   font-size: 14px;
   color: #4b5563;
   cursor: pointer;
@@ -193,7 +193,7 @@
   padding: 8px 16px;
   background: white;
   border: 1px solid #d1d5db;
-  border-radius: 20px;
+  border-radius: 2px;
   font-size: 13px;
   color: #4b5563;
   cursor: pointer;
@@ -336,7 +336,7 @@
   padding: 8px 16px;
   background: #f3f4f6;
   border: 1px solid #d1d5db;
-  border-radius: 20px;
+  border-radius: 2px;
   font-size: 13px;
   color: #4b5563;
   cursor: pointer;

@@ -442,3 +442,77 @@
     padding: 0.5rem;
   }
 }
+
+/* 메인 상품 매대 기준의 절제형 포인트 UI */
+.balanceCard,
+.earnInfo,
+.earnMethod,
+.tabMenu,
+.balanceTab,
+.historyTab,
+.historyItem,
+.pointNote {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  box-shadow: none;
+}
+
+.balanceCard {
+  color: #111;
+}
+
+.header h1,
+.earnInfo h3,
+.historyDesc,
+.balanceItem .value {
+  color: #0a1628;
+}
+
+.header p,
+.balanceDesc,
+.methodInfo p,
+.historyDate,
+.balanceAfter {
+  color: #697386;
+}
+
+.methodIcon,
+.tabButton.active,
+.loadMoreButton {
+  background: var(--black);
+  color: #fff;
+  box-shadow: none;
+}
+
+.earnMethod:hover,
+.historyItem:hover,
+.loadMoreButton:hover {
+  transform: none;
+  box-shadow: none;
+  border-color: var(--black);
+}
+
+.pointNote {
+  border-left: 1px solid var(--line);
+}
+
+.pointNote h4,
+.amount,
+.unit,
+.historyAmount .amount.earn,
+.historyAmount .amount.use,
+.historyAmount .amount.refund {
+  color: #111;
+}
+
+.pointType,
+.loadMoreButton,
+.skeleton {
+  border-radius: 2px;
+}
+
+.historyAmount .amount.use,
+.pointType.use {
+  color: #111;
+}

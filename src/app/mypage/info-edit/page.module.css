@@ -412,3 +412,97 @@
     padding: 15px;
   }
 }
+
+/* 메인 상품 매대 기준의 절제형 회원정보 수정 UI */
+.container {
+  background: var(--off-white);
+  align-items: flex-start;
+  overflow: visible;
+  padding: 2rem 1rem 4rem;
+}
+
+.container::before,
+.floatingShape,
+.submitButton::before {
+  display: none;
+}
+
+.infoEditCard,
+.loadingCard {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  box-shadow: none;
+  backdrop-filter: none;
+  animation: none;
+}
+
+.title {
+  color: #111;
+  background: none;
+  -webkit-text-fill-color: currentColor;
+}
+
+.subtitle {
+  color: #697386;
+}
+
+.input,
+.select,
+.radioItem,
+.agreementGroup,
+.backButton,
+.errorMessage {
+  border-radius: 2px;
+}
+
+.input,
+.select,
+.radioItem,
+.agreementGroup {
+  border: 1px solid var(--line);
+}
+
+.input:focus,
+.select:focus {
+  border-color: var(--black);
+  box-shadow: 0 0 0 2px var(--action-soft);
+  transform: none;
+}
+
+.radioItem:hover,
+.radioItem:has(input[type="radio"]:checked) {
+  border-color: var(--black);
+  background: var(--off-white);
+}
+
+.radioItem input[type="radio"]:checked + span {
+  color: var(--black);
+}
+
+.submitButton {
+  background: var(--black);
+  border-radius: 2px;
+  box-shadow: none;
+}
+
+.submitButton:hover {
+  background: var(--action-hover);
+  transform: none;
+  box-shadow: none;
+}
+
+.backButton {
+  color: var(--black);
+  border: 1px solid var(--black);
+}
+
+.backButton:hover {
+  background: var(--black);
+  transform: none;
+  box-shadow: none;
+}
+
+.loading {
+  color: var(--black);
+}

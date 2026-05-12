@@ -580,3 +580,119 @@
 .noticeText {
   font-weight: 500;
 }
+
+/* 메인 상품 매대 기준의 절제형 마이페이지 주문 UI */
+.pageHeader,
+.statCard,
+.filterSection,
+.ordersSection,
+.orderCard,
+.orderStatusBadge,
+.errorState,
+.cancelNotice {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  box-shadow: none;
+}
+
+.pageHeader {
+  color: #111;
+  text-align: left;
+  padding: 1.4rem 0 0.9rem;
+  border-width: 0 0 1px;
+  border-color: #13233a;
+}
+
+.pageTitle,
+.sectionTitle,
+.statNumber,
+.orderId,
+.productName,
+.emptyTitle {
+  color: #0a1628;
+}
+
+.pageDesc,
+.statLabel,
+.orderDate,
+.orderTotal,
+.emptyDesc,
+.loadingState {
+  color: #697386;
+}
+
+.statIcon,
+.resultCount,
+.filterButton.active,
+.shopButton,
+.actionButton:hover,
+.retryButton {
+  background: var(--black);
+  color: #fff;
+  border-color: var(--black);
+  box-shadow: none;
+}
+
+.statIcon,
+.filterButton,
+.orderStatusBadge,
+.resultCount,
+.actionButton,
+.shopButton,
+.refreshButton,
+.retryButton,
+.cancelNotice {
+  border-radius: 2px;
+}
+
+.statCard:hover,
+.orderCard:hover,
+.actionButton:hover,
+.shopButton:hover {
+  transform: none;
+  box-shadow: none;
+  border-color: var(--black);
+}
+
+.filterButton,
+.actionButton {
+  border: 1px solid var(--line);
+  color: #111;
+  background: #fff;
+}
+
+.filterButton:hover {
+  border-color: var(--black);
+  color: #111;
+}
+
+.productBrand,
+.orderTotal strong,
+.discountAmount {
+  color: #111;
+}
+
+.productImage {
+  border-radius: 2px;
+}
+
+.statusDot.status-배송중,
+.statusDot.status-배송완료,
+.statusDot.status-주문확인,
+.statusDot.status-취소,
+.statusDot.status-교환,
+.statusDot.status-반품 {
+  box-shadow: none;
+}
+
+.waitingNote {
+  background: var(--off-white);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  color: #697386;
+}
+
+.spinner {
+  border-top-color: var(--black);
+}

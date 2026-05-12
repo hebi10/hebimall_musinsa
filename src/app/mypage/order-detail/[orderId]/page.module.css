@@ -495,3 +495,94 @@
     text-align: center;
   }
 }
+
+/* 메인 상품 매대 기준의 절제형 주문 상세 UI */
+.container {
+  background-color: var(--off-white);
+  padding: 2rem 1rem 4rem;
+}
+
+.spinner {
+  border-top-color: var(--black);
+}
+
+.pageHeader,
+.statusCard,
+.productsList,
+.paymentCard,
+.shippingCard {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  box-shadow: none;
+}
+
+.pageTitle,
+.sectionTitle,
+.productName,
+.productPrice {
+  color: #0a1628;
+}
+
+.pageDesc,
+.orderDate,
+.trackingInfo p,
+.productBrand,
+.productOptions,
+.addressLabel,
+.zipCode {
+  color: #697386;
+}
+
+.breadcrumbLink:hover {
+  color: var(--black);
+}
+
+.statusBadge,
+.productImage,
+.backButton,
+.cancelButton,
+.trackingButton,
+.reviewButton {
+  border-radius: 2px;
+}
+
+.statusBadge {
+  background: var(--off-white);
+  border: 1px solid var(--line);
+}
+
+.backButton,
+.trackingButton,
+.reviewButton {
+  background: var(--black);
+  color: #fff;
+}
+
+.backButton:hover,
+.trackingButton:hover,
+.reviewButton:hover {
+  background: var(--action-hover);
+}
+
+.cancelButton {
+  background: #fff;
+  color: var(--error);
+  border: 1px solid var(--error);
+}
+
+.cancelButton:hover {
+  background: var(--error);
+}
+
+.finalAmount,
+.discountText,
+.discountAmount {
+  color: var(--error);
+}
+
+.status-confirmed,
+.status-preparing,
+.status-exchanged {
+  background-color: var(--black);
+}

@@ -8,6 +8,7 @@
 - 이벤트 페이지 점검 : event-page-review.md
 - 메인 랭킹 UI 점검 : main-ranking-ui.md
 - 마이페이지 UI 점검 : mypage-ui.md
+- 인증 화면 UI 정리 : auth-ui.md
 - 상품 조회 구조 개선 : product-listing-structure.md
 - 디자인 시스템 정리/리팩터 : design-system-refactor.md
 - 디자인 시스템 QA : design-system-qa.md
