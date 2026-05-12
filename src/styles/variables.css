@@ -82,9 +82,9 @@
   --border-radius-xl: var(--radius-xl);
   
   /* Shadows */
-  --shadow-sm: 0 6px 16px rgba(10, 10, 10, 0.04);
-  --shadow-md: 0 12px 28px rgba(10, 10, 10, 0.08);
-  --shadow-lg: 0 18px 40px rgba(10, 10, 10, 0.12);
+  --shadow-sm: 0 1px 0 rgba(10, 10, 10, 0.04);
+  --shadow-md: 0 4px 12px rgba(10, 10, 10, 0.06);
+  --shadow-lg: 0 8px 20px rgba(10, 10, 10, 0.08);
   
   /* Z-index */
   --z-dropdown: 1000;

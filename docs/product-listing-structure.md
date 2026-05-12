@@ -31,3 +31,5 @@
 - 2026-05-11: 메인 홈 상품 섹션은 `ProductService.getHomePageProducts()`로 최상위 `products`를 1회 읽은 뒤 `recommended/new/sale/bestseller`를 클라이언트 정렬한다. Firebase 인덱스 생성 대기 중에도 홈 초기 화면이 깨지지 않게 하기 위한 조치다.
 - 2026-05-11: 홈 쿼리용 Firestore 인덱스(`status+createdAt+__name__`, `isNew+status+createdAt+__name__`, `isSale+status+createdAt+__name__`, `status+reviewCount+__name__`)도 추가되어 있으며, 데이터가 커지면 배포 완료 후 다시 쿼리 기반 섹션 조회로 돌리는 것이 좋다.
 - 2026-05-11: 현재 작업 환경에서는 Firebase 백엔드 연결이 프록시 `127.0.0.1:9 ECONNREFUSED`로 차단되어 실제 문서 수 검증은 불가했다. 네트워크 가능한 환경에서 재확인이 필요하다.
+- 2026-05-12: 추천 페이지의 `평점`, `리뷰` 탭은 `queryProducts()` 복합 정렬 대신 `getTopRatedProducts()`, `getReviewPopularProducts()`로 최상위 상품을 읽고 클라이언트 정렬한다. 홈과 같은 이유로 인덱스 생성 대기 중에도 추천 탭이 깨지지 않게 하기 위한 조치다.
+- 2026-05-12: 브랜드 페이지는 `brandSummaries` 컬렉션을 우선 읽고, 요약 문서가 없을 때만 상품 기반 요약으로 fallback한다. 공개 읽기 규칙은 `firestore.rules`에 추가했다.

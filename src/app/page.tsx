@@ -2,6 +2,7 @@ import Link from "next/link";
 import MainBanner from "./_components/MainBanner";
 import ProductSection from "./_components/ProductSection";
 import DynamicCategorySection from "./_components/DynamicCategorySection";
+import CategoryProductTabs from "./_components/CategoryProductTabs";
 import styles from "./page.module.css";
 
 export default function Home() {
@@ -30,9 +31,13 @@ export default function Home() {
           type="new"
           maxItems={4}
           headerStyle="bordered"
-          viewAllLink="/products?sort=newest"
+          viewAllLink="/recommend?filter=new"
           viewAllLabel="전체보기"
         />
+      </section>
+
+      <section className={styles.productBand}>
+        <CategoryProductTabs />
       </section>
 
       <section className={styles.saleNotice}>
@@ -60,7 +65,7 @@ export default function Home() {
           maxItems={8}
           variant="ranking"
           headerStyle="bordered"
-          viewAllLink="/products?sort=bestseller"
+          viewAllLink="/recommend?filter=review"
           viewAllLabel="전체보기"
         />
       </section>

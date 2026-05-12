@@ -49,7 +49,7 @@ const bannerSlides: BannerSlide[] = [
     description:
       '최근 등록된 상품을 빠르게 확인하고 새 스타일을 비교해보세요.',
     primaryLabel: '신상품 보기',
-    primaryLink: '/products?sort=newest',
+    primaryLink: '/recommend?filter=new',
     secondaryLabel: '카테고리',
     secondaryLink: '/products',
     image: '/main/hero_editorial_sale_fixed.webp',
@@ -63,9 +63,9 @@ const bannerSlides: BannerSlide[] = [
     description:
       '리뷰와 구매 반응이 좋은 상품을 순위로 확인하세요.',
     primaryLabel: '베스트 보기',
-    primaryLink: '/products?sort=bestseller',
+    primaryLink: '/recommend?filter=review',
     secondaryLabel: '랭킹 보기',
-    secondaryLink: '/#best-ranking',
+    secondaryLink: '/recommend?filter=review',
     image: '/main/hero_editorial_best_fixed.webp',
     imagePosition: 'center top',
     meta: ['Ranking', 'Review', 'Bestseller'],

@@ -48,6 +48,14 @@ export interface HomePageProductGroups {
   bestSellerProducts: Product[];
 }
 
+export interface BrandSummary {
+  id: string;
+  name: string;
+  productCount: number;
+  image?: string;
+  slug?: string;
+}
+
 interface HomePageProductLimits {
   recommended?: number;
   new?: number;
@@ -59,6 +67,7 @@ type ProductPayload = Omit<Product, 'id' | 'createdAt' | 'updatedAt'>;
 
 export class ProductService {
   private static readonly PRODUCTS_COLLECTION = 'products';
+  private static readonly BRAND_SUMMARIES_COLLECTION = 'brandSummaries';
   private static readonly DEFAULT_PAGE_SIZE = 24;
   private static readonly KEYWORD_SCAN_MULTIPLIER = 3;
   private static readonly DEFAULT_SORT: ProductSort = { field: 'createdAt', order: 'desc' };
@@ -191,6 +200,23 @@ export class ProductService {
     });
   }
 
+  private static sortByRatingDesc(products: Product[]): Product[] {
+    return [...products].sort((a, b) => {
+      const ratingDiff = b.rating - a.rating;
+      if (ratingDiff !== 0) {
+        return ratingDiff;
+      }
+
+      const reviewCountDiff = b.reviewCount - a.reviewCount;
+      if (reviewCountDiff !== 0) {
+        return reviewCountDiff;
+      }
+
+      const createdAtDiff = b.createdAt.getTime() - a.createdAt.getTime();
+      return createdAtDiff !== 0 ? createdAtDiff : b.id.localeCompare(a.id);
+    });
+  }
+
   private static selectNewProducts(products: Product[], limitCount: number): Product[] {
     return this.sortByCreatedAtDesc(products.filter((product) => product.isNew)).slice(0, limitCount);
   }
@@ -204,6 +230,18 @@ export class ProductService {
   private static selectBestSellerProducts(products: Product[], limitCount: number): Product[] {
     return this.sortByReviewCountDesc(
       products.filter((product) => product.reviewCount > 0)
+    ).slice(0, limitCount);
+  }
+
+  private static selectTopRatedProducts(products: Product[], limitCount: number): Product[] {
+    return this.sortByRatingDesc(
+      products.filter((product) => product.rating >= 4.3)
+    ).slice(0, limitCount);
+  }
+
+  private static selectReviewPopularProducts(products: Product[], limitCount: number): Product[] {
+    return this.sortByReviewCountDesc(
+      products.filter((product) => product.reviewCount >= 10)
     ).slice(0, limitCount);
   }
 
@@ -231,6 +269,43 @@ export class ProductService {
     }
 
     return this.normalizeProduct(snapshot.id, snapshot.data());
+  }
+
+  private static toBrandSummaryFromProductGroups(products: Product[]): BrandSummary[] {
+    const brandMap = new Map<string, BrandSummary>();
+
+    products.forEach((product) => {
+      const brandName = product.brand?.trim();
+      if (!brandName) {
+        return;
+      }
+
+      const current = brandMap.get(brandName);
+      brandMap.set(brandName, {
+        id: current?.id || brandName,
+        name: brandName,
+        productCount: (current?.productCount || 0) + 1,
+        image: current?.image || product.mainImage || product.images[0],
+        slug: current?.slug || brandName,
+      });
+    });
+
+    return Array.from(brandMap.values()).sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  private static normalizeBrandSummary(id: string, data: Record<string, any>): BrandSummary | null {
+    const name = typeof data.name === 'string' ? data.name.trim() : '';
+    if (!name) {
+      return null;
+    }
+
+    return {
+      id,
+      name,
+      productCount: Number(data.productCount) || 0,
+      image: typeof data.image === 'string' ? data.image : undefined,
+      slug: typeof data.slug === 'string' ? data.slug : id,
+    };
   }
 
   static async queryProducts(queryInput: ProductQueryInput = {}): Promise<ProductQueryResult> {
@@ -588,6 +663,26 @@ export class ProductService {
     }
   }
 
+  static async getTopRatedProducts(limitCount: number = 24): Promise<Product[]> {
+    try {
+      const products = this.getActiveProducts(await this.getTopLevelProducts());
+      return this.selectTopRatedProducts(products, limitCount);
+    } catch (error) {
+      console.error('Failed to load top rated products:', error);
+      return [];
+    }
+  }
+
+  static async getReviewPopularProducts(limitCount: number = 24): Promise<Product[]> {
+    try {
+      const products = this.getActiveProducts(await this.getTopLevelProducts());
+      return this.selectReviewPopularProducts(products, limitCount);
+    } catch (error) {
+      console.error('Failed to load review popular products:', error);
+      return [];
+    }
+  }
+
   static async getRecommendedProducts(limitCount: number = 8): Promise<Product[]> {
     try {
       const products = this.getActiveProducts(await this.getTopLevelProducts());
@@ -633,11 +728,32 @@ export class ProductService {
 
   static async getBrands(): Promise<string[]> {
     try {
-      const products = await this.getAllProducts();
-      return [...new Set(products.map((product) => product.brand))].sort();
+      const summaries = await this.getBrandSummaries();
+      return summaries.map((brand) => brand.name);
     } catch (error) {
       console.error('Failed to load brands:', error);
       return [];
+    }
+  }
+
+  static async getBrandSummaries(): Promise<BrandSummary[]> {
+    try {
+      const summarySnapshot = await getDocs(collection(db, this.BRAND_SUMMARIES_COLLECTION));
+      const summaries = summarySnapshot.docs
+        .map((summaryDoc) => this.normalizeBrandSummary(summaryDoc.id, summaryDoc.data()))
+        .filter((summary): summary is BrandSummary => Boolean(summary))
+        .sort((a, b) => a.name.localeCompare(b.name));
+
+      if (summaries.length > 0) {
+        return summaries;
+      }
+
+      const products = this.getActiveProducts(await this.getTopLevelProducts());
+      return this.toBrandSummaryFromProductGroups(products);
+    } catch (error) {
+      console.warn('Failed to load brand summaries. Falling back to products:', error);
+      const products = this.getActiveProducts(await this.getTopLevelProducts());
+      return this.toBrandSummaryFromProductGroups(products);
     }
   }
 

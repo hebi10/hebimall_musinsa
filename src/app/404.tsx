@@ -31,11 +31,11 @@ export default function NotFound() {
           </Link>
           
           <div className={styles.links}>
-            <Link href="/sale" className={styles.link}>
+            <Link href="/main/sale" className={styles.link}>
               세일 상품 보기
             </Link>
             <span className={styles.separator}>|</span>
-            <Link href="/ranking" className={styles.link}>
+            <Link href="/recommend?filter=review" className={styles.link}>
               인기 상품 보기
             </Link>
             <span className={styles.separator}>|</span>

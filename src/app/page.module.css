@@ -295,8 +295,22 @@
   }
 
   .categoryGrid,
-  .categoryMoodGrid,
+  .categoryMoodGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
   .serviceGrid {
     grid-template-columns: 1fr;
+  }
+
+  .categoryImageWrapper,
+  .categoryImagePlaceholder {
+    min-height: 180px;
+  }
+
+  .categoryInfo {
+    min-height: 72px;
+    padding: 0.75rem;
   }
 }

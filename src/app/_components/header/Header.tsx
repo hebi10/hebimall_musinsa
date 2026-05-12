@@ -81,14 +81,14 @@ export default function Header() {
   const safeCartItemCount = isMounted ? cartItemCount : 0;
   const featuredCategories = categories.slice(0, 1);
   const primaryNavItems: HeaderNavItem[] = [
-    { label: "신상", href: "/#new-arrivals" },
-    { label: "베스트", href: "/#best-ranking" },
+    { label: "신상", href: "/recommend?filter=new" },
+    { label: "베스트", href: "/recommend?filter=review" },
     ...featuredCategories.map((category) => ({
       label: toNavLabel(category),
       href: category.href,
     })),
     { label: "세일", href: "/main/sale" },
-    { label: "브랜드", href: "/#about" },
+    { label: "브랜드", href: "/brand" },
   ].slice(0, 5);
   const secondaryNavItems: HeaderNavItem[] = [
     { label: "추천", href: "/recommend" },

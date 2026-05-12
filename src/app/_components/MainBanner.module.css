@@ -294,11 +294,11 @@
 
 @media (max-width: 768px) {
   .bannerSlide {
-    min-height: 520px;
+    min-height: 460px;
   }
 
   .bannerBackground {
-    object-position: 72% center !important;
+    object-position: 68% center !important;
   }
 
   .bannerBackdrop {
@@ -311,14 +311,14 @@
   }
 
   .bannerContent {
-    min-height: 520px;
-    padding: 1.25rem 1rem 4.8rem;
+    min-height: 460px;
+    padding: 1.25rem 1rem 4.25rem;
     align-items: flex-start;
   }
 
   .copyPanel {
-    max-width: min(100%, 26rem);
-    gap: 1rem;
+    max-width: min(100%, 23rem);
+    gap: 0.8rem;
   }
 
   .copyHeader {
@@ -334,12 +334,12 @@
 
   .bannerTitle {
     max-width: none;
-    font-size: clamp(2rem, 9vw, 3rem);
+    font-size: clamp(1.85rem, 8.2vw, 2.65rem);
   }
 
   .bannerDescription {
     max-width: none;
-    font-size: 0.95rem;
+    font-size: 0.88rem;
   }
 
   .bannerActions {
@@ -357,18 +357,18 @@
     width: calc(100% - 2rem);
     left: 1rem;
     transform: none;
-    bottom: 1rem;
+    bottom: 0.9rem;
   }
 }
 
 @media (max-width: 480px) {
   .bannerSlide {
-    min-height: 500px;
+    min-height: 430px;
   }
 
   .bannerContent {
-    min-height: 500px;
-    padding: 1rem 0.875rem 5rem;
+    min-height: 430px;
+    padding: 1rem 0.875rem 4.25rem;
   }
 
   .copyPanel {
@@ -401,10 +401,22 @@
   }
 
   .paginationBullet {
-    width: 22px;
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
   }
 
   :global(.swiper-pagination-bullet-active).paginationBullet {
-    width: 34px;
+    width: 8px;
+  }
+
+  .controlButtons {
+    gap: 0.35rem;
+  }
+
+  .swiperButtonPrev,
+  .swiperButtonNext {
+    width: 32px;
+    height: 32px;
   }
 }

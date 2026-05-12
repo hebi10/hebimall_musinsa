@@ -4,7 +4,7 @@
   text-decoration: none;
   color: inherit;
   display: block;
-  transition: border-color 0.15s;
+  transition: border-color 0.15s ease;
   border-radius: 2px;
   overflow: hidden;
   background: var(--color-bg-primary);
@@ -110,7 +110,8 @@
 }
 
 .info {
-  padding: 0.9rem;
+  padding: 0.85rem 0.9rem;
+  border-top: 1px solid var(--line);
 }
 
 .brand {
@@ -135,7 +136,7 @@
 }
 
 .card:hover .name {
-  color: var(--color-primary);
+  color: var(--black);
 }
 
 .priceContainer {

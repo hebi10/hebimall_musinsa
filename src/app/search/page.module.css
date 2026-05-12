@@ -1,7 +1,7 @@
 /* 컨테이너 */
 .container {
   min-height: 100vh;
-  background-color: #fafafa;
+  background-color: var(--off-white);
 }
 
 .content {
@@ -29,8 +29,8 @@
 .searchInput {
   flex: 1;
   padding: 16px 20px;
-  border: 2px solid #e5e5e5;
-  border-radius: 12px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
   font-size: 16px;
   transition: all 0.2s ease;
   background: white;
@@ -38,16 +38,16 @@
 
 .searchInput:focus {
   outline: none;
-  border-color: #6b7280;
-  box-shadow: 0 0 0 3px rgba(107, 114, 128, 0.1);
+  border-color: var(--black);
+  box-shadow: 0 0 0 2px var(--action-soft);
 }
 
 .searchButton {
   padding: 16px 32px;
-  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+  background: var(--black);
   color: white;
   border: none;
-  border-radius: 12px;
+  border-radius: 2px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
@@ -56,8 +56,9 @@
 }
 
 .searchButton:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
+  background: var(--action-hover);
+  transform: none;
+  box-shadow: none;
 }
 
 .searchButton:disabled {
@@ -151,7 +152,7 @@
 .filtersSection {
   background: white;
   padding: 24px;
-  border-radius: 12px;
+  border-radius: 2px;
   margin-bottom: 32px;
   border: 1px solid #e5e5e5;
 }
@@ -205,16 +206,16 @@
 }
 
 .filterTag.active {
-  background: #6b7280;
+  background: var(--black);
   color: white;
-  border-color: #6b7280;
+  border-color: var(--black);
 }
 
 /* 상품 그리드 */
 .productGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
   margin-bottom: 48px;
 }
 
@@ -364,7 +365,7 @@
   justify-content: center;
   border: 1px solid #d1d5db;
   background: white;
-  border-radius: 8px;
+  border-radius: 2px;
   font-size: 14px;
   color: #374151;
   cursor: pointer;
@@ -382,9 +383,9 @@
 }
 
 .pageButton.active {
-  background: #6b7280;
+  background: var(--black);
   color: white;
-  border-color: #6b7280;
+  border-color: var(--black);
 }
 
 /* 초기 상태 */
@@ -398,7 +399,7 @@
   text-align: center;
   background: white;
   padding: 40px;
-  border-radius: 16px;
+  border-radius: 2px;
   border: 1px solid #e5e5e5;
 }
 
@@ -457,8 +458,8 @@
   }
 
   .productGrid {
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
   }
 
   .filtersSection {
@@ -501,8 +502,8 @@
   }
 
   .productGrid {
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
   }
 
   .popularTag,

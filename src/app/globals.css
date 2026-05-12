@@ -7,20 +7,20 @@
   --font-heading: "Noto Serif KR", "Apple Myungjo", serif;
   --black: #0a0a0a;
   --text: #1a1a1a;
-  --text-subtle: #6f675f;
-  --text-soft: #978f86;
-  --off-white: #f5f4f0;
-  --surface: #fbfaf7;
+  --text-subtle: #697386;
+  --text-soft: #9aa3af;
+  --off-white: #f7f7f7;
+  --surface: #f7f7f7;
   --surface-raised: #ffffff;
-  --surface-muted: #efebe4;
-  --line: #e7e2db;
-  --line-strong: #d7d0c7;
+  --surface-muted: #eeeeee;
+  --line: #dedede;
+  --line-strong: #c8c8c8;
   --action: var(--black);
   --action-hover: #262626;
   --action-soft: rgba(10, 10, 10, 0.08);
   --point: #8f4a43;
   --point-hover: #743933;
-  --point-soft: #f2e6e1;
+  --point-soft: #f5eeee;
   --success: #3d6651;
   --warning: #b48733;
   --error: #b34b45;
@@ -51,9 +51,9 @@
   --radius-lg: 2px;
   --radius-xl: 2px;
   --radius-pill: 999px;
-  --shadow-sm: 0 6px 16px rgba(10, 10, 10, 0.04);
-  --shadow-md: 0 12px 28px rgba(10, 10, 10, 0.08);
-  --shadow-lg: 0 18px 40px rgba(10, 10, 10, 0.12);
+  --shadow-sm: 0 1px 0 rgba(10, 10, 10, 0.04);
+  --shadow-md: 0 4px 12px rgba(10, 10, 10, 0.06);
+  --shadow-lg: 0 8px 20px rgba(10, 10, 10, 0.08);
 }
 
 html,

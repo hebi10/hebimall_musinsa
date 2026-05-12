@@ -1,7 +1,8 @@
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem 1rem;
+  padding: 2rem 1rem 4rem;
+  background: var(--off-white);
 }
 
 .breadcrumb {
@@ -13,13 +14,13 @@
 }
 
 .breadcrumbLink {
-  color: #4299e1;
+  color: var(--text-subtle);
   text-decoration: none;
   transition: color 0.2s;
 }
 
 .breadcrumbLink:hover {
-  color: #3182ce;
+  color: var(--black);
 }
 
 .breadcrumbSeparator {
@@ -33,20 +34,22 @@
 }
 
 .header {
-  text-align: center;
-  margin-bottom: 3rem;
+  text-align: left;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid #13233a;
 }
 
 .title {
-  font-size: 2.5rem;
+  font-size: 1.2rem;
   font-weight: bold;
-  color: #1a202c;
+  color: #0a1628;
   margin-bottom: 0.5rem;
 }
 
 .subtitle {
-  font-size: 1.125rem;
-  color: #666;
+  font-size: 0.86rem;
+  color: #697386;
 }
 
 .filterSection {
@@ -55,8 +58,9 @@
   align-items: center;
   margin-bottom: 2rem;
   padding: 1rem;
-  background: #f8f9fa;
-  border-radius: 8px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 2px;
 }
 
 .sortSection {
@@ -68,7 +72,7 @@
 .sortSelect {
   padding: 0.5rem 1rem;
   border: 1px solid #d1d5db;
-  border-radius: 6px;
+  border-radius: 2px;
   background: white;
   font-size: 0.875rem;
   cursor: pointer;
@@ -90,23 +94,24 @@
 .categoryPath {
   color: #666;
   font-family: monospace;
-  background: #f1f5f9;
+  background: #fff;
+  border: 1px solid var(--line);
   padding: 0.25rem 0.5rem;
-  border-radius: 4px;
+  border-radius: 2px;
 }
 
 .productsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
   margin-bottom: 3rem;
 }
 
 .productCard {
   display: block;
   background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
   overflow: hidden;
   transition: all 0.3s ease;
   text-decoration: none;
@@ -114,9 +119,9 @@
 }
 
 .productCard:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-  border-color: #d1d5db;
+  transform: none;
+  box-shadow: none;
+  border-color: var(--black);
 }
 
 .productImage {
@@ -135,7 +140,7 @@
 }
 
 .productCard:hover .productImg {
-  transform: scale(1.05);
+  transform: scale(1.03);
 }
 
 .imagePlaceholder {
@@ -144,7 +149,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  background: #eeeeee;
 }
 
 .placeholderContent {
@@ -176,7 +181,7 @@
   background: rgba(245, 244, 240, 0.92);
   color: var(--black);
   padding: 0.28rem 0.58rem;
-  border-radius: 999px;
+  border-radius: 2px;
   font-size: 0.64rem;
   font-weight: 700;
   letter-spacing: 0.16em;
@@ -190,7 +195,7 @@
   background: rgba(255, 255, 255, 0.9);
   color: var(--black);
   padding: 0.28rem 0.58rem;
-  border-radius: 999px;
+  border-radius: 2px;
   font-size: 0.64rem;
   font-weight: 700;
   letter-spacing: 0.16em;
@@ -286,16 +291,16 @@
 .backButton {
   display: inline-block;
   padding: 0.75rem 1.5rem;
-  background: #4299e1;
+  background: var(--black);
   color: white;
   text-decoration: none;
-  border-radius: 6px;
+  border-radius: 2px;
   font-weight: 500;
   transition: background-color 0.2s;
 }
 
 .backButton:hover {
-  background: #3182ce;
+  background: var(--action-hover);
 }
 
 .loadingMessage {
@@ -308,7 +313,7 @@
   width: 40px;
   height: 40px;
   border: 4px solid #f3f4f6;
-  border-top: 4px solid #4299e1;
+  border-top: 4px solid var(--black);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 1rem;
@@ -332,17 +337,17 @@
 
 .retryButton {
   padding: 0.75rem 1.5rem;
-  background: #ef4444;
+  background: var(--black);
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 2px;
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
 .retryButton:hover {
-  background: #dc2626;
+  background: var(--action-hover);
 }
 
 /* 반응형 디자인 */
@@ -368,8 +373,8 @@
   }
   
   .productsGrid {
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
   }
   
   .productImage {
@@ -379,7 +384,7 @@
 
 @media (max-width: 480px) {
   .productsGrid {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   
   .productImage {

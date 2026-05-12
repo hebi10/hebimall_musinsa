@@ -25,3 +25,4 @@
 - 2026-05-11 현재 로컬 샌드박스는 npm registry 접근이 캐시 전용으로 제한되어 `eslint`, `eslint-config-next`, `@eslint/eslintrc` 설치와 `package-lock.json` 갱신이 완료되지 않았다.
 - 따라서 `npm run lint`는 설정/스크립트는 준비됐지만 로컬 `node_modules/.bin/eslint` 부재로 실패한다.
 - 네트워크 가능한 환경에서 `npm install`을 한 번 실행해 lockfile을 갱신한 뒤 `npm run lint`와 `npm run ci`를 다시 확인해야 한다.
+- 2026-05-12: `package-lock.json`의 루트 `devDependencies`에 ESLint 관련 항목을 package.json과 맞춰 반영했다. 다만 이 샌드박스는 `@eslint/eslintrc` 캐시가 없어 `npm install --prefer-offline`이 `ENOTCACHED`로 실패하므로 실제 `node_modules` 복구는 네트워크 가능한 로컬 터미널에서 진행해야 한다.

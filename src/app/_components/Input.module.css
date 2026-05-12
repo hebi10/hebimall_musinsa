@@ -12,14 +12,15 @@
 
 .input {
   width: 100%;
-  padding: 0.5rem 0.75rem;
+  min-height: 42px;
+  padding: 0.65rem 0.75rem;
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-md);
   box-shadow: none;
-  font-size: 1rem;
+  font-size: 0.875rem;
   color: var(--black);
   background-color: var(--color-bg-primary);
-  transition: all 0.2s;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .input::placeholder {

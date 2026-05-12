@@ -1,12 +1,12 @@
 .header {
-  background-color: var(--color-bg-primary);
-  border-bottom: 1px solid var(--line);
+  background-color: var(--off-white);
+  border-bottom: 1px solid #13233a;
 }
 
 .container {
-  max-width: 1280px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem 1rem;
+  padding: 2.25rem 1rem 1.4rem;
 }
 
 @media (min-width: 640px) {
@@ -30,7 +30,7 @@
   align-items: center;
   gap: 0.5rem;
   font-size: 0.875rem;
-  color: var(--text-subtle);
+  color: #697386;
 }
 
 .breadcrumbItem {
@@ -57,14 +57,16 @@
 }
 
 .title {
-  font-size: 1.875rem;
-  font-weight: bold;
-  color: var(--black);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #0a1628;
   margin: 0;
+  letter-spacing: -0.02em;
 }
 
 .description {
-  margin-top: 0.5rem;
-  font-size: 1.125rem;
-  color: var(--text-subtle);
+  margin-top: 0.45rem;
+  font-size: 0.86rem;
+  line-height: 1.6;
+  color: #697386;
 }

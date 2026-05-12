@@ -1,13 +1,13 @@
 .container {
   min-height: 100vh;
-  background-color: #ffffff;
+  background-color: var(--off-white);
 }
 
 /* 페이지 헤더 */
 .pageHeader {
-  border-bottom: 1px solid #e8e8e8;
+  border-bottom: 1px solid #13233a;
   padding: 2.5rem 1rem 2rem;
-  background: #ffffff;
+  background: var(--off-white);
 }
 
 .pageHeaderInner {
@@ -20,7 +20,7 @@
 }
 
 .pageTitle {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: 700;
   color: #111111;
   margin: 0;
@@ -34,7 +34,7 @@
 
 /* Content Section */
 .contentSection {
-  max-width: 1280px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 3rem 2rem;
 }
@@ -99,7 +99,7 @@
 .categoryCard {
   display: block;
   background: white;
-  border-radius: 8px;
+  border-radius: 2px;
   overflow: hidden;
   text-decoration: none;
   color: inherit;
