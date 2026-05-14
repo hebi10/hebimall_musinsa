@@ -61,3 +61,10 @@
 - 장바구니와 checkout의 예상 금액 계산을 `src/shared/utils/orderPricing.ts`로 통합했다.
 - checkout은 이미 할인된 상품 단가에서 상품 할인액을 다시 차감하지 않고, 서버 주문 생성은 기존처럼 Functions에서 최종 재계산한다.
 - `src/app/categories/[category]/products/[productId]/page.test.tsx`로 카테고리 상세의 장바구니/바로구매 동작을 회귀 테스트한다.
+
+## 2026-05-12 주문 취소 서버화
+- `/api/order`에 `action: "cancel"` 분기를 추가해 고객 주문 취소도 Functions 트랜잭션에서 처리한다.
+- 고객 취소는 주문 소유자이고 상태가 `pending` 또는 `confirmed`일 때만 허용한다. 관리자가 `updateStatus`로 `cancelled` 전환하는 경우에도 같은 복구 트랜잭션을 사용한다.
+- 취소 트랜잭션은 주문 상태 변경, `statusHistory` 기록, 상품 재고 복원, 사용 포인트 환급, 사용 쿠폰 복원을 함께 처리한다.
+- 새 주문 생성 시 쿠폰 복구를 위해 `userCouponId`, `couponId`를 주문 문서에 저장한다. 기존 주문 중 이 필드가 없는 주문은 쿠폰 복구 대상 식별이 제한된다.
+- 주문 상품 조회는 최상위 `products/{productId}`만 기준으로 단일화했고, `categories/{id}/products` 전체 스캔 fallback은 제거했다.

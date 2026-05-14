@@ -2,11 +2,12 @@
 
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import Link from 'next/link';
 import styles from './ChatWidget.module.css';
 
 // ─── 상수 ──────────────────────────────────────────────
-const CHAT_API_URL = '/api/chat';
+function getChatAPIUrl(): string {
+  return process.env.NEXT_PUBLIC_CHAT_API_URL?.trim() || '/api/chat';
+}
 const TYPING_DELAY_BASE = 800;
 const TYPING_DELAY_RANGE = 400;
 const SCROLL_THRESHOLD = 50;
@@ -95,7 +96,7 @@ function typingDelay(): Promise<void> {
 
 // ─── API 호출 함수 ─────────────────────────────────────
 async function callChatAPI(params: ChatAPIParams): Promise<ChatAPIResponse> {
-  const response = await fetch(CHAT_API_URL, {
+  const response = await fetch(getChatAPIUrl(), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(params),
@@ -144,6 +145,7 @@ const ChatWidget: React.FC = () => {
   const [chatMode, setChatMode] = useState<ChatMode>('idle');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
+  const [isAgentConnectRequested, setIsAgentConnectRequested] = useState(false);
 
   // Refs
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -209,15 +211,16 @@ const ChatWidget: React.FC = () => {
 
     switch (chatMode) {
       case 'active':
-        return '문의 목적 선택 또는 직접 입력';
+        return isAgentConnectRequested ? '상담 연결 후 직접 입력' : '상담원 연결 후 직접 입력';
       default:
         return '채팅 상담을 시작해보세요';
     }
-  }, [isMounted, chatMutation.isPending, chatMode]);
+  }, [isMounted, chatMutation.isPending, chatMode, isAgentConnectRequested]);
 
   // ── 채팅 시작 ─────────────────────────────────────
   const startChat = useCallback(() => {
     setChatMode('active');
+    setIsAgentConnectRequested(false);
     setMessages([createMessage(INITIAL_BOT_TEXT, 'bot')]);
 
     setTimeout(() => {
@@ -242,6 +245,7 @@ const ChatWidget: React.FC = () => {
       // 상담 연결 요청은 API 호출 없이 접수 안내를 먼저 표시한다.
       if (isConnect) {
         setChatMode('active');
+        setIsAgentConnectRequested(true);
         setMessages((prev) => [
           ...prev,
           createMessage(messageText, 'user'),
@@ -303,7 +307,7 @@ const ChatWidget: React.FC = () => {
   );
 
   // ── 파생 disabled 상태 ────────────────────────────
-  const isInputDisabled = chatMutation.isPending || chatMode === 'idle';
+  const isInputDisabled = chatMutation.isPending || chatMode === 'idle' || !isAgentConnectRequested;
   const isSendDisabled = !inputValue.trim() || isInputDisabled;
 
   const toggleChat = useCallback(() => {
@@ -317,7 +321,11 @@ const ChatWidget: React.FC = () => {
   return (
     <div className={styles.chatWidget}>
       {/* 채팅 창 */}
-      <div className={`${styles.chatWindow} ${isOpen ? styles.open : ''}`}>
+      <div
+        className={`${styles.chatWindow} ${isOpen ? styles.open : ''} ${
+          isAgentConnectRequested ? styles.agentConnected : ''
+        }`}
+      >
         {/* 헤더 */}
         <div className={styles.chatHeader}>
           <div>
@@ -407,7 +415,7 @@ const ChatWidget: React.FC = () => {
         </div>
 
         {/* 빠른 선택 버튼 */}
-        {isChatActive && (
+        {isChatActive && !isAgentConnectRequested && (
           <div className={styles.quickButtons}>
             {QUICK_BUTTONS.map((label) => (
               <button
@@ -422,15 +430,6 @@ const ChatWidget: React.FC = () => {
           </div>
         )}
 
-        {isChatActive && (
-          <div className={styles.supportActions}>
-            <Link href="/mypage/order-list">주문내역</Link>
-            <Link href="/orders/delivery">배송조회</Link>
-            <Link href="/cs/inquiry">1:1 문의</Link>
-            <Link href="/qna">상품문의</Link>
-          </div>
-        )}
-
         {/* 입력 영역 */}
         {isChatActive && (
           <div className={styles.chatInput}>
@@ -442,9 +441,9 @@ const ChatWidget: React.FC = () => {
                 onChange={handleInputChange}
                 onKeyDown={handleKeyDown}
                 placeholder={
-                  chatMode === 'active'
+                  chatMode === 'active' && isAgentConnectRequested
                     ? '메시지를 입력하세요...'
-                    : '상담을 시작해 주세요'
+                    : '상담원 연결 후 메시지를 입력하세요'
                 }
                 disabled={isInputDisabled}
                 rows={1}

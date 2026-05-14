@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Product } from '@/shared/types/product';
 import { useProduct } from '@/context/productProvider';
@@ -10,64 +9,11 @@ import { useUserActivity } from '@/context/userActivityProvider';
 import { useAddToCart } from '@/shared/hooks/useCart';
 import { useProductImageCache } from '@/shared/hooks/useImageCache';
 import { getProductReviewStats } from '@/shared/utils/syncProductReviews';
+import { getProductColorValue } from '@/shared/utils/productColor';
 import Button from '@/app/_components/Button';
 import ProductCard from './ProductCard';
 import ProductReviews from './ProductReviews';
 import styles from './ProductDetail.module.css';
-
-// 색상명을 CSS 색상값으로 변환하는 함수
-const getColorValue = (colorName: string): string => {
-  const colorMap: Record<string, string> = {
-    '검정': '#000000',
-    '검은색': '#000000',
-    '블랙': '#000000',
-    'black': '#000000',
-    '흰색': '#ffffff',
-    '화이트': '#ffffff',
-    'white': '#ffffff',
-    '빨간색': '#dc3545',
-    '빨강': '#dc3545',
-    '레드': '#dc3545',
-    'red': '#dc3545',
-    '파란색': '#007bff',
-    '파랑': '#007bff',
-    '블루': '#007bff',
-    'blue': '#007bff',
-    '초록색': '#28a745',
-    '초록': '#28a745',
-    '그린': '#28a745',
-    'green': '#28a745',
-    '노란색': '#ffc107',
-    '노랑': '#ffc107',
-    '옐로우': '#ffc107',
-    'yellow': '#ffc107',
-    '보라색': '#6f42c1',
-    '보라': '#6f42c1',
-    '퍼플': '#6f42c1',
-    'purple': '#6f42c1',
-    '분홍색': '#e83e8c',
-    '분홍': '#e83e8c',
-    '핑크': '#e83e8c',
-    'pink': '#e83e8c',
-    '주황색': '#fd7e14',
-    '주황': '#fd7e14',
-    '오렌지': '#fd7e14',
-    'orange': '#fd7e14',
-    '회색': '#6c757d',
-    '그레이': '#6c757d',
-    'gray': '#6c757d',
-    'grey': '#6c757d',
-    '네이비': '#1a1a2e',
-    'navy': '#1a1a2e',
-    '베이지': '#f5f5dc',
-    'beige': '#f5f5dc',
-    '갈색': '#8b4513',
-    '브라운': '#8b4513',
-    'brown': '#8b4513'
-  };
-  
-  return colorMap[colorName.toLowerCase()] || '#cccccc';
-};
 
 interface Props {
   product: Product;
@@ -76,20 +22,18 @@ interface Props {
 export default function ProductDetailClient({ product }: Props) {
   const router = useRouter();
   const { user } = useAuth();
-  const { addRecentProduct, addToWishlist, removeFromWishlist, isInWishlist } = useUserActivity();
+  const { wishlistItems, addRecentProduct, addToWishlist, removeFromWishlist } = useUserActivity();
   const { 
     relatedProducts, 
-    getProductById, 
     loadRelatedProducts,
     calculateDiscountPrice, 
-    isInStock,
-    loading 
+    isInStock
   } = useProduct();
 
   const addToCartMutation = useAddToCart();
 
   // 상품 이미지 캐싱
-  const { data: cachedImages, isLoading: imagesLoading } = useProductImageCache(product, !!product);
+  useProductImageCache(product, !!product);
 
   const [selectedSize, setSelectedSize] = useState<string>('');
   const [selectedColor, setSelectedColor] = useState<string>('');
@@ -122,6 +66,9 @@ export default function ProductDetailClient({ product }: Props) {
   // 유효한 이미지들만 필터링 (재정렬된 배열 기준)
   const validImages = reorderedImages.filter((_, index) => !imageErrors[index]);
   const currentImageSrc = validImages[selectedImageIndex] || reorderedImages[0] || '/placeholder-image.svg';
+  const detailImages = Array.isArray(product.detailImages)
+    ? product.detailImages.filter((image): image is string => typeof image === 'string' && image.trim().length > 0)
+    : [];
 
   // 컴포넌트 마운트 시 대표 이미지가 첫 번째로 보이도록 설정
   useEffect(() => {
@@ -132,9 +79,17 @@ export default function ProductDetailClient({ product }: Props) {
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [isWishlistLoading, setIsWishlistLoading] = useState(false);
   const [actualReviewStats, setActualReviewStats] = useState<{ reviewCount: number; rating: number } | null>(null);
+  const [optimisticWishlisted, setOptimisticWishlisted] = useState<boolean | null>(null);
 
   // 찜 상태 확인
-  const isWishlisted = user?.uid ? isInWishlist(product.id) : false;
+  const storedWishlisted = user?.uid
+    ? wishlistItems.some(item => item.productId === product.id)
+    : false;
+  const isWishlisted = optimisticWishlisted ?? storedWishlisted;
+
+  useEffect(() => {
+    setOptimisticWishlisted(null);
+  }, [product.id, user?.uid, storedWishlisted]);
 
   // 컴포넌트 마운트 시 상품 정보와 연관 상품 로드
   useEffect(() => {
@@ -285,16 +240,17 @@ export default function ProductDetailClient({ product }: Props) {
     }
 
     setIsWishlistLoading(true);
+    const nextWishlisted = !isWishlisted;
+    setOptimisticWishlisted(nextWishlisted);
     
     try {
       if (isWishlisted) {
         await removeFromWishlist(product.id);
-        alert('찜 목록에서 제거되었습니다.');
       } else {
         await addToWishlist(product.id);
-        alert('찜 목록에 추가되었습니다.');
       }
     } catch (error) {
+      setOptimisticWishlisted(isWishlisted);
       console.error('찜하기 토글 실패:', error);
       if (error instanceof Error) {
         alert(error.message);
@@ -434,7 +390,7 @@ export default function ProductDetailClient({ product }: Props) {
                       onClick={() => setSelectedColor(color)}
                       title={color}
                       disabled={!inStock}
-                      style={{ backgroundColor: getColorValue(color) }}
+                      style={{ backgroundColor: getProductColorValue(color) }}
                     />
                   ))}
                 </div>
@@ -470,8 +426,16 @@ export default function ProductDetailClient({ product }: Props) {
               onClick={handleWishlistToggle}
               disabled={isWishlistLoading}
               title={isWishlisted ? '찜 해제' : '찜하기'}
+              aria-label={isWishlisted ? '찜 해제' : '찜하기'}
+              aria-busy={isWishlistLoading}
             >
-              {isWishlisted ? '찜 해제' : '찜하기'}
+              <svg
+                className={styles.wishlistIcon}
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z" />
+              </svg>
             </button>
             <Button
               variant="secondary"
@@ -596,6 +560,19 @@ export default function ProductDetailClient({ product }: Props) {
                   <span className={styles.detailValue}>{product.details?.precautions || '정보 없음'}</span>
                 </div>
               </div>
+
+              {detailImages.length > 0 && (
+                <div className={styles.detailImages}>
+                  {detailImages.map((image, index) => (
+                    <img
+                      key={image}
+                      src={image}
+                      alt={`${product.name} 상세 이미지 ${index + 1}`}
+                      className={styles.detailImage}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           )}
 

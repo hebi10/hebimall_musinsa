@@ -49,6 +49,8 @@ export interface Order {
   discountAmount?: number;
   deliveryFee?: number;
   pointUsed?: number;
+  userCouponId?: string;
+  couponId?: string;
   finalAmount: number;
   status: OrderStatus;
   paymentMethod?: PaymentMethod;
@@ -62,6 +64,7 @@ export interface Order {
   estimatedDeliveryDate?: Date;
   cancelReason?: string;
   cancelledAt?: Date;
+  cancellationRestoredAt?: Date;
 }
 
 export interface OrderHistory {

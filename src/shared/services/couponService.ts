@@ -410,9 +410,9 @@ export class CouponService {
   /**
    * 쿠폰 사용 (REST API 호출)
    */
-  static async useCoupon(
-    userCouponId: string, 
-    orderId: string, 
+  static async redeemCoupon(
+    userCouponId: string,
+    orderId: string,
     uid: string
   ): Promise<CouponResponse> {
     try {

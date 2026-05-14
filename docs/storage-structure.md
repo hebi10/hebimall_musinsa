@@ -90,10 +90,19 @@ npm run migrate:content-images:delete-originals
 ## Storage Rules
 
 - 읽기: 상품/카테고리/이벤트 이미지는 모든 사용자 허용
-- 쓰기: 관리자만 이미지 파일, 5MB 이하
+- 쓰기: 관리자 custom claim(`admin == true` 또는 `role == "admin"`) 사용자만 이미지 파일, 5MB 이하
 
 ## 주의사항
 
 - 이미지 업로드 전 카테고리 선택 필수
 - JPG, PNG, GIF, WebP를 입력으로 허용하되 최종 저장 파일은 WebP
 - 한 번 생성된 경로는 변경하지 않는 것을 권장
+
+## 2026-05-12 상품 상세 이미지 검토 메모
+
+- 현재 상품 이미지는 `products.images[]`와 `products.mainImage`로 관리되며, 관리자 업로드는 WebP q75로 변환해 Storage에 저장한다.
+- 목록 카드는 1:1, 상품 상세 상단 이미지는 4:5 비율 컨테이너에서 `object-fit: cover`로 보이므로 8:16 원본은 현재 화면에서 크게 잘릴 수 있다.
+- 긴 세로형 상세 이미지를 상품 상세 본문에 한 장씩 노출하려면 `detailImages` 같은 별도 필드와 상세 탭 렌더링을 추가하는 방식이 적합하다.
+- 샘플 상품 `products/ZEMIfgpl9ZLAG8lgkMub`는 상세 본문에서 `detailImages[]`를 읽어 세로형 WebP를 렌더링하도록 클라이언트가 준비됐다.
+- 상세 이미지도 기존 상품 이미지와 같은 카테고리 경로를 사용하되 파일명에 `detail` 용도를 포함한다. 예: `images/accessories/{productId}/{timestamp}_detail_0_q75.webp`.
+- 2026-05-12 현재 작업 환경은 Google OAuth/Firestore/Storage 요청이 프록시 `127.0.0.1:9 ECONNREFUSED`로 차단되어 실제 업로드와 Firestore 문서 갱신은 네트워크 가능한 환경에서 재실행해야 한다.

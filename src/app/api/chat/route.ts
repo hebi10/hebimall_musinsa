@@ -4,6 +4,7 @@ import { getMenuResponse, getAIFallbackResponse } from '@/shared/utils/chatRespo
 interface ChatRequest {
   message: string;
   useAI?: boolean;
+  conversationHistory?: Array<{ role: 'user' | 'assistant'; content: string }>;
 }
 
 const NO_STORE_HEADERS = {
@@ -14,13 +15,35 @@ const NO_STORE_HEADERS = {
 
 export async function POST(request: NextRequest) {
   try {
-    const { message, useAI = false }: ChatRequest = await request.json();
+    const payload: ChatRequest = await request.json();
+    const { message, useAI = false } = payload;
 
     if (!message?.trim()) {
       return NextResponse.json(
         { error: 'Message is required.' },
         { status: 400, headers: NO_STORE_HEADERS },
       );
+    }
+
+    const upstreamUrl = getUpstreamChatApiUrl(request);
+    if (upstreamUrl) {
+      const upstreamResponse = await fetch(upstreamUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...payload, useAI }),
+        cache: 'no-store',
+      });
+
+      const upstreamBody = await upstreamResponse.json().catch(() => null);
+
+      if (upstreamResponse.ok && upstreamBody) {
+        return NextResponse.json(upstreamBody, {
+          status: upstreamResponse.status,
+          headers: NO_STORE_HEADERS,
+        });
+      }
+
+      console.error('Upstream chat API error:', upstreamResponse.status, upstreamBody);
     }
 
     if (!useAI) {
@@ -40,5 +63,28 @@ export async function POST(request: NextRequest) {
       },
       { status: 500, headers: NO_STORE_HEADERS },
     );
+  }
+}
+
+function getUpstreamChatApiUrl(request: NextRequest): string | null {
+  const configuredUrl = (
+    process.env.CHAT_API_URL ||
+    process.env.NEXT_PUBLIC_CHAT_API_URL ||
+    ''
+  ).trim();
+
+  if (!configuredUrl || configuredUrl === '/api/chat') return null;
+
+  try {
+    const upstreamUrl = new URL(configuredUrl);
+    const requestUrl = new URL(request.url);
+
+    if (upstreamUrl.origin === requestUrl.origin && upstreamUrl.pathname === requestUrl.pathname) {
+      return null;
+    }
+
+    return upstreamUrl.toString();
+  } catch {
+    return null;
   }
 }

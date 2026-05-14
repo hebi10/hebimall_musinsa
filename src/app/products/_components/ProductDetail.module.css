@@ -235,6 +235,7 @@
   cursor: pointer;
   transition: border-color 0.2s ease;
   position: relative;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
 }
 
 .colorButton::before {
@@ -247,6 +248,7 @@
 
 .colorButton.selected {
   border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px var(--color-white), 0 0 0 4px var(--color-primary);
 }
 
 .colorButton.black {
@@ -319,6 +321,16 @@
   box-shadow: none;
 }
 
+.wishlistIcon {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .wishlistButton:hover {
   border-color: var(--color-primary);
   transform: translateY(-1px);
@@ -332,6 +344,10 @@
   color: var(--color-white);
   transform: none;
   box-shadow: var(--shadow-sm);
+}
+
+.wishlistButton.wishlisted .wishlistIcon {
+  fill: currentColor;
 }
 
 .wishlistButton.wishlisted:hover {
@@ -429,6 +445,22 @@
   flex-direction: column;
   gap: var(--spacing-md);
   margin-top: var(--spacing-lg);
+}
+
+.detailImages {
+  display: grid;
+  gap: var(--spacing-lg);
+  margin-top: var(--spacing-xl);
+}
+
+.detailImage {
+  width: 100%;
+  max-width: 1080px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  border: 1px solid var(--line);
+  background: var(--color-white);
 }
 
 .detailItem {

@@ -116,7 +116,7 @@ export const useUsePoint = () => {
   const { user } = useAuth();
 
   return useMutation({
-    mutationFn: (data: UsePointRequest) => PointService.usePoint(data),
+    mutationFn: (data: UsePointRequest) => PointService.spendPoint(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['pointBalance', user?.uid] });
       queryClient.invalidateQueries({ queryKey: ['pointHistory', user?.uid] });

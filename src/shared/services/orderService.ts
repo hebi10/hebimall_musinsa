@@ -52,6 +52,12 @@ export interface CreateOrderResponse {
   status: OrderStatus;
 }
 
+interface CancelOrderRequest {
+  action: 'cancel';
+  orderId: string;
+  reason?: string;
+}
+
 async function getIdToken(): Promise<string> {
   const user = getAuth().currentUser;
   if (!user) {
@@ -96,6 +102,23 @@ async function callOrderAdminAPI(payload: Record<string, unknown>): Promise<void
   }
 }
 
+async function callOrderMutationAPI(payload: CancelOrderRequest): Promise<void> {
+  const token = await getIdToken();
+  const res = await fetch('/api/order', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || !data.success) {
+    throw new Error(data.error || '주문 요청에 실패했습니다.');
+  }
+}
+
 export class OrderService {
   private static readonly COLLECTION_NAME = 'orders';
 
@@ -125,6 +148,9 @@ export class OrderService {
         ? this.normalizeDate(data.estimatedDeliveryDate)
         : undefined,
       cancelledAt: data.cancelledAt ? this.normalizeDate(data.cancelledAt) : undefined,
+      cancellationRestoredAt: data.cancellationRestoredAt
+        ? this.normalizeDate(data.cancellationRestoredAt)
+        : undefined,
     } as Order;
   }
 
@@ -286,18 +312,11 @@ export class OrderService {
 
   static async cancelOrder(orderId: string, reason?: string): Promise<void> {
     try {
-      const orderRef = doc(db, this.COLLECTION_NAME, orderId);
-      const updateData: Record<string, any> = {
-        status: 'cancelled' as OrderStatus,
-        updatedAt: serverTimestamp(),
-      };
-
-      if (reason) {
-        updateData.cancelReason = reason;
-        updateData.cancelledAt = serverTimestamp();
-      }
-
-      await updateDoc(orderRef, updateData);
+      await callOrderMutationAPI({
+        action: 'cancel',
+        orderId,
+        reason,
+      });
     } catch (error) {
       console.error('Failed to cancel order:', error);
       throw error;

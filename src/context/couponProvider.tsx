@@ -139,7 +139,7 @@ export function CouponProvider({ children }: CouponProviderProps) {
 
     try {
       setLoading(true);
-      const response = await CouponService.useCoupon(userCouponId, orderId, user.uid);
+      const response = await CouponService.redeemCoupon(userCouponId, orderId, user.uid);
       
       if (response.success) {
         // 성공시 쿠폰 목록 새로고침

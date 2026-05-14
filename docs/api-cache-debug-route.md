@@ -13,6 +13,7 @@
 - 2026-05-12: 실시간 상담 목적 선택에 `상품 문의`를 추가하고 Next/API Functions 공통 응답 파일을 함께 갱신했다.
 - 2026-05-12: 실시간 상담의 상담 연결 intent를 버튼/자연어 중심으로 정리하고, 과거 붙임 명령어는 내부 호환만 처리하도록 Next/API Functions 공통 응답 파일을 함께 갱신했다.
 - 2026-05-12: `/api/order`는 주문 생성 외 관리자 주문 상태 변경 액션을 처리하며, `/api/coupon`은 관리자 쿠폰 마스터 생성/수정/보관 액션을 처리한다. 두 API 모두 인증 토큰 기반 민감 응답이라 `no-store` 대상이다.
+- 2026-05-14: 실시간 상담 위젯은 `NEXT_PUBLIC_CHAT_API_URL`이 있으면 해당 URL을 직접 호출하고, `/api/chat`은 `CHAT_API_URL` 또는 `NEXT_PUBLIC_CHAT_API_URL`이 절대 URL이면 upstream 상담 API로 no-store 프록시한 뒤 실패 시 기존 메뉴/fallback 응답으로 돌아간다.
 
 ## 검증
 - `rg --files src/app/api` 결과 경로 확인:
@@ -23,6 +24,11 @@
   - `Cache-Control: no-store, max-age=0`
   - `Pragma: no-cache`
   - `Expires: 0`
+- 2026-05-14 검증:
+  - `npm test -- --runTestsByPath src/app/_components/chat/ChatWidget.test.tsx --runInBand`: 통과.
+  - `npm test -- --runTestsByPath src/app/api/chat/route.test.ts --runInBand`: 통과.
+  - `npm run typecheck`: 통과.
+  - `npm run functions:build`: 통과.
 
 ## 남은 작업
 - 사용자 대상 공개 API 목록 확정 시 `API_PUBLIC_CACHE_RULES`에 개별 엔드포인트 등록 및 revalidate 값 조정.

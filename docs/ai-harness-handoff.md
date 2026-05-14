@@ -1,27 +1,26 @@
 ### commit message
-- `fix: stabilize admin dashboard query binding`
+- `fix: 상담원 연결 후 채팅 입력 활성화`
 
 ### 인수인계 (최대 3개)
-1. 관리자 대시보드 배포 오류 원인
-   - `/admin` 호스팅 화면의 `resolveSettledValue` 오류는 React Query가 `DashboardService.getDashboardStats`를 분리 호출하며 static 메서드 내부 `this`가 끊겨 발생.
-   - 로컬 회귀 테스트에서 같은 오류를 재현했다.
+1. 실시간 상담 UI
+   - 하단 `주문내역`, `배송조회`, `1:1 문의`, `상품문의` 이동 CTA를 제거했다.
+   - `상담원 연결` 요청 전에는 직접 입력창을 비활성화하고, 연결 후에만 입력/전송 가능하게 했다.
+   - `상담원 연결` 요청 후 빠른 선택 버튼을 숨기고, 메시지 영역을 기본 320px/연결 후 460px로 넓혔다.
 
-2. 수정 내용
-   - `DashboardService` 내부 정적 헬퍼 호출을 `DashboardService.*`로 바꿔 호출 컨텍스트 의존을 제거.
-   - `useDashboardQuery`의 `queryFn`은 `() => DashboardService.getDashboardStats()` 래퍼로 명시 호출.
-   - `src/shared/services/dashboardService.test.ts`에 분리 호출 회귀 테스트 추가.
+2. 상담 API 연동
+   - `ChatWidget`은 `NEXT_PUBLIC_CHAT_API_URL`이 있으면 해당 URL을 호출하고, 없으면 `/api/chat`을 호출한다.
+   - `/api/chat`은 `CHAT_API_URL` 또는 `NEXT_PUBLIC_CHAT_API_URL` 절대 URL이 있으면 upstream 상담 API로 no-store 프록시한다.
+   - upstream 실패 시 기존 메뉴/fallback 응답으로 돌아가므로 로컬 키가 없어도 기본 상담은 유지된다.
 
-3. 배포 반영
-   - 현재 코드는 수정됐지만 호스팅 페이지에는 재빌드/재배포 후 반영된다.
-   - 배포 전 관리자 계정으로 `/admin` 진입을 한 번 확인하면 된다.
+3. 문서
+   - `docs/design-system-refactor.md`와 `docs/api-cache-debug-route.md`에 UI/상담 API 변경 이력을 반영했다.
 
 ### 검증
+- `npm test -- --runTestsByPath src/app/_components/chat/ChatWidget.test.tsx --runInBand`: 통과.
+- `npm test -- --runTestsByPath src/app/api/chat/route.test.ts --runInBand`: 통과.
 - `npm run typecheck`: 통과.
-- `npm test -- --runTestsByPath src/shared/services/dashboardService.test.ts`: 통과.
-- `npx eslint src/shared/services/dashboardService.ts src/shared/services/dashboardService.test.ts src/shared/hooks/useDashboardQuery.ts`: 통과.
-- `npm run build`: 컴파일 성공 후 현재 환경의 Next worker `spawn EPERM` 제약으로 중단.
+- `npm run lint`: 통과, 기존 warning 254개 잔존.
+- `npm run functions:build`: 통과.
 
 ### 남은 작업 (최대 3개)
-1. `npm run deploy:firebase` 또는 기존 배포 절차로 호스팅 재배포.
-2. 배포 후 관리자 계정으로 `/admin`에서 대시보드 카드/차트 로딩 확인.
-3. 전체 lint 부채가 정리되면 `npm run ci` 재확인.
+1. 로컬 브라우저에서 실시간 상담 팝업을 열고 연결 전 입력 비활성, 연결 후 입력 활성, 확장된 높이를 시각 확인한다.

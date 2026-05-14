@@ -1,7 +1,7 @@
 import { onRequest } from "firebase-functions/v2/https";
 import * as admin from "firebase-admin";
 import { calculateDeliveryFee } from "../domain/orderDomain";
-import { AuthError, verifyAuthContext } from "../utils/auth";
+import { AuthContext, AuthError, verifyAuthContext } from "../utils/auth";
 
 type DeliveryOption = "standard" | "express";
 
@@ -27,6 +27,12 @@ interface RawUpdateOrderStatusRequest {
   action?: unknown;
   orderId?: unknown;
   status?: unknown;
+  reason?: unknown;
+}
+
+interface RawCancelOrderRequest {
+  action?: unknown;
+  orderId?: unknown;
   reason?: unknown;
 }
 
@@ -64,6 +70,17 @@ interface DeliveryAddress {
 interface ProductRef {
   ref: admin.firestore.DocumentReference;
   data: admin.firestore.DocumentData;
+}
+
+interface CancellationRestorationRefs {
+  productChanges: Array<{
+    ref: admin.firestore.DocumentReference;
+    quantity: number;
+  }>;
+  userRef: admin.firestore.DocumentReference | null;
+  userData: admin.firestore.DocumentData | null;
+  userCouponRef: admin.firestore.DocumentReference | null;
+  userCouponData: admin.firestore.DocumentData | null;
 }
 
 interface CartItemSummary {
@@ -117,6 +134,8 @@ const ALLOWED_ORDER_STATUS_TRANSITIONS: Record<string, string[]> = {
   returned: [],
   exchanged: [],
 };
+
+const CUSTOMER_CANCELLABLE_STATUSES = new Set(["pending", "confirmed"]);
 
 function applyNoStoreHeaders(response: any): void {
   Object.entries(NO_STORE_HEADERS).forEach(([key, value]) => {
@@ -326,19 +345,199 @@ async function findProductSnapshot(
     return { ref: topLevelRef, data: topLevelSnap.data() || {} };
   }
 
-  const categoriesSnap = await transaction.get(admin.firestore().collection("categories"));
-  for (const category of categoriesSnap.docs) {
-    const candidateRef = category.ref.collection("products").doc(productId);
-    const candidateSnap = await transaction.get(candidateRef);
-    if (candidateSnap.exists) {
-      return {
-        ref: candidateRef,
-        data: candidateSnap.data() || {},
-      };
+  return null;
+}
+
+function getOrderProducts(data: admin.firestore.DocumentData): Array<Record<string, unknown>> {
+  return Array.isArray(data.products) ? data.products.filter((item) => item && typeof item === "object") : [];
+}
+
+function getOrderUserCouponId(data: admin.firestore.DocumentData): string {
+  return toStringValue(data.userCouponId) || toStringValue(data.appliedUserCouponId);
+}
+
+async function readCancellationRestorationRefs(
+  transaction: admin.firestore.Transaction,
+  orderId: string,
+  orderData: admin.firestore.DocumentData
+): Promise<CancellationRestorationRefs> {
+  const productChanges: CancellationRestorationRefs["productChanges"] = [];
+
+  for (const item of getOrderProducts(orderData)) {
+    const productId = toStringValue(item.productId);
+    const quantity = toNonNegativeInteger(item.quantity);
+    if (!productId || quantity <= 0) {
+      continue;
+    }
+
+    const productSnapshot = await findProductSnapshot(transaction, productId);
+    if (productSnapshot) {
+      productChanges.push({
+        ref: productSnapshot.ref,
+        quantity,
+      });
+    } else {
+      console.warn(`Cancellation stock restore skipped. Product not found: ${productId}`);
     }
   }
 
-  return null;
+  const pointUsed = toNonNegativeInteger(orderData.pointUsed);
+  const orderUserId = toStringValue(orderData.userId);
+  const userRef = pointUsed > 0 && orderUserId
+    ? admin.firestore().collection("users").doc(orderUserId)
+    : null;
+  const userSnap = userRef ? await transaction.get(userRef) : null;
+
+  const userCouponId = getOrderUserCouponId(orderData);
+  const userCouponRef = userCouponId ? admin.firestore().collection("user_coupons").doc(userCouponId) : null;
+  const userCouponSnap = userCouponRef ? await transaction.get(userCouponRef) : null;
+
+  return {
+    productChanges,
+    userRef,
+    userData: userSnap?.exists ? userSnap.data() || {} : null,
+    userCouponRef,
+    userCouponData: userCouponSnap?.exists ? userCouponSnap.data() || {} : null,
+  };
+}
+
+function ensureCancellationAllowed(
+  orderId: string,
+  orderData: admin.firestore.DocumentData,
+  authContext: AuthContext,
+  actor: "customer" | "admin"
+): string {
+  const orderUserId = toStringValue(orderData.userId);
+  if (!authContext.isAdmin && orderUserId !== authContext.uid) {
+    throw new AuthError(403, "You can only cancel your own order.");
+  }
+
+  const currentStatus = toStringValue(orderData.status) || "pending";
+  if (currentStatus === "cancelled") {
+    return currentStatus;
+  }
+
+  if (actor === "customer" && !CUSTOMER_CANCELLABLE_STATUSES.has(currentStatus)) {
+    throw new Error("This order can no longer be cancelled by the customer.");
+  }
+
+  if (actor === "admin" && !ALLOWED_ORDER_STATUS_TRANSITIONS[currentStatus]?.includes("cancelled")) {
+    throw new Error(`Invalid status transition: ${currentStatus} -> cancelled`);
+  }
+
+  if (!orderId) {
+    throw new Error("orderId is required.");
+  }
+
+  return currentStatus;
+}
+
+async function cancelOrderInTransaction(
+  transaction: admin.firestore.Transaction,
+  orderId: string,
+  authContext: AuthContext,
+  reason: string,
+  actor: "customer" | "admin"
+): Promise<{
+  orderId: string;
+  previousStatus: string;
+  status: string;
+  restored: boolean;
+}> {
+  const orderRef = admin.firestore().collection("orders").doc(orderId);
+  const orderSnap = await transaction.get(orderRef);
+
+  if (!orderSnap.exists) {
+    throw new Error("Order not found.");
+  }
+
+  const orderData = orderSnap.data() || {};
+  const currentStatus = ensureCancellationAllowed(orderId, orderData, authContext, actor);
+  if (currentStatus === "cancelled") {
+    return {
+      orderId,
+      previousStatus: currentStatus,
+      status: "cancelled",
+      restored: false,
+    };
+  }
+
+  const alreadyRestored = Boolean(orderData.cancellationRestoredAt);
+  const restorationRefs = alreadyRestored
+    ? {
+        productChanges: [],
+        userRef: null,
+        userData: null,
+        userCouponRef: null,
+        userCouponData: null,
+      }
+    : await readCancellationRestorationRefs(transaction, orderId, orderData);
+
+  const now = admin.firestore.FieldValue.serverTimestamp();
+  const statusHistoryEntry = {
+    from: currentStatus,
+    to: "cancelled",
+    reason,
+    changedBy: authContext.uid,
+    actor,
+    changedAt: admin.firestore.Timestamp.now(),
+  };
+
+  for (const change of restorationRefs.productChanges) {
+    transaction.update(change.ref, {
+      stock: admin.firestore.FieldValue.increment(change.quantity),
+      updatedAt: now,
+    });
+  }
+
+  const pointUsed = toNonNegativeInteger(orderData.pointUsed);
+  const orderUserId = toStringValue(orderData.userId);
+  if (pointUsed > 0 && restorationRefs.userRef && restorationRefs.userData) {
+    const currentPointBalance = toNumber(restorationRefs.userData.pointBalance, 0);
+    const nextPointBalance = currentPointBalance + pointUsed;
+    transaction.update(restorationRefs.userRef, {
+      pointBalance: nextPointBalance,
+      updatedAt: now,
+    });
+    transaction.set(restorationRefs.userRef.collection("pointHistory").doc(), {
+      type: "refund",
+      amount: pointUsed,
+      description: "주문 취소 포인트 복원",
+      orderId,
+      date: now,
+      balanceAfter: nextPointBalance,
+      expired: false,
+    });
+  }
+
+  if (restorationRefs.userCouponRef && restorationRefs.userCouponData) {
+    const couponUid = toStringValue(restorationRefs.userCouponData.uid);
+    const couponOrderId = toStringValue(restorationRefs.userCouponData.orderId);
+    if (couponUid === orderUserId && couponOrderId === orderId) {
+      transaction.update(restorationRefs.userCouponRef, {
+        status: USER_COUPON_AVAILABLE_STATUSES[0],
+        usedDate: admin.firestore.FieldValue.delete(),
+        orderId: admin.firestore.FieldValue.delete(),
+        updatedAt: now,
+      });
+    }
+  }
+
+  transaction.update(orderRef, {
+    status: "cancelled",
+    cancelReason: reason || (actor === "customer" ? "고객 직접 취소" : "관리자 상태 변경"),
+    cancelledAt: now,
+    cancellationRestoredAt: alreadyRestored ? orderData.cancellationRestoredAt : now,
+    updatedAt: now,
+    statusHistory: admin.firestore.FieldValue.arrayUnion(statusHistoryEntry),
+  });
+
+  return {
+    orderId,
+    previousStatus: currentStatus,
+    status: "cancelled",
+    restored: !alreadyRestored,
+  };
 }
 
 export const order = onRequest(
@@ -366,6 +565,11 @@ export const order = onRequest(
 
       if (action === "updateStatus") {
         await handleAdminOrderStatusUpdate(req.body as RawUpdateOrderStatusRequest, req.headers.authorization, res);
+        return;
+      }
+
+      if (action === "cancel") {
+        await handleOrderCancellation(req.body as RawCancelOrderRequest, req.headers.authorization, res);
         return;
       }
 
@@ -445,6 +649,8 @@ export const order = onRequest(
         let couponApplied = false;
         let couponFreeShipping = false;
         let userCouponRef: admin.firestore.DocumentReference | null = null;
+        let appliedUserCouponId = "";
+        let appliedCouponId = "";
 
         if (selectedCoupon) {
           userCouponRef = admin.firestore().collection("user_coupons").doc(selectedCoupon);
@@ -457,13 +663,18 @@ export const order = onRequest(
           if (userCoupon.uid !== authContext.uid) {
             throw new Error("Cannot use coupon of another user.");
           }
+          appliedUserCouponId = selectedCoupon;
+          appliedCouponId = toStringValue(userCoupon.couponId);
+          if (!appliedCouponId) {
+            throw new Error("Coupon master data not found.");
+          }
 
           const couponCurrentStatus = toStringValue(userCoupon.status);
           if (!USER_COUPON_AVAILABLE_STATUSES.includes(couponCurrentStatus)) {
             throw new Error("Coupon is not available.");
           }
 
-          const couponRef = admin.firestore().collection("coupons").doc(String(userCoupon.couponId));
+          const couponRef = admin.firestore().collection("coupons").doc(appliedCouponId);
           const couponSnap = await transaction.get(couponRef);
           if (!couponSnap.exists) {
             throw new Error("Coupon master data not found.");
@@ -519,6 +730,7 @@ export const order = onRequest(
           deliveryFee,
           finalAmount: Math.max(0, payableAmount - requestedPointAmount),
           pointUsed: requestedPointAmount,
+          ...(appliedUserCouponId ? { userCouponId: appliedUserCouponId, couponId: appliedCouponId } : {}),
           status: "pending",
           paymentMethod,
           shippingAddress: deliveryAddress,
@@ -613,6 +825,27 @@ export const order = onRequest(
   }
 );
 
+async function handleOrderCancellation(
+  payload: RawCancelOrderRequest,
+  authorization: string | undefined,
+  res: any
+): Promise<void> {
+  const authContext = await verifyAuthContext(authorization);
+  const orderId = toStringValue(payload.orderId);
+  const reason = toStringValue(payload.reason) || "고객 직접 취소";
+
+  if (!orderId) {
+    res.status(400).json({ success: false, error: "orderId is required." });
+    return;
+  }
+
+  const result = await admin.firestore().runTransaction((transaction) =>
+    cancelOrderInTransaction(transaction, orderId, authContext, reason, authContext.isAdmin ? "admin" : "customer")
+  );
+
+  res.status(200).json({ success: true, data: result });
+}
+
 async function handleAdminOrderStatusUpdate(
   payload: RawUpdateOrderStatusRequest,
   authorization: string | undefined,
@@ -646,6 +879,10 @@ async function handleAdminOrderStatusUpdate(
 
     if (currentStatus !== nextStatus && !allowedNextStatuses.includes(nextStatus)) {
       throw new Error(`Invalid status transition: ${currentStatus} -> ${nextStatus}`);
+    }
+
+    if (nextStatus === "cancelled" && currentStatus !== "cancelled") {
+      return cancelOrderInTransaction(transaction, orderId, authContext, reason || "관리자 상태 변경", "admin");
     }
 
     const now = admin.firestore.FieldValue.serverTimestamp();

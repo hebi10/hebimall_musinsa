@@ -13,6 +13,12 @@ const eslintConfig = [
       'functions/lib/**',
       'tmp-edge-profile-single/**',
       'public/**',
+      'scripts/**',
+      'functions/seed-users.js',
+      'next-env.d.ts',
+      'src/app/search/page_backup.tsx',
+      'src/app/search/page_old.tsx',
+      'src/app/admin/coupons/page.tsx.backup',
       '*.config.js',
       '*.config.ts',
     ],
@@ -25,6 +31,20 @@ const eslintConfig = [
       },
     },
   }),
+  {
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'warn',
+      'react/no-unescaped-entities': 'warn',
+      '@next/next/no-html-link-for-pages': 'warn',
+      'prefer-const': 'warn',
+    },
+  },
+  {
+    files: ['functions/src/index.ts'],
+    rules: {
+      '@typescript-eslint/no-require-imports': 'off',
+    },
+  },
 ];
 
 export default eslintConfig;

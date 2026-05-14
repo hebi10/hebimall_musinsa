@@ -75,7 +75,7 @@ src/
 
 functions/               # Firebase Cloud Functions
 └── src/
-    ├── handlers/        # chat, coupon, points
+    ├── handlers/        # order, coupon, points, chat, adminUsers, qna
     └── cron/            # 만료 처리 스케줄러
 ```
 
@@ -111,7 +111,7 @@ npm run seed:coupons
 
 | 컬렉션 | 용도 |
 |--------|------|
-| users | 사용자 프로필, role 필드로 관리자 구분 |
+| users | 사용자 프로필, 표시용 상태와 기본 정보 |
 | products | 상품 정보, 옵션, 재고 |
 | categories | 카테고리 트리 |
 | orders | 주문 내역 및 상태 |
@@ -126,7 +126,8 @@ npm run seed:coupons
 **Firebase Security Rules**
 
 `firestore.rules`, `storage.rules`로 미인증 접근과 일반 사용자의
-쓰기 범위를 제한합니다. 관리자 권한은 `users` 컬렉션의 `role` 필드로 확인합니다.
+쓰기 범위를 제한합니다. 관리자 권한은 Firebase Custom Claims의
+`admin == true` 또는 `role == "admin"` 기준으로 확인합니다.
 
 ## 상세 문서
 
@@ -149,6 +150,7 @@ npm run seed:coupons
 ## 향후 개선 사항
 
 - 결제 모듈 연동 (현재 주문 생성까지만 구현, 실 결제 미연동)
-- 테스트 케이스 작성 (Jest 환경만 구성된 상태)
+- 주문/쿠폰/포인트 같은 금액성 흐름의 테스트 확대
+- 남아 있는 ESLint warning 단계적 정리
 - 관리자 통계 차트 시각화 개선
 - 검색 자동완성 (현재 키워드 단순 매칭만 구현)

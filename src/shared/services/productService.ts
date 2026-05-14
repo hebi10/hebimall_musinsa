@@ -18,6 +18,10 @@ import { db } from '@/shared/libs/firebase/firebase';
 import { Product, ProductFilter, ProductSort } from '@/shared/types/product';
 
 type ProductStatus = Product['status'];
+type ProductDocumentData = Partial<Omit<Product, 'id' | 'createdAt' | 'updatedAt'>> & {
+  createdAt?: unknown;
+  updatedAt?: unknown;
+};
 
 export interface ProductQueryInput {
   category?: string;
@@ -97,7 +101,7 @@ export class ProductService {
 
   private static normalizeProduct(
     id: string,
-    data: Record<string, any>,
+    data: ProductDocumentData,
     fallbackCategoryId?: string
   ): Product {
     const categoryId = this.normalizeCategoryId(data, fallbackCategoryId);
@@ -112,6 +116,7 @@ export class ProductService {
       category: data.category || categoryId,
       categoryId,
       images: Array.isArray(data.images) ? data.images : [],
+      detailImages: Array.isArray(data.detailImages) ? data.detailImages : [],
       mainImage: data.mainImage,
       sizes: Array.isArray(data.sizes) ? data.sizes : [],
       colors: Array.isArray(data.colors) ? data.colors : [],
@@ -136,7 +141,7 @@ export class ProductService {
     };
   }
 
-  private static cleanObject<T extends Record<string, any>>(obj: T): Partial<T> {
+  private static cleanObject<T extends Record<string, unknown>>(obj: T): Partial<T> {
     const cleaned: Partial<T> = {};
 
     Object.entries(obj).forEach(([key, value]) => {
@@ -293,7 +298,7 @@ export class ProductService {
     return Array.from(brandMap.values()).sort((a, b) => a.name.localeCompare(b.name));
   }
 
-  private static normalizeBrandSummary(id: string, data: Record<string, any>): BrandSummary | null {
+  private static normalizeBrandSummary(id: string, data: Partial<BrandSummary>): BrandSummary | null {
     const name = typeof data.name === 'string' ? data.name.trim() : '';
     if (!name) {
       return null;

@@ -60,7 +60,7 @@ export class PointService {
   /**
    * 포인트 사용
    */
-  static async usePoint(data: UsePointRequest): Promise<PointResponse> {
+  static async spendPoint(data: UsePointRequest): Promise<PointResponse> {
     try {
       console.log('포인트 사용 요청:', data);
       const result = await callPointsAPI('use', data);

@@ -48,15 +48,6 @@ export default function AddProductModal() {
     };
   }, []);
 
-  // 로딩 중이거나 권한이 없으면 표시하지 않음
-  if (authLoading || !user || !isAdmin) {
-    return (
-      <div className={styles.loading}>
-        권한을 확인하는 중...
-      </div>
-    );
-  }
-
   // useInputs로 기본 필드들 관리
   const [basicFields, onChangeBasic] = useInputs({
     name: '',
@@ -85,6 +76,15 @@ export default function AddProductModal() {
     isSale: false,
     status: 'draft' as 'active' | 'inactive' | 'draft'
   });
+
+  // 로딩 중이거나 권한이 없으면 표시하지 않음
+  if (authLoading || !user || !isAdmin) {
+    return (
+      <div className={styles.loading}>
+        권한을 확인하는 중...
+      </div>
+    );
+  }
 
   const handleComplexFieldChange = (field: keyof typeof complexFields, value: any) => {
     setComplexFields(prev => ({

@@ -1,8 +1,7 @@
 "use client";
 import { createContext, useContext } from "react";
 
-interface OrderContextType {
-}
+type OrderContextType = Record<string, never>;
 
 const OrderContext = createContext<OrderContextType>({
 });
