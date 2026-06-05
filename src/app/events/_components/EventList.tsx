@@ -133,7 +133,11 @@ export default function EventList() {
             className={`${styles.posterHero} ${featuredVariant ? styles[`${featuredVariant}BannerTheme`] : ''}`}
           >
             <Image
-              src={featuredImages?.bannerImage ?? featuredEvent.bannerImage}
+              src={
+                featuredImages?.detailImage ??
+                featuredImages?.bannerImage ??
+                featuredEvent.bannerImage
+              }
               alt={featuredEvent.title}
               width={1400}
               height={620}

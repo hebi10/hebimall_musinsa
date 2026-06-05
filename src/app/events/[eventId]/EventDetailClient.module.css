@@ -160,6 +160,7 @@
   line-height: 1.04;
   letter-spacing: -0.055em;
   max-width: 760px;
+  overflow-wrap: anywhere;
 }
 
 .eventDescription {
@@ -200,6 +201,7 @@
   font-size: 1rem;
   font-weight: 800;
   letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
 }
 
 .metaValue.highlight {
@@ -430,6 +432,7 @@
   margin: 0;
   line-height: 1.35;
   letter-spacing: -0.03em;
+  overflow-wrap: anywhere;
 }
 
 /* Event Content */

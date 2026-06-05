@@ -65,3 +65,9 @@
 - 480px 이하에서는 쇼핑 안내 고정 버튼을 숨기고 상담 버튼을 축소해 상품/카테고리/404 하단 콘텐츠 가림을 줄였다.
 - App Router 404 연결을 위해 `src/app/not-found.tsx`에서 기존 `404.tsx`를 export하도록 추가했다.
 - Chrome 및 Playwright Chrome 채널 스크린샷으로 `/products`, `/categories/clothing`, `/auth/login`, 커스텀 404의 모바일 렌더링을 확인했다.
+
+## 2026-06-05 AI 느낌/개발 표시 완화
+- `STYNA`는 브랜드명으로 유지하고, 메인 배너와 이벤트 배너의 영문 장식 메타 문구는 한국어 쇼핑 정보로 교체했다.
+- 모바일 이벤트 카드 높이와 오버레이 강도를 낮추고 이벤트 모바일의 상담 플로팅 버튼을 숨겨 CTA 가림을 제거했다.
+- React Query Devtools는 `NEXT_PUBLIC_ENABLE_QUERY_DEVTOOLS=true`일 때만 보이게 하고, Next dev indicator는 `devIndicators: false`로 껐다.
+- `npm run typecheck`, `npm test -- --runTestsByPath src/app/_components/chat/ChatWidget.test.tsx --runInBand`, `git diff --check` 통과.

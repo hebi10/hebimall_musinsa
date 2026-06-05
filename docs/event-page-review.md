@@ -60,10 +60,23 @@
 - 장점: 실제 Chrome 확인에서 `/events/`와 `/events/PacCrKVG9TikHo7lambG/` 모두 준비중 이미지가 editorial 이미지로 바뀌고, 수평 오버플로우 없이 로드됐다.
 - 장점: 이벤트 배너는 배경 생성과 한글 텍스트 합성을 분리해 한글 깨짐 없이 쇼핑몰 프로모션 배너처럼 사용할 수 있고, 카드 썸네일은 텍스트 없는 에디토리얼 컷으로 더 깔끔하게 읽힌다.
 - 장점: Firestore seed 전에도 사용자 이벤트 목록/상세에서는 로컬 2026 카탈로그 이벤트가 보조 데이터로 노출되어 신규 이벤트 QA가 가능하다.
-- 장점: 목록 대표 배너, 카드 썸네일, 상세 이미지를 각각 `banner`/`thumb`/`detail` 역할로 분리해 상세 페이지의 텍스트 중복을 줄였다.
+- 장점: 문구가 합성된 `banner`, 카드용 `thumb`, 텍스트 없는 `detail` 역할을 분리했고, 목록 대표 히어로와 상세 페이지는 오버레이 UI와 겹치지 않도록 `detail` 이미지를 사용한다.
 - 보완점: `getTotalParticipants()`가 제한 없는 이벤트 포함 시 `제한 없음`을 표시해 통계 카드의 의미가 어색할 수 있다.
 - 보완점: Firestore upsert는 로컬 Google Application Default Credentials가 없어 실행하지 못했다. 인증 후 `node scripts/seed-events.js`를 실행해야 실제 DB에 반영된다.
 
 ## 우선 개선 포인트
 - 1순위: 이벤트 통계 카드의 총 참여자 표기를 숫자 합산 기준으로 바꿀지 정책을 정한다.
 - 2순위: 실제 운영 이벤트 이미지가 준비되면 `ChatGPT Image 2025` fallback 패턴과 `detailImage` 업로드 정책을 함께 재검토한다.
+
+## 2026-06-05 AI 느낌/모바일 디자인 보정
+- 이벤트 `featuredEyebrow`와 상세 eyebrow의 영문 장식 문구를 한국어 쇼핑 문맥으로 교체했다.
+- 640px 이하 이벤트 목록에서 대표 배너와 카드 높이, 어두운 오버레이를 낮춰 검은 프로모션 카드 반복감을 줄였다.
+- 모바일 이벤트 목록에서는 실시간 상담 플로팅 버튼을 숨겨 첫 이벤트 카드 CTA를 가리지 않게 했다.
+- Browser 캡처 기준 `/events` 390px 화면에서 상담/개발 도구 버튼 미노출, 수평 오버플로우 없음.
+
+## 2026-06-05 대표 이벤트 이미지 분리 보정
+- 목록 대표 히어로가 문구 합성 `bannerImage`를 배경으로 쓰면서 UI 제목과 이미지 내 텍스트가 겹치는 문제가 있었다.
+- `src/app/events/_components/EventList.tsx`에서 대표 히어로 이미지 소스를 `detailImage > bannerImage > 기존 bannerImage` 순서로 바꿨다.
+- Chrome 확인 기준 `/events/` 첫 화면 대표 이미지는 `event-2026-05-best-review-detail.webp`를 사용하고, 첫 화면 대표 영역에서 `*-banner.webp`는 사용하지 않는다.
+- 목록/상세의 주요 제목, 기간, 쿠폰/CTA, 혜택 값에는 긴 무공백 문자열이 모바일 폭을 밀어내지 않도록 `overflow-wrap: anywhere` 방어를 추가했다.
+- 운영자가 새 이벤트 이미지를 직접 올릴 때도 텍스트가 합성된 배너와 별개로 `detailImage`를 함께 등록해야 목록 대표 히어로와 상세 페이지에서 같은 문제가 재발하지 않는다.

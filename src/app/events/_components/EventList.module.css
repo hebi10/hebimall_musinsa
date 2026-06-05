@@ -69,6 +69,7 @@
   font-weight: 800;
   line-height: 0.96;
   letter-spacing: 0;
+  overflow-wrap: anywhere;
 }
 
 .posterHeroDescription {
@@ -103,6 +104,7 @@
   color: rgba(255, 255, 255, 0.78);
   font-size: 0.9rem;
   font-weight: 600;
+  overflow-wrap: anywhere;
 }
 
 .posterHeroMeta {
@@ -289,6 +291,7 @@
   font-weight: 800;
   line-height: 1.08;
   letter-spacing: 0;
+  overflow-wrap: anywhere;
 }
 
 .eventDescription {
@@ -314,23 +317,29 @@
 .eventDiscount {
   display: inline-flex;
   align-items: center;
+  max-width: 100%;
   min-height: 32px;
   padding: 0 0.72rem;
   background: #ffffff;
   color: var(--black);
   font-size: 0.84rem;
   font-weight: 800;
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 
 .cardCta {
   display: inline-flex;
   align-items: center;
+  max-width: 100%;
   min-height: 32px;
   padding: 0 0.72rem;
   border: 1px solid rgba(255, 255, 255, 0.45);
   color: #ffffff;
   font-size: 0.82rem;
   font-weight: 800;
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 
 .saleBannerTheme,
