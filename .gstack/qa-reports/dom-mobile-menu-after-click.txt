@@ -2,7 +2,7 @@
   - link "STYNA home":
     - /url: /
     - generic: STYNA
-    - generic: 셀렉트웨어 스토어
+    - generic: 스타일나우 스토어
   - button "Open menu" [active]
   - generic: STYNA
   - paragraph: 차분한 무드로 정리한 데일리 셀렉트웨어.

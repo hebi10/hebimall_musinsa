@@ -68,3 +68,12 @@
 - 취소 트랜잭션은 주문 상태 변경, `statusHistory` 기록, 상품 재고 복원, 사용 포인트 환급, 사용 쿠폰 복원을 함께 처리한다.
 - 새 주문 생성 시 쿠폰 복구를 위해 `userCouponId`, `couponId`를 주문 문서에 저장한다. 기존 주문 중 이 필드가 없는 주문은 쿠폰 복구 대상 식별이 제한된다.
 - 주문 상품 조회는 최상위 `products/{productId}`만 기준으로 단일화했고, `categories/{id}/products` 전체 스캔 fallback은 제거했다.
+
+## 2026-06-05 Chrome 구매 흐름 보정
+- 로컬 Next 개발 서버에서도 주문 생성을 확인할 수 있도록 `src/app/api/order/route.ts`에서 `/api/order/` 프록시를 추가했다.
+- `OrderService`는 `trailingSlash` 설정에 따른 308 redirect를 피하기 위해 `/api/order/`를 호출한다.
+- Functions 주문 생성 트랜잭션은 장바구니 문서 읽기를 모든 쓰기보다 먼저 수행하도록 순서를 바꿔 `Firestore transactions require all reads to be executed before all writes.` 오류를 해결했다.
+- 상품 가격 계산은 `getProductPricing`/`calculateDiscountedUnitPrice` 기준으로 통합해 `originalPrice > price`인 상품을 다시 할인하지 않는다.
+- 장바구니 조회 시 기존에 잘못 저장된 단가/할인 요약은 상품 문서 기준으로 보정해 저장한다.
+- 장바구니와 checkout의 인증 가드는 `authLoading`이 끝난 뒤에만 리다이렉트하고, checkout 결제수단/배송지 라벨은 사용자 표시용 한국어로 정리했다.
+- 현재 Chrome 실제 구매 완료 확인은 배포된 Cloud Function이 아직 이전 코드라 실패한다. `functions:build`는 통과했으며, 함수 배포 후 다시 전체 구매 완료와 마이페이지 주문 노출을 확인해야 한다.

@@ -1,6 +1,6 @@
 import { onRequest } from "firebase-functions/v2/https";
 import * as admin from "firebase-admin";
-import { calculateDeliveryFee } from "../domain/orderDomain";
+import { calculateDeliveryFee, calculateDiscountedUnitPrice } from "../domain/orderDomain";
 import { AuthContext, AuthError, verifyAuthContext } from "../utils/auth";
 
 type DeliveryOption = "standard" | "express";
@@ -276,18 +276,6 @@ function parseDate(value: unknown): Date | null {
 
 function toTodayString(value: Date): string {
   return value.toISOString().split("T")[0];
-}
-
-function calculateDiscountedUnitPrice(productData: admin.firestore.DocumentData): number {
-  const price = toNumber(productData.price, 0);
-  if (!Number.isFinite(price) || price <= 0) {
-    return 0;
-  }
-
-  const saleRate = toNumber(productData.saleRate, 0);
-  const discountRate = Math.max(0, Math.min(100, saleRate));
-  const discounted = Math.floor(price * (1 - discountRate / 100));
-  return Math.max(0, Math.min(price, discounted));
 }
 
 function calculateCouponDiscount(totalAmount: number, couponData: admin.firestore.DocumentData): {
@@ -719,6 +707,9 @@ export const order = onRequest(
           throw new Error("Requested point amount is too high.");
         }
 
+        const cartRef = admin.firestore().collection("carts").doc(authContext.uid);
+        const cartSnap = cartItemIdsToRemove.size > 0 ? await transaction.get(cartRef) : null;
+
         const orderRef = ordersRef.doc();
         const orderId = orderRef.id;
         const orderData = {
@@ -771,9 +762,7 @@ export const order = onRequest(
           });
         }
 
-        const cartRef = admin.firestore().collection("carts").doc(authContext.uid);
-        const cartSnap = await transaction.get(cartRef);
-        if (cartSnap.exists && cartItemIdsToRemove.size > 0) {
+        if (cartSnap?.exists && cartItemIdsToRemove.size > 0) {
           const cartData = cartSnap.data() || {};
           const cartItems = Array.isArray(cartData.items) ? cartData.items : [];
           const nextItems = cartItems.filter((item: unknown) => {

@@ -44,6 +44,14 @@ describe('order domain logic', () => {
     expect(calculateDiscountedUnitPrice({ price: 10000, saleRate: -10 })).toBe(10000);
   });
 
+  test('does not discount price again when originalPrice is already higher than price', () => {
+    expect(calculateDiscountedUnitPrice({
+      price: 985000,
+      originalPrice: 1250000,
+      saleRate: 21,
+    })).toBe(985000);
+  });
+
   test('calculates coupon and delivery discounts', () => {
     expect(calculateCouponDiscount(10000, { type: 'percent', value: 15 })).toEqual({
       discount: 1500,

@@ -181,6 +181,11 @@ export function calculateDiscountedUnitPrice(productData: Record<string, unknown
     return 0;
   }
 
+  const originalPrice = toNumber(productData.originalPrice, 0);
+  if (originalPrice > price) {
+    return price;
+  }
+
   const saleRate = toNumber(productData.saleRate, 0);
   const discountRate = Math.max(0, Math.min(100, saleRate));
   const discounted = Math.floor(price * (1 - discountRate / 100));

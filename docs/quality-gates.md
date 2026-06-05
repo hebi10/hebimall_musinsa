@@ -48,3 +48,13 @@
 - 실제 Hook 규칙 오류였던 `AddModal` 조건부 Hook 호출은 early return 위치를 조정해 해결했다.
 - 서비스 메서드명이 Hook으로 오인되던 `CouponService.useCoupon`, `PointService.usePoint`는 각각 `redeemCoupon`, `spendPoint`로 바꿨다.
 - 현재 `npm run lint`는 exit 0으로 통과하지만 warning은 남아 있다.
+
+## 2026-06-05 TypeScript 6 baseUrl 경고 정리
+- TypeScript 6에서 `compilerOptions.baseUrl`이 deprecated 처리되어 루트 `tsconfig.json`에서 제거했다.
+- `@/*` alias는 `paths`의 `["@/*": ["./src/*"]]`만으로 유지한다.
+- 임시 억제용 `ignoreDeprecations: "6.0"`은 TypeScript 7 대비가 되지 않으므로 사용하지 않는다.
+
+## 2026-06-05 구매 흐름 보정 검증
+- `npm run typecheck`, 구매 흐름 관련 Jest 테스트, `npm run test:functions`, `npm run functions:build`를 통과했다.
+- `npm run lint`는 exit 0으로 통과하나 기존 경고 254개는 남아 있다.
+- `git diff --check`는 공백 오류 없이 통과했고, LF/CRLF 치환 경고만 출력됐다.

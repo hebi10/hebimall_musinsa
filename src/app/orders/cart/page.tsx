@@ -22,7 +22,7 @@ interface CartItemWithSelection extends CartItem {
 
 export default function OrderCartPage() {
   const router = useRouter();
-  const { user, userData } = useAuth();
+  const { user, userData, loading: authLoading } = useAuth();
   const { userCoupons } = useCoupon();
   
   // Firebase 장바구니 데이터 가져오기
@@ -49,10 +49,10 @@ export default function OrderCartPage() {
 
   // 로그인 체크
   useEffect(() => {
-    if (!user) {
+    if (!authLoading && !user) {
       router.push("/auth/login?redirect=/orders/cart");
     }
-  }, [user, router]);
+  }, [authLoading, user, router]);
 
   // 수량 변경
   const updateQuantity = async (id: string, newQuantity: number) => {
@@ -184,7 +184,7 @@ export default function OrderCartPage() {
     router.push("/orders/checkout");
   };
 
-  if (!user) {
+  if (authLoading || !user) {
     return <div>로그인이 필요합니다...</div>;
   }
 

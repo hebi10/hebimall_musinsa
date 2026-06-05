@@ -8,6 +8,7 @@ import { useAddToCart } from '@/shared/hooks/useCart';
 import { ProductService } from '@/shared/services/productService';
 import { Product } from '@/shared/types/product';
 import { getCategoryName } from '@/shared/utils/categoryUtils';
+import { getProductPricing } from '@/shared/utils/productPricing';
 import styles from './ProductDetail.module.css';
 
 interface ProductDetailPageProps {
@@ -182,6 +183,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
       return;
     }
 
+    const productPricing = getProductPricing(product);
     const orderData = {
       items: [{
         productId: product.id,
@@ -192,10 +194,8 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
         size: selectedSize || '',
         color: selectedColor || '',
         quantity,
-        price: product.price,
-        discountAmount: product.originalPrice && product.originalPrice > product.price
-          ? product.originalPrice - product.price
-          : 0,
+        price: productPricing.salePrice,
+        discountAmount: productPricing.discountAmount,
       }],
       selectedCoupon: '',
       deliveryOption: 'standard',
@@ -286,13 +286,13 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
 
           <div className={styles.priceSection}>
             <div className={styles.currentPrice}>
-              {product.price.toLocaleString()}원
+              {getProductPricing(product).salePrice.toLocaleString()}원
             </div>
-            {product.originalPrice && product.originalPrice > product.price && (
+            {getProductPricing(product).listPrice > getProductPricing(product).salePrice && (
               <div className={styles.originalPrice}>
-                {product.originalPrice.toLocaleString()}원
+                {getProductPricing(product).listPrice.toLocaleString()}원
                 <span className={styles.discount}>
-                  ({Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% 할인)
+                  ({getProductPricing(product).discountRate}% 할인)
                 </span>
               </div>
             )}

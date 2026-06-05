@@ -112,7 +112,7 @@ export default function Header() {
               <span className={styles.logoTopRow}>
                 <span className={styles.logoWordmark}>STYNA</span>
               </span>
-              <span className={styles.logoMeta}>셀렉트웨어 스토어</span>
+              <span className={styles.logoMeta}>스타일나우 스토어</span>
             </Link>
           </div>
 

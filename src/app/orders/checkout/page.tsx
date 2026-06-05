@@ -49,15 +49,20 @@ interface DeliveryAddress {
 }
 
 const paymentMethods = [
-  { value: "card", label: "card" },
-  { value: "bank", label: "bank" },
-  { value: "virtual", label: "virtual" },
-  { value: "phone", label: "phone" },
+  { value: "card", label: "카드 결제" },
+  { value: "bank", label: "무통장입금" },
+  { value: "virtual", label: "가상계좌" },
+  { value: "phone", label: "휴대폰 결제" },
 ] as const;
+
+const addressLabels: Record<string, string> = {
+  default: "기본 배송지",
+  office: "회사 배송지",
+};
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { user, userData } = useAuth();
+  const { user, userData, loading: authLoading } = useAuth();
   const { userCoupons } = useCoupon();
   const { pointBalance } = usePoint();
 
@@ -92,11 +97,11 @@ export default function CheckoutPage() {
   ]);
 
   useEffect(() => {
-    if (!user) {
+    if (!authLoading && !user) {
       router.push("/auth/login?redirect=/orders/checkout");
       return;
     }
-  }, [user, router]);
+  }, [authLoading, user, router]);
 
   useEffect(() => {
     const savedOrderData = sessionStorage.getItem("orderData");
@@ -210,20 +215,19 @@ export default function CheckoutPage() {
     }
   };
 
-  if (!user || !orderData || !selectedAddress) {
+  if (authLoading || !user || !orderData || !selectedAddress) {
     return <div>로그인 / 주문 정보 확인 중...</div>;
   }
 
   return (
     <div className={styles.container}>
       <PageHeader
-        title="checkout"
-        description="주문 생성"
+        title="주문/결제"
+        description="주문 상품과 배송 정보를 확인하고 결제를 진행하세요"
         breadcrumb={[
-          { label: "home", href: "/" },
-          { label: "cart", href: "/cart" },
-          { label: "orders", href: "/orders/cart" },
-          { label: "checkout" },
+          { label: "홈", href: "/" },
+          { label: "장바구니", href: "/orders/cart" },
+          { label: "주문/결제" },
         ]}
       />
       <div className={styles.content}>
@@ -251,7 +255,7 @@ export default function CheckoutPage() {
                 />
                 <div className={styles.addressContent}>
                   <div className={styles.addressHeader}>
-                    <span className={styles.addressName}>{address.name}</span>
+                    <span className={styles.addressName}>{addressLabels[address.name] || address.name}</span>
                   </div>
                   <div>{address.recipient} | {address.phone}</div>
                   <div>{`(${address.zipCode}) ${address.address} ${address.detailAddress}`}</div>

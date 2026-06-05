@@ -2,9 +2,9 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { useProduct } from '@/context/productProvider';
 import { useUserActivity } from '@/context/userActivityProvider';
 import CachedImage from '@/shared/components/CachedImage';
+import { getProductPricing } from '@/shared/utils/productPricing';
 import { getProductReviewStats } from '@/shared/utils/syncProductReviews';
 import styles from './ProductCard.module.css';
 import { useAuthUser } from '@/shared/hooks/useAuthUser';
@@ -40,7 +40,6 @@ export default function ProductCard({
   stock = 0,
   badgePlacement = 'default',
 }: ProductCardProps) {
-  const { calculateDiscountPrice } = useProduct();
   const { wishlistItems, addToWishlist, removeFromWishlist } = useUserActivity();
   const [actualReviewStats, setActualReviewStats] = useState<{ reviewCount: number; rating: number } | null>(null);
   const { user } = useAuthUser();
@@ -66,11 +65,9 @@ export default function ProductCard({
     return new Intl.NumberFormat('ko-KR').format(price) + '원';
   };
 
-  const discountRate = originalPrice 
-    ? Math.round(((originalPrice - price) / originalPrice) * 100)
-    : saleRate || 0;
-
-  const displayPrice = saleRate ? calculateDiscountPrice(price, saleRate) : price;
+  const pricing = getProductPricing({ price, originalPrice, saleRate });
+  const discountRate = pricing.discountRate;
+  const displayPrice = pricing.salePrice;
   const inStock = stock > 0;
 
   // 실제 리뷰 데이터가 있으면 우선 사용, 없으면 기본값 사용
@@ -158,9 +155,9 @@ export default function ProductCard({
         <h3 className={styles.name}>{name}</h3>
         
         <div className={styles.priceContainer}>
-          {originalPrice && originalPrice > price && (
+          {pricing.listPrice > pricing.salePrice && (
             <span className={styles.originalPrice}>
-              {formatPrice(originalPrice)}
+              {formatPrice(pricing.listPrice)}
             </span>
           )}
           <span className={styles.price}>

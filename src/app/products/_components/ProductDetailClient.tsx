@@ -10,6 +10,7 @@ import { useAddToCart } from '@/shared/hooks/useCart';
 import { useProductImageCache } from '@/shared/hooks/useImageCache';
 import { getProductReviewStats } from '@/shared/utils/syncProductReviews';
 import { getProductColorValue } from '@/shared/utils/productColor';
+import { getProductPricing } from '@/shared/utils/productPricing';
 import Button from '@/app/_components/Button';
 import ProductCard from './ProductCard';
 import ProductReviews from './ProductReviews';
@@ -26,7 +27,6 @@ export default function ProductDetailClient({ product }: Props) {
   const { 
     relatedProducts, 
     loadRelatedProducts,
-    calculateDiscountPrice, 
     isInStock
   } = useProduct();
 
@@ -201,6 +201,8 @@ export default function ProductDetailClient({ product }: Props) {
       return;
     }
 
+    const productPricing = getProductPricing(product);
+
     // 주문 데이터 생성
     const orderData = {
       items: [{
@@ -212,14 +214,13 @@ export default function ProductDetailClient({ product }: Props) {
         size: selectedSize || '', // 사이즈가 없으면 빈 문자열
         color: selectedColor || '', // 색상이 없으면 빈 문자열
         quantity,
-        price: displayPrice,
-        discountAmount: product.saleRate ? 
-          Math.floor(product.price * (product.saleRate / 100)) : 0
+        price: productPricing.salePrice,
+        discountAmount: productPricing.discountAmount,
       }],
-      subtotal: displayPrice * quantity,
+      subtotal: productPricing.salePrice * quantity,
       couponDiscount: 0,
-      deliveryFee: displayPrice * quantity >= 50000 ? 0 : 3000, // 5만원 이상 무료배송
-      finalAmount: (displayPrice * quantity) + (displayPrice * quantity >= 50000 ? 0 : 3000),
+      deliveryFee: productPricing.salePrice * quantity >= 50000 ? 0 : 3000,
+      finalAmount: (productPricing.salePrice * quantity) + (productPricing.salePrice * quantity >= 50000 ? 0 : 3000),
       selectedCoupon: '',
       deliveryOption: 'standard'
     };
@@ -262,9 +263,8 @@ export default function ProductDetailClient({ product }: Props) {
     }
   };
 
-  const displayPrice = product.saleRate ? 
-    calculateDiscountPrice(product.price, product.saleRate) : 
-    product.price;
+  const pricing = getProductPricing(product);
+  const displayPrice = pricing.salePrice;
 
   const inStock = isInStock(product);
 
@@ -335,15 +335,15 @@ export default function ProductDetailClient({ product }: Props) {
           </div>
 
           <div className={styles.priceSection}>
-            {product.originalPrice && product.originalPrice > displayPrice && (
+            {pricing.listPrice > pricing.salePrice && (
               <div className={styles.originalPrice}>
-                {product.originalPrice.toLocaleString()}원
+                {pricing.listPrice.toLocaleString()}원
               </div>
             )}
             <div className={styles.currentPrice}>
               {displayPrice.toLocaleString()}원
-              {product.saleRate && (
-                <span className={styles.saleRate}>{product.saleRate}%</span>
+              {pricing.discountRate > 0 && (
+                <span className={styles.saleRate}>{pricing.discountRate}%</span>
               )}
             </div>
           </div>

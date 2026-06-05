@@ -68,7 +68,7 @@ async function getIdToken(): Promise<string> {
 
 async function callOrdersAPI(payload: CreateOrderRequest): Promise<CreateOrderResponse> {
   const token = await getIdToken();
-  const res = await fetch('/api/order', {
+  const res = await fetch('/api/order/', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -87,7 +87,7 @@ async function callOrdersAPI(payload: CreateOrderRequest): Promise<CreateOrderRe
 
 async function callOrderAdminAPI(payload: Record<string, unknown>): Promise<void> {
   const token = await getIdToken();
-  const res = await fetch('/api/order', {
+  const res = await fetch('/api/order/', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -104,7 +104,7 @@ async function callOrderAdminAPI(payload: Record<string, unknown>): Promise<void
 
 async function callOrderMutationAPI(payload: CancelOrderRequest): Promise<void> {
   const token = await getIdToken();
-  const res = await fetch('/api/order', {
+  const res = await fetch('/api/order/', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

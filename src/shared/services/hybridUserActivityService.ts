@@ -9,7 +9,9 @@ import {
   orderBy, 
   limit,
   Timestamp,
-  setDoc
+  setDoc,
+  QueryDocumentSnapshot,
+  DocumentData
 } from 'firebase/firestore';
 import { db } from '@/shared/libs/firebase/firebase';
 import { RecentProduct, WishlistItem } from '@/shared/types/userActivity';
@@ -17,6 +19,39 @@ import { RecentProduct, WishlistItem } from '@/shared/types/userActivity';
 const RECENT_PRODUCTS_KEY = 'hebimall_recent_products';
 const WISHLIST_KEY = 'hebimall_wishlist';
 const MAX_RECENT_PRODUCTS = 20; // 최대 20개까지 저장
+
+function toDateValue(value: unknown): Date {
+  if (value && typeof value === 'object' && 'toDate' in value) {
+    const date = (value as { toDate: () => Date }).toDate();
+    return Number.isFinite(date.getTime()) ? date : new Date(0);
+  }
+
+  const date = new Date(String(value || ''));
+  return Number.isFinite(date.getTime()) ? date : new Date(0);
+}
+
+function isFirestoreIndexError(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error);
+  return message.includes('requires an index') || message.includes('failed-precondition');
+}
+
+function mapRecentProductDoc(docSnap: QueryDocumentSnapshot<DocumentData>): RecentProduct {
+  const data = docSnap.data();
+  return {
+    id: docSnap.id,
+    ...data,
+    viewedAt: toDateValue(data.viewedAt),
+  } as RecentProduct;
+}
+
+function mapWishlistDoc(docSnap: QueryDocumentSnapshot<DocumentData>): WishlistItem {
+  const data = docSnap.data();
+  return {
+    id: docSnap.id,
+    ...data,
+    addedAt: toDateValue(data.addedAt),
+  } as WishlistItem;
+}
 
 export class HybridUserActivityService {
   // 사용자 로그인 여부 확인 (실제 구현 시 auth 상태 확인)
@@ -68,14 +103,7 @@ export class HybridUserActivityService {
       }
 
       // 20개 초과 시 오래된 항목 삭제
-      const allUserRecentsQuery = query(
-        recentCollection,
-        where('userId', '==', userId),
-        orderBy('viewedAt', 'desc'),
-        limit(100)
-      );
-      
-      const allUserRecentSnapshot = await getDocs(allUserRecentsQuery);
+      const allUserRecentSnapshot = await this.getRecentProductSnapshot(userId, 100);
       if (allUserRecentSnapshot.docs.length > MAX_RECENT_PRODUCTS) {
         const docsToDelete = allUserRecentSnapshot.docs.slice(MAX_RECENT_PRODUCTS);
         for (const docToDelete of docsToDelete) {
@@ -126,24 +154,38 @@ export class HybridUserActivityService {
   // Firebase에서 최근 본 상품 조회
   private static async getRecentProductsFirebase(userId: string, limitCount: number): Promise<RecentProduct[]> {
     try {
-      const recentCollection = collection(db, 'userRecentProducts');
-      const q = query(
-        recentCollection,
-        where('userId', '==', userId),
-        orderBy('viewedAt', 'desc'),
-        limit(limitCount)
-      );
-      
-      const querySnapshot = await getDocs(q);
-      return querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-        viewedAt: doc.data().viewedAt?.toDate() || new Date()
-      })) as RecentProduct[];
+      const querySnapshot = await this.getRecentProductSnapshot(userId, limitCount);
+      return querySnapshot.docs.map(mapRecentProductDoc);
     } catch (error) {
       console.error('Firebase 최근 본 상품 조회 실패:', error);
       // Firebase 실패 시 LocalStorage로 fallback
       return this.getRecentProductsLocal(userId).slice(0, limitCount);
+    }
+  }
+
+  private static async getRecentProductSnapshot(userId: string, limitCount: number) {
+    const recentCollection = collection(db, 'userRecentProducts');
+    const orderedQuery = query(
+      recentCollection,
+      where('userId', '==', userId),
+      orderBy('viewedAt', 'desc'),
+      limit(limitCount)
+    );
+
+    try {
+      return await getDocs(orderedQuery);
+    } catch (error) {
+      if (!isFirestoreIndexError(error)) {
+        throw error;
+      }
+
+      const fallbackQuery = query(recentCollection, where('userId', '==', userId), limit(100));
+      const snapshot = await getDocs(fallbackQuery);
+      return {
+        docs: [...snapshot.docs]
+          .sort((a, b) => toDateValue(b.data().viewedAt).getTime() - toDateValue(a.data().viewedAt).getTime())
+          .slice(0, limitCount),
+      };
     }
   }
 
@@ -284,23 +326,35 @@ export class HybridUserActivityService {
   // Firebase에서 위시리스트 조회
   private static async getWishlistFirebase(userId: string): Promise<WishlistItem[]> {
     try {
-      const wishlistCollection = collection(db, 'userWishlist');
-      const q = query(
-        wishlistCollection,
-        where('userId', '==', userId),
-        orderBy('addedAt', 'desc')
-      );
-      
-      const querySnapshot = await getDocs(q);
-      return querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-        addedAt: doc.data().addedAt?.toDate() || new Date()
-      })) as WishlistItem[];
+      const querySnapshot = await this.getWishlistSnapshot(userId);
+      return querySnapshot.docs.map(mapWishlistDoc);
     } catch (error) {
       console.error('Firebase 위시리스트 조회 실패:', error);
       // Firebase 실패 시 LocalStorage로 fallback
       return this.getWishlistLocal(userId);
+    }
+  }
+
+  private static async getWishlistSnapshot(userId: string) {
+    const wishlistCollection = collection(db, 'userWishlist');
+    const orderedQuery = query(
+      wishlistCollection,
+      where('userId', '==', userId),
+      orderBy('addedAt', 'desc')
+    );
+
+    try {
+      return await getDocs(orderedQuery);
+    } catch (error) {
+      if (!isFirestoreIndexError(error)) {
+        throw error;
+      }
+
+      const snapshot = await getDocs(query(wishlistCollection, where('userId', '==', userId)));
+      return {
+        docs: [...snapshot.docs]
+          .sort((a, b) => toDateValue(b.data().addedAt).getTime() - toDateValue(a.data().addedAt).getTime()),
+      };
     }
   }
 

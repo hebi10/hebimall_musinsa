@@ -22,3 +22,8 @@
 - 주문 목록, 쿠폰함, 포인트, Q&A, 회원정보 수정, 주문 상세 화면에 메인 쇼핑몰 기준의 절제형 override를 추가했다.
 - 화면별 보라/노랑/초록/청록 그라데이션 헤더와 강한 그림자는 최종 cascade에서 흰 표면, 얇은 보더, 검정 액션으로 눌렀다.
 - `CouponRegister` 컴포넌트도 파란 CTA와 큰 radius를 제거해 마이페이지 쿠폰 화면과 같은 톤으로 맞췄다.
+
+## 2026-06-05 사용자 활동 조회 보정
+- 최근 본 상품과 찜한 상품 조회에서 Firestore 복합 인덱스가 아직 없을 때는 `userId` 단일 조건 조회 후 클라이언트에서 최신순 정렬한다.
+- `firestore.indexes.json`에는 `userRecentProducts(userId, viewedAt desc)`, `userWishlist(userId, addedAt desc)` 인덱스를 추가했다.
+- Chrome 확인에서 로그인 후 마이페이지의 최근 본 상품/찜한 상품 목록이 콘솔 인덱스 오류 없이 표시되는 것을 확인했다.

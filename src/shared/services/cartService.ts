@@ -8,6 +8,7 @@ import {
 import { db } from '@/shared/libs/firebase/firebase';
 import { Cart, CartItem, AddToCartRequest, UpdateCartItemRequest } from '../types/cart';
 import { Product } from '../types/product';
+import { getProductPricing } from '../utils/productPricing';
 
 export class CartService {
   private static readonly COLLECTION_NAME = 'carts';
@@ -22,12 +23,31 @@ export class CartService {
 
       if (cartSnap.exists()) {
         const data = cartSnap.data();
+        const items = await this.refreshCartItemPricing(data.items || []);
+        const totalAmount = items.reduce(
+          (sum, item) => sum + item.price * item.quantity,
+          0
+        );
+        const totalItems = items.reduce(
+          (sum, item) => sum + item.quantity,
+          0
+        );
+
+        if (this.hasCartSummaryChanged(data.items || [], items, data.totalAmount, data.totalItems)) {
+          await updateDoc(cartRef, {
+            items,
+            totalAmount,
+            totalItems,
+            updatedAt: serverTimestamp()
+          });
+        }
+
         return {
           id: cartSnap.id,
           userId: data.userId,
-          items: data.items || [],
-          totalAmount: data.totalAmount || 0,
-          totalItems: data.totalItems || 0,
+          items,
+          totalAmount,
+          totalItems,
           updatedAt: data.updatedAt?.toDate() || new Date()
         };
       }
@@ -37,6 +57,52 @@ export class CartService {
       console.error('장바구니 조회 실패:', error);
       throw error;
     }
+  }
+
+  private static async refreshCartItemPricing(items: CartItem[]): Promise<CartItem[]> {
+    return Promise.all(items.map(async (item) => {
+      try {
+        const productRef = doc(db, 'products', item.productId);
+        const productSnap = await getDoc(productRef);
+        if (!productSnap.exists()) {
+          return item;
+        }
+
+        const productData = { id: productSnap.id, ...productSnap.data() } as Product;
+        const productPricing = getProductPricing(productData);
+        return {
+          ...item,
+          productName: productData.name || item.productName,
+          productImage: productData.mainImage || productData.images?.[0] || item.productImage,
+          brand: productData.brand || item.brand,
+          price: productPricing.salePrice,
+          discountAmount: productPricing.discountAmount,
+          isAvailable: productData.stock > 0,
+        };
+      } catch {
+        return item;
+      }
+    }));
+  }
+
+  private static hasCartSummaryChanged(
+    previousItems: CartItem[],
+    nextItems: CartItem[],
+    previousTotalAmount: number,
+    previousTotalItems: number
+  ): boolean {
+    const nextTotalAmount = nextItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const nextTotalItems = nextItems.reduce((sum, item) => sum + item.quantity, 0);
+
+    if (previousTotalAmount !== nextTotalAmount || previousTotalItems !== nextTotalItems) {
+      return true;
+    }
+
+    return previousItems.some((item, index) => (
+      item.price !== nextItems[index]?.price ||
+      item.discountAmount !== nextItems[index]?.discountAmount ||
+      item.isAvailable !== nextItems[index]?.isAvailable
+    ));
   }
 
   /**
@@ -51,6 +117,8 @@ export class CartService {
       const cartRef = doc(db, this.COLLECTION_NAME, userId);
       const existingCart = await this.getUserCart(userId);
 
+      const productPricing = getProductPricing(product);
+
       // 새로운 장바구니 아이템 생성
       const newCartItem: CartItem = {
         id: `${request.productId}-${request.size}-${request.color}`,
@@ -61,12 +129,8 @@ export class CartService {
         size: request.size,
         color: request.color,
         quantity: request.quantity,
-        price: product.saleRate ? 
-          Math.floor(product.price * (1 - product.saleRate / 100)) : 
-          product.price,
-        discountAmount: product.saleRate ? 
-          Math.floor(product.price * (product.saleRate / 100)) : 
-          0,
+        price: productPricing.salePrice,
+        discountAmount: productPricing.discountAmount,
         isAvailable: product.stock > 0
       };
 

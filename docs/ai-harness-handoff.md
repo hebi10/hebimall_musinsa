@@ -2,38 +2,31 @@
 - 없음: 사용자가 커밋을 요청하지 않았다.
 
 ### 인수인계 (최대 3개)
-1. 이벤트 20개/이미지 자산
-   - `src/mocks/eventCatalog2026.json`에 2026년 1월~8월 월별 2~3개씩 총 20개 이벤트를 추가했다.
-   - 이미지 생성 기능으로 전신 모델컷 source 20개를 만들고 `public/events/2026/*-source.png`에 복사했다.
-   - `scripts/generate-event-assets.js`가 source에서 `*-banner.webp`, `*-thumb.webp` 40개를 생성한다.
+1. 구매 흐름 서버/클라이언트 보정
+   - 로컬 Next `/api/order/` 프록시를 추가하고 `OrderService` 호출 경로를 trailing slash 기준으로 맞췄다.
+   - Functions 주문 생성 트랜잭션의 장바구니 읽기를 모든 쓰기 전에 수행하도록 순서를 바꿨다.
+   - 배포된 Function은 아직 이전 코드라 Chrome 실제 주문 완료는 함수 배포 전까지 같은 트랜잭션 오류가 날 수 있다.
 
-2. 데이터 연결/seed
-   - `src/mocks/event.ts`는 이벤트 카탈로그를 읽어 Date 객체로 변환한다.
-   - `scripts/seed-events.js`도 같은 카탈로그를 사용하며 기존 이벤트 삭제 없이 동일 ID만 upsert하고 `detailImage`를 함께 넣는다.
-   - 사용자 `/events` 목록/상세는 Firestore에 없는 2026 카탈로그 이벤트를 로컬 fallback으로 병합/조회한다.
+2. 가격/장바구니/checkout 보정
+   - `getProductPricing`으로 `originalPrice > price` 상품을 재할인하지 않게 통합했다.
+   - 장바구니 조회 시 기존 잘못된 단가/할인 합계를 상품 문서 기준으로 보정해 저장한다.
+   - 장바구니/checkout 인증 가드는 auth 로딩 종료 후 리다이렉트하고, checkout 표시 라벨은 한국어로 정리했다.
 
-3. 이미지/디자인 보정
-   - 목록/상세 배너는 `object-position: right center`로 보정했다.
-   - 문구 합성 `*-banner.webp`, 카드용 `*-thumb.webp`, 오버레이/상세용 텍스트 없는 `*-detail.webp`로 역할을 분리했다.
-   - 목록 대표 히어로는 UI 제목과 이미지 내 문구가 겹치지 않도록 `detailImage`를 우선 사용한다.
-   - 카드 썸네일은 텍스트 합성을 제거하고, 메인/이벤트 영문 장식 문구는 한국어 정보형 문구로 바꿨다.
-   - 이벤트 목록/상세 주요 텍스트에는 긴 쿠폰 코드·영문명 대비 줄바꿈 방어를 추가했다.
-   - 모바일 이벤트 목록은 카드 높이/오버레이를 낮추고 상담 플로팅 버튼을 숨겨 CTA 가림을 제거했다.
-   - React Query Devtools와 Next dev indicator는 포트폴리오 확인 화면에 보이지 않도록 설정했다.
+3. 마이페이지 활동 조회 보정
+   - 최근 본 상품/찜한 상품 조회는 복합 인덱스 부재 시 단일 조건 조회와 클라이언트 정렬로 fallback한다.
+   - `firestore.indexes.json`에 최근 본 상품/찜한 상품 복합 인덱스를 추가했다.
+   - Chrome 확인에서 마이페이지 최근 본 상품/찜 목록의 인덱스 콘솔 오류가 사라졌다.
 
 ### 검증
-- `node scripts/generate-event-assets.js` 통과.
 - `npm run typecheck` 통과.
-- `npm test -- --runTestsByPath src/shared/utils/eventImages.test.ts --runInBand` 통과.
-- `npm run lint` 통과: 기존 경고 254개, 에러 0개.
-- 자산 검사 통과: source PNG 20개, banner/detail/thumb WebP 60개 존재.
-- Chrome 확인: `/events` 페이지네이션 1~4페이지에서 신규 링크 20개 노출, 20개 상세 URL 모두 404/이미지 깨짐/가로 오버플로우 없음.
-- Chrome 확인: `/events/` 첫 화면 대표 영역은 `*-detail.webp`를 사용하고 `*-banner.webp`를 쓰지 않는다.
-- Firebase 확인: 현재 `events` 문서 2개에는 `detailImage`가 없고 `bannerImage`/`thumbnailImage`만 있다. 상세는 로컬 2026 카탈로그 기준 `detailImage` fallback으로 분리했다.
-- AI 느낌 보정 후 `npm run typecheck`, `npm test -- --runTestsByPath src/app/_components/chat/ChatWidget.test.tsx --runInBand`, `git diff --check` 통과.
-- Browser 캡처 확인: `/events` 390px 모바일에서 상담/개발 도구 버튼 미노출, 수평 오버플로우 없음.
+- `npm test -- --runTestsByPath src/app/api/order/route.test.ts src/shared/utils/productPricing.test.ts src/app/products/_components/ProductDetailClient.test.tsx src/app/categories/[category]/products/[productId]/page.test.tsx --runInBand` 통과.
+- `npm run test:functions -- --runTestsByPath functions/__tests__/orderDomain.test.ts functions/__tests__/couponDomain.test.ts --runInBand` 통과.
+- `npm run functions:build` 통과.
+- `npm run lint` exit 0 통과: 기존 경고 254개, 에러 0개.
+- `git diff --check` 통과: 공백 오류 없음, LF/CRLF 치환 경고만 출력.
+- Chrome 확인: 로그인, 찜/최근, 장바구니 금액 보정, checkout 한국어 라벨은 확인. 구매 완료/마이페이지 주문 노출은 함수 배포 후 재확인 필요.
 
 ### 남은 작업 (최대 3개)
-1. Firestore 반영은 인증 설정 후 `node scripts/seed-events.js`로 실행한다.
-2. DB 반영 후 사용자 페이지의 로컬 fallback 병합을 유지할지 제거할지 운영 정책을 정한다.
-3. 운영 이미지 업로드 시 텍스트 합성 배너와 별도로 `detailImage`를 넣는 정책을 유지한다.
+1. `firebase deploy --only functions:order,firestore:indexes` 또는 운영 배포 절차로 Functions/인덱스를 반영한다.
+2. 배포 후 Chrome에서 장바구니 주문 생성, 주문 완료 화면, 마이페이지 주문 목록/상세 노출을 다시 확인한다.
+3. 기존 lint warning 254개는 별도 품질 정리 작업으로 줄인다.
