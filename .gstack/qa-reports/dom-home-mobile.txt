@@ -1,0 +1,167 @@
+- banner:
+  - link "STYNA home":
+    - /url: /
+    - generic: STYNA
+    - generic: 셀렉트웨어 스토어
+  - button "Open menu"
+  - generic: STYNA
+  - paragraph: 차분한 무드로 정리한 데일리 셀렉트웨어.
+  - heading "메인 메뉴" [level=3]
+  - link "신상":
+    - /url: /recommend/?filter=new
+  - link "베스트":
+    - /url: /recommend/?filter=review
+  - link "의류":
+    - /url: /categories/clothing/
+  - link "세일":
+    - /url: /main/sale/
+  - link "브랜드":
+    - /url: /brand/
+  - heading "카테고리" [level=3]
+  - link "의류":
+    - /url: /categories/clothing/
+  - link "가방":
+    - /url: /categories/bags/
+  - link "액세서리":
+    - /url: /categories/accessories/
+  - link "아웃도어":
+    - /url: /categories/outdoor/
+  - heading "고객지원" [level=3]
+  - link "이벤트":
+    - /url: /events/
+  - link "리뷰":
+    - /url: /reviews/
+  - link "1:1문의":
+    - /url: /cs/inquiry/
+  - link "상품문의":
+    - /url: /qna/
+  - link "고객센터":
+    - /url: /cs/faq/
+  - link "검색":
+    - /url: /search/
+  - link "장바구니":
+    - /url: /orders/cart/
+  - link "로그인":
+    - /url: /auth/login/
+- main:
+  - generic: STYNA
+  - generic: "01"
+  - heading "시즌오프 세일" [level=1]
+  - paragraph: 겨울 시즌 상품 정리. 할인 상품을 먼저 확인하세요.
+  - generic: Up to 70%
+  - generic: Outer
+  - generic: Daily wear
+  - link "할인 상품 보기 →":
+    - /url: /main/sale/
+    - text: 할인 상품 보기
+    - generic: →
+  - link "전체상품":
+    - /url: /products/
+  - generic: New arrivals
+  - generic: "02"
+  - heading "신상품 업데이트" [level=1]
+  - paragraph: 최근 등록된 상품을 빠르게 확인하고 새 스타일을 비교해보세요.
+  - generic: New
+  - generic: Weekly update
+  - generic: STYNA
+  - link "신상품 보기 →":
+    - /url: /recommend/?filter=new
+    - text: 신상품 보기
+    - generic: →
+  - link "카테고리":
+    - /url: /products/
+  - generic: Best ranking
+  - generic: "03"
+  - heading "베스트셀러" [level=1]
+  - paragraph: 리뷰와 구매 반응이 좋은 상품을 순위로 확인하세요.
+  - generic: Ranking
+  - generic: Review
+  - generic: Bestseller
+  - link "베스트 보기 →":
+    - /url: /recommend/?filter=review
+    - text: 베스트 보기
+    - generic: →
+  - link "랭킹 보기":
+    - /url: /recommend/?filter=review
+  - strong: "01"
+  - generic: / 03
+  - button "이전 슬라이드":
+  - button "다음 슬라이드":
+  - heading "카테고리" [level=2]
+  - generic: 로딩 중...
+  - generic: 상품 수 확인 중
+  - generic: 로딩 중...
+  - generic: 상품 수 확인 중
+  - generic: 로딩 중...
+  - generic: 상품 수 확인 중
+  - generic: 로딩 중...
+  - generic: 상품 수 확인 중
+  - heading "신상품" [level=2]
+  - paragraph: 최근 등록된 상품
+  - link "전체보기":
+    - /url: /recommend/?filter=new
+  - paragraph: 상품을 불러오는 중입니다...
+  - heading "카테고리별 상품" [level=2]
+  - paragraph: 상품을 불러오는 중입니다.
+  - heading "시즌오프 할인 중" [level=2]
+  - paragraph: 지금 할인 중인 상품을 확인해보세요
+  - link "할인 상품 보기":
+    - /url: /main/sale/
+  - heading "베스트셀러" [level=2]
+  - paragraph: 리뷰가 많은 인기 상품
+  - link "전체보기":
+    - /url: /recommend/?filter=review
+  - paragraph: 상품을 불러오는 중입니다...
+  - heading "할인 상품" [level=2]
+  - paragraph: 지금 할인 중인 상품
+  - link "전체보기":
+    - /url: /main/sale/
+  - paragraph: 상품을 불러오는 중입니다...
+  - heading "배송 안내" [level=2]
+  - paragraph: 평일 오후 2시 이전 주문 시 당일 발송합니다. 배송은 2~3일 정도 소요됩니다.
+  - heading "교환반품" [level=2]
+  - paragraph: 수령 후 7일 이내 접수가 가능합니다. 상품 하자 시 반품 배송비는 무료입니다.
+  - heading "고객 문의" [level=2]
+  - paragraph: 1:1 문의 또는 채팅 상담을 이용해주세요. 평일 10:00~18:00 운영합니다.
+  - heading "주문 조회" [level=2]
+  - paragraph: 마이페이지에서 주문 상태와 배송 현황을 확인할 수 있습니다.
+- contentinfo:
+  - heading "고객센터" [level=3]
+  - link "자주 묻는 질문":
+    - /url: /cs/faq/
+  - link "공지사항":
+    - /url: /cs/notice_list/
+  - link "1:1 문의":
+    - /url: /cs/inquiry/
+  - link "상품문의":
+    - /url: /qna/
+  - heading "회사정보" [level=3]
+  - link "사업자 정보":
+    - /url: /legal/business-info/
+  - link "이용약관":
+    - /url: /legal/terms/
+  - link "개인정보처리방침":
+    - /url: /legal/privacy/
+  - link "기획전":
+    - /url: /events/
+  - heading "쇼핑안내" [level=3]
+  - link "오프라인 매장":
+    - /url: /support/offline/
+  - link "배송조회":
+    - /url: /orders/delivery/
+  - link "리뷰":
+    - /url: /reviews/
+  - heading "소셜" [level=3]
+  - link "Instagram":
+    - /url: "#"
+  - link "YouTube":
+    - /url: "#"
+  - paragraph: UI 및 브랜딩 포트폴리오용 쇼핑몰 데모입니다.
+  - paragraph: sevim0104@naver.com
+  - strong: © 2025 STYNA. All rights reserved.
+- button "채팅 열기": 실시간 상담
+- button "쇼핑 안내 열기":
+  - generic: 쇼핑 안내
+- button "Open Tanstack query devtools":
+- button "Open Next.js Dev Tools":
+- alert

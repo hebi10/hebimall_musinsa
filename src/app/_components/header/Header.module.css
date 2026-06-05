@@ -5,6 +5,10 @@
   border-bottom: 1px solid var(--line);
 }
 
+.headerMenuOpen {
+  z-index: 1002;
+}
+
 .container {
   position: relative;
   max-width: 1320px;

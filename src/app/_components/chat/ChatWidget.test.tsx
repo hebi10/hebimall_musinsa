@@ -3,8 +3,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import ChatWidget from './ChatWidget';
 
-process.env.NEXT_PUBLIC_CHAT_API_URL = 'https://example.com/chat';
-
 jest.mock('./ChatWidget.module.css', () => new Proxy({}, {
   get: (_target, prop) => String(prop),
 }));
@@ -26,6 +24,8 @@ function renderChatWidget() {
 
 describe('ChatWidget', () => {
   beforeEach(() => {
+    delete process.env.NEXT_PUBLIC_CHAT_API_URL;
+
     Element.prototype.scrollIntoView = jest.fn();
     global.fetch = jest.fn().mockResolvedValue({
       ok: true,
@@ -49,7 +49,7 @@ describe('ChatWidget', () => {
     expect(screen.getByPlaceholderText('메시지를 입력하세요...')).not.toBeDisabled();
   });
 
-  test('uses configured chat API URL after agent connect is requested', async () => {
+  test('uses local chat API route after agent connect is requested', async () => {
     renderChatWidget();
 
     fireEvent.click(screen.getByLabelText('채팅 열기'));
@@ -61,7 +61,29 @@ describe('ChatWidget', () => {
 
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalledWith(
-        'https://example.com/chat',
+        '/api/chat',
+        expect.objectContaining({
+          method: 'POST',
+        }),
+      );
+    });
+  });
+
+  test('uses local chat API route even when a public chat API URL is configured', async () => {
+    process.env.NEXT_PUBLIC_CHAT_API_URL = 'https://example.com/chat';
+
+    renderChatWidget();
+
+    fireEvent.click(screen.getByLabelText('채팅 열기'));
+    fireEvent.click(screen.getByRole('button', { name: '상담원 연결' }));
+    fireEvent.change(screen.getByPlaceholderText('메시지를 입력하세요...'), {
+      target: { value: '배송이 궁금합니다' },
+    });
+    fireEvent.click(screen.getByLabelText('메시지 전송'));
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledWith(
+        '/api/chat',
         expect.objectContaining({
           method: 'POST',
         }),

@@ -1,12 +1,13 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import { usePathname } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
 import styles from './ChatWidget.module.css';
 
 // ─── 상수 ──────────────────────────────────────────────
 function getChatAPIUrl(): string {
-  return process.env.NEXT_PUBLIC_CHAT_API_URL?.trim() || '/api/chat';
+  return '/api/chat';
 }
 const TYPING_DELAY_BASE = 800;
 const TYPING_DELAY_RANGE = 400;
@@ -137,6 +138,8 @@ MessageText.displayName = 'MessageText';
 
 // ─── ChatWidget 컴포넌트 ───────────────────────────────
 const ChatWidget: React.FC = () => {
+  const pathname = usePathname();
+
   // UI 상태
   const [isOpen, setIsOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
@@ -316,6 +319,10 @@ const ChatWidget: React.FC = () => {
     }
     setIsOpen((prev) => !prev);
   }, [chatMode, isOpen, startChat]);
+
+  if (pathname?.startsWith('/auth')) {
+    return null;
+  }
 
   // ── 렌더링 ────────────────────────────────────────
   return (

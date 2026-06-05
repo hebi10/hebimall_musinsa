@@ -1,0 +1,248 @@
+[
+  {
+    "level": "error",
+    "message": "Failed to query products: FirebaseError: Order by clause cannot contain more fields after the key price",
+    "timestamp": "2026-06-05T01:20:53.284Z",
+    "url": "chrome-extension://fmkadmapgofadopljbjfkapdkoienihi/build/installHook.js"
+  },
+  {
+    "level": "error",
+    "message": "상품 목록 조회 실패: Error: 상품 조회에 실패했습니다.\n    at ProductService.queryProducts (webpack-internal:///(app-pages-browser)/./src/shared/services/productService.ts:280:19)\n    at async loadPage (webpack-internal:///(app-pages-browser)/./src/app/products/_components/ProductList.tsx:105:28)",
+    "timestamp": "2026-06-05T01:20:53.285Z",
+    "url": "chrome-extension://fmkadmapgofadopljbjfkapdkoienihi/build/installHook.js"
+  },
+  {
+    "level": "error",
+    "message": "Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received",
+    "timestamp": "2026-06-05T01:20:56.811Z",
+    "url": "http://localhost:3000/events/"
+  },
+  {
+    "level": "error",
+    "message": "Failed to query products: FirebaseError: Order by clause cannot contain more fields after the key price",
+    "timestamp": "2026-06-05T01:22:02.170Z",
+    "url": "chrome-extension://fmkadmapgofadopljbjfkapdkoienihi/build/installHook.js"
+  },
+  {
+    "level": "error",
+    "message": "상품 목록 조회 실패: Error: 상품 조회에 실패했습니다.\n    at ProductService.queryProducts (webpack-internal:///(app-pages-browser)/./src/shared/services/productService.ts:280:19)\n    at async loadPage (webpack-internal:///(app-pages-browser)/./src/app/products/_components/ProductList.tsx:105:28)",
+    "timestamp": "2026-06-05T01:22:02.170Z",
+    "url": "chrome-extension://fmkadmapgofadopljbjfkapdkoienihi/build/installHook.js"
+  },
+  {
+    "level": "error",
+    "message": "Failed to query products: FirebaseError: The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/hebimall/firestore/indexes?create_composite=Cklwcm9qZWN0cy9oZWJpbWFsbC9kYXRhYmFzZXMvKGRlZmF1bHQpL2NvbGxlY3Rpb25Hcm91cHMvcHJvZHVjdHMvaW5kZXhlcy9fEAEaDgoKY2F0ZWdvcnlJZBABGgoKBnN0YXR1cxABGg0KCWNyZWF0ZWRBdBACGgwKCF9fbmFtZV9fEAI",
+    "timestamp": "2026-06-05T01:24:55.434Z",
+    "url": "chrome-extension://fmkadmapgofadopljbjfkapdkoienihi/build/installHook.js"
+  },
+  {
+    "level": "error",
+    "message": "Failed to load category products: Error: 상품 조회에 실패했습니다.\n    at ProductService.queryProducts (webpack-internal:///(app-pages-browser)/./src/shared/services/productService.ts:280:19)\n    at async ProductService.getProductsByCategory (webpack-internal:///(app-pages-browser)/./src/shared/services/productService.ts:369:28)\n    at async ProductService.getRelatedProducts (webpack-internal:///(app-pages-browser)/./src/shared/services/productService.ts:457:38)\n    at async ProductProvider.useCallback[loadRelatedProducts] (webpack-internal:///(app-pages-browser)/./src/context/productProvider.tsx:280:33)",
+    "timestamp": "2026-06-05T01:24:55.436Z",
+    "url": "chrome-extension://fmkadmapgofadopljbjfkapdkoienihi/build/installHook.js"
+  },
+  {
+    "level": "error",
+    "message": "Failed to query products: FirebaseError: The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/hebimall/firestore/indexes?create_composite=Cklwcm9qZWN0cy9oZWJpbWFsbC9kYXRhYmFzZXMvKGRlZmF1bHQpL2NvbGxlY3Rpb25Hcm91cHMvcHJvZHVjdHMvaW5kZXhlcy9fEAEaDgoKY2F0ZWdvcnlJZBABGgoKBnN0YXR1cxABGg0KCWNyZWF0ZWRBdBACGgwKCF9fbmFtZV9fEAI",
+    "timestamp": "2026-06-05T01:24:59.192Z",
+    "url": "chrome-extension://fmkadmapgofadopljbjfkapdkoienihi/build/installHook.js"
+  },
+  {
+    "level": "error",
+    "message": "Failed to load category products: Error: 상품 조회에 실패했습니다.\n    at ProductService.queryProducts (webpack-internal:///(app-pages-browser)/./src/shared/services/productService.ts:280:19)\n    at async ProductService.getProductsByCategory (webpack-internal:///(app-pages-browser)/./src/shared/services/productService.ts:369:28)\n    at async DynamicCategoryPage.useEffect.loadProducts (webpack-internal:///(app-pages-browser)/./src/app/categories/[category]/page.tsx:98:50)",
+    "timestamp": "2026-06-05T01:24:59.193Z",
+    "url": "chrome-extension://fmkadmapgofadopljbjfkapdkoienihi/build/installHook.js"
+  },
+  {
+    "level": "error",
+    "message": "Failed to query products: FirebaseError: Order by clause cannot contain more fields after the key price",
+    "timestamp": "2026-06-05T01:25:27.842Z",
+    "url": "chrome-extension://fmkadmapgofadopljbjfkapdkoienihi/build/installHook.js"
+  },
+  {
+    "level": "error",
+    "message": "상품 목록 조회 실패: Error: 상품 조회에 실패했습니다.\n    at ProductService.queryProducts (webpack-internal:///(app-pages-browser)/./src/shared/services/productService.ts:280:19)\n    at async loadPage (webpack-internal:///(app-pages-browser)/./src/app/products/_components/ProductList.tsx:105:28)",
+    "timestamp": "2026-06-05T01:25:27.842Z",
+    "url": "chrome-extension://fmkadmapgofadopljbjfkapdkoienihi/build/installHook.js"
+  },
+  {
+    "level": "error",
+    "message": "Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received",
+    "timestamp": "2026-06-05T01:25:46.790Z",
+    "url": "http://localhost:3000/cs/inquiry/"
+  },
+  {
+    "level": "error",
+    "message": "Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received",
+    "timestamp": "2026-06-05T01:25:46.791Z",
+    "url": "http://localhost:3000/cs/inquiry/"
+  },
+  {
+    "level": "error",
+    "message": "Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received",
+    "timestamp": "2026-06-05T01:25:46.791Z",
+    "url": "http://localhost:3000/cs/inquiry/"
+  },
+  {
+    "level": "error",
+    "message": "Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received",
+    "timestamp": "2026-06-05T01:25:46.791Z",
+    "url": "http://localhost:3000/cs/inquiry/"
+  },
+  {
+    "level": "error",
+    "message": "Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received",
+    "timestamp": "2026-06-05T01:27:12.499Z",
+    "url": "http://localhost:3000/admin/dashboard/orders/"
+  },
+  {
+    "level": "error",
+    "message": "Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received",
+    "timestamp": "2026-06-05T01:27:12.499Z",
+    "url": "http://localhost:3000/admin/dashboard/orders/"
+  },
+  {
+    "level": "error",
+    "message": "Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received",
+    "timestamp": "2026-06-05T01:27:12.499Z",
+    "url": "http://localhost:3000/admin/dashboard/orders/"
+  },
+  {
+    "level": "error",
+    "message": "Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received",
+    "timestamp": "2026-06-05T01:27:12.499Z",
+    "url": "http://localhost:3000/admin/dashboard/orders/"
+  },
+  {
+    "level": "error",
+    "message": "Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received",
+    "timestamp": "2026-06-05T01:27:41.922Z",
+    "url": "http://localhost:3000/admin/cleanup-korean/"
+  },
+  {
+    "level": "error",
+    "message": "Failed to query products: FirebaseError: The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/hebimall/firestore/indexes?create_composite=Cklwcm9qZWN0cy9oZWJpbWFsbC9kYXRhYmFzZXMvKGRlZmF1bHQpL2NvbGxlY3Rpb25Hcm91cHMvcHJvZHVjdHMvaW5kZXhlcy9fEAEaDgoKY2F0ZWdvcnlJZBABGgoKBnN0YXR1cxABGg0KCWNyZWF0ZWRBdBACGgwKCF9fbmFtZV9fEAI",
+    "timestamp": "2026-06-05T01:27:58.450Z",
+    "url": "chrome-extension://fmkadmapgofadopljbjfkapdkoienihi/build/installHook.js"
+  },
+  {
+    "level": "error",
+    "message": "Failed to load category products: Error: 상품 조회에 실패했습니다.\n    at ProductService.queryProducts (webpack-internal:///(app-pages-browser)/./src/shared/services/productService.ts:280:19)\n    at async ProductService.getProductsByCategory (webpack-internal:///(app-pages-browser)/./src/shared/services/productService.ts:369:28)\n    at async ProductService.getRelatedProducts (webpack-internal:///(app-pages-browser)/./src/shared/services/productService.ts:457:38)\n    at async ProductProvider.useCallback[loadRelatedProducts] (webpack-internal:///(app-pages-browser)/./src/context/productProvider.tsx:280:33)",
+    "timestamp": "2026-06-05T01:27:58.450Z",
+    "url": "chrome-extension://fmkadmapgofadopljbjfkapdkoienihi/build/installHook.js"
+  },
+  {
+    "level": "error",
+    "message": "Failed to query products: FirebaseError: The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/hebimall/firestore/indexes?create_composite=Cklwcm9qZWN0cy9oZWJpbWFsbC9kYXRhYmFzZXMvKGRlZmF1bHQpL2NvbGxlY3Rpb25Hcm91cHMvcHJvZHVjdHMvaW5kZXhlcy9fEAEaDgoKY2F0ZWdvcnlJZBABGgoKBnN0YXR1cxABGg0KCWNyZWF0ZWRBdBACGgwKCF9fbmFtZV9fEAI",
+    "timestamp": "2026-06-05T01:28:00.740Z",
+    "url": "chrome-extension://fmkadmapgofadopljbjfkapdkoienihi/build/installHook.js"
+  },
+  {
+    "level": "error",
+    "message": "Failed to load category products: Error: 상품 조회에 실패했습니다.\n    at ProductService.queryProducts (webpack-internal:///(app-pages-browser)/./src/shared/services/productService.ts:280:19)\n    at async ProductService.getProductsByCategory (webpack-internal:///(app-pages-browser)/./src/shared/services/productService.ts:369:28)\n    at async DynamicCategoryPage.useEffect.loadProducts (webpack-internal:///(app-pages-browser)/./src/app/categories/[category]/page.tsx:98:50)",
+    "timestamp": "2026-06-05T01:28:00.740Z",
+    "url": "chrome-extension://fmkadmapgofadopljbjfkapdkoienihi/build/installHook.js"
+  },
+  {
+    "level": "error",
+    "message": "Failed to query products: FirebaseError: Order by clause cannot contain more fields after the key price",
+    "timestamp": "2026-06-05T01:28:22.291Z",
+    "url": "chrome-extension://fmkadmapgofadopljbjfkapdkoienihi/build/installHook.js"
+  },
+  {
+    "level": "error",
+    "message": "상품 목록 조회 실패: Error: 상품 조회에 실패했습니다.\n    at ProductService.queryProducts (webpack-internal:///(app-pages-browser)/./src/shared/services/productService.ts:280:19)\n    at async loadPage (webpack-internal:///(app-pages-browser)/./src/app/products/_components/ProductList.tsx:105:28)",
+    "timestamp": "2026-06-05T01:28:22.291Z",
+    "url": "chrome-extension://fmkadmapgofadopljbjfkapdkoienihi/build/installHook.js"
+  },
+  {
+    "level": "error",
+    "message": "Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received",
+    "timestamp": "2026-06-05T01:28:29.580Z",
+    "url": "http://localhost:3000/brand/"
+  },
+  {
+    "level": "error",
+    "message": "Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received",
+    "timestamp": "2026-06-05T01:28:29.580Z",
+    "url": "http://localhost:3000/brand/"
+  },
+  {
+    "level": "error",
+    "message": "Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received",
+    "timestamp": "2026-06-05T01:28:29.580Z",
+    "url": "http://localhost:3000/brand/"
+  },
+  {
+    "level": "error",
+    "message": "Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received",
+    "timestamp": "2026-06-05T01:28:29.580Z",
+    "url": "http://localhost:3000/brand/"
+  },
+  {
+    "level": "error",
+    "message": "Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received",
+    "timestamp": "2026-06-05T01:28:29.581Z",
+    "url": "http://localhost:3000/brand/"
+  },
+  {
+    "level": "error",
+    "message": "Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received",
+    "timestamp": "2026-06-05T01:30:13.492Z",
+    "url": "http://localhost:3000/admin/dashboard/products/add/"
+  },
+  {
+    "level": "error",
+    "message": "Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received",
+    "timestamp": "2026-06-05T01:30:13.497Z",
+    "url": "http://localhost:3000/admin/dashboard/products/add/"
+  },
+  {
+    "level": "error",
+    "message": "Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received",
+    "timestamp": "2026-06-05T01:30:13.497Z",
+    "url": "http://localhost:3000/admin/dashboard/products/add/"
+  },
+  {
+    "level": "error",
+    "message": "Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received",
+    "timestamp": "2026-06-05T01:30:13.497Z",
+    "url": "http://localhost:3000/admin/dashboard/products/add/"
+  },
+  {
+    "level": "error",
+    "message": "Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received",
+    "timestamp": "2026-06-05T01:30:13.497Z",
+    "url": "http://localhost:3000/admin/dashboard/products/add/"
+  },
+  {
+    "level": "error",
+    "message": "Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received",
+    "timestamp": "2026-06-05T01:30:38.284Z",
+    "url": "http://localhost:3000/admin/seed/"
+  },
+  {
+    "level": "error",
+    "message": "Failed to query products: FirebaseError: The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/hebimall/firestore/indexes?create_composite=Cklwcm9qZWN0cy9oZWJpbWFsbC9kYXRhYmFzZXMvKGRlZmF1bHQpL2NvbGxlY3Rpb25Hcm91cHMvcHJvZHVjdHMvaW5kZXhlcy9fEAEaDgoKY2F0ZWdvcnlJZBABGgoKBnN0YXR1cxABGg0KCWNyZWF0ZWRBdBACGgwKCF9fbmFtZV9fEAI",
+    "timestamp": "2026-06-05T01:31:05.969Z",
+    "url": "chrome-extension://fmkadmapgofadopljbjfkapdkoienihi/build/installHook.js"
+  },
+  {
+    "level": "error",
+    "message": "Failed to load category products: Error: 상품 조회에 실패했습니다.\n    at ProductService.queryProducts (webpack-internal:///(app-pages-browser)/./src/shared/services/productService.ts:280:19)\n    at async ProductService.getProductsByCategory (webpack-internal:///(app-pages-browser)/./src/shared/services/productService.ts:369:28)\n    at async ProductService.getRelatedProducts (webpack-internal:///(app-pages-browser)/./src/shared/services/productService.ts:457:38)\n    at async ProductProvider.useCallback[loadRelatedProducts] (webpack-internal:///(app-pages-browser)/./src/context/productProvider.tsx:280:33)",
+    "timestamp": "2026-06-05T01:31:05.970Z",
+    "url": "chrome-extension://fmkadmapgofadopljbjfkapdkoienihi/build/installHook.js"
+  },
+  {
+    "level": "error",
+    "message": "Failed to query products: FirebaseError: The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/hebimall/firestore/indexes?create_composite=Cklwcm9qZWN0cy9oZWJpbWFsbC9kYXRhYmFzZXMvKGRlZmF1bHQpL2NvbGxlY3Rpb25Hcm91cHMvcHJvZHVjdHMvaW5kZXhlcy9fEAEaDgoKY2F0ZWdvcnlJZBABGgoKBnN0YXR1cxABGg0KCWNyZWF0ZWRBdBACGgwKCF9fbmFtZV9fEAI",
+    "timestamp": "2026-06-05T01:31:08.330Z",
+    "url": "chrome-extension://fmkadmapgofadopljbjfkapdkoienihi/build/installHook.js"
+  },
+  {
+    "level": "error",
+    "message": "Failed to load category products: Error: 상품 조회에 실패했습니다.\n    at ProductService.queryProducts (webpack-internal:///(app-pages-browser)/./src/shared/services/productService.ts:280:19)\n    at async ProductService.getProductsByCategory (webpack-internal:///(app-pages-browser)/./src/shared/services/productService.ts:369:28)\n    at async DynamicCategoryPage.useEffect.loadProducts (webpack-internal:///(app-pages-browser)/./src/app/categories/[category]/page.tsx:98:50)",
+    "timestamp": "2026-06-05T01:31:08.330Z",
+    "url": "chrome-extension://fmkadmapgofadopljbjfkapdkoienihi/build/installHook.js"
+  }
+]

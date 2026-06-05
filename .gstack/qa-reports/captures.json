@@ -1,0 +1,50 @@
+[
+  {
+    "route": "/products",
+    "file": "C:/Users/gy554/Desktop/portfolio/hebimall/.gstack/qa-reports/screenshots/issue-products-mobile-query-fail.png",
+    "info": {
+      "clientWidth": 485,
+      "height": 659,
+      "scrollWidth": 485,
+      "text": "STYNA 셀렉트웨어 스토어 STYNA 차분한 무드로 정리한 데일리 셀렉트웨어. 메인 메뉴 신상 베스트 상의 세일 브랜드 카테고리 상의 하의 신발 스포츠 아웃도어 가방 주얼리 액세서리 고객지원 이벤트 리뷰 1:1문의 상품문의 고객센터 검색 장바구니 로그인 홈 / 전체 상품 전체 상품 STYNA의 다양한 상품을 만나보세요 상품 목록 로딩 실패: 상품 조회에 실패했습니다. 다시 시도 고객센터 자주 묻는 질문 공지사항 1:1 문의 상품문의 회사정보 사업자 정보 이용약관 개인정보처리방침 기획전 쇼핑안내 오프라인 매장 배송조회 리뷰 소셜 Instagram YouTube UI 및 브랜딩 포트폴리오용 쇼핑몰 데모입니다. sevim0104@naver.com © 2025 STYNA. All rights reserved. 실시간 상담 쇼핑 안내",
+      "url": "http://localhost:3000/products/",
+      "width": 500
+    }
+  },
+  {
+    "route": "/categories/clothing",
+    "file": "C:/Users/gy554/Desktop/portfolio/hebimall/.gstack/qa-reports/screenshots/issue-category-mobile-query-fail.png",
+    "info": {
+      "clientWidth": 485,
+      "height": 659,
+      "scrollWidth": 485,
+      "text": "STYNA 셀렉트웨어 스토어 STYNA 차분한 무드로 정리한 데일리 셀렉트웨어. 메인 메뉴 신상 베스트 상의 세일 브랜드 카테고리 상의 하의 신발 스포츠 아웃도어 가방 주얼리 액세서리 고객지원 이벤트 리뷰 1:1문의 상품문의 고객센터 검색 장바구니 로그인 홈 > 카테고리 > tops tops 다양한 상품을 만나보세요 인기순 최신순 낮은 가격순 높은 가격순 리뷰 많은순 총 0개 상품 해당 카테고리에 상품이 없습니다. 다른 카테고리 보기 고객센터 자주 묻는 질문 공지사항 1:1 문의 상품문의 회사정보 사업자 정보 이용약관 개인정보처리방침 기획전 쇼핑안내 오프라인 매장 배송조회 리뷰 소셜 Instagram YouTube UI 및 브랜딩 포트폴리오용 쇼핑몰 데모입니다. sevim0104@naver.com © 2025 STYNA. All rights reserved. 실시간 상담 쇼핑 안내",
+      "url": "http://localhost:3000/categories/tops",
+      "width": 500
+    }
+  },
+  {
+    "route": "/",
+    "file": "C:/Users/gy554/Desktop/portfolio/hebimall/.gstack/qa-reports/screenshots/evidence-home-mobile.png",
+    "info": {
+      "clientWidth": 485,
+      "height": 659,
+      "scrollWidth": 485,
+      "text": "STYNA 셀렉트웨어 스토어 STYNA 차분한 무드로 정리한 데일리 셀렉트웨어. 메인 메뉴 신상 베스트 상의 세일 브랜드 카테고리 상의 하의 신발 스포츠 아웃도어 가방 주얼리 액세서리 고객지원 이벤트 리뷰 1:1문의 상품문의 고객센터 검색 장바구니 로그인 STYNA 01 시즌오프 세일 겨울 시즌 상품 정리. 할인 상품을 먼저 확인하세요. Up to 70% Outer Daily wear 할인 상품 보기 → 전체상품 NEW ARRIVALS 02 신상품 업데이트 최근 등록된 상품을 빠르게 확인하고 새 스타일을 비교해보세요. New Weekly update STYNA 신상품 보기 → 카테고리 BEST RANKING 03 베스트셀러 리뷰와 구매 반응이 좋은 상품을 순위로 확인하세요. Ranking Review Bestseller 베스트 보기 → 랭킹 보기 01 / 03 카테고리 상의 2,450+ 상품 하의 1,890+ 상품 신발 1,230+ 상품 스포츠 650+ 상품 신상품 최근 등록된 상품",
+      "url": "http://localhost:3000/",
+      "width": 500
+    }
+  },
+  {
+    "route": "/auth/login",
+    "file": "C:/Users/gy554/Desktop/portfolio/hebimall/.gstack/qa-reports/screenshots/evidence-login-mobile.png",
+    "info": {
+      "clientWidth": 485,
+      "height": 659,
+      "scrollWidth": 485,
+      "text": "STYNA 셀렉트웨어 스토어 STYNA 차분한 무드로 정리한 데일리 셀렉트웨어. 메인 메뉴 신상 베스트 상의 세일 브랜드 카테고리 상의 하의 신발 스포츠 아웃도어 가방 주얼리 액세서리 고객지원 이벤트 리뷰 1:1문의 상품문의 고객센터 검색 장바구니 로그인 STYNA 패션을 위한 모든 것 로그인 이메일 비밀번호 로그인 상태 유지 비밀번호 찾기 로그인 또는 K 일반 유저 로그인 N 관리자 로그인 G 구글 로그인 아직 계정이 없으신가요? 회원가입 고객센터 자주 묻는 질문 공지사항 1:1 문의 상품문의 회사정보 사업자 정보 이용약관 개인정보처리방침 기획전 쇼핑안내 오프라인 매장 배송조회 리뷰 소셜 Instagram YouTube UI 및 브랜딩 포트폴리오용 쇼핑몰 데모입니다. sevim0104@naver.com © 2025 STYNA. All rights reserved. 실시간 상담 쇼핑 안내",
+      "url": "http://localhost:3000/auth/login/",
+      "width": 500
+    }
+  }
+]

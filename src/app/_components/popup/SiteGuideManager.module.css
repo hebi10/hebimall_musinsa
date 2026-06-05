@@ -47,15 +47,7 @@
 
 @media (max-width: 480px) {
   .fixedButton {
-    right: 1rem;
-    bottom: calc(1rem + 40px);
-    min-width: 96px;
-    height: 34px;
-    padding: 0 0.75rem;
-  }
-
-  .buttonText {
-    font-size: 11px;
+    display: none;
   }
 }
 

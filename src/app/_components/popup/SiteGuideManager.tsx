@@ -1,10 +1,12 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import SiteGuidePopup from './SiteGuidePopup';
 import styles from './SiteGuideManager.module.css';
 
 const SiteGuideManager: React.FC = () => {
+  const pathname = usePathname();
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
 
@@ -23,6 +25,10 @@ const SiteGuideManager: React.FC = () => {
 
   // 서버 사이드 렌더링에서는 아무것도 렌더링하지 않음
   if (!isClient) {
+    return null;
+  }
+
+  if (pathname?.startsWith('/auth')) {
     return null;
   }
 

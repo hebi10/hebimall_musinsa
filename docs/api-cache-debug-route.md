@@ -13,7 +13,10 @@
 - 2026-05-12: 실시간 상담 목적 선택에 `상품 문의`를 추가하고 Next/API Functions 공통 응답 파일을 함께 갱신했다.
 - 2026-05-12: 실시간 상담의 상담 연결 intent를 버튼/자연어 중심으로 정리하고, 과거 붙임 명령어는 내부 호환만 처리하도록 Next/API Functions 공통 응답 파일을 함께 갱신했다.
 - 2026-05-12: `/api/order`는 주문 생성 외 관리자 주문 상태 변경 액션을 처리하며, `/api/coupon`은 관리자 쿠폰 마스터 생성/수정/보관 액션을 처리한다. 두 API 모두 인증 토큰 기반 민감 응답이라 `no-store` 대상이다.
-- 2026-05-14: 실시간 상담 위젯은 `NEXT_PUBLIC_CHAT_API_URL`이 있으면 해당 URL을 직접 호출하고, `/api/chat`은 `CHAT_API_URL` 또는 `NEXT_PUBLIC_CHAT_API_URL`이 절대 URL이면 upstream 상담 API로 no-store 프록시한 뒤 실패 시 기존 메뉴/fallback 응답으로 돌아간다.
+- 2026-05-14: `/api/chat`은 `CHAT_API_URL` 또는 `NEXT_PUBLIC_CHAT_API_URL`이 절대 URL이면 upstream 상담 API로 no-store 프록시한 뒤 실패 시 기존 메뉴/fallback 응답으로 돌아간다.
+- 2026-05-14: 실시간 상담 위젯은 브라우저 CORS 차단을 피하도록 항상 same-origin `/api/chat`만 호출한다. `/api/chat`은 upstream이 없으면 서버 환경변수 `OPENAI_API_KEY`로 OpenAI Chat Completions를 직접 호출한다. `OPENAI_CHAT_MODEL`이 없으면 `gpt-4o-mini`를 사용한다.
+- 2026-05-14: `NEXT_PUBLIC_CHAT_API_URL`은 클라이언트 직접 호출용이 아니라 Next `/api/chat`의 서버 측 upstream 프록시 후보로만 사용한다.
+- 2026-05-14: Firebase Hosting의 `/api/chat` rewrite가 사용하는 Functions `chat`도 기본 모델을 `gpt-4o-mini`로 맞추고, OpenAI 호출 실패 시 문의 내용 기반 fallback 응답을 반환하도록 보정했다.
 
 ## 검증
 - `rg --files src/app/api` 결과 경로 확인:
@@ -27,6 +30,15 @@
 - 2026-05-14 검증:
   - `npm test -- --runTestsByPath src/app/_components/chat/ChatWidget.test.tsx --runInBand`: 통과.
   - `npm test -- --runTestsByPath src/app/api/chat/route.test.ts --runInBand`: 통과.
+  - `npm run typecheck`: 통과.
+  - `npm run functions:build`: 통과.
+- 2026-05-14 추가 검증:
+  - `npm test -- --runTestsByPath src/app/_components/chat/ChatWidget.test.tsx --runInBand`: 통과.
+  - `npm test -- --runTestsByPath src/app/api/chat/route.test.ts --runInBand`: 통과.
+  - `npm run typecheck`: 통과.
+  - `npm run lint`: 통과, 기존 warning 254개 잔존.
+- 2026-05-14 상담 경로 복구 검증:
+  - `npm test -- --runTestsByPath src/app/_components/chat/ChatWidget.test.tsx src/app/api/chat/route.test.ts --runInBand`: 통과.
   - `npm run typecheck`: 통과.
   - `npm run functions:build`: 통과.
 

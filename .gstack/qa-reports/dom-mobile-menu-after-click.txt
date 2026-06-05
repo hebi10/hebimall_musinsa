@@ -1,0 +1,427 @@
+- banner:
+  - link "STYNA home":
+    - /url: /
+    - generic: STYNA
+    - generic: 셀렉트웨어 스토어
+  - button "Open menu" [active]
+  - generic: STYNA
+  - paragraph: 차분한 무드로 정리한 데일리 셀렉트웨어.
+  - heading "메인 메뉴" [level=3]
+  - link "신상":
+    - /url: /recommend/?filter=new
+  - link "베스트":
+    - /url: /recommend/?filter=review
+  - link "상의":
+    - /url: /categories/clothing/
+  - link "세일":
+    - /url: /main/sale/
+  - link "브랜드":
+    - /url: /brand/
+  - heading "카테고리" [level=3]
+  - link "상의":
+    - /url: /categories/clothing/
+  - link "하의":
+    - /url: /categories/bottoms/
+  - link "신발":
+    - /url: /categories/shoes/
+  - link "스포츠":
+    - /url: /categories/sports/
+  - link "아웃도어":
+    - /url: /categories/outdoor/
+  - link "가방":
+    - /url: /categories/bags/
+  - link "주얼리":
+    - /url: /categories/jewelry/
+  - link "액세서리":
+    - /url: /categories/accessories/
+  - heading "고객지원" [level=3]
+  - link "이벤트":
+    - /url: /events/
+  - link "리뷰":
+    - /url: /reviews/
+  - link "1:1문의":
+    - /url: /cs/inquiry/
+  - link "상품문의":
+    - /url: /qna/
+  - link "고객센터":
+    - /url: /cs/faq/
+  - link "검색":
+    - /url: /search/
+  - link "장바구니":
+    - /url: /orders/cart/
+  - link "로그인":
+    - /url: /auth/login/
+- main:
+  - generic: New arrivals
+  - generic: "02"
+  - heading "신상품 업데이트" [level=1]
+  - paragraph: 최근 등록된 상품을 빠르게 확인하고 새 스타일을 비교해보세요.
+  - generic: New
+  - generic: Weekly update
+  - generic: STYNA
+  - link "신상품 보기 →":
+    - /url: /recommend/?filter=new
+    - text: 신상품 보기
+    - generic: →
+  - link "카테고리":
+    - /url: /products/
+  - generic: Best ranking
+  - generic: "03"
+  - heading "베스트셀러" [level=1]
+  - paragraph: 리뷰와 구매 반응이 좋은 상품을 순위로 확인하세요.
+  - generic: Ranking
+  - generic: Review
+  - generic: Bestseller
+  - link "베스트 보기 →":
+    - /url: /recommend/?filter=review
+    - text: 베스트 보기
+    - generic: →
+  - link "랭킹 보기":
+    - /url: /recommend/?filter=review
+  - generic: STYNA
+  - generic: "01"
+  - heading "시즌오프 세일" [level=1]
+  - paragraph: 겨울 시즌 상품 정리. 할인 상품을 먼저 확인하세요.
+  - generic: Up to 70%
+  - generic: Outer
+  - generic: Daily wear
+  - link "할인 상품 보기 →":
+    - /url: /main/sale/
+    - text: 할인 상품 보기
+    - generic: →
+  - link "전체상품":
+    - /url: /products/
+  - strong: "01"
+  - generic: / 03
+  - button "이전 슬라이드":
+  - button "다음 슬라이드":
+  - heading "카테고리" [level=2]
+  - link "상의 상의 2,450+ 상품":
+    - /url: /categories/clothing/
+    - img "상의"
+    - generic: 상의
+    - generic: 2,450+ 상품
+  - link "하의 하의 1,890+ 상품":
+    - /url: /categories/bottoms/
+    - img "하의"
+    - generic: 하의
+    - generic: 1,890+ 상품
+  - link "신발 신발 1,230+ 상품":
+    - /url: /categories/shoes/
+    - img "신발"
+    - generic: 신발
+    - generic: 1,230+ 상품
+  - link "스포츠 스포츠 650+ 상품":
+    - /url: /categories/sports/
+    - img "스포츠"
+    - generic: 스포츠
+    - generic: 650+ 상품
+  - heading "신상품" [level=2]
+  - paragraph: 최근 등록된 상품
+  - link "전체보기":
+    - /url: /recommend/?filter=new
+  - link "블루 사파이어 칵테일 반지 NEW -21% 위시리스트에 추가 SAPPHIRE ROYAL 블루 사파이어 칵테일 반지 1,250,000원 778,150원 ★ 4.5 (13)":
+    - /url: /products/ZEMIfgpl9ZLAG8lgkMub/
+    - img "블루 사파이어 칵테일 반지"
+    - generic: NEW
+    - generic: "-21%"
+    - button "위시리스트에 추가":
+    - paragraph: SAPPHIRE ROYAL
+    - heading "블루 사파이어 칵테일 반지" [level=3]
+    - generic: 1,250,000원
+    - generic: 778,150원
+    - generic: ★ 4.5
+    - generic: (13)
+  - link "에메랄드 스톤 펜던트 목걸이 NEW -19% 위시리스트에 추가 EMERALD LUXURY 에메랄드 스톤 펜던트 목걸이 950,000원 619,650원 ★ 4.5 (13)":
+    - /url: /products/uu9sEJlHxx4pv0HgNvFe/
+    - img "에메랄드 스톤 펜던트 목걸이"
+    - generic: NEW
+    - generic: "-19%"
+    - button "위시리스트에 추가":
+    - paragraph: EMERALD LUXURY
+    - heading "에메랄드 스톤 펜던트 목걸이" [level=3]
+    - generic: 950,000원
+    - generic: 619,650원
+    - generic: ★ 4.5
+    - generic: (13)
+  - link "시티즌 메탈 오토매틱 시계 NEW -20% 위시리스트에 추가 CITIZEN 시티즌 메탈 오토매틱 시계 480,000원 308,000원 ★ 4.5 (13)":
+    - /url: /products/FdDywMIh90USigMNMGyU/
+    - img "시티즌 메탈 오토매틱 시계"
+    - generic: NEW
+    - generic: "-20%"
+    - button "위시리스트에 추가":
+    - paragraph: CITIZEN
+    - heading "시티즌 메탈 오토매틱 시계" [level=3]
+    - generic: 480,000원
+    - generic: 308,000원
+    - generic: ★ 4.5
+    - generic: (13)
+  - link "18K 다이아몬드 스터드 귀걸이 NEW -21% 위시리스트에 추가 DIAMOND ELITE 18K 다이아몬드 스터드 귀걸이 1,580,000원 987,500원 ★ 4.5 (13)":
+    - /url: /products/08bAASTc0HwiDhecRehh/
+    - img "18K 다이아몬드 스터드 귀걸이"
+    - generic: NEW
+    - generic: "-21%"
+    - button "위시리스트에 추가":
+    - paragraph: DIAMOND ELITE
+    - heading "18K 다이아몬드 스터드 귀걸이" [level=3]
+    - generic: 1,580,000원
+    - generic: 987,500원
+    - generic: ★ 4.5
+    - generic: (13)
+  - heading "카테고리별 상품" [level=2]
+  - paragraph: 원하는 분류의 상품을 빠르게 확인하세요
+  - link "전체보기":
+    - /url: /categories/bags/
+  - tablist "카테고리별 상품":
+    - tab "가방" [selected]
+    - tab "상의"
+    - tab "스포츠"
+    - tab "신발"
+    - tab "아웃도어"
+    - tab "액세서리"
+  - link "스퀘어 디자이너 클러치백 -19% 위시리스트에 추가 DESIGNER HOUSE 스퀘어 디자이너 클러치백 155,000원 101,250원 ★ 4.5 (13)":
+    - /url: /products/oMmMQqIss82rqyMntTuK/
+    - img "스퀘어 디자이너 클러치백"
+    - generic: "-19%"
+    - button "위시리스트에 추가":
+    - paragraph: DESIGNER HOUSE
+    - heading "스퀘어 디자이너 클러치백" [level=3]
+    - generic: 155,000원
+    - generic: 101,250원
+    - generic: ★ 4.5
+    - generic: (13)
+  - link "하드케이스 여행용 캐리어백 NEW -24% 위시리스트에 추가 TRAVEL MATE 하드케이스 여행용 캐리어백 125,000원 72,200원 ★ 4.5 (13)":
+    - /url: /products/LdhEW1R4TAH0YCe6o8Rq/
+    - img "하드케이스 여행용 캐리어백"
+    - generic: NEW
+    - generic: "-24%"
+    - button "위시리스트에 추가":
+    - paragraph: TRAVEL MATE
+    - heading "하드케이스 여행용 캐리어백" [level=3]
+    - generic: 125,000원
+    - generic: 72,200원
+    - generic: ★ 4.5
+    - generic: (13)
+  - link "리사이클 에코 숄더백 NEW 위시리스트에 추가 ECO GREEN 리사이클 에코 숄더백 55,000원 ★ 4.5 (13)":
+    - /url: /products/u0GhU8mdpZ6LHcZWQaol/
+    - img "리사이클 에코 숄더백"
+    - generic: NEW
+    - button "위시리스트에 추가":
+    - paragraph: ECO GREEN
+    - heading "리사이클 에코 숄더백" [level=3]
+    - generic: 55,000원
+    - generic: ★ 4.5
+    - generic: (13)
+  - link "레더 프리미엄 서류가방 -19% 위시리스트에 추가 BUSINESS PRO 레더 프리미엄 서류가방 180,000원 117,450원 ★ 4.5 (13)":
+    - /url: /products/htT5EP0B4YkfHJ8urw5T/
+    - img "레더 프리미엄 서류가방"
+    - generic: "-19%"
+    - button "위시리스트에 추가":
+    - paragraph: BUSINESS PRO
+    - heading "레더 프리미엄 서류가방" [level=3]
+    - generic: 180,000원
+    - generic: 117,450원
+    - generic: ★ 4.5
+    - generic: (13)
+  - heading "시즌오프 할인 중" [level=2]
+  - paragraph: 지금 할인 중인 상품을 확인해보세요
+  - link "할인 상품 보기":
+    - /url: /main/sale/
+  - heading "베스트셀러" [level=2]
+  - paragraph: 리뷰가 많은 인기 상품
+  - link "전체보기":
+    - /url: /recommend/?filter=review
+  - generic: "1"
+  - link "로우컷 화이트 스니커즈 -19% 위시리스트에 추가 CLASSIC 로우컷 화이트 스니커즈 110,000원 72,090원 ★ 4.5 (13)":
+    - /url: /products/xoUBLvxyTibBtfES6fRK/
+    - img "로우컷 화이트 스니커즈"
+    - generic: "-19%"
+    - button "위시리스트에 추가":
+    - paragraph: CLASSIC
+    - heading "로우컷 화이트 스니커즈" [level=3]
+    - generic: 110,000원
+    - generic: 72,090원
+    - generic: ★ 4.5
+    - generic: (13)
+  - generic: "2"
+  - link "베이직 크루넥 반팔티 -25% 위시리스트에 추가 SUMMER 베이직 크루넥 반팔티 20,000원 11,250원 ★ 4.5 (13)":
+    - /url: /products/GY2SPaOk0TY3tyUjn7jj/
+    - img "베이직 크루넥 반팔티"
+    - generic: "-25%"
+    - button "위시리스트에 추가":
+    - paragraph: SUMMER
+    - heading "베이직 크루넥 반팔티" [level=3]
+    - generic: 20,000원
+    - generic: 11,250원
+    - generic: ★ 4.5
+    - generic: (13)
+  - generic: "3"
+  - link "에어 쿠셔닝 프로 런닝화 NEW -20% 위시리스트에 추가 RUN ELITE 에어 쿠셔닝 프로 런닝화 230,000원 148,000원 ★ 4.5 (13)":
+    - /url: /products/cHKOPfUajKkA0lO1uvh3/
+    - img "에어 쿠셔닝 프로 런닝화"
+    - generic: NEW
+    - generic: "-20%"
+    - button "위시리스트에 추가":
+    - paragraph: RUN ELITE
+    - heading "에어 쿠셔닝 프로 런닝화" [level=3]
+    - generic: 230,000원
+    - generic: 148,000원
+    - generic: ★ 4.5
+    - generic: (13)
+  - generic: "4"
+  - link "실버 커플 반지 세트 -24% 위시리스트에 추가 LOVE RING 실버 커플 반지 세트 165,000원 95,000원 ★ 4.5 (13)":
+    - /url: /products/GVR0sCpCwznagc7RlrUr/
+    - img "실버 커플 반지 세트"
+    - generic: "-24%"
+    - button "위시리스트에 추가":
+    - paragraph: LOVE RING
+    - heading "실버 커플 반지 세트" [level=3]
+    - generic: 165,000원
+    - generic: 95,000원
+    - generic: ★ 4.5
+    - generic: (13)
+  - generic: "5"
+  - link "클래식 컨버스 스니커즈 NEW -17% 위시리스트에 추가 RETRO 클래식 컨버스 스니커즈 95,000원 65,570원 ★ 4.5 (13)":
+    - /url: /products/l3H54GIOSQF9NWo4saCu/
+    - img "클래식 컨버스 스니커즈"
+    - generic: NEW
+    - generic: "-17%"
+    - button "위시리스트에 추가":
+    - paragraph: RETRO
+    - heading "클래식 컨버스 스니커즈" [level=3]
+    - generic: 95,000원
+    - generic: 65,570원
+    - generic: ★ 4.5
+    - generic: (13)
+  - generic: "6"
+  - link "안티포그 수영 고글 프로 -22% 위시리스트에 추가 SWIM PRO 안티포그 수영 고글 프로 45,000원 27,300원 ★ 4.5 (13)":
+    - /url: /products/BgfQxSiI1SA8dZXvFdEW/
+    - img "안티포그 수영 고글 프로"
+    - generic: "-22%"
+    - button "위시리스트에 추가":
+    - paragraph: SWIM PRO
+    - heading "안티포그 수영 고글 프로" [level=3]
+    - generic: 45,000원
+    - generic: 27,300원
+    - generic: ★ 4.5
+    - generic: (13)
+  - generic: "7"
+  - link "익스트림 4계절 다운 재킷 -21% 위시리스트에 추가 OUTDOOR MASTER 익스트림 4계절 다운 재킷 240,000원 149,310원 ★ 4.5 (13)":
+    - /url: /products/Ta5Ej9gGTJ4GIFtuzTsK/
+    - img "익스트림 4계절 다운 재킷"
+    - generic: "-21%"
+    - button "위시리스트에 추가":
+    - paragraph: OUTDOOR MASTER
+    - heading "익스트림 4계절 다운 재킷" [level=3]
+    - generic: 240,000원
+    - generic: 149,310원
+    - generic: ★ 4.5
+    - generic: (13)
+  - generic: "8"
+  - link "스트랩 샌들 위시리스트에 추가 SUMMER 스트랩 샌들 45,000원 ★ 4.5 (13)":
+    - /url: /products/e1zp6U3Osvagj90RP9vK/
+    - img "스트랩 샌들"
+    - button "위시리스트에 추가":
+    - paragraph: SUMMER
+    - heading "스트랩 샌들" [level=3]
+    - generic: 45,000원
+    - generic: ★ 4.5
+    - generic: (13)
+  - heading "할인 상품" [level=2]
+  - paragraph: 지금 할인 중인 상품
+  - link "전체보기":
+    - /url: /main/sale/
+  - link "블루 사파이어 칵테일 반지 NEW -21% 위시리스트에 추가 SAPPHIRE ROYAL 블루 사파이어 칵테일 반지 1,250,000원 778,150원 ★ 4.5 (13)":
+    - /url: /products/ZEMIfgpl9ZLAG8lgkMub/
+    - img "블루 사파이어 칵테일 반지"
+    - generic: NEW
+    - generic: "-21%"
+    - button "위시리스트에 추가":
+    - paragraph: SAPPHIRE ROYAL
+    - heading "블루 사파이어 칵테일 반지" [level=3]
+    - generic: 1,250,000원
+    - generic: 778,150원
+    - generic: ★ 4.5
+    - generic: (13)
+  - link "14K 로즈골드 체인 팔찌 -22% 위시리스트에 추가 ROSE GOLD 14K 로즈골드 체인 팔찌 185,000원 113,100원 ★ 4.5 (13)":
+    - /url: /products/U2IRDVTmJCm573HadZyp/
+    - img "14K 로즈골드 체인 팔찌"
+    - generic: "-22%"
+    - button "위시리스트에 추가":
+    - paragraph: ROSE GOLD
+    - heading "14K 로즈골드 체인 팔찌" [level=3]
+    - generic: 185,000원
+    - generic: 113,100원
+    - generic: ★ 4.5
+    - generic: (13)
+  - link "실버 아쿠아마린 귀걸이 -20% 위시리스트에 추가 AQUA JEWEL 실버 아쿠아마린 귀걸이 295,000원 188,000원 ★ 4.5 (13)":
+    - /url: /products/FUrd0sKgYuMWrhVkut2I/
+    - img "실버 아쿠아마린 귀걸이"
+    - generic: "-20%"
+    - button "위시리스트에 추가":
+    - paragraph: AQUA JEWEL
+    - heading "실버 아쿠아마린 귀걸이" [level=3]
+    - generic: 295,000원
+    - generic: 188,000원
+    - generic: ★ 4.5
+    - generic: (13)
+  - link "에메랄드 스톤 펜던트 목걸이 NEW -19% 위시리스트에 추가 EMERALD LUXURY 에메랄드 스톤 펜던트 목걸이 950,000원 619,650원 ★ 4.5 (13)":
+    - /url: /products/uu9sEJlHxx4pv0HgNvFe/
+    - img "에메랄드 스톤 펜던트 목걸이"
+    - generic: NEW
+    - generic: "-19%"
+    - button "위시리스트에 추가":
+    - paragraph: EMERALD LUXURY
+    - heading "에메랄드 스톤 펜던트 목걸이" [level=3]
+    - generic: 950,000원
+    - generic: 619,650원
+    - generic: ★ 4.5
+    - generic: (13)
+  - heading "배송 안내" [level=2]
+  - paragraph: 평일 오후 2시 이전 주문 시 당일 발송합니다. 배송은 2~3일 정도 소요됩니다.
+  - heading "교환반품" [level=2]
+  - paragraph: 수령 후 7일 이내 접수가 가능합니다. 상품 하자 시 반품 배송비는 무료입니다.
+  - heading "고객 문의" [level=2]
+  - paragraph: 1:1 문의 또는 채팅 상담을 이용해주세요. 평일 10:00~18:00 운영합니다.
+  - heading "주문 조회" [level=2]
+  - paragraph: 마이페이지에서 주문 상태와 배송 현황을 확인할 수 있습니다.
+- contentinfo:
+  - heading "고객센터" [level=3]
+  - link "자주 묻는 질문":
+    - /url: /cs/faq/
+  - link "공지사항":
+    - /url: /cs/notice_list/
+  - link "1:1 문의":
+    - /url: /cs/inquiry/
+  - link "상품문의":
+    - /url: /qna/
+  - heading "회사정보" [level=3]
+  - link "사업자 정보":
+    - /url: /legal/business-info/
+  - link "이용약관":
+    - /url: /legal/terms/
+  - link "개인정보처리방침":
+    - /url: /legal/privacy/
+  - link "기획전":
+    - /url: /events/
+  - heading "쇼핑안내" [level=3]
+  - link "오프라인 매장":
+    - /url: /support/offline/
+  - link "배송조회":
+    - /url: /orders/delivery/
+  - link "리뷰":
+    - /url: /reviews/
+  - heading "소셜" [level=3]
+  - link "Instagram":
+    - /url: "#"
+  - link "YouTube":
+    - /url: "#"
+  - paragraph: UI 및 브랜딩 포트폴리오용 쇼핑몰 데모입니다.
+  - paragraph: sevim0104@naver.com
+  - strong: © 2025 STYNA. All rights reserved.
+- button "채팅 열기": 실시간 상담
+- button "쇼핑 안내 열기":
+  - generic: 쇼핑 안내
+- button "Open Tanstack query devtools":
+- button "Open Next.js Dev Tools":
+- alert

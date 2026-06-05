@@ -262,6 +262,87 @@ export class ProductService {
       .slice(0, limitCount);
   }
 
+  private static sortProducts(products: Product[], sort: ProductSort): Product[] {
+    return [...products].sort((a, b) => {
+      let diff = 0;
+
+      switch (sort.field) {
+        case 'price':
+          diff = a.price - b.price;
+          break;
+        case 'rating':
+          diff = a.rating - b.rating;
+          break;
+        case 'createdAt':
+          diff = a.createdAt.getTime() - b.createdAt.getTime();
+          break;
+        case 'name':
+          diff = a.name.localeCompare(b.name);
+          break;
+        case 'reviewCount':
+          diff = a.reviewCount - b.reviewCount;
+          break;
+        default:
+          diff = 0;
+      }
+
+      const orderedDiff = sort.order === 'asc' ? diff : -diff;
+      return orderedDiff !== 0 ? orderedDiff : a.id.localeCompare(b.id);
+    });
+  }
+
+  private static applyQueryClientSide(products: Product[], queryInput: ProductQueryInput): Product[] {
+    const sort = this.normalizeSort(queryInput.sort);
+    const categoryFilter = queryInput.category || queryInput.categoryId;
+
+    let filtered = products;
+
+    if (queryInput.status) {
+      filtered = filtered.filter((product) => product.status === queryInput.status);
+    }
+
+    if (categoryFilter) {
+      const normalizedCategory = this.normalizeCategoryId({ categoryId: categoryFilter });
+      filtered = filtered.filter((product) => this.normalizeCategoryId(product) === normalizedCategory);
+    }
+
+    if (queryInput.brand) {
+      filtered = filtered.filter((product) => product.brand === queryInput.brand);
+    }
+
+    if (typeof queryInput.minPrice === 'number') {
+      filtered = filtered.filter((product) => product.price >= queryInput.minPrice!);
+    }
+
+    if (typeof queryInput.maxPrice === 'number') {
+      filtered = filtered.filter((product) => product.price <= queryInput.maxPrice!);
+    }
+
+    if (queryInput.minRating !== undefined) {
+      filtered = filtered.filter((product) => product.rating >= queryInput.minRating!);
+    }
+
+    if (queryInput.isNew !== undefined) {
+      filtered = filtered.filter((product) => product.isNew === queryInput.isNew);
+    }
+
+    if (queryInput.isSale !== undefined) {
+      filtered = filtered.filter((product) => product.isSale === queryInput.isSale);
+    }
+
+    return this.sortProducts(this.filterByKeyword(filtered, queryInput.keyword), sort);
+  }
+
+  private static async queryProductsWithClientFallback(queryInput: ProductQueryInput): Promise<ProductQueryResult> {
+    const pageSize = Math.max(1, queryInput.limitCount ?? this.DEFAULT_PAGE_SIZE);
+    const products = this.applyQueryClientSide(await this.getTopLevelProducts(), queryInput);
+
+    return {
+      items: products.slice(0, pageSize),
+      hasMore: false,
+    };
+  }
+
   private static async getTopLevelProducts(): Promise<Product[]> {
     const snapshot = await getDocs(collection(db, this.PRODUCTS_COLLECTION));
     return snapshot.docs.map((productDoc) => this.normalizeProduct(productDoc.id, productDoc.data()));
@@ -416,8 +497,14 @@ export class ProductService {
         hasMore,
       };
     } catch (error) {
-      console.error('Failed to query products:', error);
-      throw new Error('상품 조회에 실패했습니다.');
+      console.warn('Product query used client fallback:', error);
+
+      try {
+        return await this.queryProductsWithClientFallback(queryInput);
+      } catch (fallbackError) {
+        console.error('Failed to query products with fallback:', fallbackError);
+        throw new Error('상품 조회에 실패했습니다.');
+      }
     }
   }
 
@@ -566,24 +653,7 @@ export class ProductService {
   }
 
   static async getSortedProducts(products: Product[], sort: ProductSort): Promise<Product[]> {
-    return [...products].sort((a, b) => {
-      switch (sort.field) {
-        case 'price':
-          return sort.order === 'asc' ? a.price - b.price : b.price - a.price;
-        case 'rating':
-          return sort.order === 'asc' ? a.rating - b.rating : b.rating - a.rating;
-        case 'createdAt':
-          return sort.order === 'asc'
-            ? a.createdAt.getTime() - b.createdAt.getTime()
-            : b.createdAt.getTime() - a.createdAt.getTime();
-        case 'name':
-          return sort.order === 'asc'
-            ? a.name.localeCompare(b.name)
-            : b.name.localeCompare(a.name);
-        default:
-          return 0;
-      }
-    });
+    return this.sortProducts(products, sort);
   }
 
   static async searchProducts(searchQuery: string): Promise<Product[]> {

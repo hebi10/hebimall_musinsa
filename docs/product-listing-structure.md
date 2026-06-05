@@ -35,3 +35,4 @@
 - 2026-05-12: 브랜드 페이지는 `brandSummaries` 컬렉션을 우선 읽고, 요약 문서가 없을 때만 상품 기반 요약으로 fallback한다. 공개 읽기 규칙은 `firestore.rules`에 추가했다.
 - 2026-05-12: 검색 화면 필터/검색 버튼/태그의 큰 radius와 회색 그라데이션 CTA를 메인 상품 매대와 같은 사각 탭, 검정 CTA 기준으로 낮췄다.
 - 2026-05-12: 주문 생성/취소 서버 로직의 상품 조회도 최상위 `products/{productId}` 기준으로 단일화했다. `categories/{id}/products` 전체 스캔 fallback은 제거했으므로 주문 가능한 상품은 최상위 상품 문서가 필요하다.
+- 2026-06-05: `queryProducts()`의 Firestore 복합 쿼리가 인덱스/range+orderBy 제약으로 실패하면 최상위 `products`를 1회 읽고 동일 필터·정렬을 클라이언트에서 적용하는 fallback을 추가했다. `/products` 오류 화면과 `/categories/clothing -> tops`의 빈 카테고리 오인 표시를 막기 위한 복구 경로다.

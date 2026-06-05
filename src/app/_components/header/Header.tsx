@@ -104,7 +104,7 @@ export default function Header() {
   };
 
   return (
-    <header className={styles.header}>
+    <header className={`${styles.header} ${isMobileMenuOpen ? styles.headerMenuOpen : ""}`}>
       <div className={styles.container}>
         <div className={styles.headerContent}>
           <div className={styles.logo}>
