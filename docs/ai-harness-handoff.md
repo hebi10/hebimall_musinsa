@@ -11,6 +11,7 @@
    - `getProductPricing`으로 `originalPrice > price` 상품을 재할인하지 않게 통합했다.
    - 장바구니 조회 시 기존 잘못된 단가/할인 합계를 상품 문서 기준으로 보정해 저장한다.
    - 장바구니/checkout 인증 가드는 auth 로딩 종료 후 리다이렉트하고, checkout 표시 라벨은 한국어로 정리했다.
+   - checkout은 주문 입력 영역을 섹션 카드로 묶고 결제 요약 내부 padding과 모바일 반응형 줄바꿈을 보정했다.
 
 3. 마이페이지 활동 조회 보정
    - 최근 본 상품/찜한 상품 조회는 복합 인덱스 부재 시 단일 조건 조회와 클라이언트 정렬로 fallback한다.
@@ -25,6 +26,7 @@
 - `npm run lint` exit 0 통과: 기존 경고 254개, 에러 0개.
 - `git diff --check` 통과: 공백 오류 없음, LF/CRLF 치환 경고만 출력.
 - Chrome 확인: 로그인, 찜/최근, 장바구니 금액 보정, checkout 한국어 라벨은 확인. 구매 완료/마이페이지 주문 노출은 함수 배포 후 재확인 필요.
+- checkout UI 보정 후 `npm run typecheck`, `npm run lint`, `git diff --check` 통과.
 
 ### 남은 작업 (최대 3개)
 1. `firebase deploy --only functions:order,firestore:indexes` 또는 운영 배포 절차로 Functions/인덱스를 반영한다.

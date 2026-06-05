@@ -233,120 +233,144 @@ export default function CheckoutPage() {
       <div className={styles.content}>
         <div className={styles.checkoutLayout}>
           <div className={styles.orderSection}>
-            <h3 className={styles.sectionTitle}>상품</h3>
-            {orderData.items.map((item) => (
-              <div key={`${item.productId}-${item.size}-${item.color}`} className={styles.orderItem}>
-                <div className={styles.itemInfo}>
-                  <div>{item.productName || item.productId}</div>
-                  <div>{item.color} / {item.size} / 수량 {item.quantity}</div>
-                </div>
-                <div>{(Math.max(0, item.price) * item.quantity).toLocaleString()}원</div>
-              </div>
-            ))}
-
-            <h3 className={styles.sectionTitle}>배송 주소</h3>
-            {addresses.map((address) => (
-              <label key={address.id} className={styles.addressOption}>
-                <input
-                  type="radio"
-                  name="address"
-                  checked={selectedAddress.id === address.id}
-                  onChange={() => setSelectedAddress(address)}
-                />
-                <div className={styles.addressContent}>
-                  <div className={styles.addressHeader}>
-                    <span className={styles.addressName}>{addressLabels[address.name] || address.name}</span>
+            <section className={styles.section}>
+              <h3 className={styles.sectionTitle}>상품</h3>
+              <div className={styles.orderItems}>
+                {orderData.items.map((item) => (
+                  <div key={`${item.productId}-${item.size}-${item.color}`} className={styles.orderItem}>
+                    <div className={styles.itemInfo}>
+                      {item.brand && <div className={styles.itemBrand}>{item.brand}</div>}
+                      <div className={styles.itemName}>{item.productName || item.productId}</div>
+                      <div className={styles.itemOptions}>{item.color} / {item.size} / 수량 {item.quantity}</div>
+                    </div>
+                    <div className={styles.itemPrice}>
+                      {(Math.max(0, item.price) * item.quantity).toLocaleString()}원
+                    </div>
                   </div>
-                  <div>{address.recipient} | {address.phone}</div>
-                  <div>{`(${address.zipCode}) ${address.address} ${address.detailAddress}`}</div>
-                </div>
-              </label>
-            ))}
+                ))}
+              </div>
+            </section>
 
-            <h3 className={styles.sectionTitle}>결제 방식</h3>
-            <div className={styles.paymentMethods}>
-              {paymentMethods.map((method) => (
-                <label key={method.value} className={styles.paymentMethod}>
+            <section className={styles.section}>
+              <h3 className={styles.sectionTitle}>배송 주소</h3>
+              <div className={styles.addressList}>
+                {addresses.map((address) => (
+                  <label key={address.id} className={styles.addressOption}>
+                    <input
+                      type="radio"
+                      name="address"
+                      checked={selectedAddress.id === address.id}
+                      onChange={() => setSelectedAddress(address)}
+                    />
+                    <div className={styles.addressContent}>
+                      <div className={styles.addressHeader}>
+                        <span className={styles.addressName}>{addressLabels[address.name] || address.name}</span>
+                      </div>
+                      <div className={styles.addressRecipient}>{address.recipient} | {address.phone}</div>
+                      <div className={styles.addressLocation}>
+                        {`(${address.zipCode}) ${address.address} ${address.detailAddress}`}
+                      </div>
+                    </div>
+                  </label>
+                ))}
+              </div>
+            </section>
+
+            <section className={styles.section}>
+              <h3 className={styles.sectionTitle}>결제 방식</h3>
+              <div className={styles.paymentMethods}>
+                {paymentMethods.map((method) => (
+                  <label key={method.value} className={styles.paymentMethod}>
+                    <input
+                      type="radio"
+                      name="payment"
+                      value={method.value}
+                      checked={paymentMethod === method.value}
+                      onChange={() => setPaymentMethod(method.value)}
+                    />
+                    <span className={styles.methodLabel}>{method.label}</span>
+                  </label>
+                ))}
+              </div>
+            </section>
+
+            <section className={styles.section}>
+              <h3 className={styles.sectionTitle}>포인트 사용</h3>
+              <div className={styles.pointSection}>
+                <div className={styles.pointInfo}>
+                  <span>가용 포인트: {pointBalance.toLocaleString()}원</span>
+                  <span className={styles.pointNote}>이번 주문에는 최대 {maxUsablePoints.toLocaleString()}원까지 사용할 수 있습니다.</span>
+                </div>
+                <div className={styles.pointInput}>
                   <input
-                    type="radio"
-                    name="payment"
-                    value={method.value}
-                    checked={paymentMethod === method.value}
-                    onChange={() => setPaymentMethod(method.value)}
+                    type="number"
+                    value={usePoints}
+                    onChange={(event) => handlePointChange(event.target.value)}
+                    max={maxUsablePoints}
                   />
-                  <span>{method.label}</span>
-                </label>
-              ))}
-            </div>
-
-            <h3 className={styles.sectionTitle}>포인트 사용</h3>
-            <div className={styles.pointSection}>
-              <span>가용 포인트: {pointBalance.toLocaleString()}원</span>
-              <input
-                type="number"
-                value={usePoints}
-                onChange={(event) => handlePointChange(event.target.value)}
-                max={maxUsablePoints}
-              />
-              <button onClick={() => setUsePoints(maxUsablePoints)}>
-                전액 사용
-              </button>
-            </div>
-          </div>
-
-          <div className={styles.paymentSummary}>
-            <h3 className={styles.summaryTitle}>최종 금액</h3>
-            <div className={styles.summaryItems}>
-              <div className={styles.summaryItem}>
-                <span>상품 금액</span>
-                <span>{subtotal.toLocaleString()}원</span>
-              </div>
-              <div className={styles.summaryItem}>
-                <span>상품 할인</span>
-                <span>-{discountAmount.toLocaleString()}원</span>
-              </div>
-              {couponDiscount > 0 && (
-                <div className={styles.summaryItem}>
-                  <span>쿠폰 할인</span>
-                  <span>-{couponDiscount.toLocaleString()}원</span>
+                  <button type="button" className={styles.maxButton} onClick={() => setUsePoints(maxUsablePoints)}>
+                    전액 사용
+                  </button>
                 </div>
-              )}
-              <div className={styles.summaryItem}>
-                <span>배송비</span>
-                <span>{deliveryFee ? `${deliveryFee.toLocaleString()}원` : "무료"}</span>
               </div>
-              <div className={styles.summaryItem}>
-                <span>포인트 사용</span>
-                <span>-{usePoints.toLocaleString()}원</span>
-              </div>
-              <div className={styles.summaryDivider} />
-              <div className={styles.totalAmount}>
-                <span>최종 결제금액</span>
-                <span>{finalAmount.toLocaleString()}원</span>
-              </div>
-            </div>
-
-            <label className={styles.termsCheck}>
-              <input
-                type="checkbox"
-                checked={agreeTerms}
-                onChange={(event) => setAgreeTerms(event.target.checked)}
-              />
-              <span>결제 진행 동의</span>
-            </label>
-
-            <button
-              className={styles.checkoutButton}
-              onClick={handleCompleteOrder}
-              disabled={!agreeTerms || isProcessing}
-            >
-              {isProcessing ? "주문 처리 중..." : `${finalAmount.toLocaleString()}원 주문하기`}
-            </button>
-
-            <Link href="/orders/cart" className={styles.backButton}>
-              뒤로가기
-            </Link>
+            </section>
           </div>
+
+          <aside className={styles.paymentSummary}>
+            <div className={styles.summaryContent}>
+              <h3 className={styles.summaryTitle}>최종 금액</h3>
+              <div className={styles.summaryItems}>
+                <div className={styles.summaryItem}>
+                  <span>상품 금액</span>
+                  <span>{subtotal.toLocaleString()}원</span>
+                </div>
+                <div className={styles.summaryItem}>
+                  <span>상품 할인</span>
+                  <span>-{discountAmount.toLocaleString()}원</span>
+                </div>
+                {couponDiscount > 0 && (
+                  <div className={styles.summaryItem}>
+                    <span>쿠폰 할인</span>
+                    <span>-{couponDiscount.toLocaleString()}원</span>
+                  </div>
+                )}
+                <div className={styles.summaryItem}>
+                  <span>배송비</span>
+                  <span>{deliveryFee ? `${deliveryFee.toLocaleString()}원` : "무료"}</span>
+                </div>
+                <div className={styles.summaryItem}>
+                  <span>포인트 사용</span>
+                  <span>-{usePoints.toLocaleString()}원</span>
+                </div>
+                <div className={styles.summaryDivider} />
+                <div className={styles.totalAmount}>
+                  <span>최종 결제금액</span>
+                  <span>{finalAmount.toLocaleString()}원</span>
+                </div>
+              </div>
+
+              <label className={styles.termsCheck}>
+                <input
+                  type="checkbox"
+                  checked={agreeTerms}
+                  onChange={(event) => setAgreeTerms(event.target.checked)}
+                />
+                <span>결제 진행 동의</span>
+              </label>
+
+              <button
+                className={styles.checkoutButton}
+                onClick={handleCompleteOrder}
+                disabled={!agreeTerms || isProcessing}
+              >
+                {isProcessing ? "주문 처리 중..." : `${finalAmount.toLocaleString()}원 주문하기`}
+              </button>
+
+              <Link href="/orders/cart" className={styles.backButton}>
+                뒤로가기
+              </Link>
+            </div>
+          </aside>
         </div>
       </div>
     </div>
