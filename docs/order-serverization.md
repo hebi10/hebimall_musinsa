@@ -81,4 +81,5 @@
 ## 2026-06-05 checkout 반응형 UI 보정
 - `/orders/checkout`의 주문 상품, 배송 주소, 결제 방식, 포인트 사용 영역을 실제 `.section` 카드 구조로 감싸 CSS와 JSX 구조를 맞췄다.
 - 결제 요약 박스는 `.summaryContent` 래퍼를 추가해 내부 여백을 복구하고, sticky 동작은 1024px 이상에서만 적용한다.
-- 금액 행, 상품명, 주소, 버튼은 모바일 폭에서 줄바꿈과 간격이 깨지지 않도록 gap, min-height, overflow-wrap을 보정했다.
+- 금액 행, 상품명, 주소, 포인트 입력/전액 사용 버튼은 모바일 폭에서 줄바꿈과 간격이 깨지지 않도록 gap, min-height, overflow-wrap을 보정했다.
+- 배송지와 결제수단은 선택 상태가 카드 표면에서 바로 드러나도록 border/background 상태 스타일을 추가하고, 섹션 간격을 더 조밀하게 낮췄다.
