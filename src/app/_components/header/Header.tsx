@@ -119,7 +119,9 @@ export default function Header() {
           <button
             className={styles.mobileMenuButton}
             onClick={toggleMobileMenu}
-            aria-label="Open menu"
+            aria-label={isMobileMenuOpen ? "메뉴 닫기" : "메뉴 열기"}
+            aria-expanded={isMobileMenuOpen}
+            aria-controls="mobile-navigation"
           >
             <span
               className={`${styles.hamburgerLine} ${isMobileMenuOpen ? styles.line1Active : ""}`}
@@ -180,7 +182,10 @@ export default function Header() {
         </div>
 
         <div
+          id="mobile-navigation"
           className={`${styles.mobileMenu} ${isMobileMenuOpen ? styles.mobileMenuOpen : ""}`}
+          aria-hidden={!isMobileMenuOpen}
+          inert={!isMobileMenuOpen}
         >
           <div className={styles.mobileMenuContent}>
             <div className={styles.mobileBrandBlock}>

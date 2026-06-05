@@ -1,0 +1,167 @@
+
+> hebimall@0.1.0 dev
+> next dev
+
+   ▲ Next.js 15.5.9
+   - Local:        http://localhost:3000
+   - Network:      http://175.120.197.120:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 3.2s
+ ○ Compiling /events/[eventId] ...
+ ✓ Compiled /events/[eventId] in 11.4s (1277 modules)
+ GET /events/PacCrKVG9TikHo7lambG/ 200 in 15011ms
+ ○ Compiling / ...
+ ✓ Compiled / in 1909ms (1410 modules)
+ GET / 200 in 3092ms
+ GET /events/PacCrKVG9TikHo7lambG/ 200 in 3420ms
+ GET /events/PacCrKVG9TikHo7lambG/ 200 in 295ms
+ GET /events/PacCrKVG9TikHo7lambG/ 200 in 329ms
+ ○ Compiling /events ...
+ ✓ Compiled /events in 735ms (1297 modules)
+ GET /events/ 200 in 942ms
+ GET /events/ 200 in 83ms
+ GET /events/ 200 in 70ms
+ GET /events/ 200 in 67ms
+ GET /events/ 200 in 568ms
+ ✓ Compiled in 447ms (1279 modules)
+ GET /events/ 200 in 117ms
+ GET /events/PacCrKVG9TikHo7lambG/ 200 in 970ms
+ ✓ Compiled in 482ms (1269 modules)
+ ✓ Compiled in 347ms (1279 modules)
+ GET /events/PacCrKVG9TikHo7lambG/ 200 in 629ms
+ ✓ Compiled in 288ms (828 modules)
+ GET /events/PacCrKVG9TikHo7lambG/ 200 in 680ms
+ ✓ Compiled in 295ms (1279 modules)
+ GET /events/PacCrKVG9TikHo7lambG/ 200 in 461ms
+ GET /events/ 200 in 499ms
+ GET /events/ 200 in 153ms
+ ○ Compiling / ...
+ ✓ Compiled / in 839ms (890 modules)
+ GET / 200 in 2278ms
+ GET /events/PacCrKVG9TikHo7lambG/ 200 in 1975ms
+ GET / 200 in 161ms
+ GET /events/event-2026-06-midyear-sale/ 404 in 217ms
+ GET / 200 in 183ms
+ ○ Compiling /products ...
+ ✓ Compiled /products in 551ms (1377 modules)
+ GET /products/ 200 in 1306ms
+ GET /events/ 200 in 171ms
+ ○ Compiling /auth/login ...
+ ✓ Compiled /auth/login in 792ms (1401 modules)
+ GET /auth/login/ 200 in 1271ms
+ ✓ Compiled /auth/signup in 502ms (1393 modules)
+ GET /auth/signup/ 200 in 938ms
+ ○ Compiling /auth/find-password ...
+ ✓ Compiled /auth/find-password in 1157ms (1403 modules)
+ GET /auth/find-password/ 200 in 1655ms
+ ○ Compiling /cs/faq ...
+ ✓ Compiled /cs/faq in 1293ms (1417 modules)
+ GET /cs/faq/ 200 in 2158ms
+ ○ Compiling /cart ...
+ ✓ Compiled /cart in 964ms (1430 modules)
+ GET /cart/ 200 in 1390ms
+ ○ Compiling /admin/dashboard/dashboard ...
+ ✓ Compiled /admin/dashboard/dashboard in 1340ms (1481 modules)
+ GET /admin/dashboard/dashboard/ 200 in 1969ms
+ ✓ Compiled in 1213ms (1453 modules)
+ GET / 200 in 625ms
+ ✓ Compiled in 1505ms (963 modules)
+ ✓ Compiled in 1ms (963 modules)
+ ✓ Compiled in 2ms (963 modules)
+ ✓ Compiled in 1ms (963 modules)
+ GET /products/ 200 in 3614ms
+ GET /events/ 200 in 4669ms
+ GET /events/PacCrKVG9TikHo7lambG/ 200 in 5063ms
+ GET /events/event-2026-06-midyear-sale/ 200 in 5084ms
+ GET /events/ 200 in 545ms
+ GET /auth/login/ 200 in 340ms
+ GET /cart/ 200 in 291ms
+ ✓ Compiled in 550ms (963 modules)
+ GET /events/ 200 in 935ms
+ GET /cart/ 200 in 936ms
+ GET /events/PacCrKVG9TikHo7lambG/ 200 in 1139ms
+ GET /events/event-2026-06-midyear-sale/ 200 in 1145ms
+ GET /events/ 200 in 341ms
+ GET /events/event-2026-06-midyear-sale/ 200 in 235ms
+ GET /events/ 200 in 116ms
+ GET /events/event-2026-05-best-review/ 200 in 164ms
+ GET /events/event-2026-08-last-summer/ 200 in 238ms
+ GET /events/event-2026-08-pre-fall/ 200 in 164ms
+ GET /events/event-2026-07-summer-review/ 200 in 176ms
+ GET /events/event-2026-07-cool-touch/ 200 in 232ms
+ GET /events/event-2026-07-vacation-coupon/ 200 in 268ms
+ GET /events/event-2026-06-midyear-sale/ 200 in 222ms
+ GET /events/event-2026-06-summer-linen/ 200 in 202ms
+ GET /events/event-2026-05-family-coupon/ 200 in 297ms
+ GET /events/event-2026-05-denim-festival/ 200 in 219ms
+ GET /events/event-2026-04-styling-coupon/ 200 in 195ms
+ GET /events/event-2026-04-office-look/ 200 in 202ms
+ GET /events/event-2026-04-shirt-collection/ 200 in 250ms
+ GET /events/event-2026-03-photo-review/ 200 in 220ms
+ GET /events/event-2026-03-white-day-coupon/ 200 in 231ms
+ GET /events/event-2026-03-trench-week/ 200 in 214ms
+ GET /events/event-2026-02-spring-preview/ 200 in 222ms
+ GET /events/event-2026-02-knit-review/ 200 in 227ms
+ GET /events/event-2026-01-welcome-coupon/ 200 in 242ms
+ GET /events/event-2026-01-layering-sale/ 200 in 228ms
+ GET /events/ 200 in 157ms
+ GET /events/event-2026-08-last-summer/ 200 in 288ms
+ ✓ Compiled in 3.6s (1411 modules)
+ ✓ Compiled in 740ms (1421 modules)
+ GET /cart/ 200 in 1181ms
+ GET /events/ 200 in 1187ms
+ GET /events/PacCrKVG9TikHo7lambG/ 200 in 1508ms
+ GET /events/event-2026-08-last-summer/ 200 in 1521ms
+ ✓ Compiled in 830ms (1411 modules)
+ GET / 200 in 877ms
+ GET /events/ 200 in 262ms
+ GET / 200 in 268ms
+ GET /events/ 200 in 155ms
+ ✓ Compiled in 657ms (1411 modules)
+ ✓ Compiled in 1127ms (1411 modules)
+ ✓ Compiled in 919ms (1411 modules)
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 1226ms (1415 modules)
+ GET /events/2026/event-2026-08-last-summer-detail.webp 404 in 2554ms
+ GET / 200 in 269ms
+ GET /events/ 200 in 462ms
+ GET /events/ 200 in 203ms
+ GET /events/event-2026-08-last-summer/ 200 in 834ms
+ ✓ Compiled in 1087ms (1422 modules)
+ GET /events/ 200 in 1119ms
+ GET /events/ 200 in 1081ms
+ GET /events/event-2026-08-last-summer/ 200 in 585ms
+ GET /events/PacCrKVG9TikHo7lambG/ 200 in 1636ms
+ GET /events/event-2026-08-last-summer/ 200 in 1642ms
+ GET /events/ 200 in 814ms
+ GET /events/event-2026-05-best-review/ 200 in 319ms
+ GET /events/event-2026-08-last-summer/ 200 in 340ms
+ GET /events/event-2026-08-pre-fall/ 200 in 384ms
+ GET /events/event-2026-07-summer-review/ 200 in 266ms
+ GET /events/event-2026-07-cool-touch/ 200 in 357ms
+ GET /events/event-2026-07-vacation-coupon/ 200 in 419ms
+ GET /events/event-2026-06-midyear-sale/ 200 in 267ms
+ GET /events/event-2026-06-summer-linen/ 200 in 401ms
+ GET /events/event-2026-05-family-coupon/ 200 in 415ms
+ GET /events/ 200 in 294ms
+ GET /events/event-2026-05-denim-festival/ 200 in 407ms
+ GET /events/event-2026-04-styling-coupon/ 200 in 483ms
+ GET /events/event-2026-04-office-look/ 200 in 300ms
+ GET /events/event-2026-04-shirt-collection/ 200 in 337ms
+ GET /events/event-2026-03-photo-review/ 200 in 365ms
+ GET /events/event-2026-03-white-day-coupon/ 200 in 336ms
+ GET /events/event-2026-03-trench-week/ 200 in 353ms
+ GET /events/event-2026-02-spring-preview/ 200 in 299ms
+ GET /events/event-2026-02-knit-review/ 200 in 305ms
+ GET /events/event-2026-01-welcome-coupon/ 200 in 508ms
+ GET /events/event-2026-01-layering-sale/ 200 in 348ms
+   ▲ Next.js 15.5.9
+   - Local:        http://localhost:3000
+   - Network:      http://175.120.197.120:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 4.6s
+[?25h

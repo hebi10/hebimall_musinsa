@@ -14,6 +14,7 @@ import {
   getEventStatus,
 } from '@/shared/services/eventService';
 import { Event, EventUiVariant } from '@/shared/types/event';
+import { getEventDisplayImages } from '@/shared/utils/eventImages';
 import Image from 'next/image';
 import Link from 'next/link';
 import styles from './EventDetailClient.module.css';
@@ -414,6 +415,7 @@ export default function EventDetailClient({ event }: EventDetailClientProps) {
   const status = getEventStatus(event);
   const uiVariant = useMemo(() => getEventUiVariant(event), [event]);
   const uiMeta = useMemo(() => getEventUiMeta(event), [event]);
+  const displayImages = useMemo(() => getEventDisplayImages(event), [event]);
   const [participantCount, setParticipantCount] = useState(event.participantCount);
   const [hasParticipated, setHasParticipated] = useState(false);
   const [isParticipationChecking, setIsParticipationChecking] = useState(false);
@@ -759,17 +761,24 @@ export default function EventDetailClient({ event }: EventDetailClientProps) {
         </div>
       </div>
 
-      {event.bannerImage && (
+      {displayImages.detailImage && (
         <div className={styles.bannerSection}>
-          <div className={styles.bannerImageContainer}>
-            <Image
-              src={event.bannerImage}
-              alt={event.title}
-              width={1200}
-              height={600}
-              className={styles.bannerImage}
-              priority
-            />
+          <div className={styles.bannerFeature}>
+            <div className={styles.bannerImageContainer}>
+              <Image
+                src={displayImages.detailImage}
+                alt={event.title}
+                width={1200}
+                height={600}
+                className={styles.bannerImage}
+                priority
+              />
+            </div>
+            <div className={styles.bannerFeaturePanel}>
+              <span className={styles.bannerFeatureEyebrow}>{uiMeta.featuredEyebrow}</span>
+              <h2>{uiMeta.featuredAccentText}</h2>
+              <p>{rewardMethod}</p>
+            </div>
           </div>
         </div>
       )}

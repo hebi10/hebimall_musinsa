@@ -40,13 +40,6 @@
 /* 반응형 디자인 */
 @media (max-width: 768px) {
   .fixedButton {
-    right: 1rem;
-    bottom: calc(1rem + 42px);
-  }
-}
-
-@media (max-width: 480px) {
-  .fixedButton {
     display: none;
   }
 }

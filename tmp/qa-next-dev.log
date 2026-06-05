@@ -720,3 +720,52 @@
  ✓ Compiled /categories/[category] in 740ms (778 modules)
  GET /categories/clothing/ 200 in 1189ms
  GET /auth/login/ 200 in 283ms
+ ✓ Compiled /events in 489ms (779 modules)
+ GET /events/ 200 in 978ms
+ GET / 200 in 495ms
+ GET / 200 in 78ms
+ GET /events/ 200 in 230ms
+ GET /events/ 200 in 155ms
+ ○ Compiling /events/[eventId] ...
+ ✓ Compiled /events/[eventId] in 2.2s (1673 modules)
+ GET /events/PacCrKVG9TikHo7lambG/ 200 in 4989ms
+ GET /events/PacCrKVG9TikHo7lambG/ 200 in 324ms
+ GET / 200 in 615ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 739ms (910 modules)
+ GET /not-a-real-page-for-qa/ 404 in 1538ms
+ ✓ Compiled in 921ms (1652 modules)
+ ✓ Compiled in 974ms (1652 modules)
+ ✓ Compiled in 995ms (1662 modules)
+ GET / 200 in 321ms
+ GET /events/ 200 in 323ms
+ GET / 200 in 159ms
+ ✓ Compiled in 822ms (1662 modules)
+ GET / 200 in 340ms
+ GET /events/ 200 in 347ms
+ GET / 200 in 194ms
+ ✓ Compiled in 1197ms (1652 modules)
+ ✓ Compiled /_not-found in 359ms (911 modules)
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 3.2s (1996 modules)
+ GET /events/ 500 in 10344ms
+ GET /events/ 500 in 1049ms
+ GET /events/ 500 in 4505ms
+ GET /events/ 500 in 394ms
+ GET / 500 in 4503ms
+ GET / 500 in 394ms
+ GET /events/ 500 in 1811ms
+ GET /events/ 500 in 545ms
+ GET / 500 in 2184ms
+ GET / 500 in 563ms
+ GET /events/ 500 in 1553ms
+ GET /events/ 500 in 555ms
+ GET / 500 in 1547ms
+ GET / 500 in 614ms
+ GET / 500 in 2263ms
+ GET / 500 in 431ms
+ GET / 500 in 2163ms
+ GET / 500 in 432ms
+ GET / 500 in 1140ms
+ GET / 500 in 327ms
+[?25h

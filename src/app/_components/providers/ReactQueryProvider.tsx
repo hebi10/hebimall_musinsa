@@ -9,6 +9,7 @@ interface ReactQueryProviderProps {
 }
 
 export default function ReactQueryProvider({ children }: ReactQueryProviderProps) {
+  const showDevtools = process.env.NEXT_PUBLIC_ENABLE_QUERY_DEVTOOLS === 'true';
   const [queryClient] = useState(() => new QueryClient({
     defaultOptions: {
       queries: {
@@ -23,7 +24,7 @@ export default function ReactQueryProvider({ children }: ReactQueryProviderProps
   return (
     <QueryClientProvider client={queryClient}>
       {children}
-      <ReactQueryDevtools initialIsOpen={false} />
+      {showDevtools && <ReactQueryDevtools initialIsOpen={false} />}
     </QueryClientProvider>
   );
 }

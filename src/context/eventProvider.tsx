@@ -28,6 +28,18 @@ interface EventProviderProps {
   children: ReactNode;
 }
 
+const mergeCatalogEvents = (eventsData: Event[], catalogEvents: Event[]): Event[] => {
+  const eventIds = new Set(eventsData.map(event => event.id));
+  const mergedEvents = [
+    ...eventsData,
+    ...catalogEvents.filter(event => !eventIds.has(event.id)),
+  ];
+
+  return mergedEvents.sort(
+    (left, right) => right.createdAt.getTime() - left.createdAt.getTime()
+  );
+};
+
 export function EventProvider({ children }: EventProviderProps) {
   const [events, setEvents] = useState<Event[]>([]);
   const [filter, setFilterState] = useState<EventFilter>({});
@@ -47,7 +59,8 @@ export function EventProvider({ children }: EventProviderProps) {
 
     try {
       const eventsData = await EventService.getEvents();
-      setEvents(eventsData);
+      const { mockEvents } = await import('@/mocks/event');
+      setEvents(mergeCatalogEvents(eventsData, mockEvents));
     } catch (error) {
       console.error('Error loading events:', error);
 

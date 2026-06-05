@@ -9,6 +9,7 @@ import {
 } from '@/shared/constants/eventUiMeta';
 import { getEventStatus, getFeaturedEvent } from '@/shared/services/eventService';
 import { Event } from '@/shared/types/event';
+import { getEventDisplayImages } from '@/shared/utils/eventImages';
 import styles from './EventList.module.css';
 import { useEvent } from '@/context/eventProvider';
 
@@ -45,6 +46,18 @@ const getCardHighlightText = (event: Event, fallbackLabel: string) => {
   return fallbackLabel;
 };
 
+const getStatusLabel = (status: ReturnType<typeof getEventStatus>) => {
+  if (status === 'ended') {
+    return '종료';
+  }
+
+  if (status === 'upcoming') {
+    return '예정';
+  }
+
+  return '진행중';
+};
+
 export default function EventList() {
   const {
     events,
@@ -74,6 +87,7 @@ export default function EventList() {
   const featuredEvent = getFeaturedEvent(filteredEvents);
   const featuredMeta = featuredEvent ? getEventUiMeta(featuredEvent) : null;
   const featuredVariant = featuredEvent ? getEventUiVariant(featuredEvent) : null;
+  const featuredImages = featuredEvent ? getEventDisplayImages(featuredEvent) : null;
 
   if (loading) {
     return (
@@ -113,59 +127,69 @@ export default function EventList() {
   return (
     <div className={styles.container}>
       {!showEmptyState && featuredEvent ? (
-        <div className={styles.bannerSection}>
-          <div
-            className={`${styles.mainBanner} ${featuredVariant ? styles[`${featuredVariant}BannerTheme`] : ''}`}
+        <section className={styles.bannerSection} aria-label="대표 이벤트">
+          <Link
+            href={`/events/${featuredEvent.id}`}
+            className={`${styles.posterHero} ${featuredVariant ? styles[`${featuredVariant}BannerTheme`] : ''}`}
           >
             <Image
-              src={featuredEvent.bannerImage}
+              src={featuredImages?.bannerImage ?? featuredEvent.bannerImage}
               alt={featuredEvent.title}
-              width={1200}
-              height={400}
-              className={styles.bannerImage}
+              width={1400}
+              height={620}
+              className={styles.posterHeroImage}
+              priority
             />
-            <div className={styles.bannerContent}>
-              {featuredMeta ? (
-                <>
-                  <span className={styles.bannerEyebrow}>{featuredMeta.featuredEyebrow}</span>
-                  <span className={styles.bannerAccent}>{featuredMeta.featuredAccentText}</span>
-                </>
-              ) : null}
-              <h2 className={styles.bannerTitle}>{featuredEvent.title}</h2>
-              <p className={styles.bannerDescription}>{featuredEvent.description}</p>
-              <Link href={`/events/${featuredEvent.id}`} className={styles.featuredCta}>
-                {featuredMeta?.featuredCtaLabel ?? '이벤트 보기'}
-              </Link>
+            <div className={styles.posterHeroOverlay}>
+              <span className={styles.posterHeroKicker}>
+                {featuredMeta?.featuredEyebrow ?? 'Featured Event'}
+              </span>
+              <h2 className={styles.posterHeroTitle}>{featuredEvent.title}</h2>
+              <p className={styles.posterHeroDescription}>{featuredEvent.description}</p>
+              <div className={styles.posterHeroActions}>
+                <span className={styles.posterHeroButton}>
+                  {featuredMeta?.featuredCtaLabel ?? '이벤트 보기'}
+                </span>
+                <span className={styles.posterHeroPeriod}>
+                  {formatDate(featuredEvent.startDate)} - {formatDate(featuredEvent.endDate)}
+                </span>
+              </div>
+              <div className={styles.posterHeroMeta} aria-label="이벤트 현황">
+                <span className={styles.posterHeroMetric}>
+                  <strong className={styles.posterHeroMetricValue}>
+                    {getActiveEvents().length}
+                  </strong>
+                  <span className={styles.posterHeroMetricLabel}>진행중</span>
+                </span>
+                <span className={styles.posterHeroMetric}>
+                  <strong className={styles.posterHeroMetricValue}>
+                    {getTotalParticipants()}
+                  </strong>
+                  <span className={styles.posterHeroMetricLabel}>참여 규모</span>
+                </span>
+                <span className={styles.posterHeroMetric}>
+                  <strong className={styles.posterHeroMetricValue}>{events.length}</strong>
+                  <span className={styles.posterHeroMetricLabel}>전체 이벤트</span>
+                </span>
+              </div>
             </div>
-          </div>
-        </div>
+          </Link>
+        </section>
       ) : null}
 
-      <div className={styles.stats}>
-        <div className={styles.statItem}>
-          <div className={styles.statNumber}>{getActiveEvents().length}</div>
-          <div className={styles.statLabel}>진행중</div>
+      <div className={styles.eventToolbar}>
+        <div className={styles.filters} aria-label="이벤트 유형 필터">
+          {FILTER_OPTIONS.map(option => (
+            <button
+              key={option.type}
+              className={`${styles.filterButton} ${activeFilterType === option.type ? styles.active : ''}`}
+              onClick={() => handleFilterChange(option.type)}
+            >
+              {option.label}
+            </button>
+          ))}
         </div>
-        <div className={styles.statItem}>
-          <div className={styles.statNumber}>{getTotalParticipants()}</div>
-          <div className={styles.statLabel}>총 참여자</div>
-        </div>
-        <div className={styles.statItem}>
-          <div className={styles.statNumber}>{events.length}</div>
-          <div className={styles.statLabel}>전체 이벤트</div>
-        </div>
-      </div>
-
-      <div className={styles.filters}>
-        {FILTER_OPTIONS.map(option => (
-          <button
-            key={option.type}
-            className={`${styles.filterButton} ${activeFilterType === option.type ? styles.active : ''}`}
-            onClick={() => handleFilterChange(option.type)}
-          >
-            {option.label}
-          </button>
-        ))}
+        <p className={styles.eventCount}>{filteredEvents.length.toLocaleString()}개 이벤트</p>
       </div>
 
       {showEmptyState ? (
@@ -184,75 +208,44 @@ export default function EventList() {
               const status = getEventStatus(event);
               const uiVariant = getEventUiVariant(event);
               const uiMeta = getEventUiMeta(event);
+              const displayImages = getEventDisplayImages(event);
               const cardHighlightText = getCardHighlightText(event, uiMeta.cardAccentLabel);
 
               return (
                 <Link
                   key={event.id}
                   href={`/events/${event.id}`}
-                  className={`${styles.eventCard} ${styles[`${uiVariant}CardTheme`]}`}
+                  className={`${styles.eventPosterCard} ${styles[`${uiVariant}CardTheme`]}`}
                 >
-                  <div className={styles.eventImageContainer}>
-                    <Image
-                      src={event.thumbnailImage}
-                      alt={event.title}
-                      width={300}
-                      height={200}
-                      className={styles.eventImage}
-                    />
+                  <Image
+                    src={displayImages.thumbnailImage}
+                    alt={event.title}
+                    width={720}
+                    height={480}
+                    className={styles.posterCardImage}
+                  />
+                  <div className={styles.posterCardOverlay}>
                     <div className={styles.eventBadges}>
                       <span className={styles.typeBadge}>{uiMeta.badgeLabel}</span>
-                      {status === 'ongoing' && (
-                        <span className={`${styles.statusBadge} ${styles.active}`}>
-                          진행중
-                        </span>
-                      )}
-                      {status === 'ended' && (
-                        <span className={`${styles.statusBadge} ${styles.ended}`}>
-                          종료
-                        </span>
-                      )}
-                      {status === 'upcoming' && (
-                        <span className={`${styles.statusBadge} ${styles.upcoming}`}>
-                          예정
-                        </span>
-                      )}
+                      <span className={`${styles.statusBadge} ${styles[status]}`}>
+                        {getStatusLabel(status)}
+                      </span>
                     </div>
-                  </div>
-
-                  <div className={styles.eventInfo}>
-                    <div className={styles.eventSignatureRow}>
+                    <div className={styles.posterCardCopy}>
                       <span className={styles.eventEyebrow}>{uiMeta.cardEyebrow}</span>
-                      <span className={styles.eventAccentTag}>{uiMeta.typeLabel}</span>
-                    </div>
-                    <h3 className={styles.eventTitle}>{event.title}</h3>
-                    <p className={styles.eventDescription}>{event.description}</p>
-
-                    <div className={styles.eventMeta}>
-                      <div className={styles.eventPeriod}>
-                        {formatDate(event.startDate)} ~ {formatDate(event.endDate)}
+                      <h3 className={styles.eventTitle}>{event.title}</h3>
+                      <p className={styles.eventDescription}>{event.description}</p>
+                      <div className={styles.eventFooter}>
+                        <span className={styles.eventDiscount}>{cardHighlightText}</span>
+                        <span className={styles.cardCta}>{uiMeta.cardCtaLabel}</span>
                       </div>
-                      <div className={styles.eventParticipants}>
-                        참여자: {event.participantCount.toLocaleString()}명
-                        {event.hasMaxParticipants && event.maxParticipants && event.maxParticipants > 0 ? (
-                          <span className={styles.maxParticipants}>
-                            / {event.maxParticipants.toLocaleString()}명
-                          </span>
-                        ) : (
-                          <span className={styles.noLimit}>(제한 없음)</span>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className={styles.eventFooter}>
-                      <div className={styles.eventDiscount}>{cardHighlightText}</div>
-                      <span className={styles.cardCta}>{uiMeta.cardCtaLabel}</span>
                     </div>
                   </div>
                 </Link>
               );
             })}
           </div>
+
           {totalPages > 1 && (
             <div className={styles.pagination}>
               <button

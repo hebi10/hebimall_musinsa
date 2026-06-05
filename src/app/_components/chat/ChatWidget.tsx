@@ -312,6 +312,7 @@ const ChatWidget: React.FC = () => {
   // ── 파생 disabled 상태 ────────────────────────────
   const isInputDisabled = chatMutation.isPending || chatMode === 'idle' || !isAgentConnectRequested;
   const isSendDisabled = !inputValue.trim() || isInputDisabled;
+  const isEventPage = pathname?.startsWith('/events');
 
   const toggleChat = useCallback(() => {
     if (!isOpen && chatMode === 'idle') {
@@ -326,7 +327,7 @@ const ChatWidget: React.FC = () => {
 
   // ── 렌더링 ────────────────────────────────────────
   return (
-    <div className={styles.chatWidget}>
+    <div className={`${styles.chatWidget} ${isEventPage ? styles.eventPageWidget : ''}`}>
       {/* 채팅 창 */}
       <div
         className={`${styles.chatWindow} ${isOpen ? styles.open : ''} ${

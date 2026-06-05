@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { EventService } from '@/shared/services/eventService';
+import { Event } from '@/shared/types/event';
 import EventDetailClient from './EventDetailClient';
 
 // 동적 배포에서는 generateStaticParams가 필요 없음
@@ -12,12 +13,25 @@ interface Props {
   }>;
 }
 
+const getEventWithCatalogFallback = async (eventId: string): Promise<Event | null> => {
+  try {
+    const event = await EventService.getEventById(eventId);
+    if (event) {
+      return event;
+    }
+  } catch (error) {
+    console.error('Error loading event from Firestore:', error);
+  }
+
+  const { mockEvents } = await import('@/mocks/event');
+  return mockEvents.find(mockEvent => mockEvent.id === eventId) ?? null;
+};
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { eventId } = await params;
   
   try {
-    // Firebase에서 이벤트 정보를 가져옴
-    const event = await EventService.getEventById(eventId);
+    const event = await getEventWithCatalogFallback(eventId);
     
     if (!event) {
       return {
@@ -48,8 +62,7 @@ export default async function EventDetailPage({ params }: Props) {
   const { eventId } = await params;
   
   try {
-    // Firebase에서 이벤트 정보를 가져옴
-    const event = await EventService.getEventById(eventId);
+    const event = await getEventWithCatalogFallback(eventId);
     
     if (!event) {
       notFound();

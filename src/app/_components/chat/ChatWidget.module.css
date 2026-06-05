@@ -417,12 +417,45 @@
 }
 
 /* 반응형 디자인 */
+@media (max-width: 640px) {
+  .eventPageWidget {
+    display: none;
+  }
+
+  .chatWidget {
+    right: max(0.75rem, env(safe-area-inset-right));
+    bottom: calc(0.75rem + env(safe-area-inset-bottom));
+  }
+
+  .chatButton {
+    min-width: 48px;
+    width: 48px;
+    max-width: 48px;
+    height: 36px;
+    padding: 0;
+    overflow: hidden;
+    font-size: 0;
+  }
+
+  .chatButton::before {
+    content: '상담';
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .chatButton.open::before {
+    content: '×';
+    font-size: 18px;
+    font-weight: 500;
+  }
+}
+
 @media (max-width: 480px) {
   .chatWindow {
     position: fixed;
-    left: 0.75rem;
-    right: 0.75rem;
-    bottom: 4.75rem;
+    left: max(0.75rem, env(safe-area-inset-left));
+    right: max(0.75rem, env(safe-area-inset-right));
+    bottom: calc(4.75rem + env(safe-area-inset-bottom));
     width: auto;
     height: min(640px, calc(100dvh - 5.75rem));
     max-height: calc(100dvh - 5.75rem);
@@ -433,15 +466,16 @@
   }
   
   .chatWidget {
-    right: 0.75rem;
-    bottom: 0.75rem;
+    right: max(0.75rem, env(safe-area-inset-right));
+    bottom: calc(0.75rem + env(safe-area-inset-bottom));
   }
 
   .chatButton {
-    min-width: 78px;
+    min-width: 48px;
+    width: 48px;
+    max-width: calc(100vw - 1.5rem);
     height: 32px;
-    padding: 0 0.65rem;
-    font-size: 11px;
+    padding: 0;
   }
   
   .quickButton {

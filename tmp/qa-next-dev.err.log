@@ -6,3 +6,327 @@
  ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
  ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
  ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json',
+  page: '/events'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json',
+  page: '/'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json',
+  page: '/events'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json',
+  page: '/'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json',
+  page: '/events'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json',
+  page: '/'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json',
+  page: '/events'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json',
+  page: '/'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json',
+  page: '/events'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json',
+  page: '/'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json',
+  page: '/events'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json',
+  page: '/'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json',
+  page: '/'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json',
+  page: '/'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json',
+  page: '/'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json',
+  page: '/'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json',
+  page: '/'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json',
+  page: '/'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\gy554\\Desktop\\portfolio\\hebimall\\.next\\routes-manifest.json'
+}

@@ -10,6 +10,7 @@ export interface Event {
   content?: EventContent | null;
   bannerImage: string;
   thumbnailImage: string;
+  detailImage?: string;
   eventType: EventType;
   couponType?: EventCouponType;
   startDate: Date;

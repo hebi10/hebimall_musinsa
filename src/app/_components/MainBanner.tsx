@@ -42,11 +42,11 @@ const bannerSlides: BannerSlide[] = [
     image: '/main/hero_editorial_outer_fixed.webp',
     mobileImage: '/main/hero_editorial_outer_mobile.webp',
     imagePosition: 'center top',
-    meta: ['Up to 70%', 'Outer', 'Daily wear'],
+    meta: ['최대 70%', '아우터', '데일리웨어'],
   },
   {
     id: 2,
-    eyebrow: 'New arrivals',
+    eyebrow: '신상품',
     title: '신상품 업데이트',
     description:
       '최근 등록된 상품을 빠르게 확인하고 새 스타일을 비교해보세요.',
@@ -57,11 +57,11 @@ const bannerSlides: BannerSlide[] = [
     image: '/main/hero_editorial_sale_fixed.webp',
     mobileImage: '/main/hero_editorial_sale_mobile.webp',
     imagePosition: 'center top',
-    meta: ['New', 'Weekly update', 'STYNA'],
+    meta: ['신규 등록', '주간 업데이트', '바로 보기'],
   },
   {
     id: 3,
-    eyebrow: 'Best ranking',
+    eyebrow: '베스트',
     title: '베스트셀러',
     description:
       '리뷰와 구매 반응이 좋은 상품을 순위로 확인하세요.',
@@ -72,7 +72,7 @@ const bannerSlides: BannerSlide[] = [
     image: '/main/hero_editorial_best_fixed.webp',
     mobileImage: '/main/hero_editorial_best_mobile.webp',
     imagePosition: 'center top',
-    meta: ['Ranking', 'Review', 'Bestseller'],
+    meta: ['랭킹', '리뷰 반응', '인기 상품'],
   },
 ];
 

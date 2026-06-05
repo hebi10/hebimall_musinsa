@@ -1,0 +1,26 @@
+
+> hebimall@0.1.0 dev
+> next dev --hostname 0.0.0.0
+
+   ▲ Next.js 15.5.9
+   - Local:        http://localhost:3000
+   - Network:      http://0.0.0.0:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 2.7s
+ ○ Compiling /events ...
+ ✓ Compiled /events in 16.4s (1162 modules)
+ GET /events/ 200 in 18919ms
+ ○ Compiling /qna ...
+ ✓ Compiled /qna in 2.5s (1078 modules)
+ GET /events/ 200 in 1700ms
+ GET /qna/ 200 in 3131ms
+ GET /events/ 200 in 227ms
+ GET /events/ 200 in 304ms
+ GET /events/ 200 in 270ms
+ GET /events/ 200 in 210ms
+ GET /events/ 200 in 372ms
+ GET /events/ 200 in 180ms
+ GET /events/ 200 in 185ms
+ GET /events/ 200 in 1725ms

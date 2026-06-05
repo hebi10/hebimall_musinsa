@@ -7,11 +7,18 @@
 - `src/app/events/_components/EventList.module.css`
 - `src/context/eventProvider.tsx`
 - `src/shared/constants/eventUiMeta.ts`
+- `src/shared/utils/eventImages.ts`
 - `src/shared/services/eventService.ts`
 - `src/shared/types/event.ts`
+- `src/mocks/eventCatalog2026.json`
+- `src/mocks/event.ts`
+- `scripts/seed-events.js`
+- `scripts/generate-event-assets.js`
 - `src/app/events/[eventId]/page.tsx`
 - `src/app/events/[eventId]/EventDetailClient.tsx`
 - `src/app/events/[eventId]/EventDetailClient.module.css`
+- `src/app/_components/chat/ChatWidget.module.css`
+- `src/app/_components/popup/SiteGuideManager.module.css`
 
 ## 리뷰 목적
 - 이벤트 목록 페이지와 상세 페이지의 사용자 흐름을 확인한다.
@@ -33,13 +40,30 @@
 - 대표 배너 CTA와 카드 하단 CTA는 검정 기반으로 통일하고, 버건디는 세일 카드 배지와 강조 태그 같은 타입 표시 쪽에만 남겼다.
 - 2026-05-12: 상세 페이지의 타입별 그라데이션 변수, 큰 radius, blur, 강한 그림자를 하단 override로 중립화했다. 상세 히어로/혜택/본문/유의사항/하단 CTA는 흰 표면, 얇은 보더, 2px radius, 검정 CTA 기준으로 맞췄다.
 - 2026-05-12: 목록 대표 배너와 이벤트 카드도 2px radius와 무그림자 hover로 보정해 메인 상품 매대의 낮은 장식 밀도와 맞췄다.
+- 2026-06-05: `getEventDisplayImages()`를 추가해 누락 이미지, `/images/events/*`, `/api/placeholder/*`, 과거 `ChatGPT Image 2025` 기반 준비중 업로드 이미지를 이벤트 타입별 editorial 자산으로 치환한다. 정상 CDN/업로드 이미지는 보존한다.
+- 2026-06-05: 목록 대표 배너와 카드 이미지를 `getEventDisplayImages()` 기준으로 렌더링하고, 상세 배너는 단일 대형 이미지 대신 이미지 + 혜택 요약 패널의 에디토리얼 기획전형 블록으로 재구성했다.
+- 2026-06-05: mock 이벤트 기간과 이미지 경로를 현재 사용 가능한 `/main/hero_editorial_*` 자산으로 맞춰 Firestore fallback 상황에서도 종료된 2024 이벤트나 깨진 이미지가 보이지 않게 했다.
+- 2026-06-05: 모바일에서 쇼핑 안내 버튼은 768px 이하에서 숨기고, 채팅 버튼은 640px 이하에서 짧은 `상담` 버튼으로 줄여 이벤트/상세 하단 CTA를 덜 압박하도록 조정했다. `/auth/*`에서는 기존처럼 플로팅 UI가 렌더링되지 않는다.
+- 2026-06-05: 2026년 1월~8월 월별 2~3개씩 총 20개 이벤트 카탈로그를 `src/mocks/eventCatalog2026.json`으로 추가했다. `src/mocks/event.ts`와 `scripts/seed-events.js`는 같은 카탈로그를 사용한다.
+- 2026-06-05: 이벤트별 전신 모델컷 source 20개를 이미지 생성 기능으로 만들고, `scripts/generate-event-assets.js`로 한글 이벤트 문구가 들어간 `banner.webp`/`thumb.webp` 40개를 `public/events/2026/`에 생성했다.
+- 2026-06-05: 모델컷이 잘리는 문제를 줄이기 위해 목록/상세 배너 이미지는 `object-position: right center` 기준으로 보정했고, 최종 이벤트 배너는 UI 컨테이너와 맞는 `1600x820` 비율로 생성한다.
+- 2026-06-05: 카드 미리보기 썸네일은 축소 시 흰 텍스트 박스가 어수선하게 보이지 않도록 텍스트 합성을 제거하고, 전신 모델컷 중심의 클린 이미지로 재생성했다. 이벤트명/혜택/기간은 카드 UI에서 별도로 표시한다.
+- 2026-06-05: Chrome 확인 중 Firestore에는 기존 2개 이벤트만 있어 신규 20개 이벤트 상세가 404로 뜨는 문제가 확인됐다. 사용자 이벤트 목록은 Firestore 이벤트와 로컬 2026 카탈로그를 병합하고, 상세 라우트는 Firestore에 문서가 없으면 로컬 카탈로그로 조회하도록 보정했다.
+- 2026-06-05: Chrome에서 `/events` 페이지네이션 1~4페이지를 확인해 2026 신규 이벤트 링크 20개가 모두 노출되는지 확인했다. 20개 상세 URL도 직접 순회해 404, 깨진 이미지, 가로 오버플로우가 없음을 확인했다.
+- 2026-06-05: Firebase `events` 컬렉션을 확인한 결과 문서 2개 모두 `bannerImage`/`thumbnailImage`만 있고 `detailImage`는 없었다. 상세 페이지에서 배너 이미지를 재사용해 문구가 반복되는 문제가 있어 `detailImage`를 선택적 필드로 추가하고, 2026 이벤트는 `*-detail.webp` 클린 컷을 별도로 생성해 상세에서 사용하도록 분리했다.
+- 2026-06-05: Chrome에서 2026 이벤트 상세 20개를 다시 순회해 모두 `*-detail.webp`만 사용하고 `*-banner.webp`를 상세에서 사용하지 않는지 확인했다. 깨진 이미지와 가로 오버플로우도 없었다.
 
 ## 디자인 평가
 - 장점: 정보 구조가 단순하고 카드 메타 정보, 배지, 기간 표시는 빠르게 읽힌다.
 - 장점: 메인 페이지와 비슷한 배경색, 보더, 타이포 위계를 써서 이벤트 목록도 운영툴 느낌보다 차분한 브랜드 페이지 흐름으로 읽힌다.
 - 장점: 리뷰 키워드가 있는 `special` 이벤트는 별도 리뷰형 variant로 보여 세일·쿠폰과 다른 참여형 흐름을 즉시 읽을 수 있다.
-- 보완점: CTA 역할은 분리됐지만 로그인 후 원래 이벤트 상세로 복귀하는 리다이렉트가 없어 전환 흐름이 한 번 끊긴다.
+- 장점: 실제 Chrome 확인에서 `/events/`와 `/events/PacCrKVG9TikHo7lambG/` 모두 준비중 이미지가 editorial 이미지로 바뀌고, 수평 오버플로우 없이 로드됐다.
+- 장점: 이벤트 배너는 배경 생성과 한글 텍스트 합성을 분리해 한글 깨짐 없이 쇼핑몰 프로모션 배너처럼 사용할 수 있고, 카드 썸네일은 텍스트 없는 에디토리얼 컷으로 더 깔끔하게 읽힌다.
+- 장점: Firestore seed 전에도 사용자 이벤트 목록/상세에서는 로컬 2026 카탈로그 이벤트가 보조 데이터로 노출되어 신규 이벤트 QA가 가능하다.
+- 장점: 목록 대표 배너, 카드 썸네일, 상세 이미지를 각각 `banner`/`thumb`/`detail` 역할로 분리해 상세 페이지의 텍스트 중복을 줄였다.
+- 보완점: `getTotalParticipants()`가 제한 없는 이벤트 포함 시 `제한 없음`을 표시해 통계 카드의 의미가 어색할 수 있다.
+- 보완점: Firestore upsert는 로컬 Google Application Default Credentials가 없어 실행하지 못했다. 인증 후 `node scripts/seed-events.js`를 실행해야 실제 DB에 반영된다.
 
 ## 우선 개선 포인트
-- 1순위: 로그인 후 원래 이벤트 상세로 복귀하는 리다이렉트 흐름을 붙여 참여 전환 손실을 줄인다.
-- 2순위: 실제 브라우저에서 메인 페이지와 비교해 이벤트 목록/상세의 보더, 여백, CTA 대비가 지나치게 튀지 않는지 데스크톱·모바일에서 한 번 더 확인한다.
+- 1순위: 이벤트 통계 카드의 총 참여자 표기를 숫자 합산 기준으로 바꿀지 정책을 정한다.
+- 2순위: 실제 운영 이벤트 이미지가 준비되면 `ChatGPT Image 2025` fallback 패턴과 `detailImage` 업로드 정책을 함께 재검토한다.

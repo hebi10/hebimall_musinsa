@@ -1,0 +1,46 @@
+ ⨯ ./src/app/events/_components/EventList.tsx
+Error: 
+
+Caused by:
+    0: Failed to read source code from C:\Users\gy554\Desktop\portfolio\hebimall\src\app\events\_components\EventList.tsx
+    1: 지정된 파일을 찾을 수 없습니다. (os error 2)
+
+Import trace for requested module:
+./src/app/events/_components/EventList.tsx
+./src/app/events/page.tsx
+ ⨯ ./src/app/events/_components/EventList.module.css
+Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\src\app\events\_components\EventList.module.css'
+
+Import trace for requested module:
+./src/app/events/_components/EventList.module.css
+./src/app/events/_components/EventList.tsx
+ ⨯ ./src/app/events/_components/EventList.module.css
+Module not found: Can't resolve 'C:\Users\gy554\Desktop\portfolio\hebimall\src\app\events\_components\EventList.module.css'
+
+https://nextjs.org/docs/messages/module-not-found
+
+Import trace for requested module:
+./src/app/events/_components/EventList.tsx
+ ⨯ ./src/app/events/page.module.css
+Error: ENOENT: no such file or directory, open 'C:\Users\gy554\Desktop\portfolio\hebimall\src\app\events\page.module.css'
+
+Import trace for requested module:
+./src/app/events/page.module.css
+./src/app/events/page.tsx
+ ⨯ ./src/app/events/page.module.css
+Module not found: Can't resolve 'C:\Users\gy554\Desktop\portfolio\hebimall\src\app\events\page.module.css'
+
+https://nextjs.org/docs/messages/module-not-found
+Error loading event: Error: NEXT_HTTP_ERROR_FALLBACK;404
+    at notFound (..\..\..\src\client\components\not-found.ts:25:17)
+    at EventDetailPage (src\app\events\[eventId]\page.tsx:55:15)
+  23 | export function notFound(): never {
+  24 |   // eslint-disable-next-line no-throw-literal
+> 25 |   const error = new Error(DIGEST) as HTTPAccessFallbackError
+     |                 ^
+  26 |   ;(error as HTTPAccessFallbackError).digest = DIGEST
+  27 |
+  28 |   throw error {
+  digest: 'NEXT_HTTP_ERROR_FALLBACK;404'
+}
+ ⚠ Found a change in next.config.ts. Restarting the server to apply the changes...

@@ -12,6 +12,7 @@ const nextConfig: NextConfig = {
   // 출력 설정 - 개발 환경에서는 기본값 사용
   // output: 'standalone',
   trailingSlash: true,
+  devIndicators: false,
 
   images: {
     // 호스팅 환경에서 안정성을 위해 이미지 최적화 비활성화
