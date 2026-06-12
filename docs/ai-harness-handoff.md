@@ -1,34 +1,30 @@
 ### commit message
-- 없음: 사용자가 커밋을 요청하지 않았다.
+- 없음: 사용자가 커밋을 요청하지 않음.
 
-### 인수인계 (최대 3개)
-1. 구매 흐름 서버/클라이언트 보정
-   - 로컬 Next `/api/order/` 프록시를 추가하고 `OrderService` 호출 경로를 trailing slash 기준으로 맞췄다.
-   - Functions 주문 생성 트랜잭션의 장바구니 읽기를 모든 쓰기 전에 수행하도록 순서를 바꿨다.
-   - 배포된 Function은 아직 이전 코드라 Chrome 실제 주문 완료는 함수 배포 전까지 같은 트랜잭션 오류가 날 수 있다.
+### 인수인계
+1. 로컬 API 404 보정
+   - `/api/points`, `/api/coupon`, `/api/admin/users`, `/api/qna/verify-secret` App Router route를 추가했다.
+   - 공통 `src/app/api/_lib/functionProxy.ts`가 no-store 헤더, 인증 헤더, JSON body를 Cloud Function으로 프록시한다.
+   - 인증 없는 로컬 요청은 404 HTML 대신 Functions JSON 응답(401 또는 도메인 404)을 반환한다.
 
-2. 가격/장바구니/checkout 보정
-   - `getProductPricing`으로 `originalPrice > price` 상품을 재할인하지 않게 통합했다.
-   - 장바구니 조회 시 기존 잘못된 단가/할인 합계를 상품 문서 기준으로 보정해 저장한다.
-   - 장바구니/checkout 인증 가드는 auth 로딩 종료 후 리다이렉트하고, checkout 표시 라벨은 한국어로 정리했다.
-   - checkout은 주문 입력 영역을 섹션 카드로 묶고 결제 요약 내부 padding과 모바일 반응형 줄바꿈을 보정했다.
+2. 카트 링크/CTA 보정
+   - `/cart`의 `/main/recommend` 링크를 실제 `/recommend`로 바꿨다.
+   - `/cart`의 동작 없는 주문 버튼은 선택 항목이 있을 때 `/orders/cart`로 이동하게 하고, 선택 항목이 없으면 disabled 버튼을 렌더링한다.
+   - 기존 모바일 장바구니 레이아웃 보정 변경은 보존했다.
 
-3. 마이페이지 활동 조회 보정
-   - 최근 본 상품/찜한 상품 조회는 복합 인덱스 부재 시 단일 조건 조회와 클라이언트 정렬로 fallback한다.
-   - `firestore.indexes.json`에 최근 본 상품/찜한 상품 복합 인덱스를 추가했다.
-   - Chrome 확인에서 마이페이지 최근 본 상품/찜 목록의 인덱스 콘솔 오류가 사라졌다.
+3. Chrome 확인 상태
+   - 로컬 dev 서버는 `http://localhost:3000`에서 실행 중이다.
+   - Chrome 자동화 연결은 됐지만 `localhost`, `127.0.0.1`, 네트워크 IP `:3000` 모두 `net::ERR_BLOCKED_BY_CLIENT`로 차단됐다.
+   - 동일 흐름은 HTTP 요청과 링크 크롤링으로 대체 확인했다.
 
 ### 검증
-- `npm run typecheck` 통과.
-- `npm test -- --runTestsByPath src/app/api/order/route.test.ts src/shared/utils/productPricing.test.ts src/app/products/_components/ProductDetailClient.test.tsx src/app/categories/[category]/products/[productId]/page.test.tsx --runInBand` 통과.
-- `npm run test:functions -- --runTestsByPath functions/__tests__/orderDomain.test.ts functions/__tests__/couponDomain.test.ts --runInBand` 통과.
-- `npm run functions:build` 통과.
-- `npm run lint` exit 0 통과: 기존 경고 254개, 에러 0개.
-- `git diff --check` 통과: 공백 오류 없음, LF/CRLF 치환 경고만 출력.
-- Chrome 확인: 로그인, 찜/최근, 장바구니 금액 보정, checkout 한국어 라벨은 확인. 구매 완료/마이페이지 주문 노출은 함수 배포 후 재확인 필요.
-- checkout UI 보정 후 `npm run typecheck`, `npm run lint`, `git diff --check` 통과.
+- `npm test -- --runTestsByPath src/app/api/points/route.test.ts src/app/api/coupon/route.test.ts src/app/api/admin/users/route.test.ts src/app/api/qna/verify-secret/route.test.ts src/app/api/order/route.test.ts --runInBand`: 통과.
+- `npm run typecheck`: 통과.
+- `npm run lint`: 통과, 기존 warning 253개.
+- HTTP 확인: API 누락 404 HTML 해소, 내부 링크 27개 깨짐 없음.
+- Chrome 확인: 로컬 `:3000` 페이지 로딩이 `net::ERR_BLOCKED_BY_CLIENT`로 차단되어 화면/콘솔/네트워크 확인 불가.
 
-### 남은 작업 (최대 3개)
-1. `firebase deploy --only functions:order,firestore:indexes` 또는 운영 배포 절차로 Functions/인덱스를 반영한다.
-2. 배포 후 Chrome에서 장바구니 주문 생성, 주문 완료 화면, 마이페이지 주문 목록/상세 노출을 다시 확인한다.
-3. 기존 lint warning 254개는 별도 품질 정리 작업으로 줄인다.
+### 남은 작업
+1. Chrome의 로컬 `:3000` 차단 원인 확인 후 실제 화면에서 콘솔/네트워크와 `/cart` CTA 이동 확인.
+2. 인증된 테스트 계정으로 포인트/쿠폰/관리자/QnA Function 권한 흐름 확인.
+3. 기존 lint warning은 별도 정리 작업으로 축소.

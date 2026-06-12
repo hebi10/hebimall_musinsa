@@ -83,3 +83,12 @@
 - 결제 요약 박스는 `.summaryContent` 래퍼를 추가해 내부 여백을 복구하고, sticky 동작은 1024px 이상에서만 적용한다.
 - 금액 행, 상품명, 주소, 포인트 입력/전액 사용 버튼은 모바일 폭에서 줄바꿈과 간격이 깨지지 않도록 gap, min-height, overflow-wrap을 보정했다.
 - 배송지와 결제수단은 선택 상태가 카드 표면에서 바로 드러나도록 border/background 상태 스타일을 추가하고, 섹션 간격을 더 조밀하게 낮췄다.
+
+## 2026-06-11 checkout 배송지 수령자 보정
+- `/orders/checkout`의 임시 배송지 목록을 `buildCheckoutDeliveryAddresses` 유틸로 분리했다.
+- 사용자 프로필이 첫 렌더 이후 로드되어도 배송지 `recipient`가 최신 `userData.name` 또는 Firebase `displayName`으로 갱신되도록 했다.
+- 수령자명이 비어 서버의 `deliveryAddress is required.` 검증에 걸리는 회귀를 `deliveryAddress.test.ts`로 방지한다.
+
+## 2026-06-12 카트 진입 링크 보정
+- 목 데이터 기반 `/cart`의 추천 이동 링크를 존재하지 않는 `/main/recommend`에서 실제 `/recommend`로 수정했다.
+- `/cart`의 주문 CTA는 동작 없는 버튼 대신 실제 장바구니 흐름인 `/orders/cart`로 연결한다.

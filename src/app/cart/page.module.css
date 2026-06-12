@@ -129,6 +129,8 @@
 }
 
 .quantityButton {
+  min-width: 44px;
+  min-height: 44px;
   padding: 0.5rem;
   background: none;
   border: none;
@@ -143,6 +145,7 @@
 
 .quantityInput {
   width: 3rem;
+  min-height: 44px;
   text-align: center;
   border: none;
   padding: 0.5rem 0;
@@ -150,8 +153,17 @@
 }
 
 .itemPrice {
-  text-align: right;
-  min-width: 5rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  min-width: 0;
+  margin: 0 0 0.75rem;
+  text-align: left;
+}
+
+.cartItem > .itemPrice {
+  display: none;
 }
 
 .originalPrice {
@@ -171,7 +183,8 @@
   border: none;
   color: var(--text-subtle);
   cursor: pointer;
-  padding: 0.25rem;
+  min-height: 44px;
+  padding: 0.25rem 0.5rem;
   transition: color 0.2s;
 }
 
@@ -236,6 +249,7 @@
 }
 
 .checkoutButton {
+  display: block;
   width: 100%;
   background-color: var(--black);
   color: var(--surface-raised);
@@ -243,6 +257,8 @@
   border: none;
   border-radius: var(--radius-md);
   font-weight: 600;
+  text-align: center;
+  text-decoration: none;
   cursor: pointer;
   transition: background-color 0.2s;
   margin-bottom: 0.75rem;
@@ -347,4 +363,57 @@
 .checkoutButton,
 .continueShoppingButton {
   font-weight: 700;
+}
+
+@media (max-width: 640px) {
+  .content {
+    padding: 1.25rem 0.75rem;
+  }
+
+  .cartItems,
+  .orderSummary {
+    padding: 1rem;
+  }
+
+  .cartHeader {
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .selectAll,
+  .itemCheckbox {
+    min-height: 44px;
+  }
+
+  .cartItem {
+    display: grid;
+    grid-template-columns: 2rem 4.5rem minmax(0, 1fr);
+    gap: 0.75rem;
+    padding: 1rem 0;
+  }
+
+  .itemImage {
+    width: 4.5rem;
+    height: 4.5rem;
+  }
+
+  .itemName,
+  .itemOptions {
+    overflow-wrap: anywhere;
+  }
+
+  .itemActions {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .quantityControl {
+    flex: 1 1 9.5rem;
+    max-width: 12rem;
+  }
+
+  .quantityInput {
+    flex: 1;
+    min-width: 2.5rem;
+  }
 }

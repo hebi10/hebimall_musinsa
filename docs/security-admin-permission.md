@@ -40,6 +40,7 @@
 - 2026-05-11: 배포 전 환경에서 `categoryOrder` 권한 오류가 나도 기본 카테고리 순서로 fallback하며, 개발 콘솔의 red error를 줄이기 위해 조회 실패 로그를 warning으로 낮췄다.
 - 2026-05-12: 브랜드 목록용 `brandSummaries/{brandId}`는 공개 읽기, 관리자 쓰기 규칙을 추가했다. 상품 상세 데이터가 아닌 공개 목록 요약 데이터로 취급한다.
 - 2026-05-12: Storage Rules의 관리자 판정도 Firestore/Functions/클라이언트와 같이 `admin == true` 또는 `role == "admin"` custom claim 기준으로 통일했다.
+- 2026-06-12: 로컬 Next dev에서도 `/api/admin/users`가 Cloud Function `adminUsers`로 프록시되도록 App Router route를 추가했다. 관리자 권한 변경은 로컬 확인 시에도 custom claim 검증 Function 경계를 거친다.
 
 ## 남은 확인
 - 일반 계정으로 `/admin` 접속 시 Unauthorized UI 분기와 비로그인 이동 UX는 통합 점검 필요.

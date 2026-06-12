@@ -49,6 +49,10 @@
   margin-top: 2rem;
 }
 
+.productGrid > * {
+  min-width: 0;
+}
+
 /* 모바일 반응형 */
 @media (max-width: 768px) {
   .container {

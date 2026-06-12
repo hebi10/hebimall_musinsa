@@ -19,6 +19,7 @@ export default function LoginPage() {
   const [rememberMe, setRememberMe] = useState(false);
 
   const { login, error, clearError, user, loading } = useAuth();
+  const isTransitioning = isSubmitting || (!loading && Boolean(user));
 
   const handleRememberMeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setRememberMe(e.target.checked);
@@ -35,7 +36,6 @@ export default function LoginPage() {
       router.replace("/mypage");
     } catch (error) {
       console.error("Naver login failed:", error);
-    } finally {
       setIsSubmitting(false);
     }
   };
@@ -51,7 +51,6 @@ export default function LoginPage() {
       router.replace("/mypage");
     } catch (error) {
       console.error("Kakao login failed:", error);
-    } finally {
       setIsSubmitting(false);
     }
   };
@@ -78,7 +77,6 @@ export default function LoginPage() {
       router.replace("/mypage");
     } catch (error) {
       console.error("Login failed:", error);
-    } finally {
       setIsSubmitting(false);
     }
   };
@@ -86,6 +84,14 @@ export default function LoginPage() {
   return (
     <div className={styles.container}>
       <div className={styles.formWrapper}>
+        {isTransitioning && (
+          <div className={styles.transitionOverlay} role="status" aria-live="polite">
+            <span className={styles.transitionSpinner} aria-hidden="true" />
+            <strong>마이페이지 준비 중</strong>
+            <p>계정 정보를 확인하고 있습니다. 잠시만 기다려주세요.</p>
+          </div>
+        )}
+
         <h2 className={styles.title}>로그인</h2>
 
         <form className={styles.form} onSubmit={handleSubmit}>

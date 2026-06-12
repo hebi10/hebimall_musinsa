@@ -395,6 +395,51 @@
   line-height: 1.7;
 }
 
+.loadingEventGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1.5rem auto 0;
+  max-width: 760px;
+}
+
+.loadingEventCard {
+  display: grid;
+  gap: 0.7rem;
+  padding: 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface-raised);
+}
+
+.loadingEventImage,
+.loadingEventLine,
+.loadingEventLineShort {
+  display: block;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--line) 0%, var(--surface) 50%, var(--line) 100%);
+  background-size: 200% 100%;
+  animation: skeletonPulse 1.4s ease-in-out infinite;
+}
+
+.loadingEventImage {
+  aspect-ratio: 4 / 3;
+}
+
+.loadingEventLine,
+.loadingEventLineShort {
+  height: 0.8rem;
+}
+
+.loadingEventLineShort {
+  width: 58%;
+}
+
+@keyframes skeletonPulse {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
 .errorState {
   display: grid;
   gap: 1rem;
@@ -519,6 +564,10 @@
   }
 
   .eventGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .loadingEventGrid {
     grid-template-columns: 1fr;
   }
 

@@ -92,11 +92,21 @@ export default function EventList() {
   if (loading) {
     return (
       <div className={styles.container}>
-        <div className={`${styles.statePanel} ${styles.loadingState}`}>
+        <div className={`${styles.statePanel} ${styles.loadingState}`} role="status" aria-live="polite">
+          <span>이벤트를 불러오는 중입니다.</span>
           <p className={styles.stateTitle}>이벤트를 불러오는 중입니다.</p>
           <p className={styles.stateDescription}>
             최신 이벤트 정보와 배너를 준비하고 있습니다.
           </p>
+          <div className={styles.loadingEventGrid}>
+            {Array.from({ length: 3 }).map((_, index) => (
+              <div key={index} className={styles.loadingEventCard} aria-label="이벤트 로딩 카드">
+                <span className={styles.loadingEventImage} />
+                <span className={styles.loadingEventLine} />
+                <span className={styles.loadingEventLineShort} />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     );

@@ -229,6 +229,191 @@ button.menuItem {
   background: var(--surface-raised);
 }
 
+.loginRequiredPanel {
+  display: grid;
+  justify-items: center;
+  gap: 0.75rem;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+  text-align: center;
+}
+
+.loginRequiredPanel h2 {
+  margin: 0;
+  color: var(--black);
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.loginRequiredPanel p {
+  margin: 0;
+  color: var(--text-subtle);
+  font-size: 0.92rem;
+  line-height: 1.7;
+}
+
+.loginRequiredButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  margin-top: 0.5rem;
+  padding: 0 1rem;
+  border: 1px solid var(--black);
+  border-radius: var(--radius-sm);
+  background: var(--black);
+  color: var(--surface-raised);
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.loginRequiredButton:hover {
+  background: var(--action-hover);
+  border-color: var(--action-hover);
+}
+
+.loadingPanel {
+  display: grid;
+  justify-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+  padding: 1.75rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+  text-align: center;
+}
+
+.loadingPanel strong {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--black);
+}
+
+.loadingPanel p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--text-subtle);
+}
+
+.loadingSpinner {
+  width: 2rem;
+  height: 2rem;
+  border: 2px solid var(--line);
+  border-top-color: var(--black);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.loadingGrid {
+  display: grid;
+  gap: 1rem;
+}
+
+.profileSkeleton,
+.quickSkeleton,
+.bodySkeleton {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+}
+
+.profileSkeleton {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  padding: 1.5rem;
+}
+
+.skeletonAvatar {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  background: var(--line);
+}
+
+.skeletonLines {
+  display: grid;
+  gap: 0.65rem;
+  width: min(100%, 360px);
+}
+
+.skeletonLines span,
+.quickSkeleton span,
+.bodySkeleton span {
+  display: block;
+  height: 0.875rem;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--line) 0%, var(--surface) 50%, var(--line) 100%);
+  background-size: 200% 100%;
+  animation: skeletonPulse 1.4s ease-in-out infinite;
+}
+
+.skeletonLines span:nth-child(1) {
+  width: 58%;
+}
+
+.skeletonLines span:nth-child(2) {
+  width: 82%;
+}
+
+.skeletonLines span:nth-child(3) {
+  width: 42%;
+}
+
+.quickSkeleton {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.85rem;
+  padding: 1rem;
+}
+
+.quickSkeleton span {
+  height: 4.5rem;
+  border-radius: var(--radius-md);
+}
+
+.bodySkeleton {
+  display: grid;
+  gap: 0.8rem;
+  min-height: 260px;
+  padding: 2rem;
+}
+
+.bodySkeleton span:nth-child(1) {
+  width: 36%;
+}
+
+.bodySkeleton span:nth-child(2) {
+  width: 92%;
+}
+
+.bodySkeleton span:nth-child(3) {
+  width: 76%;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes skeletonPulse {
+  0% {
+    background-position: 100% 0;
+  }
+
+  100% {
+    background-position: -100% 0;
+  }
+}
+
 @media (max-width: 900px) {
   .profileSection {
     grid-template-columns: 1fr;
@@ -282,6 +467,10 @@ button.menuItem {
   }
 
   .quickActions {
+    grid-template-columns: 1fr;
+  }
+
+  .quickSkeleton {
     grid-template-columns: 1fr;
   }
 

@@ -1,5 +1,6 @@
 .card {
   width: 100%;
+  min-width: 0;
   cursor: pointer;
   text-decoration: none;
   color: inherit;
@@ -89,8 +90,8 @@
   position: absolute;
   top: var(--spacing-sm);
   right: var(--spacing-sm);
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   border: none;
   background: rgba(255, 255, 255, 0.92);
   border-radius: 50%;
@@ -149,6 +150,7 @@
   gap: var(--spacing-sm);
   margin-bottom: var(--spacing-sm);
   flex-wrap: wrap;
+  min-width: 0;
 }
 
 .originalPrice {
@@ -162,6 +164,7 @@
   font-weight: var(--font-weight-bold);
   color: var(--color-text-primary);
   font-size: 1rem;
+  overflow-wrap: anywhere;
 }
 
 .salePrice {
@@ -266,7 +269,7 @@
   .wishlistButton {
     top: var(--spacing-xs);
     right: var(--spacing-xs);
-    width: 32px;
-    height: 32px;
+    width: 44px;
+    height: 44px;
   }
 }

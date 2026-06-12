@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useState } from "react";
+import Link from "next/link";
 import PageHeader from "../_components/PageHeader";
 import styles from "./layout.module.css";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/authProvider";
-import { CouponProvider } from "@/context/couponProvider";
 import { ProfileSection, QuickActions, SidebarMenu } from "./_components";
 
 interface MyPageLayoutProps {
@@ -15,7 +15,8 @@ interface MyPageLayoutProps {
 export default function MyPageLayout({ children }: MyPageLayoutProps) {
   const [activeTab, setActiveTab] = useState('orders');
   const pathname = usePathname();
-  const { userData, logout } = useAuth();
+  const { user, userData, logout, loading, isUserDataLoading } = useAuth();
+  const isPreparingMyPage = loading || Boolean(user && isUserDataLoading);
 
   // 스크롤 복원 방지 (useLayoutEffect로 더 빠르게 실행)
   useLayoutEffect(() => {
@@ -38,24 +39,16 @@ export default function MyPageLayout({ children }: MyPageLayoutProps) {
     return () => clearTimeout(timer);
   }, [pathname]);
 
-  const userInfo = {
-    name: userData?.name || "로딩중...",
-    email: userData?.email || "로딩중...",
-    membershipLevel: userData?.membershipLevel || "silver",
-    orders: userData?.orders || 0,
-    reviews: userData?.reviews || 0,
-    coupons: userData?.coupons || 0
-  };
-
-  const quickActions = [
-    { icon: "", title: "주문내역", desc: "주문 현황 확인", href: "/mypage/order-list" },
-    { icon: "", title: "문의 관리", desc: "작성한 문의 확인", href: "/mypage/qa" },
-    { icon: "", title: "쿠폰함", desc: "사용 가능한 쿠폰", href: "/mypage/coupons" },
-    { icon: "", title: "회원정보", desc: "기본 정보 수정", href: "/mypage/info-edit" },
-    { icon: "", title: "최근 본 상품", desc: "최근 본 상품 확인", href: "/mypage/recently-viewed" },
-    { icon: "", title: "찜한 상품", desc: "관심 상품 관리", href: "/mypage/wishlist" },
-    { icon: "", title: "적립금", desc: "포인트 현황 확인", href: "/mypage/point" }
-  ];
+  const header = (
+    <PageHeader
+      title="마이페이지"
+      description="주문, 쿠폰, 관심 상품과 최근 활동을 한곳에서 관리하세요"
+      breadcrumb={[
+        { label: '홈', href: '/' },
+        { label: '마이페이지' }
+      ]}
+    />
+  );
 
   useEffect(() => {
     const tabMap = {
@@ -76,16 +69,83 @@ export default function MyPageLayout({ children }: MyPageLayoutProps) {
     }
   }, [pathname]);
 
+  if (isPreparingMyPage) {
+    return (
+      <div className={styles.container}>
+        {header}
+
+        <div className={styles.content}>
+          <section className={styles.loadingPanel} role="status" aria-live="polite">
+            <span className={styles.loadingSpinner} aria-hidden="true" />
+            <strong>마이페이지 준비 중</strong>
+            <p>회원 정보와 최근 활동을 불러오고 있습니다.</p>
+          </section>
+
+          <div className={styles.loadingGrid} aria-hidden="true">
+            <div className={styles.profileSkeleton}>
+              <span className={styles.skeletonAvatar} />
+              <div className={styles.skeletonLines}>
+                <span />
+                <span />
+                <span />
+              </div>
+            </div>
+            <div className={styles.quickSkeleton}>
+              {Array.from({ length: 4 }).map((_, index) => (
+                <span key={index} />
+              ))}
+            </div>
+            <div className={styles.bodySkeleton}>
+              <span />
+              <span />
+              <span />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className={styles.container}>
+        {header}
+
+        <div className={styles.content}>
+          <section className={styles.loginRequiredPanel}>
+            <h2>로그인이 필요합니다</h2>
+            <p>주문, 쿠폰, 관심 상품과 최근 활동은 로그인 후 확인할 수 있습니다.</p>
+            <Link href="/auth/login" className={styles.loginRequiredButton}>
+              로그인 페이지로 이동
+            </Link>
+          </section>
+        </div>
+      </div>
+    );
+  }
+
+  const userInfo = {
+    name: userData?.name || "로딩중...",
+    email: userData?.email || "로딩중...",
+    membershipLevel: userData?.membershipLevel || "silver",
+    orders: userData?.orders || 0,
+    reviews: userData?.reviews || 0,
+    coupons: userData?.coupons || 0
+  };
+
+  const quickActions = [
+    { icon: "", title: "주문내역", desc: "주문 현황 확인", href: "/mypage/order-list" },
+    { icon: "", title: "문의 관리", desc: "작성한 문의 확인", href: "/mypage/qa" },
+    { icon: "", title: "쿠폰함", desc: "사용 가능한 쿠폰", href: "/mypage/coupons" },
+    { icon: "", title: "회원정보", desc: "기본 정보 수정", href: "/mypage/info-edit" },
+    { icon: "", title: "최근 본 상품", desc: "최근 본 상품 확인", href: "/mypage/recently-viewed" },
+    { icon: "", title: "찜한 상품", desc: "관심 상품 관리", href: "/mypage/wishlist" },
+    { icon: "", title: "적립금", desc: "포인트 현황 확인", href: "/mypage/point" }
+  ];
+
   return (
     <div className={styles.container}>
-      <PageHeader
-        title="마이페이지"
-        description="주문, 쿠폰, 관심 상품과 최근 활동을 한곳에서 관리하세요"
-        breadcrumb={[
-          { label: '홈', href: '/' },
-          { label: '마이페이지' }
-        ]}
-      />
+      {header}
       
       <div className={styles.content}>
         {/* 프로필 섹션 */}
@@ -101,9 +161,7 @@ export default function MyPageLayout({ children }: MyPageLayoutProps) {
 
           {/* 콘텐츠 영역 - 여기에 각 페이지의 내용이 들어감 */}
           <div className={styles.contentArea}>
-            <CouponProvider>
-              {children}
-            </CouponProvider>
+            {children}
           </div>
         </div>
       </div>

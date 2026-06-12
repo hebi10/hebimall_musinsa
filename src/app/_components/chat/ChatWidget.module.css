@@ -1,17 +1,17 @@
 /* ChatWidget - storefront support style */
 .chatWidget {
   position: fixed;
-  bottom: 1rem;
-  right: 1rem;
+  bottom: calc(0.75rem + env(safe-area-inset-bottom));
+  right: max(0.75rem, env(safe-area-inset-right));
   z-index: 1000;
   font-family: inherit;
 }
 
 /* 채팅 토글 버튼 */
 .chatButton {
-  min-width: 104px;
-  height: 38px;
-  padding: 0 0.9rem;
+  min-width: 88px;
+  height: 36px;
+  padding: 0 0.75rem;
   border-radius: 2px;
   background: var(--black);
   border: 1px solid var(--black);

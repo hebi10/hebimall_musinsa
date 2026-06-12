@@ -71,3 +71,8 @@
 - 모바일 이벤트 카드 높이와 오버레이 강도를 낮추고 이벤트 모바일의 상담 플로팅 버튼을 숨겨 CTA 가림을 제거했다.
 - React Query Devtools는 `NEXT_PUBLIC_ENABLE_QUERY_DEVTOOLS=true`일 때만 보이게 하고, Next dev indicator는 `devIndicators: false`로 껐다.
 - `npm run typecheck`, `npm test -- --runTestsByPath src/app/_components/chat/ChatWidget.test.tsx --runInBand`, `git diff --check` 통과.
+## 2026-06-11 디자인 피드백 10건 반영
+- 모바일 상품/카테고리 그리드는 `minmax(0, 1fr)` 기준으로 보정하고 상품 카드 위시리스트, 헤더 메뉴, 장바구니 수량/삭제 버튼의 터치 타깃을 44px 기준에 맞췄다.
+- 상품/이벤트 목록 로딩은 카드형 스켈레톤을 추가했고, 마이페이지 비로그인/관리자 게이트/로그인 모바일 링크는 흑백 CTA와 단일 상태 안내로 정리했다.
+- QnA/리뷰 필터는 모바일에서 내부 가로 스크롤로 처리하고, 카테고리 기본 표시명은 원격 목록이 비어도 `tops -> 상의`처럼 한국어 기본값을 사용하도록 했다.
+- Playwright 390px 캡처로 `/products`, `/cart`, `/reviews`, `/auth/login`에서 가로 밀림과 주요 CTA 겹침이 없는 것을 확인했다. `/categories`, `/qna`, `/categories/tops`는 데이터 로딩 상태에서만 확인되어 최종 목록 UI는 데이터 연결 후 재확인이 필요하다.

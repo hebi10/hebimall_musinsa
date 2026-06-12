@@ -44,3 +44,8 @@
 
 ## 남은 작업
 - 사용자 대상 공개 API 목록 확정 시 `API_PUBLIC_CACHE_RULES`에 개별 엔드포인트 등록 및 revalidate 값 조정.
+
+## 2026-06-12 로컬 API 프록시 보강
+- Firebase Hosting rewrite에만 있던 `/api/points`, `/api/coupon`, `/api/admin/users`, `/api/qna/verify-secret`를 로컬 Next dev에서도 동작하도록 App Router API route로 추가했다.
+- 네 라우트는 `src/app/api/_lib/functionProxy.ts`의 공통 no-store 프록시를 사용해 인증 헤더와 JSON body를 대응 Cloud Function으로 전달한다.
+- 인증 없는 확인 요청은 더 이상 404 HTML이 아니라 Functions의 JSON 응답(예: 401 또는 도메인 404)을 반환한다.

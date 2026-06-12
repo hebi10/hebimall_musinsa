@@ -15,6 +15,7 @@ import 'swiper/css/effect-fade';
 
 interface BannerSlide {
   id: number;
+  tone: 'outer' | 'new' | 'best';
   eyebrow: string;
   title: string;
   description: string;
@@ -31,48 +32,51 @@ interface BannerSlide {
 const bannerSlides: BannerSlide[] = [
   {
     id: 1,
-    eyebrow: 'STYNA',
-    title: '시즌오프 세일',
+    tone: 'outer',
+    eyebrow: 'STYNA EDIT',
+    title: '겨울의 첫 레이어',
     description:
-      '겨울 시즌 상품 정리. 할인 상품을 먼저 확인하세요.',
-    primaryLabel: '할인 상품 보기',
+      '코트와 니트, 매일 입는 기본을 새롭게 정리했습니다.',
+    primaryLabel: '시즌 스타일 보기',
     primaryLink: '/main/sale',
-    secondaryLabel: '전체상품',
+    secondaryLabel: '전체 상품',
     secondaryLink: '/products',
     image: '/main/hero_editorial_outer_fixed.webp',
     mobileImage: '/main/hero_editorial_outer_mobile.webp',
     imagePosition: 'center top',
-    meta: ['최대 70%', '아우터', '데일리웨어'],
+    meta: ['OUTER 20%', 'KNIT DROP', 'SEASON OFF'],
   },
   {
     id: 2,
-    eyebrow: '신상품',
-    title: '신상품 업데이트',
+    tone: 'new',
+    eyebrow: 'NEW ARRIVALS',
+    title: '새로 들어온 기본',
     description:
-      '최근 등록된 상품을 빠르게 확인하고 새 스타일을 비교해보세요.',
+      '매일 입기 좋은 실루엣부터 이번 주 업데이트된 상품까지.',
     primaryLabel: '신상품 보기',
     primaryLink: '/recommend?filter=new',
-    secondaryLabel: '카테고리',
+    secondaryLabel: '카테고리 보기',
     secondaryLink: '/products',
     image: '/main/hero_editorial_sale_fixed.webp',
     mobileImage: '/main/hero_editorial_sale_mobile.webp',
     imagePosition: 'center top',
-    meta: ['신규 등록', '주간 업데이트', '바로 보기'],
+    meta: ['WEEKLY UPDATE', 'DAILY FIT', 'NEW IN'],
   },
   {
     id: 3,
-    eyebrow: '베스트',
-    title: '베스트셀러',
+    tone: 'best',
+    eyebrow: 'BEST CURATION',
+    title: '많이 선택한 조합',
     description:
-      '리뷰와 구매 반응이 좋은 상품을 순위로 확인하세요.',
-    primaryLabel: '베스트 보기',
+      '리뷰와 구매 반응이 좋은 상품을 한 번에 비교해보세요.',
+    primaryLabel: '베스트 조합 보기',
     primaryLink: '/recommend?filter=review',
-    secondaryLabel: '랭킹 보기',
+    secondaryLabel: '리뷰 랭킹',
     secondaryLink: '/recommend?filter=review',
     image: '/main/hero_editorial_best_fixed.webp',
     mobileImage: '/main/hero_editorial_best_mobile.webp',
     imagePosition: 'center top',
-    meta: ['랭킹', '리뷰 반응', '인기 상품'],
+    meta: ['REVIEW PICK', 'BEST SELLER', 'RANKING'],
   },
 ];
 
@@ -113,7 +117,7 @@ export default function MainBanner() {
         >
           {bannerSlides.map((slide, index) => (
             <SwiperSlide key={slide.id}>
-              <div className={styles.bannerSlide}>
+              <div className={styles.bannerSlide} data-tone={slide.tone}>
                 <Image
                   src={slide.image}
                   alt={`${slide.title} 배너 이미지`}

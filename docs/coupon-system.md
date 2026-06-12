@@ -66,6 +66,7 @@ scripts/seed-coupons.ts              # 시드 데이터
 - 2026-05-12: 관리자 쿠폰 생성/수정/비활성화는 `/api/coupon` Function 액션을 통해 수행하도록 변경했다. 이미 발급된 이력 보존을 위해 관리 화면의 삭제는 `isActive: false` 보관 처리로 동작한다.
 - 2026-05-12: 장바구니/checkout 쿠폰 예상 계산을 `orderPricing` 유틸로 통합해 최소 주문금액, 만료, 무료배송 조건을 화면에서도 반영하도록 정리했다.
 - 2026-05-12: 주문 생성 시 주문 문서에 `userCouponId`, `couponId`를 저장하고, 주문 취소 트랜잭션에서 해당 `user_coupons` 문서의 상태를 `사용가능`으로 복원한다.
+- 2026-06-12: 로컬 Next dev에서도 `/api/coupon`이 Cloud Function `coupon`으로 프록시되도록 App Router route를 추가했다. 쿠폰 등록/관리 액션은 로컬과 배포 환경 모두 같은 서버 검증 경계를 사용한다.
 
 ## 미구현
 

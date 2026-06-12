@@ -16,8 +16,20 @@
   position: relative;
   min-height: 380px;
   overflow: hidden;
-  background: #33243d;
+  background: #161310;
+  --banner-accent: #e3d0bc;
+  --banner-glow: rgba(227, 208, 188, 0.12);
   isolation: isolate;
+}
+
+.bannerSlide[data-tone="new"] {
+  --banner-accent: #d5d7cf;
+  --banner-glow: rgba(213, 215, 207, 0.12);
+}
+
+.bannerSlide[data-tone="best"] {
+  --banner-accent: #d9c6a1;
+  --banner-glow: rgba(217, 198, 161, 0.14);
 }
 
 .bannerBackground {
@@ -33,12 +45,20 @@
   position: absolute;
   inset: 0;
   z-index: 1;
-  background: linear-gradient(
-    90deg,
-    rgba(34, 20, 44, 0.2) 0%,
-    rgba(34, 20, 44, 0.06) 52%,
-    rgba(34, 20, 44, 0.04) 100%
-  );
+  background:
+    radial-gradient(circle at 18% 40%, var(--banner-glow) 0, transparent 28%),
+    linear-gradient(
+      90deg,
+      rgba(8, 8, 8, 0.72) 0%,
+      rgba(8, 8, 8, 0.52) 28%,
+      rgba(8, 8, 8, 0.18) 58%,
+      rgba(8, 8, 8, 0.04) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.08) 0%,
+      rgba(0, 0, 0, 0.12) 100%
+    );
 }
 
 .bannerContent {
@@ -58,9 +78,25 @@
 }
 
 .copyPanel {
+  position: relative;
   display: grid;
   gap: 0.85rem;
   width: min(100%, 28rem);
+  padding-left: 1.15rem;
+}
+
+.copyPanel::before {
+  content: "";
+  position: absolute;
+  top: 0.18rem;
+  bottom: 0.25rem;
+  left: 0;
+  width: 1px;
+  background: linear-gradient(
+    180deg,
+    var(--banner-accent),
+    rgba(255, 255, 255, 0.14)
+  );
 }
 
 .copyHeader {
@@ -72,10 +108,10 @@
 
 .bannerEyebrow {
   display: inline-block;
-  color: rgba(255, 255, 255, 0.72);
+  color: var(--banner-accent);
   font-size: 0.68rem;
   font-weight: 600;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
@@ -85,14 +121,15 @@
 
 .bannerTitle {
   margin: 0;
-  max-width: 12ch;
+  max-width: 13ch;
   font-family: var(--font-base);
   font-weight: 800;
   font-size: clamp(2.1rem, 4vw, 3.2rem);
   line-height: 1.08;
-  letter-spacing: -0.035em;
+  letter-spacing: 0;
   text-wrap: balance;
   color: var(--color-white);
+  text-shadow: 0 12px 30px rgba(0, 0, 0, 0.26);
 }
 
 .bannerDescription {
@@ -100,7 +137,8 @@
   max-width: 22rem;
   font-size: 0.9rem;
   line-height: 1.7;
-  color: rgba(255, 255, 255, 0.84);
+  color: rgba(255, 255, 255, 0.82);
+  text-shadow: 0 8px 22px rgba(0, 0, 0, 0.22);
 }
 
 .bannerMetaList {
@@ -113,8 +151,9 @@
   position: relative;
   display: inline-flex;
   align-items: center;
-  color: rgba(255, 255, 255, 0.72);
-  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.74);
+  font-size: 0.74rem;
+  font-weight: 600;
   line-height: 1.4;
 }
 
@@ -166,8 +205,8 @@
 }
 
 .secondaryAction {
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  background: rgba(12, 12, 12, 0.12);
   color: var(--color-white);
 }
 
@@ -314,12 +353,14 @@
   }
 
   .bannerBackdrop {
-    background: linear-gradient(
-      90deg,
-      rgba(0, 0, 0, 0.72) 0%,
-      rgba(0, 0, 0, 0.48) 48%,
-      rgba(0, 0, 0, 0.2) 100%
-    );
+    background:
+      linear-gradient(
+        180deg,
+        rgba(0, 0, 0, 0.76) 0%,
+        rgba(0, 0, 0, 0.36) 58%,
+        rgba(0, 0, 0, 0.66) 100%
+      ),
+      radial-gradient(circle at 18% 18%, var(--banner-glow) 0, transparent 42%);
   }
 
   .bannerContent {

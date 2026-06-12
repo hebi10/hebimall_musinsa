@@ -621,3 +621,33 @@
 .answerLabel {
   color: var(--black);
 }
+
+@media (max-width: 768px) {
+  .categoryFilter {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 0.35rem;
+  }
+
+  .categoryButton,
+  .searchButton,
+  .pageButton,
+  .writeButton {
+    min-height: 44px;
+  }
+
+  .categoryButton {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .searchInput {
+    min-height: 44px;
+  }
+}

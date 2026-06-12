@@ -9,6 +9,7 @@ import { useCoupon } from "@/context/couponProvider";
 import { usePoint } from "@/context/pointProvider";
 import { OrderService } from "@/shared/services/orderService";
 import { calculateOrderPreview } from "@/shared/utils/orderPricing";
+import { buildCheckoutDeliveryAddresses, DeliveryAddress } from "./deliveryAddress";
 import styles from "./page.module.css";
 
 interface CheckoutItem {
@@ -37,17 +38,6 @@ interface CheckoutDraft {
   };
 }
 
-interface DeliveryAddress {
-  id: string;
-  name: string;
-  recipient: string;
-  phone: string;
-  address: string;
-  detailAddress: string;
-  zipCode: string;
-  isDefault: boolean;
-}
-
 const paymentMethods = [
   { value: "card", label: "카드 결제" },
   { value: "bank", label: "무통장입금" },
@@ -73,28 +63,10 @@ export default function CheckoutPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
 
-  const [addresses] = useState<DeliveryAddress[]>([
-    {
-      id: "addr1",
-      name: "default",
-      recipient: userData?.name || "",
-      phone: "010-1234-5678",
-      address: "seoul",
-      detailAddress: "101-202",
-      zipCode: "06234",
-      isDefault: true,
-    },
-    {
-      id: "addr2",
-      name: "office",
-      recipient: userData?.name || "",
-      phone: "010-1234-5678",
-      address: "seoul",
-      detailAddress: "room 15",
-      zipCode: "06789",
-      isDefault: false,
-    },
-  ]);
+  const addresses = useMemo(
+    () => buildCheckoutDeliveryAddresses(userData, user?.displayName),
+    [userData, user?.displayName]
+  );
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -125,10 +97,14 @@ export default function CheckoutPage() {
   }, [router]);
 
   useEffect(() => {
-    const defaultAddress = addresses.find((address) => address.isDefault);
-    if (defaultAddress) {
-      setSelectedAddress(defaultAddress);
-    }
+    setSelectedAddress((currentAddress) => {
+      const defaultAddress = addresses.find((address) => address.isDefault) || addresses[0] || null;
+      if (!currentAddress) {
+        return defaultAddress;
+      }
+
+      return addresses.find((address) => address.id === currentAddress.id) || defaultAddress;
+    });
   }, [addresses]);
 
   const selectedCouponView = userCoupons?.find((coupon) => coupon.id === orderData?.selectedCoupon) || null;

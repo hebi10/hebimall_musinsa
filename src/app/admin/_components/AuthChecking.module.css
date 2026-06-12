@@ -1,0 +1,51 @@
+.gate {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  padding: 2rem;
+  background: var(--off-white);
+  color: var(--black);
+}
+
+.gateContent {
+  display: grid;
+  justify-items: center;
+  gap: 0.75rem;
+  max-width: 420px;
+  text-align: center;
+}
+
+.gateContent p {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.gateContent small {
+  color: var(--text-subtle);
+  line-height: 1.6;
+}
+
+.gateButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 1rem;
+  border: 1px solid var(--black);
+  border-radius: var(--radius-sm);
+  background: var(--black);
+  color: var(--surface-raised);
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.gateButton:hover {
+  background: var(--action-hover);
+  border-color: var(--action-hover);
+}
+
+.denied {
+  color: var(--error);
+}

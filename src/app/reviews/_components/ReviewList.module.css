@@ -612,3 +612,34 @@
   background: var(--action-hover, #333);
   color: var(--surface-raised, #fff);
 }
+
+@media (max-width: 768px) {
+  .filters {
+    justify-content: flex-start;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 0.35rem;
+  }
+
+  .filterButton,
+  .sortSelect,
+  .helpfulButton,
+  .productLink {
+    min-height: 44px;
+  }
+
+  .filterButton {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats {
+    grid-template-columns: 1fr;
+  }
+
+  .reviewActions {
+    align-items: stretch;
+  }
+}

@@ -27,3 +27,7 @@
 - 최근 본 상품과 찜한 상품 조회에서 Firestore 복합 인덱스가 아직 없을 때는 `userId` 단일 조건 조회 후 클라이언트에서 최신순 정렬한다.
 - `firestore.indexes.json`에는 `userRecentProducts(userId, viewedAt desc)`, `userWishlist(userId, addedAt desc)` 인덱스를 추가했다.
 - Chrome 확인에서 로그인 후 마이페이지의 최근 본 상품/찜한 상품 목록이 콘솔 인덱스 오류 없이 표시되는 것을 확인했다.
+
+## 2026-06-11 로그인 직후 전환 UX
+- 로그인 직후 `userData`/권한 확인 중에는 마이페이지 레이아웃에서 본문 대신 “마이페이지 준비 중” 스켈레톤을 표시한다.
+- 루트에 이미 있는 `CouponProvider`와 중복되던 마이페이지 내부 `CouponProvider`를 제거해 로그인 직후 쿠폰 조회 중복 가능성을 줄였다.

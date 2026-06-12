@@ -16,6 +16,46 @@
   gap: var(--spacing-md);
 }
 
+.loadingGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  width: min(100%, 720px);
+  margin-top: 0.5rem;
+}
+
+.loadingCard {
+  display: grid;
+  gap: 0.65rem;
+  padding: 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: var(--surface-raised);
+}
+
+.loadingImage,
+.loadingLine,
+.loadingLineShort {
+  display: block;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--line) 0%, var(--surface) 50%, var(--line) 100%);
+  background-size: 200% 100%;
+  animation: skeletonPulse 1.4s ease-in-out infinite;
+}
+
+.loadingImage {
+  aspect-ratio: 1;
+}
+
+.loadingLine,
+.loadingLineShort {
+  height: 0.75rem;
+}
+
+.loadingLineShort {
+  width: 62%;
+}
+
 .spinner {
   width: 40px;
   height: 40px;
@@ -28,6 +68,11 @@
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+@keyframes skeletonPulse {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
 }
 
 /* 에러 상태 */
@@ -313,6 +358,11 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.75rem;
   }
+
+  .loadingGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
 }
 
 /* Medium Devices (768px and down) */
@@ -381,5 +431,11 @@
   .pageButton {
     min-width: 36px;
     padding: var(--spacing-xs) var(--spacing-sm);
+  }
+}
+
+@media (max-width: 480px) {
+  .stats {
+    grid-template-columns: 1fr;
   }
 }

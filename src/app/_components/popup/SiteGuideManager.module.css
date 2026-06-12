@@ -1,12 +1,12 @@
 /* 고정 버튼 스타일 */
 .fixedButton {
   position: fixed;
-  right: 1rem;
-  bottom: calc(1rem + 46px);
-  min-width: 104px;
-  height: 38px;
+  right: max(0.75rem, env(safe-area-inset-right));
+  bottom: calc(0.75rem + 42px + env(safe-area-inset-bottom));
+  min-width: 88px;
+  height: 36px;
   width: auto;
-  padding: 0 0.9rem;
+  padding: 0 0.75rem;
   background: var(--color-white);
   border: 1px solid var(--black);
   border-radius: 2px;

@@ -18,7 +18,9 @@ export async function getCategoryNames(): Promise<Record<string, string>> {
 
   try {
     const categories = await CategoryService.getCategories();
-    const categoryNames: Record<string, string> = {};
+    const categoryNames: Record<string, string> = {
+      ...getDefaultCategoryNames(),
+    };
     
     categories.forEach(category => {
       if (category.id && category.name) {
@@ -57,6 +59,18 @@ export async function getCategoryName(categoryId: string): Promise<string> {
  */
 export function getDefaultCategoryNames(): Record<string, string> {
   return {
+    accessories: '액세서리',
+    bags: '가방',
+    bottoms: '하의',
+    shoes: '신발',
+    tops: '상의',
+    clothing: '의류',
+    jewelry: '주얼리',
+    outdoor: '아웃도어',
+    sports: '스포츠',
+  };
+  /*
+  return {
     'accessories': '액세서리',
     'bags': '가방',
     'bottoms': '하의', 
@@ -67,6 +81,7 @@ export function getDefaultCategoryNames(): Record<string, string> {
     'outdoor': '아웃도어',
     'sports': '스포츠'
   };
+  */
 }
 
 /**
@@ -91,7 +106,7 @@ export async function getCategoryNamesByIds(categoryIds: string[]): Promise<stri
 export async function getCategoryIdByName(categoryName: string): Promise<string | null> {
   const categoryNames = await getCategoryNames();
   const entries = Object.entries(categoryNames);
-  const found = entries.find(([id, name]) => name === categoryName);
+  const found = entries.find(([, name]) => name === categoryName);
   return found ? found[0] : null;
 }
 

@@ -1,0 +1,281 @@
+
+> hebimall@0.1.0 dev
+> next dev
+
+   ▲ Next.js 15.5.9
+   - Local:        http://localhost:3000
+   - Network:      http://175.120.197.120:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 6.3s
+ ○ Compiling / ...
+ ✓ Compiled / in 16s (1336 modules)
+ GET / 200 in 3071ms
+ GET / 200 in 284ms
+ GET / 200 in 553ms
+ GET / 200 in 592ms
+ GET / 200 in 298ms
+ ○ Compiling /products ...
+ ✓ Compiled /products in 1606ms (1204 modules)
+ GET /products/ 200 in 3551ms
+ ○ Compiling /categories ...
+ ✓ Compiled /categories in 987ms (1196 modules)
+ GET /categories/ 200 in 1681ms
+ ○ Compiling /categories/[category] ...
+ ✓ Compiled /categories/[category] in 1026ms (1210 modules)
+ GET /categories/tops/ 200 in 2934ms
+ ○ Compiling /qna ...
+ ✓ Compiled /qna in 1028ms (1224 modules)
+ GET /qna/ 200 in 1569ms
+ ○ Compiling /reviews ...
+ ✓ Compiled /reviews in 1237ms (1263 modules)
+ GET /reviews/ 200 in 1948ms
+ ○ Compiling /events ...
+ ✓ Compiled /events in 1264ms (1272 modules)
+ GET /events/ 200 in 1863ms
+ ○ Compiling /events/[eventId] ...
+ ✓ Compiled /events/[eventId] in 2.7s (1417 modules)
+ GET /events/event-2026-08-last-summer/ 200 in 6075ms
+ ○ Compiling /cart ...
+ ✓ Compiled /cart in 874ms (1430 modules)
+ GET /cart/ 200 in 1450ms
+ ○ Compiling /auth/login ...
+ ✓ Compiled /auth/login in 873ms (1472 modules)
+ GET /auth/login/ 200 in 1395ms
+ ○ Compiling /auth/signup ...
+ ✓ Compiled /auth/signup in 1199ms (1464 modules)
+ GET /auth/signup/ 200 in 1640ms
+ ○ Compiling /auth/find-password ...
+ ✓ Compiled /auth/find-password in 961ms (1474 modules)
+ GET /auth/find-password/ 200 in 1454ms
+ ○ Compiling /mypage ...
+ ✓ Compiled /mypage in 1400ms (1538 modules)
+ GET /mypage/ 200 in 1867ms
+ ○ Compiling /admin/dashboard/dashboard ...
+ ✓ Compiled /admin/dashboard/dashboard in 1827ms (1574 modules)
+ GET /admin/dashboard/dashboard/ 200 in 2685ms
+ ○ Compiling /cs/faq ...
+ ✓ Compiled /cs/faq in 1712ms (1561 modules)
+ GET /cs/faq/ 200 in 2329ms
+ ○ Compiling /search ...
+ ✓ Compiled /search in 2.1s (1572 modules)
+ GET /search/ 200 in 2763ms
+ ○ Compiling /api/chat ...
+ ✓ Compiled /api/chat in 1500ms (1484 modules)
+ GET /api/chat/ 405 in 1798ms
+ POST /api/chat/ 500 in 1818ms
+ ○ Compiling /api/order ...
+ ✓ Compiled /api/order in 1498ms (1486 modules)
+ GET /api/order/ 405 in 1649ms
+ POST /api/order/ 400 in 3550ms
+ POST /api/chat/ 200 in 1332ms
+ POST /api/order/ 401 in 325ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 709ms (1232 modules)
+ POST /api/points/ 404 in 1983ms
+ POST /api/coupon/ 404 in 187ms
+ POST /api/qna/verify-secret/ 404 in 219ms
+ GET /api/admin/users/ 404 in 241ms
+ GET /api/products/ 404 in 224ms
+ GET /api/categories/ 404 in 185ms
+ GET /api/search/ 404 in 173ms
+ ✓ Compiled / in 265ms (756 modules)
+ GET / 200 in 1121ms
+ ○ Compiling /products ...
+ ✓ Compiled /products in 596ms (766 modules)
+ GET /products/ 200 in 1325ms
+ ○ Compiling /categories ...
+ ✓ Compiled /categories in 563ms (772 modules)
+ GET /categories/ 200 in 1061ms
+ ○ Compiling /categories/[category] ...
+ ✓ Compiled /categories/[category] in 858ms (780 modules)
+ GET /categories/tops/ 200 in 1704ms
+ ○ Compiling /qna ...
+ ✓ Compiled /qna in 1012ms (788 modules)
+ GET /qna/ 200 in 1640ms
+ ○ Compiling /reviews ...
+ ✓ Compiled /reviews in 975ms (799 modules)
+ GET /reviews/ 200 in 1855ms
+ ○ Compiling /events ...
+ ✓ Compiled /events in 958ms (809 modules)
+ GET /events/ 200 in 1417ms
+ ○ Compiling /events/[eventId] ...
+ ✓ Compiled /events/[eventId] in 2.5s (959 modules)
+ GET /events/event-2026-08-last-summer/ 200 in 4473ms
+ ○ Compiling /cart ...
+ ✓ Compiled /cart in 928ms (967 modules)
+ GET /cart/ 200 in 1772ms
+ ○ Compiling /auth/login ...
+ ✓ Compiled /auth/login in 1005ms (980 modules)
+ GET /auth/login/ 200 in 1520ms
+ ○ Compiling /auth/signup ...
+ ✓ Compiled /auth/signup in 1226ms (986 modules)
+ GET /auth/signup/ 200 in 1925ms
+ ○ Compiling /mypage ...
+ ✓ Compiled /mypage in 1262ms (1005 modules)
+ GET /mypage/ 200 in 1816ms
+ ○ Compiling /admin/dashboard/dashboard ...
+ ✓ Compiled /admin/dashboard/dashboard in 1168ms (1023 modules)
+ GET /admin/dashboard/dashboard/ 200 in 1728ms
+ ○ Compiling /cs/faq ...
+ ✓ Compiled /cs/faq in 973ms (1032 modules)
+ GET /cs/faq/ 200 in 1605ms
+ ○ Compiling /search ...
+ ✓ Compiled /search in 1114ms (1039 modules)
+ GET /search/ 200 in 1643ms
+ GET / 200 in 340ms
+ ○ Compiling /auth/find-password ...
+ ✓ Compiled /auth/find-password in 1261ms (1045 modules)
+ GET /auth/find-password/ 200 in 2033ms
+ GET /auth/login/ 200 in 324ms
+ GET /auth/signup/ 200 in 523ms
+ ○ Compiling /brand ...
+ ✓ Compiled /brand in 1541ms (1606 modules)
+ GET /brand/ 200 in 2266ms
+ GET /categories/accessories/ 200 in 387ms
+ GET /categories/bags/ 200 in 258ms
+ GET /categories/clothing/ 200 in 341ms
+ GET /categories/outdoor/ 200 in 279ms
+ GET /cs/faq/ 200 in 310ms
+ ○ Compiling /cs/inquiry ...
+ ✓ Compiled /cs/inquiry in 1488ms (1618 modules)
+ GET /cs/inquiry/ 200 in 2403ms
+ ○ Compiling /cs/notice_list ...
+ ✓ Compiled /cs/notice_list in 1837ms (1628 modules)
+ GET /cs/notice_list/ 200 in 2304ms
+ GET /events/ 200 in 209ms
+ ○ Compiling /legal/business-info ...
+ ✓ Compiled /legal/business-info in 1657ms (1637 modules)
+ GET /legal/business-info/ 200 in 2622ms
+ ○ Compiling /legal/privacy ...
+ ✓ Compiled /legal/privacy in 1989ms (1645 modules)
+ GET /legal/privacy/ 200 in 2905ms
+ ○ Compiling /legal/terms ...
+ ✓ Compiled /legal/terms in 1861ms (1637 modules)
+ GET /legal/terms/ 200 in 2383ms
+ GET /main/recommend/ 404 in 318ms
+ ○ Compiling /main/sale ...
+ ✓ Compiled /main/sale in 1997ms (1637 modules)
+ GET /main/sale/ 200 in 3032ms
+ ○ Compiling /orders/cart ...
+ ✓ Compiled /orders/cart in 2.8s (1657 modules)
+ GET /orders/cart/ 200 in 4179ms
+ ○ Compiling /orders/delivery ...
+ ✓ Compiled /orders/delivery in 2.6s (1667 modules)
+ GET /orders/delivery/ 200 in 3501ms
+ GET /products/ 200 in 411ms
+ GET /qna/ 200 in 478ms
+ ○ Compiling /recommend ...
+ ✓ Compiled /recommend in 2.1s (1678 modules)
+ GET /recommend/ 200 in 2978ms
+ GET /recommend/?filter=new 200 in 255ms
+ GET /recommend/?filter=review 200 in 208ms
+ GET /reviews/ 200 in 242ms
+ GET /search/ 200 in 200ms
+ ○ Compiling /support/offline ...
+ ✓ Compiled /support/offline in 1820ms (1687 modules)
+ GET /support/offline/ 200 in 2444ms
+ GET /cart/ 200 in 331ms
+ GET /orders/cart/ 200 in 308ms
+ ✓ Compiled in 1413ms (583 modules)
+ ✓ Compiled in 621ms (583 modules)
+ ✓ Compiled in 539ms (593 modules)
+ ○ Compiling /api/points ...
+ ✓ Compiled /api/points in 872ms (733 modules)
+ POST /api/points/ 401 in 3456ms
+ ○ Compiling /api/coupon ...
+ ✓ Compiled /api/coupon in 745ms (735 modules)
+ POST /api/coupon/ 401 in 2302ms
+ ○ Compiling /api/qna/verify-secret ...
+ ✓ Compiled /api/qna/verify-secret in 583ms (737 modules)
+ POST /api/qna/verify-secret/ 404 in 4474ms
+ ○ Compiling /api/admin/users ...
+ ✓ Compiled /api/admin/users in 578ms (739 modules)
+ POST /api/admin/users/ 401 in 2509ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 5.6s (681 modules)
+ GET /main/recommend/ 404 in 6901ms
+ ○ Compiling /recommend ...
+ ✓ Compiled /recommend in 707ms (693 modules)
+ GET /recommend/ 200 in 1461ms
+ ✓ Compiled /orders/cart in 487ms (709 modules)
+ GET /orders/cart/ 200 in 884ms
+ ○ Compiling / ...
+ ✓ Compiled / in 853ms (783 modules)
+ GET / 200 in 2218ms
+ ○ Compiling /cart ...
+ ✓ Compiled /cart in 831ms (789 modules)
+ GET /cart/ 200 in 1582ms
+ GET /orders/cart/ 200 in 177ms
+ GET /recommend/ 200 in 176ms
+ ✓ Compiled /products in 504ms (799 modules)
+ GET /products/ 200 in 957ms
+ ○ Compiling /events ...
+ ✓ Compiled /events in 574ms (809 modules)
+ GET /events/ 200 in 1015ms
+ GET / 200 in 493ms
+ ○ Compiling /auth/login ...
+ ✓ Compiled /auth/login in 593ms (822 modules)
+ GET /auth/login/ 200 in 1112ms
+ ○ Compiling /brand ...
+ ✓ Compiled /brand in 604ms (828 modules)
+ GET /brand/ 200 in 1002ms
+ ○ Compiling /categories/[category] ...
+ ✓ Compiled /categories/[category] in 725ms (836 modules)
+ GET /categories/accessories/ 200 in 1251ms
+ GET /categories/bags/ 200 in 191ms
+ GET /categories/clothing/ 200 in 194ms
+ GET /categories/outdoor/ 200 in 160ms
+ ○ Compiling /cs/faq ...
+ ✓ Compiled /cs/faq in 859ms (845 modules)
+ GET /cs/faq/ 200 in 1571ms
+ ○ Compiling /cs/inquiry ...
+ ✓ Compiled /cs/inquiry in 975ms (852 modules)
+ GET /cs/inquiry/ 200 in 1593ms
+ ○ Compiling /cs/notice_list ...
+ ✓ Compiled /cs/notice_list in 1384ms (858 modules)
+ GET /cs/notice_list/ 200 in 1973ms
+ GET /events/ 200 in 221ms
+ ○ Compiling /legal/business-info ...
+ ✓ Compiled /legal/business-info in 766ms (864 modules)
+ GET /legal/business-info/ 200 in 1204ms
+ ○ Compiling /legal/privacy ...
+ ✓ Compiled /legal/privacy in 692ms (869 modules)
+ GET /legal/privacy/ 200 in 1515ms
+ ○ Compiling /legal/terms ...
+ ✓ Compiled /legal/terms in 1166ms (871 modules)
+ GET /legal/terms/ 200 in 1867ms
+ ○ Compiling /main/sale ...
+ ✓ Compiled /main/sale in 1385ms (877 modules)
+ GET /main/sale/ 200 in 1980ms
+ GET /orders/cart/ 200 in 227ms
+ ○ Compiling /orders/delivery ...
+ ✓ Compiled /orders/delivery in 924ms (883 modules)
+ GET /orders/delivery/ 200 in 1360ms
+ GET /products/ 200 in 238ms
+ ○ Compiling /qna ...
+ ✓ Compiled /qna in 1211ms (891 modules)
+ GET /qna/ 200 in 1969ms
+ GET /recommend/ 200 in 329ms
+ GET /recommend/?filter=new 200 in 320ms
+ GET /recommend/?filter=review 200 in 231ms
+ ○ Compiling /reviews ...
+ ✓ Compiled /reviews in 1424ms (900 modules)
+ GET /reviews/ 200 in 2220ms
+ ○ Compiling /search ...
+ ✓ Compiled /search in 1691ms (907 modules)
+ GET /search/ 200 in 2249ms
+ ○ Compiling /support/offline ...
+ ✓ Compiled /support/offline in 1366ms (913 modules)
+ GET /support/offline/ 200 in 2190ms
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 3.7s (1595 modules)
+ GET /cart/ 500 in 8999ms
+ GET /cart/ 500 in 339ms
+ GET /cart/ 500 in 1441ms
+ GET /cart/ 500 in 282ms
+ GET /cart/ 500 in 1230ms
+ GET /cart/ 500 in 296ms
+ GET /cart/ 500 in 1792ms
+ GET /cart/ 500 in 382ms

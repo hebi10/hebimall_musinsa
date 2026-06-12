@@ -126,4 +126,26 @@ describe('EventList', () => {
     expect(posterHero).toHaveAttribute('href', '/events/featured-event');
     expect(screen.getAllByText('미드이어 세일').length).toBeGreaterThan(0);
   });
+
+  test('renders event-shaped skeleton cards while loading', () => {
+    useEvent.mockReturnValue({
+      events: [],
+      filteredEvents: [],
+      filter: {},
+      currentPage: 1,
+      eventsPerPage: 6,
+      loading: true,
+      error: null,
+      setFilter: jest.fn(),
+      setCurrentPage: jest.fn(),
+      getActiveEvents: () => [],
+      getTotalParticipants: () => 0,
+      refreshEvents: jest.fn(),
+    });
+
+    render(<EventList />);
+
+    expect(screen.getByRole('status')).toHaveTextContent('이벤트를 불러오는 중입니다');
+    expect(screen.getAllByLabelText('이벤트 로딩 카드')).toHaveLength(3);
+  });
 });

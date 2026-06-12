@@ -107,8 +107,13 @@
   margin-bottom: 3rem;
 }
 
+.productsGrid > * {
+  min-width: 0;
+}
+
 .productCard {
   display: block;
+  min-width: 0;
   background: white;
   border: 1px solid var(--line);
   border-radius: 2px;
@@ -231,12 +236,15 @@
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+  min-width: 0;
 }
 
 .currentPrice {
   font-size: 1.125rem;
   font-weight: 700;
   color: #1f2937;
+  overflow-wrap: anywhere;
 }
 
 .originalPrice {

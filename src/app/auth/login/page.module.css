@@ -1,9 +1,56 @@
 .container {
   width: 100%;
+  min-width: 0;
 }
 
 .formWrapper {
   width: 100%;
+  min-width: 0;
+  position: relative;
+}
+
+.transitionOverlay {
+  position: absolute;
+  inset: -0.5rem;
+  z-index: 5;
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 0.625rem;
+  min-height: calc(100% + 1rem);
+  padding: 2rem;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.94);
+  color: #111111;
+  text-align: center;
+}
+
+.transitionOverlay strong {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.transitionOverlay p {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: #666666;
+}
+
+.transitionSpinner {
+  width: 2rem;
+  height: 2rem;
+  border: 2px solid #e5e5e5;
+  border-top-color: #111111;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .title {
@@ -25,6 +72,7 @@
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
+  gap: 0.75rem;
 }
 
 .rememberMe {
@@ -168,6 +216,7 @@
   margin-top: 1.5rem;
   font-size: 0.875rem;
   color: #888888;
+  overflow-wrap: anywhere;
 }
 
 .linkText {
@@ -189,5 +238,28 @@
   font-size: 0.875rem;
   text-align: center;
   background-color: #fff8f8;
+}
+
+@media (max-width: 480px) {
+  .transitionOverlay {
+    inset: -0.25rem;
+    padding: 1.25rem;
+  }
+
+  .loginStatus {
+    align-items: flex-start;
+  }
+
+  .rememberMe,
+  .link,
+  .linkText {
+    min-width: 0;
+  }
+
+  .button,
+  .socialButton,
+  .input {
+    min-height: 44px;
+  }
 }
 

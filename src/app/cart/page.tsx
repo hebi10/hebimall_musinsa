@@ -99,7 +99,7 @@ export default function CartPage() {
               원하는 상품을 장바구니에 담아보세요.<br />
               지금 쇼핑을 시작해보세요!
             </p>
-            <Link href="/main/recommend">
+            <Link href="/recommend">
               <Button size="lg">쇼핑 계속하기</Button>
             </Link>
           </div>
@@ -154,6 +154,17 @@ export default function CartPage() {
                     옵션: {item.color} / {item.size}
                   </p>
                   
+                  <div className={styles.itemPrice}>
+                    {item.originalPrice && (
+                      <p className={styles.originalPrice}>
+                        {item.originalPrice.toLocaleString()}원
+                      </p>
+                    )}
+                    <p className={styles.salePrice}>
+                      {(item.price * item.quantity).toLocaleString()}원
+                    </p>
+                  </div>
+
                   <div className={styles.itemActions}>
                     <div className={styles.quantityControl}>
                       <button
@@ -183,17 +194,6 @@ export default function CartPage() {
                       삭제
                     </button>
                   </div>
-                </div>
-                
-                <div className={styles.itemPrice}>
-                  {item.originalPrice && (
-                    <p className={styles.originalPrice}>
-                      {item.originalPrice.toLocaleString()}원
-                    </p>
-                  )}
-                  <p className={styles.salePrice}>
-                    {(item.price * item.quantity).toLocaleString()}원
-                  </p>
                 </div>
               </div>
             ))}
@@ -230,14 +230,17 @@ export default function CartPage() {
               <span className={styles.totalValue}>{total.toLocaleString()}원</span>
             </div>
             
-            <button 
-              className={styles.checkoutButton}
-              disabled={selectedItems.length === 0}
-            >
-              주문하기 ({selectedItems.length}개)
-            </button>
+            {selectedItems.length > 0 ? (
+              <Link href="/orders/cart" className={styles.checkoutButton}>
+                주문하기 ({selectedItems.length}개)
+              </Link>
+            ) : (
+              <button className={styles.checkoutButton} disabled>
+                주문하기 ({selectedItems.length}개)
+              </button>
+            )}
             
-            <Link href="/main/recommend">
+            <Link href="/recommend">
               <button className={styles.continueShoppingButton}>
                 쇼핑 계속하기
               </button>

@@ -159,9 +159,18 @@ export default function ProductList() {
 
   if (loading && currentPage === 1 && items.length === 0) {
     return (
-      <div className={styles.loading}>
+      <div className={styles.loading} role="status" aria-live="polite">
         <div className={styles.spinner}></div>
         <p>상품 목록을 불러오는 중입니다...</p>
+        <div className={styles.loadingGrid}>
+          {Array.from({ length: 6 }).map((_, index) => (
+            <div key={index} className={styles.loadingCard} aria-label="상품 목록 로딩 카드">
+              <span className={styles.loadingImage} />
+              <span className={styles.loadingLine} />
+              <span className={styles.loadingLineShort} />
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
