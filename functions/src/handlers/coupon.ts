@@ -2,6 +2,7 @@ import { onRequest } from "firebase-functions/v2/https";
 import { getFirestore, FieldValue } from "firebase-admin/firestore";
 import {
   couponHasExpired,
+  isCouponIssuableByAction,
   isAvailableUserCouponStatus,
   normalizeCouponCode,
 } from "../domain/couponDomain";
@@ -290,7 +291,7 @@ async function handleRegister(
     data: {
       message: "Coupon registered successfully.",
       userCouponId: userCouponRef.id,
-      couponName: couponData.name,
+      couponName: couponData?.name,
       couponCode,
     },
   });
@@ -317,8 +318,26 @@ async function handleIssue(
   }
 
   const couponData = couponDoc.data();
-  if (!couponData?.isActive) {
-    res.status(403).json({ success: false, error: "Coupon is inactive." });
+  const issuePolicy = isCouponIssuableByAction(couponData);
+
+  if (!issuePolicy.ok) {
+    const statusByReason: Record<typeof issuePolicy.reason, number> = {
+      inactive: 403,
+      code_coupon_requires_register: 403,
+      expired: 410,
+      usage_limit_reached: 409,
+    };
+    const messageByReason: Record<typeof issuePolicy.reason, string> = {
+      inactive: "Coupon is inactive.",
+      code_coupon_requires_register: "Code coupons must be registered with couponCode.",
+      expired: "Coupon has expired.",
+      usage_limit_reached: "Coupon usage limit has been reached.",
+    };
+
+    res.status(statusByReason[issuePolicy.reason]).json({
+      success: false,
+      error: messageByReason[issuePolicy.reason],
+    });
     return;
   }
 
@@ -343,12 +362,17 @@ async function handleIssue(
     updatedAt: FieldValue.serverTimestamp(),
   });
 
+  await db.collection("coupons").doc(couponId).update({
+    usedCount: FieldValue.increment(1),
+    updatedAt: FieldValue.serverTimestamp(),
+  });
+
   res.status(200).json({
     success: true,
     data: {
       message: "Coupon issued successfully.",
       userCouponId: userCouponRef.id,
-      couponName: couponData.name,
+      couponName: couponData?.name,
     },
   });
 }

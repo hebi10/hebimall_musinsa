@@ -92,3 +92,8 @@
 ## 2026-06-12 카트 진입 링크 보정
 - 목 데이터 기반 `/cart`의 추천 이동 링크를 존재하지 않는 `/main/recommend`에서 실제 `/recommend`로 수정했다.
 - `/cart`의 주문 CTA는 동작 없는 버튼 대신 실제 장바구니 흐름인 `/orders/cart`로 연결한다.
+
+## 2026-06-22 checkout 복구 흐름 보정
+- `/orders/checkout`은 `sessionStorage.orderData`가 없거나 깨졌거나 주문 상품이 비어 있으면 모호한 확인 문구 대신 복구 화면을 보여준다.
+- 복구 화면은 `/orders/cart`로 돌아가는 링크를 제공해 장바구니에서 주문 상품을 다시 선택할 수 있게 한다.
+- `/orders/cart` 내부 breadcrumb와 뒤로가기성 링크가 mock `/cart`로 빠지지 않도록 실제 주문 장바구니 또는 쇼핑 계속하기 흐름으로 정리했다.

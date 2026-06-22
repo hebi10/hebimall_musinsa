@@ -9,34 +9,9 @@ import { useCoupon } from "@/context/couponProvider";
 import { usePoint } from "@/context/pointProvider";
 import { OrderService } from "@/shared/services/orderService";
 import { calculateOrderPreview } from "@/shared/utils/orderPricing";
+import { CheckoutDraft, parseCheckoutDraft } from "./checkoutDraft";
 import { buildCheckoutDeliveryAddresses, DeliveryAddress } from "./deliveryAddress";
 import styles from "./page.module.css";
-
-interface CheckoutItem {
-  productId: string;
-  id?: string;
-  size: string;
-  color: string;
-  quantity: number;
-  productName?: string;
-  productImage?: string;
-  brand?: string;
-  price: number;
-  discountAmount?: number;
-}
-
-interface CheckoutDraft {
-  items: CheckoutItem[];
-  selectedCoupon?: string;
-  deliveryOption: "standard" | "express";
-  pricingPreview?: {
-    subtotal: number;
-    productDiscountAmount: number;
-    couponDiscount: number;
-    deliveryFee: number;
-    finalAmount: number;
-  };
-}
 
 const paymentMethods = [
   { value: "card", label: "카드 결제" },
@@ -62,6 +37,7 @@ export default function CheckoutPage() {
   const [usePoints, setUsePoints] = useState<number>(0);
   const [isProcessing, setIsProcessing] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
+  const [checkoutRecoveryReason, setCheckoutRecoveryReason] = useState<string | null>(null);
 
   const addresses = useMemo(
     () => buildCheckoutDeliveryAddresses(userData, user?.displayName),
@@ -77,24 +53,15 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     const savedOrderData = sessionStorage.getItem("orderData");
-    if (!savedOrderData) {
-      router.push("/orders/cart");
+    const result = parseCheckoutDraft(savedOrderData);
+    if (!result.ok) {
+      setCheckoutRecoveryReason(result.reason);
       return;
     }
 
-    const parsed = JSON.parse(savedOrderData) as CheckoutDraft;
-    if (!parsed.items?.length) {
-      router.push("/orders/cart");
-      return;
-    }
-
-    setOrderData({
-      items: parsed.items,
-      selectedCoupon: parsed.selectedCoupon,
-      deliveryOption: parsed.deliveryOption === "express" ? "express" : "standard",
-      pricingPreview: parsed.pricingPreview,
-    });
-  }, [router]);
+    setCheckoutRecoveryReason(null);
+    setOrderData(result.draft);
+  }, []);
 
   useEffect(() => {
     setSelectedAddress((currentAddress) => {
@@ -191,8 +158,39 @@ export default function CheckoutPage() {
     }
   };
 
-  if (authLoading || !user || !orderData || !selectedAddress) {
+  if (authLoading || !user) {
     return <div>로그인 / 주문 정보 확인 중...</div>;
+  }
+
+  if (checkoutRecoveryReason) {
+    return (
+      <div className={styles.container}>
+        <PageHeader
+          title="주문/결제"
+          description="주문 정보를 다시 확인해주세요"
+          breadcrumb={[
+            { label: "홈", href: "/" },
+            { label: "장바구니", href: "/orders/cart" },
+            { label: "주문/결제" },
+          ]}
+        />
+        <div className={styles.content}>
+          <div className={styles.recoveryPanel} role="status" aria-live="polite">
+            <h2 className={styles.recoveryTitle}>주문 정보를 불러올 수 없습니다</h2>
+            <p className={styles.recoveryDescription}>
+              장바구니에서 주문할 상품을 다시 선택하면 결제를 이어갈 수 있습니다.
+            </p>
+            <Link href="/orders/cart" className={styles.recoveryButton}>
+              장바구니로 돌아가기
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!orderData || !selectedAddress) {
+    return <div>주문 정보 확인 중...</div>;
   }
 
   return (

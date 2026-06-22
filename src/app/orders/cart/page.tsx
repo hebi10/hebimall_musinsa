@@ -196,7 +196,7 @@ export default function OrderCartPage() {
           description="장바구니를 불러오는 중..."
           breadcrumb={[
             { label: '홈', href: '/' },
-            { label: '장바구니', href: '/cart' },
+            { label: '장바구니', href: '/orders/cart' },
             { label: '주문/결제' }
           ]}
         />
@@ -215,7 +215,7 @@ export default function OrderCartPage() {
           description="장바구니 오류"
           breadcrumb={[
             { label: '홈', href: '/' },
-            { label: '장바구니', href: '/cart' },
+            { label: '장바구니', href: '/orders/cart' },
             { label: '주문/결제' }
           ]}
         />
@@ -237,7 +237,7 @@ export default function OrderCartPage() {
           description="안전하고 빠른 주문 처리"
           breadcrumb={[
             { label: '홈', href: '/' },
-            { label: '장바구니', href: '/cart' },
+            { label: '장바구니', href: '/orders/cart' },
             { label: '주문/결제' }
           ]}
         />
@@ -249,8 +249,8 @@ export default function OrderCartPage() {
             <p className={styles.emptyDescription}>
               장바구니에서 상품을 선택하고 주문을 진행해주세요.
             </p>
-            <Link href="/cart">
-              <Button size="lg">장바구니로 돌아가기</Button>
+            <Link href="/recommend">
+              <Button size="lg">쇼핑 계속하기</Button>
             </Link>
           </div>
         </div>
@@ -265,7 +265,7 @@ export default function OrderCartPage() {
         description={`${selectedItems.length}개 상품 주문 진행`}
         breadcrumb={[
           { label: '홈', href: '/' },
-          { label: '장바구니', href: '/cart' },
+          { label: '장바구니', href: '/orders/cart' },
           { label: '주문/결제' }
         ]}
       />
@@ -500,8 +500,8 @@ export default function OrderCartPage() {
                   {finalAmount.toLocaleString()}원 결제하기
                 </button>
                 
-                <Link href="/cart" className={styles.backButton}>
-                  장바구니로 돌아가기
+                <Link href="/recommend" className={styles.backButton}>
+                  쇼핑 계속하기
                 </Link>
               </div>
 

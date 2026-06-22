@@ -1,5 +1,6 @@
 import {
   couponHasExpired,
+  isCouponIssuableByAction,
   isAvailableUserCouponStatus,
   normalizeCouponCode,
 } from '../src/domain/couponDomain';
@@ -23,5 +24,34 @@ describe('coupon domain logic', () => {
     expect(isAvailableUserCouponStatus('available')).toBe(true);
     expect(isAvailableUserCouponStatus('ACTIVE')).toBe(true);
     expect(isAvailableUserCouponStatus('사용완료')).toBe(false);
+  });
+
+  test('allows direct issue only for active direct assignment coupons', () => {
+    expect(
+      isCouponIssuableByAction({
+        isActive: true,
+        isDirectAssign: true,
+        expiryDate: '2026-05-12',
+        usageLimit: 10,
+        usedCount: 9,
+      }, new Date('2026-05-11T10:00:00.000Z')),
+    ).toEqual({ ok: true });
+
+    expect(
+      isCouponIssuableByAction({
+        isActive: true,
+        isDirectAssign: false,
+        couponCode: 'WELCOME2026',
+        expiryDate: '2026-05-12',
+      }, new Date('2026-05-11T10:00:00.000Z')),
+    ).toEqual({ ok: false, reason: 'code_coupon_requires_register' });
+
+    expect(
+      isCouponIssuableByAction({
+        isActive: true,
+        isDirectAssign: true,
+        expiryDate: '2026-05-10',
+      }, new Date('2026-05-11T10:00:00.000Z')),
+    ).toEqual({ ok: false, reason: 'expired' });
   });
 });

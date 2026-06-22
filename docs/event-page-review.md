@@ -80,3 +80,8 @@
 - Chrome 확인 기준 `/events/` 첫 화면 대표 이미지는 `event-2026-05-best-review-detail.webp`를 사용하고, 첫 화면 대표 영역에서 `*-banner.webp`는 사용하지 않는다.
 - 목록/상세의 주요 제목, 기간, 쿠폰/CTA, 혜택 값에는 긴 무공백 문자열이 모바일 폭을 밀어내지 않도록 `overflow-wrap: anywhere` 방어를 추가했다.
 - 운영자가 새 이벤트 이미지를 직접 올릴 때도 텍스트가 합성된 배너와 별개로 `detailImage`를 함께 등록해야 목록 대표 히어로와 상세 페이지에서 같은 문제가 재발하지 않는다.
+
+## 2026-06-22 이벤트 HTML 렌더링 방어
+- 상세 본문의 HTML 렌더링은 `src/shared/utils/eventHtml.ts` allowlist sanitizer를 거쳐 출력한다.
+- `script`, `style`, `iframe`, `object`, `embed`, `form` 계열 태그와 이벤트 핸들러 속성은 제거하고, 링크는 안전한 `href`만 유지한다.
+- `src/shared/utils/eventHtml.test.ts`로 스크립트 제거, 허용 태그 보존, 위험 링크 제거를 검증했다.

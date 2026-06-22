@@ -41,6 +41,10 @@
   - `npm test -- --runTestsByPath src/app/_components/chat/ChatWidget.test.tsx src/app/api/chat/route.test.ts --runInBand`: 통과.
   - `npm run typecheck`: 통과.
   - `npm run functions:build`: 통과.
+- 2026-06-22 상담 API 입력 방어 검증:
+  - Next `/api/chat`과 Functions `chat`에서 메시지 길이 상한, 대화 기록 개수 상한, `user`/`assistant` 외 role 제거를 공통 적용했다.
+  - 포트폴리오/개인 연락처 안내 문구는 면접관 확인 목적이 있어 유지하되, 사용자 입력이 시스템 role로 주입되지 않도록 방어했다.
+  - `npm test -- --runTestsByPath src/app/api/chat/route.test.ts --runInBand`: 통과.
 
 ## 남은 작업
 - 사용자 대상 공개 API 목록 확정 시 `API_PUBLIC_CACHE_RULES`에 개별 엔드포인트 등록 및 revalidate 값 조정.

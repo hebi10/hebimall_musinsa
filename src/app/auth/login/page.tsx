@@ -9,8 +9,24 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/authProvider";
 
+function getSafeRedirectTarget(redirect: string | null): string {
+  if (!redirect || !redirect.startsWith("/") || redirect.startsWith("//")) {
+    return "/mypage";
+  }
+
+  return redirect;
+}
+
 export default function LoginPage() {
   const router = useRouter();
+  const showDevelopmentLogins = process.env.NODE_ENV === "development";
+  const [redirectTarget, setRedirectTarget] = useState(() => {
+    if (typeof window === "undefined") {
+      return "/mypage";
+    }
+
+    return getSafeRedirectTarget(new URLSearchParams(window.location.search).get("redirect"));
+  });
   const [values, onChange] = useInput({
     id: '',
     password: '',
@@ -20,6 +36,10 @@ export default function LoginPage() {
 
   const { login, error, clearError, user, loading } = useAuth();
   const isTransitioning = isSubmitting || (!loading && Boolean(user));
+
+  useEffect(() => {
+    setRedirectTarget(getSafeRedirectTarget(new URLSearchParams(window.location.search).get("redirect")));
+  }, []);
 
   const handleRememberMeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setRememberMe(e.target.checked);
@@ -33,7 +53,7 @@ export default function LoginPage() {
     try {
       await login("test@test.com", "testtest", false);
       window.scrollTo(0, 0);
-      router.replace("/mypage");
+      router.replace(redirectTarget);
     } catch (error) {
       console.error("Naver login failed:", error);
       setIsSubmitting(false);
@@ -48,7 +68,7 @@ export default function LoginPage() {
     try {
       await login("test01@test.com", "test01test01", false);
       window.scrollTo(0, 0);
-      router.replace("/mypage");
+      router.replace(redirectTarget);
     } catch (error) {
       console.error("Kakao login failed:", error);
       setIsSubmitting(false);
@@ -57,9 +77,9 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (!loading && user) {
-      router.replace("/mypage");
+      router.replace(redirectTarget);
     }
-  }, [user, loading, router]);
+  }, [user, loading, router, redirectTarget]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,7 +94,7 @@ export default function LoginPage() {
     try {
       await login(values.id, values.password, rememberMe);
       window.scrollTo(0, 0);
-      router.replace("/mypage");
+      router.replace(redirectTarget);
     } catch (error) {
       console.error("Login failed:", error);
       setIsSubmitting(false);
@@ -152,34 +172,34 @@ export default function LoginPage() {
           </Button>
         </form>
 
-        <div className={styles.divider}>
-          <span className={styles.dividerText}>또는</span>
-        </div>
+        {showDevelopmentLogins && (
+          <>
+            <div className={styles.divider}>
+              <span className={styles.dividerText}>개발용 빠른 로그인</span>
+            </div>
 
-        <div className={styles.socialButtons}>
-          <button
-            type="button"
-            className={styles.socialButton}
-            onClick={handleKakaoLogin}
-            disabled={isSubmitting}
-          >
-            <span className={`${styles.socialBtn} ${styles.kakaoIcon}`}>K</span>
-            {isSubmitting ? "로그인 중..." : "일반 유저 로그인"}
-          </button>
-          <button
-            type="button"
-            className={styles.socialButton}
-            onClick={handleNaverLogin}
-            disabled={isSubmitting}
-          >
-            <span className={`${styles.socialBtn} ${styles.naverIcon}`}>N</span>
-            {isSubmitting ? "로그인 중..." : "관리자 로그인"}
-          </button>
-          <button type="button" className={styles.socialButton}>
-            <span className={`${styles.socialBtn} ${styles.googleIcon}`}>G</span>
-            구글 로그인
-          </button>
-        </div>
+            <div className={styles.socialButtons}>
+              <button
+                type="button"
+                className={styles.socialButton}
+                onClick={handleKakaoLogin}
+                disabled={isSubmitting}
+              >
+                <span className={`${styles.socialBtn} ${styles.kakaoIcon}`}>U</span>
+                {isSubmitting ? "로그인 중..." : "개발용 회원 로그인"}
+              </button>
+              <button
+                type="button"
+                className={styles.socialButton}
+                onClick={handleNaverLogin}
+                disabled={isSubmitting}
+              >
+                <span className={`${styles.socialBtn} ${styles.naverIcon}`}>A</span>
+                {isSubmitting ? "로그인 중..." : "개발용 관리자 로그인"}
+              </button>
+            </div>
+          </>
+        )}
 
         <div className={styles.link}>
           아직 계정이 없으신가요?{' '}

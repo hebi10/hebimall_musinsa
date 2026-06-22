@@ -191,7 +191,7 @@ export default function Header() {
             <div className={styles.mobileBrandBlock}>
               <span className={styles.mobileBrandWordmark}>STYNA</span>
               <p className={styles.mobileBrandText}>
-                차분한 무드로 정리한 데일리 셀렉트웨어.
+                의류, 가방, 액세서리를 한곳에서 둘러보는 포트폴리오 쇼핑몰입니다.
               </p>
             </div>
 

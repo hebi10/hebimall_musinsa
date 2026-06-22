@@ -52,9 +52,7 @@ export class SimpleQnAService {
         qnaData.passwordSalt = secret.passwordSalt;
       }
 
-      console.log('Creating QnA with data:', qnaData);
       const docRef = await addDoc(collection(db, COLLECTION_NAME), qnaData);
-      console.log('QnA created successfully with ID:', docRef.id);
       return docRef.id;
     } catch (error) {
       console.error('Error creating QnA:', error);

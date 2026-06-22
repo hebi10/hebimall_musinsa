@@ -4,7 +4,7 @@ import { getMenuResponse, getAIFallbackResponse } from '@/shared/utils/chatRespo
 interface ChatRequest {
   message: string;
   useAI?: boolean;
-  conversationHistory?: Array<{ role: 'user' | 'assistant'; content: string }>;
+  conversationHistory?: Array<{ role: string; content: unknown }>;
 }
 
 const NO_STORE_HEADERS = {
@@ -12,6 +12,10 @@ const NO_STORE_HEADERS = {
   'Pragma': 'no-cache',
   'Expires': '0',
 };
+
+const MAX_MESSAGE_LENGTH = 1200;
+const MAX_HISTORY_ITEMS = 10;
+const MAX_HISTORY_CONTENT_LENGTH = 800;
 
 const SYSTEM_PROMPT = `당신은 STYNA 온라인 패션 쇼핑몰의 전문 고객지원 AI입니다.
 
@@ -45,6 +49,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (message.length > MAX_MESSAGE_LENGTH) {
+      return NextResponse.json(
+        { error: 'Message is too long.' },
+        { status: 413, headers: NO_STORE_HEADERS },
+      );
+    }
+
     const upstreamUrl = getUpstreamChatApiUrl(request);
     if (upstreamUrl) {
       const upstreamResponse = await fetch(upstreamUrl, {
@@ -70,7 +81,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ response: getMenuResponse(message) }, { headers: NO_STORE_HEADERS });
     }
 
-    const openAIResponse = await getOpenAIChatResponse(message, conversationHistory);
+    const openAIResponse = await getOpenAIChatResponse(
+      message,
+      sanitizeConversationHistory(conversationHistory),
+    );
     if (openAIResponse) {
       return NextResponse.json({ response: openAIResponse }, { headers: NO_STORE_HEADERS });
     }
@@ -116,7 +130,7 @@ function getUpstreamChatApiUrl(request: NextRequest): string | null {
 
 async function getOpenAIChatResponse(
   message: string,
-  conversationHistory: ChatRequest['conversationHistory'] = [],
+  conversationHistory: Array<{ role: 'user' | 'assistant'; content: string }> = [],
 ): Promise<string | null> {
   const apiKey = process.env.OPENAI_API_KEY?.trim();
   if (!apiKey) return null;
@@ -132,7 +146,7 @@ async function getOpenAIChatResponse(
         model: process.env.OPENAI_CHAT_MODEL?.trim() || 'gpt-4o-mini',
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
-          ...(conversationHistory ?? []).slice(-10),
+          ...conversationHistory,
           { role: 'user', content: message },
         ],
         max_tokens: 500,
@@ -152,4 +166,24 @@ async function getOpenAIChatResponse(
     console.error('OpenAI chat API request failed:', error);
     return null;
   }
+}
+
+function sanitizeConversationHistory(
+  conversationHistory: ChatRequest['conversationHistory'] = [],
+): Array<{ role: 'user' | 'assistant'; content: string }> {
+  if (!Array.isArray(conversationHistory)) {
+    return [];
+  }
+
+  return conversationHistory
+    .filter((item): item is { role: 'user' | 'assistant'; content: string } =>
+      (item?.role === 'user' || item?.role === 'assistant') &&
+      typeof item.content === 'string' &&
+      item.content.trim().length > 0,
+    )
+    .map(item => ({
+      role: item.role,
+      content: item.content.slice(0, MAX_HISTORY_CONTENT_LENGTH),
+    }))
+    .slice(-MAX_HISTORY_ITEMS);
 }

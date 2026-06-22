@@ -72,109 +72,6 @@
   padding: 2rem;
 }
 
-.deliveryInfo {
-  border: 1px solid #e1e5e9;
-  border-radius: 8px;
-  overflow: hidden;
-  margin-bottom: 1rem;
-}
-
-.deliveryHeader {
-  background: #f8f9fa;
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid #e1e5e9;
-}
-
-.orderNumber {
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 0.5rem;
-}
-
-.deliveryMeta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.9rem;
-  color: #6c757d;
-}
-
-.status {
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: 500;
-}
-
-.statusPreparing {
-  background: #ffc107;
-  color: #856404;
-}
-
-.statusShipping {
-  background: #007bff;
-  color: white;
-}
-
-.statusDelivered {
-  background: #28a745;
-  color: white;
-}
-
-.deliveryBody {
-  padding: 1.5rem;
-}
-
-.trackingInfo {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.infoLabel {
-  font-weight: 500;
-  color: #333;
-}
-
-.infoValue {
-  color: #666;
-}
-
-.trackingHistory {
-  margin-top: 1.5rem;
-}
-
-.historyTitle {
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid #e1e5e9;
-}
-
-.historyItem {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.75rem 0;
-  border-bottom: 1px solid #f8f9fa;
-}
-
-.historyItem:last-child {
-  border-bottom: none;
-}
-
-.historyStatus {
-  font-weight: 500;
-  color: #333;
-}
-
-.historyTime {
-  color: #6c757d;
-  font-size: 0.9rem;
-}
-
 .noResult {
   text-align: center;
   padding: 3rem 1rem;
@@ -221,7 +118,6 @@
 
 .searchSection,
 .resultSection,
-.deliveryInfo,
 .note {
   background: var(--surface-raised);
   border: 1px solid var(--line);
@@ -229,23 +125,15 @@
   box-shadow: none;
 }
 
-.deliveryHeader,
 .note {
   background: var(--off-white);
 }
 
 .searchTitle,
-.label,
-.orderNumber,
-.infoLabel,
-.historyTitle,
-.historyStatus {
+.label {
   color: var(--black);
 }
 
-.deliveryMeta,
-.infoValue,
-.historyTime,
 .noResult,
 .note {
   color: var(--text-subtle);
@@ -273,32 +161,9 @@
   background: var(--action-hover);
 }
 
-.status {
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-}
-
-.statusPreparing,
-.statusShipping,
-.statusDelivered {
-  background: var(--off-white);
-  color: var(--black);
-}
-
 @media (max-width: 768px) {
   .searchForm {
     flex-direction: column;
     align-items: stretch;
-  }
-  
-  .trackingInfo {
-    grid-template-columns: 1fr;
-    gap: 0.5rem;
-  }
-  
-  .historyItem {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.25rem;
   }
 }

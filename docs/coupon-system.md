@@ -67,6 +67,7 @@ scripts/seed-coupons.ts              # 시드 데이터
 - 2026-05-12: 장바구니/checkout 쿠폰 예상 계산을 `orderPricing` 유틸로 통합해 최소 주문금액, 만료, 무료배송 조건을 화면에서도 반영하도록 정리했다.
 - 2026-05-12: 주문 생성 시 주문 문서에 `userCouponId`, `couponId`를 저장하고, 주문 취소 트랜잭션에서 해당 `user_coupons` 문서의 상태를 `사용가능`으로 복원한다.
 - 2026-06-12: 로컬 Next dev에서도 `/api/coupon`이 Cloud Function `coupon`으로 프록시되도록 App Router route를 추가했다. 쿠폰 등록/관리 액션은 로컬과 배포 환경 모두 같은 서버 검증 경계를 사용한다.
+- 2026-06-22: `action: "issue"`는 코드 없는 직접 발급 쿠폰만 허용하도록 제한했다. 코드 쿠폰은 `register` 액션을 통해서만 등록되며, 비활성/만료/발급 한도 초과 쿠폰은 서버에서 차단한다.
 
 ## 미구현
 

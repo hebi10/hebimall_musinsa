@@ -66,24 +66,15 @@ export default function QnAWritePage() {
       setLoading(true);
       setError(null);
 
-      console.log('Creating QnA with data:', {
-        userId: user.uid,
-        userEmail: user.email,
-        userName: user.displayName || user.email,
-        formData
-      });
-
       const qnaId = await SimpleQnAService.createQnA(
         user.uid,
         user.email || '',
         user.displayName || user.email || '',
         formData
       );
-
-      console.log('QnA created successfully with ID:', qnaId);
       
       // 성공 시 mypage로 이동
-      router.push('/mypage/qa');
+      router.push(`/mypage/qa?created=${encodeURIComponent(qnaId)}`);
     } catch (err) {
       console.error('Error creating QnA:', err);
       setError('문의 등록에 실패했습니다. 다시 시도해주세요.');

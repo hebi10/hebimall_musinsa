@@ -5,6 +5,26 @@
   padding: var(--spacing-lg);
 }
 
+.notice {
+  padding: 0.875rem 1rem;
+  background: var(--surface-muted, #f7f7f7);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.errorNotice {
+  padding: 0.875rem 1rem;
+  background: #fff5f5;
+  border: 1px solid #ffd6d6;
+  border-radius: 4px;
+  color: var(--color-error);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
 /* 통계 정보 */
 .stats {
   display: grid;

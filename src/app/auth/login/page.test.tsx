@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import LoginPage from './page';
 import { useAuth } from '@/context/authProvider';
 
@@ -67,6 +67,8 @@ jest.mock('./page.module.css', () => ({
 describe('LoginPage transition feedback', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    window.scrollTo = jest.fn();
+    window.history.pushState({}, '', '/auth/login');
     (useAuth as jest.Mock).mockReturnValue({
       login,
       error: null,
@@ -91,5 +93,29 @@ describe('LoginPage transition feedback', () => {
 
     expect(screen.getByRole('status')).toHaveTextContent('마이페이지 준비 중');
     expect(screen.getByRole('status')).toHaveTextContent('계정 정보를 확인하고 있습니다');
+  });
+
+  test('uses redirect query after successful login before the default mypage route', async () => {
+    window.history.pushState({}, '', '/auth/login?redirect=/orders/checkout');
+    login.mockResolvedValue(undefined);
+
+    render(<LoginPage />);
+
+    fireEvent.change(screen.getByLabelText('이메일'), {
+      target: { value: 'buyer@example.com' },
+    });
+    fireEvent.change(screen.getByLabelText('비밀번호'), {
+      target: { value: 'password1234' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: '로그인' }));
+
+    await waitFor(() => expect(replace).toHaveBeenCalledWith('/orders/checkout'));
+  });
+
+  test('does not show hard-coded demo account login buttons outside development', () => {
+    render(<LoginPage />);
+
+    expect(screen.queryByText('일반 유저 로그인')).not.toBeInTheDocument();
+    expect(screen.queryByText('관리자 로그인')).not.toBeInTheDocument();
   });
 });

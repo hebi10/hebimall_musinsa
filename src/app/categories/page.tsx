@@ -55,7 +55,7 @@ export default function CategoriesPage() {
                   </span>
                 ) : (
                   <div className={styles.iconPlaceholder}>
-                    <p className={styles.placeholderText}>이미지 준비중</p>
+                    <p className={styles.placeholderText}>{category.name}</p>
                   </div>
                 )}
               </div>

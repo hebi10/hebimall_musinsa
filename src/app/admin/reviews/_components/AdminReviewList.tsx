@@ -1,17 +1,54 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Review } from '@/shared/types/review';
 import Button from '@/app/_components/Button';
-import { mockReviews } from '@/mocks/review';
+import { ReviewService } from '@/shared/services/reviewService';
 import styles from './AdminReviewList.module.css';
 
 export default function AdminReviewList() {
-  const [reviews, setReviews] = useState(mockReviews);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [sortBy, setSortBy] = useState<'latest' | 'rating' | 'reported'>('latest');
   const [filterRating, setFilterRating] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedReviews, setSelectedReviews] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadReviews = async () => {
+      setIsLoading(true);
+      setLoadError(null);
+
+      try {
+        const result = await ReviewService.getAllReviews(1, 100, undefined, 'latest');
+        if (!isMounted) {
+          return;
+        }
+
+        setReviews(result.reviews);
+      } catch {
+        if (!isMounted) {
+          return;
+        }
+
+        setLoadError('리뷰 데이터를 불러오지 못했습니다. 잠시 후 다시 확인해주세요.');
+        setReviews([]);
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    loadReviews();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const filteredReviews = reviews.filter(review => {
     const matchesRating = filterRating === null || review.rating === filterRating;
@@ -27,6 +64,8 @@ export default function AdminReviewList() {
     switch (sortBy) {
       case 'rating':
         return a.rating - b.rating; // 낮은 평점부터
+      case 'reported':
+        return a.rating - b.rating;
       case 'latest':
       default:
         return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
@@ -54,23 +93,28 @@ export default function AdminReviewList() {
       alert('삭제할 리뷰를 선택해주세요.');
       return;
     }
-    
-    if (confirm(`선택한 ${selectedReviews.length}개의 리뷰를 삭제하시겠습니까?`)) {
-      setReviews(reviews.filter(review => !selectedReviews.includes(review.id)));
-      setSelectedReviews([]);
-      alert('선택한 리뷰가 삭제되었습니다.');
-    }
+
+    alert('리뷰 삭제는 서버 검증 API 연결 후 사용할 수 있습니다.');
   };
 
   const handleHideReview = (reviewId: string) => {
-    if (confirm('이 리뷰를 숨기시겠습니까?')) {
-      // 실제로는 API를 통해 숨김 처리
-      alert('리뷰가 숨김 처리되었습니다.');
-    }
+    void reviewId;
+    alert('리뷰 숨김 처리는 서버 검증 API 연결 후 사용할 수 있습니다.');
   };
 
   return (
     <div className={styles.container}>
+      <div className={styles.notice}>
+        리뷰 목록은 Firestore 데이터를 기준으로 표시됩니다. 삭제와 숨김 처리는 서버 검증 API 연결 후
+        활성화됩니다.
+      </div>
+
+      {loadError && (
+        <div className={styles.errorNotice} role="alert">
+          {loadError}
+        </div>
+      )}
+
       {/* 통계 정보 */}
       <div className={styles.stats}>
         <div className={styles.statItem}>
@@ -79,7 +123,9 @@ export default function AdminReviewList() {
         </div>
         <div className={styles.statItem}>
           <div className={styles.statNumber}>
-            {(reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length).toFixed(1)}
+            {reviews.length > 0
+              ? (reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length).toFixed(1)
+              : '0.0'}
           </div>
           <div className={styles.statLabel}>평균 평점</div>
         </div>
@@ -91,7 +137,9 @@ export default function AdminReviewList() {
         </div>
         <div className={styles.statItem}>
           <div className={styles.statNumber}>
-            {Math.round((reviews.filter(r => r.isRecommended).length / reviews.length) * 100)}%
+            {reviews.length > 0
+              ? Math.round((reviews.filter(r => r.isRecommended).length / reviews.length) * 100)
+              : 0}%
           </div>
           <div className={styles.statLabel}>추천율</div>
         </div>
@@ -158,8 +206,14 @@ export default function AdminReviewList() {
       </div>
 
       {/* 리뷰 목록 */}
+      {isLoading && (
+        <div className={styles.emptyState}>
+          <p>리뷰 데이터를 불러오는 중입니다.</p>
+        </div>
+      )}
+
       <div className={styles.reviewList}>
-        {sortedReviews.map(review => (
+        {!isLoading && sortedReviews.map(review => (
           <div key={review.id} className={styles.reviewItem}>
             <div className={styles.reviewHeader}>
               <label className={styles.reviewSelect}>
@@ -224,7 +278,7 @@ export default function AdminReviewList() {
         ))}
       </div>
 
-      {sortedReviews.length === 0 && (
+      {!isLoading && sortedReviews.length === 0 && (
         <div className={styles.emptyState}>
           <p>조건에 맞는 리뷰가 없습니다.</p>
         </div>

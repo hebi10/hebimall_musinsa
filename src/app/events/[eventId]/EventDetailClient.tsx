@@ -14,6 +14,7 @@ import {
   getEventStatus,
 } from '@/shared/services/eventService';
 import { Event, EventUiVariant } from '@/shared/types/event';
+import { sanitizeEventHtml } from '@/shared/utils/eventHtml';
 import { getEventDisplayImages } from '@/shared/utils/eventImages';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -62,15 +63,6 @@ const formatDate = (date: Date) =>
 
 const hasHtmlContent = (content?: string | null) =>
   Boolean(content && HTML_TAG_PATTERN.test(content));
-
-const sanitizeEventHtml = (content: string) =>
-  content
-    .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '')
-    .replace(/<style[\s\S]*?>[\s\S]*?<\/style>/gi, '')
-    .replace(/<(iframe|object|embed|form)[\s\S]*?>[\s\S]*?<\/\1>/gi, '')
-    .replace(/\son\w+=(["']).*?\1/gi, '')
-    .replace(/\son\w+=\S+/gi, '')
-    .replace(/\s(href|src)=(["'])javascript:[\s\S]*?\2/gi, '');
 
 const getContentParagraphs = (content?: string | null) =>
   (content ?? '')
