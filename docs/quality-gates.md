@@ -58,3 +58,8 @@
 - `npm run typecheck`, 구매 흐름 관련 Jest 테스트, `npm run test:functions`, `npm run functions:build`를 통과했다.
 - `npm run lint`는 exit 0으로 통과하나 기존 경고 254개는 남아 있다.
 - `git diff --check`는 공백 오류 없이 통과했고, LF/CRLF 치환 경고만 출력됐다.
+
+## 2026-06-22 ESLint warning 0개 정리
+- `functions/src/**`, `src/shared/**`, `src/context/**`, `src/app/**` 전반의 기존 ESLint warning을 정리했다.
+- 주요 정리 항목은 `any` 타입 구체화, unused 제거, Hook 의존성 보정, anonymous default export 이름 지정, unescaped entity 처리, `next/image`/`Link` 전환이다.
+- 최종 검증에서 `npm run lint -- --max-warnings=0`, `npm run typecheck`, `npm test`, `npm run functions:build`가 모두 통과했다.

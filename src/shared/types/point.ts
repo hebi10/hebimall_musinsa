@@ -7,7 +7,7 @@ export interface PointHistory {
   type: PointType;
   amount: number;
   description: string;
-  date: Date | any; // Firestore Timestamp
+  date: Date | Timestamp; // Firestore Timestamp
   orderId?: string;
   balanceAfter: number;
   expired?: boolean;
@@ -47,10 +47,11 @@ export interface PointHistoryResponse {
   success: boolean;
   history: PointHistory[];
   hasMore: boolean;
-  lastDoc: any;
+  lastDoc: QueryDocumentSnapshot<DocumentData> | null;
 }
 
 export interface PointBalanceResponse {
   success: boolean;
   pointBalance: number;
 }
+import type { DocumentData, QueryDocumentSnapshot, Timestamp } from 'firebase/firestore';

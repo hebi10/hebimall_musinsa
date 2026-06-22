@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useCallback, useState, useEffect } from 'react';
+import Link from 'next/link';
 import { QnAService } from '@/shared/services/qnaService';
 import { QnA, QnAFilter } from '@/shared/types/qna';
 import styles from './page.module.css';
@@ -23,7 +24,7 @@ export default function QnAListPage() {
     { value: 'general', label: '일반문의' },
   ];
 
-  const loadQnAs = async () => {
+  const loadQnAs = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -53,9 +54,9 @@ export default function QnAListPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchTerm, selectedCategory]);
 
-  const loadStats = async () => {
+  const loadStats = useCallback(async () => {
     try {
       const statsData: Record<string, number> = {};
       qnas.forEach(qna => {
@@ -65,17 +66,17 @@ export default function QnAListPage() {
     } catch (err) {
       console.error('Error loading stats:', err);
     }
-  };
+  }, [qnas]);
 
   useEffect(() => {
     loadQnAs();
-  }, [selectedCategory]);
+  }, [selectedCategory, loadQnAs]);
 
   useEffect(() => {
     if (qnas.length > 0) {
       loadStats();
     }
-  }, [qnas]);
+  }, [qnas, loadStats]);
 
   const handleSearch = () => {
     setCurrentPage(1);
@@ -231,9 +232,9 @@ export default function QnAListPage() {
 
             <div className={styles.qnaContent}>
               <h3 className={styles.qnaTitle}>
-                <a href={`/qna/${qna.id}`} className={styles.titleLink}>
+                <Link href={`/qna/${qna.id}`} className={styles.titleLink}>
                   {qna.title}
-                </a>
+                </Link>
               </h3>
               <div className={styles.qnaDetails}>
                 <span className={styles.author}>작성자: {qna.userName}</span>
@@ -287,9 +288,9 @@ export default function QnAListPage() {
       )}
 
       <div className={styles.writeSection}>
-        <a href="/qna/write" className={styles.writeButton}>
+        <Link href="/qna/write" className={styles.writeButton}>
           문의 작성
-        </a>
+        </Link>
       </div>
     </div>
   );

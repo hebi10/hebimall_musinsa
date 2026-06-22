@@ -29,7 +29,7 @@ const trendFiles = [
 let totalFixed = 0;
 
 for (const file of files) {
-  let content = fs.readFileSync(file, 'utf8');
+  const content = fs.readFileSync(file, 'utf8');
   const lines = content.split('\n');
   let changed = false;
 

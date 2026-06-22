@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import Image from 'next/image';
 import { useImageCache } from '@/shared/hooks/useImageCache';
 
 interface CachedImageProps {
@@ -86,10 +87,14 @@ export default function CachedImage({
   }
 
   return (
-    <img
+    <Image
       ref={imgRef}
       src={shouldShowImage ? cachedSrc : src}
       alt={alt}
+      width={1}
+      height={1}
+      sizes="100vw"
+      unoptimized
       className={className}
       onLoad={handleImageLoad}
       onError={handleImageError}

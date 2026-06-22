@@ -1,17 +1,29 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import styles from './EditModal.module.css';
 import useInputs from '@/shared/hooks/useInput';
 import { Product } from '@/shared/types/product';
 import { 
   uploadProductImages, 
   deleteProductImage, 
-  validateImageFiles,
-  createPreviewUrl,
-  revokePreviewUrl 
+  validateImageFiles
 } from '@/shared/libs/firebase/storage';
 import { getCategoryNames } from '@/shared/utils/categoryUtils';
+
+type ProductStatus = 'active' | 'inactive' | 'draft';
+
+interface ComplexFields {
+  images: string[];
+  mainImage: string;
+  sizes: string[];
+  colors: string[];
+  tags: string[];
+  isNew: boolean;
+  isSale: boolean;
+  status: ProductStatus;
+}
 
 interface EditProductModalProps {
   product: Product;
@@ -71,7 +83,7 @@ export default function EditProductModal({ product, onSave, onClose }: EditProdu
   });
 
   // 복잡한 필드들은 별도 state로 관리
-  const [complexFields, setComplexFields] = useState({
+  const [complexFields, setComplexFields] = useState<ComplexFields>({
     images: product.images || [],
     mainImage: product.mainImage || '', // 기존 대표 이미지만 사용, 없으면 빈 문자열
     sizes: product.sizes || [],
@@ -79,10 +91,10 @@ export default function EditProductModal({ product, onSave, onClose }: EditProdu
     tags: product.tags || [],
     isNew: product.isNew || false,
     isSale: product.isSale || false,
-    status: product.status || 'active' as 'active' | 'inactive' | 'draft'
+    status: product.status || 'active'
   });
 
-  const handleComplexFieldChange = (field: keyof typeof complexFields, value: any) => {
+  const handleComplexFieldChange = <K extends keyof ComplexFields>(field: K, value: ComplexFields[K]) => {
     setComplexFields(prev => ({
       ...prev,
       [field]: value
@@ -678,7 +690,13 @@ export default function EditProductModal({ product, onSave, onClose }: EditProdu
                       }`}
                       onClick={() => handleSetMainImage(image)}
                     >
-                      <img src={image} alt={`Product ${index + 1}`} />
+                      <Image
+                        src={image}
+                        alt={`Product ${index + 1}`}
+                        width={160}
+                        height={160}
+                        unoptimized
+                      />
                       <div className={styles.imageActions}>
                         <span className={`${styles.imageOrder} ${
                           complexFields.mainImage === image ? styles.mainImageBadge : ''

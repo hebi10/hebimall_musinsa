@@ -2,14 +2,18 @@
 
 import { useState } from "react";
 
-export default function useInputs(initialState: Record<string, any> = {}) {
-  const [values, setValues] = useState(initialState);
+type InputValues = Record<string, string | number | boolean>;
+
+export default function useInputs<T extends { [K in keyof T]: InputValues[string] }>(initialState: T) {
+  const [values, setValues] = useState<T>(initialState);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
+    const { name, value, type } = e.target;
+    const nextValue = type === 'checkbox' && 'checked' in e.target ? e.target.checked : value;
+
     setValues((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: nextValue,
     }));
   };
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import PageHeader from "../../_components/PageHeader";
@@ -302,7 +303,12 @@ export default function OrderCartPage() {
                   </div>
                   
                   <div className={styles.itemImage}>
-                    <img src={item.productImage} alt={item.productName} />
+                    <Image
+                      src={item.productImage}
+                      alt={item.productName}
+                      fill
+                      sizes="96px"
+                    />
                   </div>
                   
                   <div className={styles.itemDetails}>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { Product } from '@/shared/types/product';
 import styles from './page.module.css';
@@ -14,7 +15,7 @@ interface CategoryClientProps {
   };
 }
 
-export default function CategoryClient({ products: initialProducts, category, categoryData }: CategoryClientProps) {
+export default function CategoryClient({ products: initialProducts, category }: CategoryClientProps) {
   const [products, setProducts] = useState(initialProducts);
   const [sortBy, setSortBy] = useState('popular');
 
@@ -77,10 +78,12 @@ export default function CategoryClient({ products: initialProducts, category, ca
           >
             <div className={styles.productImage}>
               {product.mainImage ? (
-                <img 
-                  src={product.mainImage} 
+                <Image
+                  src={product.mainImage}
                   alt={product.name}
                   className={styles.productImg}
+                  fill
+                  sizes="(max-width: 768px) 50vw, 25vw"
                 />
               ) : (
                 <div className={styles.imagePlaceholder}>

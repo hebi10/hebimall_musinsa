@@ -76,7 +76,7 @@ export default function EventForm({ event, isEdit = false }: Props) {
     }
   };
 
-  const handleInputChange = (field: string, value: any) => {
+  const handleInputChange = (field: string, value: string | number | boolean | string[]) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
@@ -386,26 +386,30 @@ export default function EventForm({ event, isEdit = false }: Props) {
           <div className={styles.formGroup}>
             <label className={styles.label}>대상 카테고리</label>
             <div className={styles.categoryContainer}>
-              <div className={styles.categoryGrid}>
-                <label className={styles.categoryItem}>
-                  <input
-                    type="checkbox"
-                    checked={formData.selectedCategories.includes('전체')}
-                    onChange={() => handleCategoryToggle('전체')}
-                  />
-                  <span>전체</span>
-                </label>
-                {categories.map((category) => (
-                  <label key={category.id} className={styles.categoryItem}>
+              {loadingCategories ? (
+                <div className={styles.selectedCategories}>카테고리를 불러오는 중...</div>
+              ) : (
+                <div className={styles.categoryGrid}>
+                  <label className={styles.categoryItem}>
                     <input
                       type="checkbox"
-                      checked={formData.selectedCategories.includes(category.name)}
-                      onChange={() => handleCategoryToggle(category.name)}
+                      checked={formData.selectedCategories.includes('전체')}
+                      onChange={() => handleCategoryToggle('전체')}
                     />
-                    <span>{category.name}</span>
+                    <span>전체</span>
                   </label>
-                ))}
-              </div>
+                  {categories.map((category) => (
+                    <label key={category.id} className={styles.categoryItem}>
+                      <input
+                        type="checkbox"
+                        checked={formData.selectedCategories.includes(category.name)}
+                        onChange={() => handleCategoryToggle(category.name)}
+                      />
+                      <span>{category.name}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
               <div className={styles.selectedCategories}>
                 선택된 카테고리: {formData.selectedCategories.length > 0 
                   ? formData.selectedCategories.join(', ') 

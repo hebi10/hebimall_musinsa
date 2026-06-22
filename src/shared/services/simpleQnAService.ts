@@ -7,6 +7,8 @@ import {
   orderBy,
   limit,
   serverTimestamp,
+  QueryDocumentSnapshot,
+  DocumentData,
 } from 'firebase/firestore';
 import { db } from '@/shared/libs/firebase/firebase';
 import { QnA, CreateQnAData } from '@/shared/types/qna';
@@ -97,7 +99,7 @@ export class SimpleQnAService {
   }
 
   // Firestore 문서를 QnA 객체로 변환
-  private static convertDocToQnA(doc: any): QnA {
+  private static convertDocToQnA(doc: QueryDocumentSnapshot<DocumentData>): QnA {
     const data = doc.data();
     return {
       id: doc.id,

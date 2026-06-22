@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import { useReview } from '@/context/reviewProvider';
 import { useAuth } from '@/context/authProvider';
-import { Review } from '@/shared/types/review';
 import { formatDate } from '@/shared/utils/dateFormat';
 import styles from './ProductReviews.module.css';
 
@@ -39,7 +38,7 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
   useEffect(() => {
     loadProductReviews(productId);
     loadReviewSummary(productId);
-  }, [productId]);
+  }, [productId, loadProductReviews, loadReviewSummary]);
 
   const handleSubmitReview = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -23,7 +23,7 @@ if (process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_USE_FIREBA
   try {
     connectFunctionsEmulator(functions, 'localhost', 5002);
     console.log('Connected to Functions emulator');
-  } catch (error) {
+  } catch {
     console.log('Functions emulator connection failed or already connected');
   }
 }

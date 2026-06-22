@@ -5,7 +5,6 @@ import {
   getDoc, 
   addDoc, 
   updateDoc, 
-  deleteDoc, 
   query, 
   orderBy, 
   where,
@@ -17,7 +16,6 @@ import {
   uploadBytes, 
   getDownloadURL, 
   deleteObject,
-  StorageError 
 } from 'firebase/storage';
 import { db, storage } from '@/shared/libs/firebase/firebase';
 import {

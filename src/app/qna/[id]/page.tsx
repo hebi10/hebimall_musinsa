@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useCallback, useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useRouter, useParams } from 'next/navigation';
 import { useAuth } from '@/context/authProvider';
 import { QnAService } from '@/shared/services/qnaService';
@@ -20,7 +21,7 @@ export default function QnADetailPage() {
 
   const qnaId = params.id as string;
 
-  const loadQnA = async (password?: string) => {
+  const loadQnA = useCallback(async (password?: string) => {
     try {
       setLoading(true);
       setError(null);
@@ -46,7 +47,7 @@ export default function QnADetailPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [qnaId]);
 
   const handlePasswordSubmit = async () => {
     const result = await QnAService.getQnAWithAccessCheck(qnaId, secretPassword);
@@ -63,7 +64,7 @@ export default function QnADetailPage() {
     if (qnaId) {
       loadQnA();
     }
-  }, [qnaId]);
+  }, [qnaId, loadQnA]);
 
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat('ko-KR', {
@@ -216,11 +217,14 @@ export default function QnADetailPage() {
             {qna.images && qna.images.length > 0 && (
               <div className={styles.images}>
                 {qna.images.map((imageUrl, index) => (
-                  <img
+                  <Image
                     key={index}
                     src={imageUrl}
                     alt={`첨부 이미지 ${index + 1}`}
                     className={styles.attachedImage}
+                    width={720}
+                    height={540}
+                    sizes="100vw"
                   />
                 ))}
               </div>

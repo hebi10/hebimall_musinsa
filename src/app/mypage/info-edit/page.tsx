@@ -4,15 +4,38 @@ import { useState, useEffect, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 import useInputs from "@/shared/hooks/useInput";
-import { doc, updateDoc, getDoc } from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 import { db } from "@/shared/libs/firebase/firebase";
 import { useAuth } from "@/context/authProvider";
+import { FirebaseError } from "firebase/app";
 import { updatePassword, updateEmail, EmailAuthProvider, reauthenticateWithCredential } from "firebase/auth";
+
+interface InfoEditFormData {
+  email: string;
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+  name: string;
+  phone: string;
+  birthYear: string;
+  birthMonth: string;
+  birthDay: string;
+  gender: string;
+  marketingAgree: boolean;
+}
+
+function getStringValue(value: unknown): string {
+  return typeof value === "string" ? value : "";
+}
+
+function getBooleanValue(value: unknown): boolean {
+  return typeof value === "boolean" ? value : false;
+}
 
 export default function InfoEditPage() {
   const router = useRouter();
   const { user, userData } = useAuth();
-  const [formData, onChange, setFormData] = useInputs({
+  const [rawFormData, onChange, setFormData] = useInputs<InfoEditFormData>({
     email: "",
     currentPassword: "",
     newPassword: "",
@@ -25,6 +48,7 @@ export default function InfoEditPage() {
     gender: "",
     marketingAgree: false,
   });
+  const formData = rawFormData as unknown as InfoEditFormData;
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -34,18 +58,19 @@ export default function InfoEditPage() {
   useEffect(() => {
     const loadUserData = async () => {
       if (user && userData) {
+        const birth = userData.birth as { year?: unknown; month?: unknown; day?: unknown } | undefined;
         setFormData({
-          email: userData.email || "",
+          email: getStringValue(userData.email),
           currentPassword: "",
           newPassword: "",
           confirmPassword: "",
-          name: userData.name || "",
-          phone: userData.phone || "",
-          birthYear: userData.birth?.year || "",
-          birthMonth: userData.birth?.month || "",
-          birthDay: userData.birth?.day || "",
-          gender: userData.gender || "",
-          marketingAgree: userData.marketingAgree || false,
+          name: getStringValue(userData.name),
+          phone: getStringValue(userData.phone),
+          birthYear: getStringValue(birth?.year),
+          birthMonth: getStringValue(birth?.month),
+          birthDay: getStringValue(birth?.day),
+          gender: getStringValue(userData.gender),
+          marketingAgree: getBooleanValue(userData.marketingAgree),
         });
         setIsLoading(false);
       }
@@ -155,13 +180,13 @@ export default function InfoEditPage() {
 
       alert("정보가 성공적으로 업데이트되었습니다!");
       router.push("/mypage");
-    } catch (error: any) {
+    } catch (error) {
       console.error("Update failed:", error);
       
       // Firebase 에러 메시지 처리
-      if (error.code === "auth/wrong-password") {
+      if (error instanceof FirebaseError && error.code === "auth/wrong-password") {
         setErrors({ currentPassword: "현재 비밀번호가 올바르지 않습니다." });
-      } else if (error.code === "auth/email-already-in-use") {
+      } else if (error instanceof FirebaseError && error.code === "auth/email-already-in-use") {
         setErrors({ email: "이미 사용 중인 이메일입니다." });
       } else {
         setErrors({ general: "정보 업데이트에 실패했습니다. 다시 시도해주세요." });

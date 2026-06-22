@@ -1,5 +1,6 @@
 import { onRequest } from "firebase-functions/v2/https";
 import { getFirestore, FieldValue } from "firebase-admin/firestore";
+import type { Response } from "express";
 import {
   couponHasExpired,
   isCouponIssuableByAction,
@@ -68,14 +69,17 @@ export const coupon = onRequest(
         default:
           res.status(400).json({ success: false, error: `Unsupported action: ${action}` });
       }
-    } catch (error: any) {
+    } catch (error) {
       if (error instanceof AuthError) {
         res.status(error.statusCode).json({ success: false, error: error.message });
         return;
       }
 
       console.error("Coupon API error:", error);
-      res.status(500).json({ success: false, error: error.message || "Internal server error" });
+      res.status(500).json({
+        success: false,
+        error: error instanceof Error ? error.message : "Internal server error",
+      });
     }
   }
 );
@@ -168,7 +172,7 @@ function buildCouponAdminData(data: Record<string, unknown>, partial = false): R
   return nextData;
 }
 
-async function handleAdminCreate(data: Record<string, unknown>, res: any): Promise<void> {
+async function handleAdminCreate(data: Record<string, unknown>, res: Response): Promise<void> {
   const db = getDb();
   const couponData = buildCouponAdminData(data, false);
   const docRef = await db.collection("coupons").add({
@@ -183,7 +187,7 @@ async function handleAdminCreate(data: Record<string, unknown>, res: any): Promi
   });
 }
 
-async function handleAdminUpdate(data: Record<string, unknown>, res: any): Promise<void> {
+async function handleAdminUpdate(data: Record<string, unknown>, res: Response): Promise<void> {
   const couponId = ensureString(data.couponId);
   if (!couponId) {
     res.status(400).json({ success: false, error: "couponId is required." });
@@ -202,7 +206,7 @@ async function handleAdminUpdate(data: Record<string, unknown>, res: any): Promi
   });
 }
 
-async function handleAdminArchive(data: Record<string, unknown>, res: any): Promise<void> {
+async function handleAdminArchive(data: Record<string, unknown>, res: Response): Promise<void> {
   const couponId = ensureString(data.couponId);
   if (!couponId) {
     res.status(400).json({ success: false, error: "couponId is required." });
@@ -224,7 +228,7 @@ async function handleAdminArchive(data: Record<string, unknown>, res: any): Prom
 async function handleRegister(
   userId: string,
   data: { couponCode?: string },
-  res: any
+  res: Response
 ): Promise<void> {
   const couponCode = normalizeCouponCode(data.couponCode);
 
@@ -300,7 +304,7 @@ async function handleRegister(
 async function handleIssue(
   userId: string,
   data: { couponId?: string },
-  res: any
+  res: Response
 ): Promise<void> {
   const { couponId } = data;
 
@@ -380,7 +384,7 @@ async function handleIssue(
 async function handleUse(
   userId: string,
   data: { userCouponId?: string; orderId?: string },
-  res: any
+  res: Response
 ): Promise<void> {
   const { userCouponId, orderId } = data;
 
@@ -447,7 +451,7 @@ async function handleUse(
   });
 }
 
-async function handleCleanup(res: any): Promise<void> {
+async function handleCleanup(res: Response): Promise<void> {
   const db = getDb();
   const today = new Date();
   const todayStr = today.toISOString().split("T")[0];

@@ -11,6 +11,14 @@ interface ChatRequest {
   }>;
 }
 
+interface OpenAIChatResponse {
+  choices?: Array<{
+    message?: {
+      content?: string;
+    };
+  }>;
+}
+
 const SYSTEM_PROMPT = `당신은 STYNA 온라인 패션 쇼핑몰의 전문 고객지원 AI입니다.
 
 === 회사 정보 ===
@@ -119,8 +127,8 @@ export const chat = onRequest(
         throw new Error(`OpenAI API error: ${openaiRes.status}`);
       }
 
-      const data: any = await openaiRes.json();
-      const aiResponse = data.choices[0]?.message?.content ?? getAIFallbackResponse(message);
+      const data = await openaiRes.json() as OpenAIChatResponse;
+      const aiResponse = data.choices?.[0]?.message?.content ?? getAIFallbackResponse(message);
 
       res.status(200).json({ success: true, data: { response: aiResponse } });
     } catch (error) {

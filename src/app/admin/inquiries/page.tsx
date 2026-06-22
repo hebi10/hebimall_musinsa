@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { InquiryService } from '@/shared/services/inquiryService';
 import { Inquiry } from '@/shared/types/inquiry';
 import styles from './page.module.css';
@@ -34,7 +34,7 @@ export default function AdminInquiriesPage() {
   ];
 
   // 문의 목록 로드
-  const loadInquiries = async () => {
+  const loadInquiries = useCallback(async () => {
     try {
       setLoading(true);
       const allInquiries = await InquiryService.getAllInquiries(100);
@@ -66,11 +66,11 @@ export default function AdminInquiriesPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedFilter, selectedCategory, searchTerm]);
 
   useEffect(() => {
     loadInquiries();
-  }, [selectedFilter, selectedCategory]);
+  }, [loadInquiries]);
 
   // 검색 처리
   const handleSearch = () => {

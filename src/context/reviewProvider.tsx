@@ -94,7 +94,7 @@ export function ReviewProvider({ children }: { children: ReactNode }) {
       const { reviews, hasMore, lastDoc: newLastDoc } = await ReviewService.getProductReviews(
         productId, 
         10, 
-        reset ? undefined : lastDoc
+        reset ? undefined : lastDocRef.current
       );
 
       if (reset) {

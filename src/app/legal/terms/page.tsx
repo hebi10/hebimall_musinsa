@@ -18,7 +18,7 @@ export default function TermsPage() {
         <div className={styles.article}>
           <div className={styles.articleNumber}>제1조 (목적)</div>
           <div className={styles.content}>
-            본 약관은 ㈜스티나몰(이하 "회사")이 운영하는 STYNA 웹사이트 및 모바일 애플리케이션(이하 "서비스")을 
+            본 약관은 ㈜스티나몰(이하 &quot;회사&quot;)이 운영하는 STYNA 웹사이트 및 모바일 애플리케이션(이하 &quot;서비스&quot;)을
             이용함에 있어 회사와 이용자의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다.
           </div>
         </div>
@@ -30,16 +30,16 @@ export default function TermsPage() {
           </div>
           <ul className={styles.list}>
             <li className={styles.listItem}>
-              <span className={styles.highlight}>"서비스"</span>란 회사가 제공하는 STYNA 전자상거래 플랫폼을 의미합니다.
+              <span className={styles.highlight}>&quot;서비스&quot;</span>란 회사가 제공하는 STYNA 전자상거래 플랫폼을 의미합니다.
             </li>
             <li className={styles.listItem}>
-              <span className={styles.highlight}>"이용자"</span>란 본 약관에 따라 회사가 제공하는 서비스를 받는 회원 및 비회원을 의미합니다.
+              <span className={styles.highlight}>&quot;이용자&quot;</span>란 본 약관에 따라 회사가 제공하는 서비스를 받는 회원 및 비회원을 의미합니다.
             </li>
             <li className={styles.listItem}>
-              <span className={styles.highlight}>"회원"</span>이란 회사에 개인정보를 제공하여 회원등록을 한 자로서, 회사의 정보를 지속적으로 제공받으며 회사가 제공하는 서비스를 계속적으로 이용할 수 있는 자를 의미합니다.
+              <span className={styles.highlight}>&quot;회원&quot;</span>이란 회사에 개인정보를 제공하여 회원등록을 한 자로서, 회사의 정보를 지속적으로 제공받으며 회사가 제공하는 서비스를 계속적으로 이용할 수 있는 자를 의미합니다.
             </li>
             <li className={styles.listItem}>
-              <span className={styles.highlight}>"비회원"</span>이란 회원에 가입하지 않고 회사가 제공하는 서비스를 이용하는 자를 의미합니다.
+              <span className={styles.highlight}>&quot;비회원&quot;</span>이란 회원에 가입하지 않고 회사가 제공하는 서비스를 이용하는 자를 의미합니다.
             </li>
           </ul>
         </div>

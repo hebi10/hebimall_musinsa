@@ -58,7 +58,7 @@ export default function ProductList() {
     setCacheByPage({});
   }, []);
 
-  const loadPage = async (page: number, forceLoad = false) => {
+  const loadPage = useCallback(async (page: number, forceLoad = false) => {
     if (page < 1) {
       return;
     }
@@ -96,7 +96,7 @@ export default function ProductList() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [cacheByPage, cursorStack, queryInput]);
 
   const loadCategories = useCallback(async () => {
     try {
@@ -112,8 +112,43 @@ export default function ProductList() {
   }, [loadCategories]);
 
   useEffect(() => {
+    let isActive = true;
+
     resetPagination();
-    void loadPage(1, true);
+
+    const loadFirstPage = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const result = await ProductService.queryProducts({
+          ...queryInput,
+          startAfterDoc: null,
+        });
+
+        if (!isActive) return;
+
+        setItems(result.items);
+        setCurrentPage(1);
+        setHasMoreByPage({ 1: result.hasMore });
+        setCacheByPage({ 1: result.items });
+        setCursorStack({ 1: null, 2: result.nextCursor || null });
+      } catch (err) {
+        if (!isActive) return;
+        console.error('상품 목록 조회 실패:', err);
+        setError(err instanceof Error ? err.message : '상품 목록을 불러오지 못했습니다.');
+      } finally {
+        if (isActive) {
+          setLoading(false);
+        }
+      }
+    };
+
+    void loadFirstPage();
+
+    return () => {
+      isActive = false;
+    };
   }, [queryInput, resetPagination]);
 
   const handleSearch = () => {

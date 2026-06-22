@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { useAuth } from '@/context/authProvider';
 import { useDashboardData, useDashboardFormatters } from '@/shared/hooks/useDashboardQuery';
 import { SimpleQnAService } from '@/shared/services/simpleQnAService';
-import { QnA } from '@/shared/types/qna';
 import Chart from './_components/Chart';
 import ErrorBoundary from './_components/ErrorBoundary';
 import LoadingSpinner from './_components/LoadingSpinner';
@@ -359,7 +359,7 @@ function DashboardContent() {
             <span className={styles.thDesc}>설명</span>
             <span className={styles.thStatus}>상태</span>
           </div>
-          <a href="/admin/qna" className={styles.tableRow}>
+          <Link href="/admin/qna" className={styles.tableRow}>
             <span className={styles.tdName}>QnA 관리</span>
             <span className={styles.tdDesc}>고객 문의 답변 및 상태 관리</span>
             <span className={styles.tdStatus}>
@@ -369,42 +369,42 @@ function DashboardContent() {
                 <span className={styles.statusNormal}>정상</span>
               )}
             </span>
-          </a>
-          <a href="/admin/dashboard/orders" className={styles.tableRow}>
+          </Link>
+          <Link href="/admin/dashboard/orders" className={styles.tableRow}>
             <span className={styles.tdName}>주문 관리</span>
             <span className={styles.tdDesc}>주문 상태 변경 및 재고 동기화</span>
             <span className={styles.tdStatus}>
               <span className={styles.statusNormal}>정상</span>
             </span>
-          </a>
-          <a href="/admin/dashboard/products" className={styles.tableRow}>
+          </Link>
+          <Link href="/admin/dashboard/products" className={styles.tableRow}>
             <span className={styles.tdName}>상품 관리</span>
             <span className={styles.tdDesc}>상품 등록/수정 및 카테고리 관리</span>
             <span className={styles.tdStatus}>
               <span className={styles.statusNormal}>정상</span>
             </span>
-          </a>
-          <a href="/admin/dashboard/users" className={styles.tableRow}>
+          </Link>
+          <Link href="/admin/dashboard/users" className={styles.tableRow}>
             <span className={styles.tdName}>사용자 관리</span>
             <span className={styles.tdDesc}>회원 권한 관리 및 포인트 지급</span>
             <span className={styles.tdStatus}>
               <span className={styles.statusNormal}>정상</span>
             </span>
-          </a>
-          <a href="/admin/inquiries" className={styles.tableRow}>
+          </Link>
+          <Link href="/admin/inquiries" className={styles.tableRow}>
             <span className={styles.tdName}>1:1 문의</span>
             <span className={styles.tdDesc}>고객 문의 응대 및 이력 관리</span>
             <span className={styles.tdStatus}>
               <span className={styles.statusNormal}>정상</span>
             </span>
-          </a>
-          <a href="/admin/coupons" className={styles.tableRow}>
+          </Link>
+          <Link href="/admin/coupons" className={styles.tableRow}>
             <span className={styles.tdName}>쿠폰 관리</span>
             <span className={styles.tdDesc}>쿠폰 발급 및 사용 이력 추적</span>
             <span className={styles.tdStatus}>
               <span className={styles.statusNormal}>정상</span>
             </span>
-          </a>
+          </Link>
         </div>
       </div>
 

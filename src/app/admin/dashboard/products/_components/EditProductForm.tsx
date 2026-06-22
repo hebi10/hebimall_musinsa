@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import Image from 'next/image';
 import { Product } from '@/shared/types/product';
 import { useCategories } from '@/context/categoryProvider';
 import useInputs from '@/shared/hooks/useInput';
@@ -213,24 +214,16 @@ export default function EditProductForm({ product, onSave, onCancel }: EditProdu
   });
 
   // 사이즈 관련 상태
-  const [sizeDetails, setSizeDetails] = useState(product.details?.sizes || {});
+  const [sizeDetails, setSizeDetails] = useState<Product['details']['sizes']>(product.details?.sizes || {});
   
   // 이미지 미리보기 URL 관리
-  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<string[]>(() => product.images || []);
+  const blobPreviewUrlsRef = useRef<string[]>([]);
 
   useEffect(() => {
-    // 기존 이미지들의 미리보기 URL 생성
-    if (complexFields.images.length > 0) {
-      setPreviewUrls(complexFields.images);
-    }
-
     return () => {
       // 컴포넌트 언마운트 시 미리보기 URL 정리
-      previewUrls.forEach(url => {
-        if (url.startsWith('blob:')) {
-          revokePreviewUrl(url);
-        }
-      });
+      blobPreviewUrlsRef.current.forEach(url => revokePreviewUrl(url));
     };
   }, []);
 
@@ -250,6 +243,7 @@ export default function EditProductForm({ product, onSave, onCancel }: EditProdu
 
       // 미리보기 URL 생성
       const newPreviewUrls = Array.from(files).map(file => createPreviewUrl(file));
+      blobPreviewUrlsRef.current.push(...newPreviewUrls);
       
       // 기존 미리보기에 추가
       setPreviewUrls(prev => [...prev, ...newPreviewUrls]);
@@ -290,6 +284,7 @@ export default function EditProductForm({ product, onSave, onCancel }: EditProdu
 
       // 임시 미리보기 URL 정리
       newPreviewUrls.forEach(url => revokePreviewUrl(url));
+      blobPreviewUrlsRef.current = blobPreviewUrlsRef.current.filter(url => !newPreviewUrls.includes(url));
 
     } catch (error) {
       console.error('이미지 업로드 실패:', error);
@@ -417,17 +412,13 @@ export default function EditProductForm({ product, onSave, onCancel }: EditProdu
       setIsSaving(true);
 
       // undefined 값을 제거하는 함수
-      const cleanObject = (obj: any) => {
-        const cleaned: any = {};
-        Object.keys(obj).forEach(key => {
-          if (obj[key] !== undefined) {
-            cleaned[key] = obj[key];
-          }
-        });
-        return cleaned;
+      const cleanObject = (obj: Product): Product => {
+        return Object.fromEntries(
+          Object.entries(obj).filter(([, value]) => value !== undefined)
+        ) as Product;
       };
 
-      const productData = {
+      const productData: Product = {
         ...product,
         name: basicFields.name,
         description: basicFields.description,
@@ -637,7 +628,7 @@ export default function EditProductForm({ product, onSave, onCancel }: EditProdu
         <div className={styles.formGroup}>
           <label className={styles.label}>사이즈</label>
           <div className={styles.sizeList}>
-            {complexFields.sizes.map((size, index) => (
+            {complexFields.sizes.map((size) => (
               <div key={size} className={styles.sizeItem}>
                 <span>{size}</span>
                 <button
@@ -658,7 +649,7 @@ export default function EditProductForm({ product, onSave, onCancel }: EditProdu
         <div className={styles.formGroup}>
           <label className={styles.label}>색상</label>
           <div className={styles.colorList}>
-            {complexFields.colors.map((color, index) => (
+            {complexFields.colors.map((color) => (
               <div key={color} className={styles.colorItem}>
                 <div 
                   className={styles.colorPreview}
@@ -684,7 +675,7 @@ export default function EditProductForm({ product, onSave, onCancel }: EditProdu
         <div className={styles.formGroup}>
           <label className={styles.label}>태그</label>
           <div className={styles.tagList}>
-            {complexFields.tags.map((tag, index) => (
+            {complexFields.tags.map((tag) => (
               <div key={tag} className={styles.tag}>
                 <span>{tag}</span>
                 <button
@@ -752,7 +743,14 @@ export default function EditProductForm({ product, onSave, onCancel }: EditProdu
           <div className={styles.imageGrid}>
             {previewUrls.map((url, index) => (
               <div key={index} className={styles.imageItem}>
-                <img src={url} alt={`상품 이미지 ${index + 1}`} className={styles.image} />
+                <Image
+                  src={url}
+                  alt={`상품 이미지 ${index + 1}`}
+                  width={160}
+                  height={160}
+                  className={styles.image}
+                  unoptimized
+                />
                 <div className={styles.imageActions}>
                   <button
                     type="button"

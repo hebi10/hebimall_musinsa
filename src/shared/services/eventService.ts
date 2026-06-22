@@ -282,7 +282,7 @@ export class EventService {
   static async updateEvent(id: string, eventData: Partial<Event>): Promise<void> {
     try {
       const docRef = doc(db, EVENTS_COLLECTION, id);
-      const updateData: any = {
+      const updateData: Record<string, unknown> = {
         ...eventData,
         updatedAt: Timestamp.now(),
       };
@@ -404,7 +404,7 @@ export class EventService {
 
       updates.forEach(({ id, data }) => {
         const docRef = doc(db, EVENTS_COLLECTION, id);
-        const updateData: any = {
+        const updateData: Record<string, unknown> = {
           ...data,
           updatedAt: Timestamp.now(),
         };

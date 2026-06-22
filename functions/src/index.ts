@@ -22,8 +22,13 @@ export { cleanupExpiredCoupons } from "./cron/cleanupExpiredCoupons";
    Next.js SSR 서버
 ============================ */
 
-let app: any;
-let handler: any;
+interface NextApp {
+  prepare(): Promise<void>;
+  getRequestHandler(): (req: unknown, res: unknown) => void | Promise<void>;
+}
+
+let app: NextApp | undefined;
+let handler: ((req: unknown, res: unknown) => void | Promise<void>) | undefined;
 let prepared = false;
 
 export const nextjsServer = onRequest(
@@ -43,7 +48,11 @@ export const nextjsServer = onRequest(
 
     try {
       if (!prepared) {
-        const next = require("next");
+        const next = require("next") as (options: {
+          dev: boolean;
+          dir: string;
+          conf: { distDir: string };
+        }) => NextApp;
 
         app = next({
           dev: false,
@@ -58,7 +67,11 @@ export const nextjsServer = onRequest(
         prepared = true;
       }
 
-      return handler(req, res);
+      if (!handler) {
+        throw new Error("Next.js handler was not initialized.");
+      }
+
+      await handler(req, res);
     } catch (error) {
       console.error("Next.js server error:", error);
       res.status(500).json({

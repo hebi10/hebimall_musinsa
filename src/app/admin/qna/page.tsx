@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { SimpleQnAService } from '@/shared/services/simpleQnAService';
 import { QnA } from '@/shared/types/qna';
 import styles from './page.module.css';
@@ -32,7 +32,7 @@ export default function AdminQnAPage() {
   ];
 
   // QnA 목록 로드
-  const loadQnAs = async () => {
+  const loadQnAs = useCallback(async () => {
     try {
       setLoading(true);
       const allQnAs = await SimpleQnAService.getAllQnAs(100);
@@ -64,11 +64,11 @@ export default function AdminQnAPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedFilter, selectedCategory, searchTerm]);
 
   useEffect(() => {
     loadQnAs();
-  }, [selectedFilter, selectedCategory]);
+  }, [loadQnAs]);
 
   // 검색 처리
   const handleSearch = () => {

@@ -12,6 +12,14 @@ interface MyPageLayoutProps {
   children: React.ReactNode;
 }
 
+function getStringValue(value: unknown, fallback: string): string {
+  return typeof value === "string" ? value : fallback;
+}
+
+function getNumberValue(value: unknown): number {
+  return typeof value === "number" && Number.isFinite(value) ? value : 0;
+}
+
 export default function MyPageLayout({ children }: MyPageLayoutProps) {
   const [activeTab, setActiveTab] = useState('orders');
   const pathname = usePathname();
@@ -125,12 +133,12 @@ export default function MyPageLayout({ children }: MyPageLayoutProps) {
   }
 
   const userInfo = {
-    name: userData?.name || "로딩중...",
-    email: userData?.email || "로딩중...",
-    membershipLevel: userData?.membershipLevel || "silver",
-    orders: userData?.orders || 0,
-    reviews: userData?.reviews || 0,
-    coupons: userData?.coupons || 0
+    name: getStringValue(userData?.name, "로딩중..."),
+    email: getStringValue(userData?.email, "로딩중..."),
+    membershipLevel: getStringValue(userData?.membershipLevel, "silver"),
+    orders: getNumberValue(userData?.orders),
+    reviews: getNumberValue(userData?.reviews),
+    coupons: getNumberValue(userData?.coupons)
   };
 
   const quickActions = [

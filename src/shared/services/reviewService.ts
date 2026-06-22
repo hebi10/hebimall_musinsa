@@ -20,10 +20,6 @@ import { Review, ReviewSummary } from '@/shared/types/review';
 
 export class ReviewService {
   // 리뷰 컬렉션 경로: reviews/{productId}
-  private static getReviewsCollectionPath(productId: string) {
-    return `reviews`;
-  }
-
   // 리뷰 생성
   static async createReview(productId: string, review: Omit<Review, 'id' | 'createdAt' | 'updatedAt'>): Promise<Review> {
     try {
@@ -203,7 +199,7 @@ export class ReviewService {
       
       // 페이징 적용
       const offset = (page - 1) * pageSize;
-      reviewQuery = query(reviewQuery, limit(pageSize + offset)) as any;
+      reviewQuery = query(reviewQuery, limit(pageSize + offset));
 
       const snapshot = await getDocs(reviewQuery);
       

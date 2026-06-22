@@ -120,7 +120,7 @@ export default function RenameCategoryId() {
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">"가방" → "bags" 카테고리 ID 변경</h1>
+      <h1 className="text-2xl font-bold mb-6">&quot;가방&quot; → &quot;bags&quot; 카테고리 ID 변경</h1>
       
       <div className="mb-6 space-x-4">
         <button
@@ -149,11 +149,11 @@ export default function RenameCategoryId() {
       <div className="mt-8 p-4 bg-blue-50 rounded">
         <h3 className="font-semibold mb-2">작업 과정:</h3>
         <ol className="list-decimal list-inside text-sm space-y-1">
-          <li>"가방" 카테고리 데이터 및 상품들 확인</li>
-          <li>새로운 "bags" 카테고리 문서 생성</li>
-          <li>모든 상품을 "bags" 카테고리로 복사 (category 필드 업데이트)</li>
-          <li>기존 "가방" 카테고리의 모든 상품 삭제</li>
-          <li>기존 "가방" 카테고리 문서 삭제</li>
+          <li>&quot;가방&quot; 카테고리 데이터 및 상품들 확인</li>
+          <li>새로운 &quot;bags&quot; 카테고리 문서 생성</li>
+          <li>모든 상품을 &quot;bags&quot; 카테고리로 복사 (category 필드 업데이트)</li>
+          <li>기존 &quot;가방&quot; 카테고리의 모든 상품 삭제</li>
+          <li>기존 &quot;가방&quot; 카테고리 문서 삭제</li>
         </ol>
         
         <p className="mt-2 text-sm text-red-600">

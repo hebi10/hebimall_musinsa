@@ -51,7 +51,7 @@ export const config = onRequest(
           },
         },
       });
-    } catch (error: any) {
+    } catch (error) {
       console.error("Config API error:", error);
       res.status(500).json({ success: false, error: "환경변수를 불러올 수 없습니다." });
     }

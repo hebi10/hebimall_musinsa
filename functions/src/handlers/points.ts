@@ -1,5 +1,6 @@
 import { onRequest } from "firebase-functions/v2/https";
 import * as admin from "firebase-admin";
+import type { Response } from "express";
 import { verifyAuthContext, requireAdmin, AuthError } from "../utils/auth";
 
 export const points = onRequest(
@@ -52,14 +53,17 @@ export const points = onRequest(
         default:
           res.status(400).json({ success: false, error: `Unsupported action: ${action}` });
       }
-    } catch (error: any) {
+    } catch (error) {
       if (error instanceof AuthError) {
         res.status(error.statusCode).json({ success: false, error: error.message });
         return;
       }
 
       console.error("Points API error:", error);
-      res.status(500).json({ success: false, error: error.message || "Internal server error" });
+      res.status(500).json({
+        success: false,
+        error: error instanceof Error ? error.message : "Internal server error",
+      });
     }
   }
 );
@@ -108,7 +112,7 @@ async function mutateBalance(params: {
 async function handleAdd(
   actorUserId: string,
   data: { userId?: string; amount?: number; description?: string; orderId?: string },
-  res: any
+  res: Response
 ): Promise<void> {
   const { amount, description, orderId, userId } = data;
   const targetUserId = userId || actorUserId;
@@ -138,7 +142,7 @@ async function handleAdd(
 async function handleRefund(
   actorUserId: string,
   data: { userId?: string; amount?: number; description?: string; orderId?: string },
-  res: any
+  res: Response
 ): Promise<void> {
   const { amount, description, orderId, userId } = data;
   const targetUserId = userId || actorUserId;
@@ -171,7 +175,7 @@ async function handleRefund(
 async function handleUse(
   userId: string,
   data: { amount?: number; description?: string; orderId?: string },
-  res: any
+  res: Response
 ): Promise<void> {
   const { amount, description, orderId } = data;
 
@@ -200,7 +204,7 @@ async function handleUse(
   });
 }
 
-async function handleBalance(userId: string, res: any): Promise<void> {
+async function handleBalance(userId: string, res: Response): Promise<void> {
   const userDoc = await admin.firestore().collection("users").doc(userId).get();
 
   if (!userDoc.exists) {
@@ -215,7 +219,7 @@ async function handleBalance(userId: string, res: any): Promise<void> {
 async function handleHistory(
   userId: string,
   data: { limit?: number; lastDocId?: string },
-  res: any
+  res: Response
 ): Promise<void> {
   const limitCount = data.limit ?? 50;
 

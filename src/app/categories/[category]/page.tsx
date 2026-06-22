@@ -1,9 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '@/shared/libs/firebase/firebase';
 import { ProductService } from '@/shared/services/productService';
 import { Product } from '@/shared/types/product';
 import { getCategoryName } from '@/shared/utils/categoryUtils';
@@ -194,18 +193,12 @@ export default function DynamicCategoryPage({ params }: CategoryPageProps) {
             >
               <div className={styles.productImage}>
                 {product.mainImage ? (
-                  <img 
-                    src={product.mainImage} 
+                  <Image
+                    src={product.mainImage}
                     alt={product.name}
                     className={styles.productImg}
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
-                      const placeholder = target.nextElementSibling as HTMLElement;
-                      if (placeholder) {
-                        placeholder.style.display = 'flex';
-                      }
-                    }}
+                    fill
+                    sizes="(max-width: 768px) 50vw, 25vw"
                   />
                 ) : null}
                 <div className={styles.imagePlaceholder} style={{ display: product.mainImage ? 'none' : 'flex' }}>

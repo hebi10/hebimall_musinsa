@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { useAuth } from '@/context/authProvider';
 import { InquiryService } from '@/shared/services/inquiryService';
 import { Inquiry, CreateInquiryData } from '@/shared/types/inquiry';
@@ -30,13 +30,7 @@ export default function InquiryPage() {
   });
 
   // 사용자 문의 내역 로드
-  useEffect(() => {
-    if (user && activeTab === 'list') {
-      loadUserInquiries();
-    }
-  }, [user, activeTab]);
-
-  const loadUserInquiries = async () => {
+  const loadUserInquiries = useCallback(async () => {
     if (!user) return;
     
     setLoading(true);
@@ -49,7 +43,13 @@ export default function InquiryPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    if (user && activeTab === 'list') {
+      void loadUserInquiries();
+    }
+  }, [user, activeTab, loadUserInquiries]);
 
   const toggleItem = (id: string) => {
     setOpenItems(prev =>
@@ -85,7 +85,7 @@ export default function InquiryPage() {
       
       // 문의 내역 탭으로 이동하고 데이터 새로고침
       setActiveTab('list');
-      loadUserInquiries();
+      void loadUserInquiries();
     } catch (error) {
       console.error('문의 등록 실패:', error);
       alert('문의 등록에 실패했습니다. 다시 시도해주세요.');

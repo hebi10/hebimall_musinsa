@@ -2,7 +2,8 @@
 
 import { useState, useEffect, FormEvent, Suspense } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { FirebaseError } from "firebase/app";
 import styles from "./page.module.css";
 import useInput from "@/shared/hooks/useInput";
 import { confirmPasswordReset, verifyPasswordResetCode } from "firebase/auth";
@@ -10,12 +11,12 @@ import { auth } from "@/shared/libs/firebase/firebase";
 import { getErrorMessage } from "@/shared/utils/authErrorMessages";
 
 function ResetPasswordContent() {
-  const router = useRouter();
   const searchParams = useSearchParams();
-  const [values, onChange] = useInput({
+  const [rawValues, onChange] = useInput({
     password: '',
     confirmPassword: '',
   });
+  const values = rawValues as { password: string; confirmPassword: string };
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -38,7 +39,7 @@ function ResetPasswordContent() {
         const userEmail = await verifyPasswordResetCode(auth, oobCode);
         setEmail(userEmail);
         setIsValidCode(true);
-      } catch (err: any) {
+      } catch (err) {
         console.error("Invalid reset code:", err);
         setError("링크가 만료되었거나 올바르지 않습니다. 비밀번호 찾기를 다시 시도해주세요.");
         setIsValidCode(false);
@@ -86,9 +87,9 @@ function ResetPasswordContent() {
     try {
       await confirmPasswordReset(auth, oobCode, values.password);
       setSuccess(true);
-    } catch (err: any) {
+    } catch (err) {
       console.error("Password reset failed:", err);
-      const errorMessage = getErrorMessage(err.code);
+      const errorMessage = getErrorMessage(err instanceof FirebaseError ? err.code : 'unknown');
       setError(errorMessage);
     } finally {
       setIsSubmitting(false);

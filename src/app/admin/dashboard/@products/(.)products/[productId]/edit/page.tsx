@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect, use, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useProduct } from '@/context/productProvider';
 import { useAuth } from '@/context/authProvider';
@@ -23,6 +23,13 @@ export default function ProductEditPage({ params }: ProductEditPageProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { productId } = use(params);
+
+  // 팝업 닫기 함수
+  const handleClose = useCallback(() => {
+    if (confirm('변경사항이 저장되지 않습니다. 정말 닫으시겠습니까?')) {
+      router.push('/admin/dashboard/products');
+    }
+  }, [router]);
 
   // 인증 및 권한 체크
   useEffect(() => {
@@ -60,14 +67,7 @@ export default function ProductEditPage({ params }: ProductEditPageProps) {
       document.body.style.overflow = 'unset';
       document.removeEventListener('keydown', handleEscKey);
     };
-  }, []);
-
-  // 팝업 닫기 함수
-  const handleClose = () => {
-    if (confirm('변경사항이 저장되지 않습니다. 정말 닫으시겠습니까?')) {
-      router.push('/admin/dashboard/products');
-    }
-  };
+  }, [handleClose]);
 
   // 배경 클릭 시 닫기
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { FeaturedProductService, FeaturedProductConfig } from '@/shared/services/featuredProductService';
+import { FeaturedProductService } from '@/shared/services/featuredProductService';
 import { ProductService } from '@/shared/services/productService';
 import { Product } from '@/shared/types/product';
 import Image from 'next/image';
@@ -10,7 +10,6 @@ import styles from './page.module.css';
 
 export default function FeaturedProductManagePage() {
   const router = useRouter();
-  const [config, setConfig] = useState<FeaturedProductConfig | null>(null);
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -45,7 +44,6 @@ export default function FeaturedProductManagePage() {
       console.log('로드된 상품 개수:', productsData.length);
       console.log('상품 샘플:', productsData.slice(0, 3));
 
-      setConfig(configData);
       setAllProducts(productsData);
 
       if (configData) {

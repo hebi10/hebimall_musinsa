@@ -1,6 +1,6 @@
 // 포인트 관리 서비스
 
-import { doc, getDoc, collection, query, orderBy, limit, getDocs, startAfter } from 'firebase/firestore';
+import { doc, getDoc, collection, query, orderBy, limit, getDocs, startAfter, QueryDocumentSnapshot, DocumentData } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { db } from '@/shared/libs/firebase/firebase';
 import { 
@@ -21,7 +21,18 @@ async function getIdToken(): Promise<string> {
 }
 
 /** 통합 Points API 호출 헬퍼 */
-async function callPointsAPI(action: string, data?: Record<string, any>): Promise<any> {
+type ApiPayload = Record<string, unknown>;
+type PointApiResult = ApiPayload & {
+  newBalance?: number;
+  usedAmount?: number;
+  refundedAmount?: number;
+};
+
+function getUnknownErrorMessage(error: unknown, fallback: string): string {
+  return error instanceof Error ? error.message : fallback;
+}
+
+async function callPointsAPI(action: string, data?: object): Promise<PointApiResult> {
   const token = await getIdToken();
   const res = await fetch('/api/points', {
     method: 'POST',
@@ -38,7 +49,7 @@ async function callPointsAPI(action: string, data?: Record<string, any>): Promis
     throw new Error(json.error || '요청에 실패했습니다.');
   }
 
-  return json.data;
+  return (json.data ?? {}) as PointApiResult;
 }
 
 export class PointService {
@@ -51,9 +62,9 @@ export class PointService {
       const result = await callPointsAPI('add', data);
       console.log('포인트 적립 결과:', result);
       return { success: true, newBalance: result.newBalance };
-    } catch (error: any) {
+    } catch (error) {
       console.error('포인트 적립 실패:', error);
-      throw new Error(error.message || '포인트 적립에 실패했습니다.');
+      throw new Error(getUnknownErrorMessage(error, '포인트 적립에 실패했습니다.'));
     }
   }
 
@@ -66,9 +77,9 @@ export class PointService {
       const result = await callPointsAPI('use', data);
       console.log('포인트 사용 결과:', result);
       return { success: true, newBalance: result.newBalance, usedAmount: result.usedAmount };
-    } catch (error: any) {
+    } catch (error) {
       console.error('포인트 사용 실패:', error);
-      throw new Error(error.message || '포인트 사용에 실패했습니다.');
+      throw new Error(getUnknownErrorMessage(error, '포인트 사용에 실패했습니다.'));
     }
   }
 
@@ -81,16 +92,20 @@ export class PointService {
       const result = await callPointsAPI('refund', data);
       console.log('포인트 환불 결과:', result);
       return { success: true, newBalance: result.newBalance, refundedAmount: result.refundedAmount };
-    } catch (error: any) {
+    } catch (error) {
       console.error('포인트 환불 실패:', error);
-      throw new Error(error.message || '포인트 환불에 실패했습니다.');
+      throw new Error(getUnknownErrorMessage(error, '포인트 환불에 실패했습니다.'));
     }
   }
 
   /**
    * 포인트 내역 조회 (클라이언트에서 직접 Firestore 읽기)
    */
-  static async getPointHistory(userId: string, limitCount: number = 50, lastDoc?: any): Promise<PointHistoryResponse> {
+  static async getPointHistory(
+    userId: string,
+    limitCount: number = 50,
+    lastDoc?: QueryDocumentSnapshot<DocumentData> | null
+  ): Promise<PointHistoryResponse> {
     try {
       let q = query(
         collection(db, 'users', userId, 'pointHistory'),
@@ -115,9 +130,9 @@ export class PointService {
         hasMore: snapshot.docs.length === limitCount,
         lastDoc: snapshot.docs.length > 0 ? snapshot.docs[snapshot.docs.length - 1] : null
       };
-    } catch (error: any) {
+    } catch (error) {
       console.error('포인트 내역 조회 실패:', error);
-      throw new Error(error.message || '포인트 내역 조회에 실패했습니다.');
+      throw new Error(getUnknownErrorMessage(error, '포인트 내역 조회에 실패했습니다.'));
     }
   }
 
@@ -139,9 +154,9 @@ export class PointService {
         success: true,
         pointBalance
       };
-    } catch (error: any) {
+    } catch (error) {
       console.error('포인트 잔액 조회 실패:', error);
-      throw new Error(error.message || '포인트 잔액 조회에 실패했습니다.');
+      throw new Error(getUnknownErrorMessage(error, '포인트 잔액 조회에 실패했습니다.'));
     }
   }
 

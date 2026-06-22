@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect, ReactNode } from "react";
-import Link from "next/link";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/authProvider";
 import styles from "./page.module.css";
 import AdminNav from "../../_components/adminNav";
 import { AdminUserService, AdminUserData, UserStats, UserFilter, PointOperation } from "@/shared/services/adminUserService";
+import { PointHistory } from "@/shared/types/point";
 
 export default function AdminUsersPage() {
   const router = useRouter();
@@ -26,10 +26,10 @@ export default function AdminUsersPage() {
   const [pointDescription, setPointDescription] = useState<string>('');
   const [pointOperation, setPointOperation] = useState<'add' | 'subtract'>('add');
   const [showUserDetail, setShowUserDetail] = useState(false);
-  const [userPointHistory, setUserPointHistory] = useState<any[]>([]);
+  const [userPointHistory, setUserPointHistory] = useState<PointHistory[]>([]);
 
   // 사용자 데이터 로드
-  const loadUsers = async () => {
+  const loadUsers = useCallback(async () => {
     try {
       console.log('loadUsers 시작...');
       setIsLoading(true);
@@ -57,13 +57,13 @@ export default function AdminUsersPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [searchTerm, roleFilter, statusFilter, currentPage]);
 
   useEffect(() => {
     if (isAdmin) {
       loadUsers();
     }
-  }, [isAdmin, searchTerm, roleFilter, statusFilter, currentPage]);
+  }, [isAdmin, loadUsers]);
 
   // 필터링된 사용자 설정
   useEffect(() => {
@@ -173,14 +173,16 @@ export default function AdminUsersPage() {
     }
   };
 
-  const formatDate = (date: Date) => {
+  const formatDate = (date: Date | { toDate: () => Date }) => {
+    const dateValue = date instanceof Date ? date : date.toDate();
+
     return new Intl.DateTimeFormat('ko-KR', {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
       hour: '2-digit',
       minute: '2-digit',
-    }).format(date);
+    }).format(dateValue);
   };
 
   const formatCurrency = (amount: number) => {

@@ -30,7 +30,17 @@ async function getIdToken(): Promise<string> {
 }
 
 /** 통합 Coupon API 호출 헬퍼 */
-async function callCouponAPI(action: string, data?: Record<string, any>): Promise<any> {
+type ApiPayload = Record<string, unknown>;
+type CouponApiResult = ApiPayload & {
+  couponId?: string;
+  message?: string;
+};
+
+function getUnknownErrorMessage(error: unknown, fallback: string): string {
+  return error instanceof Error ? error.message : fallback;
+}
+
+async function callCouponAPI(action: string, data?: object): Promise<CouponApiResult> {
   const token = await getIdToken();
   const res = await fetch('/api/coupon', {
     method: 'POST',
@@ -47,7 +57,7 @@ async function callCouponAPI(action: string, data?: Record<string, any>): Promis
     throw new Error(json.error || '요청에 실패했습니다.');
   }
 
-  return json.data;
+  return (json.data ?? {}) as CouponApiResult;
 }
 
 export class CouponService {
@@ -83,6 +93,9 @@ export class CouponService {
   static async createCoupon(couponData: Omit<Coupon, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
     try {
       const result = await callCouponAPI('adminCreate', couponData);
+      if (!result.couponId) {
+        throw new Error('생성된 쿠폰 ID를 확인할 수 없습니다.');
+      }
       return result.couponId;
     } catch (error) {
  console.error('쿠폰 생성 실패:', error);
@@ -240,7 +253,8 @@ export class CouponService {
           const sortBy = filter.sortBy || 'issuedDate';
           const sortOrder = filter.sortOrder || 'desc';
           
-          let aValue: any, bValue: any;
+          let aValue = 0;
+          let bValue = 0;
           
           if (sortBy === 'issuedDate') {
             aValue = new Date(a.issuedDate).getTime();
@@ -249,8 +263,10 @@ export class CouponService {
             // 이름은 쿠폰 마스터에서 가져와야 하므로 나중에 처리
             return 0;
           } else {
-            aValue = (a as any)[sortBy];
-            bValue = (b as any)[sortBy];
+            const aRecord = a as unknown as Record<string, unknown>;
+            const bRecord = b as unknown as Record<string, unknown>;
+            aValue = Number(aRecord[sortBy]) || 0;
+            bValue = Number(bRecord[sortBy]) || 0;
           }
           
           if (sortOrder === 'desc') {
@@ -398,12 +414,13 @@ export class CouponService {
    * 쿠폰 발급 (REST API 호출)
    */
   static async issueCoupon(uid: string, couponId: string): Promise<CouponResponse> {
+    void uid;
     try {
       const result = await callCouponAPI('issue', { couponId });
-      return { success: true, message: result.message, data: result };
-    } catch (error: any) {
+      return { success: true, message: result.message || '쿠폰이 발급되었습니다.', data: result };
+    } catch (error) {
  console.error('쿠폰 발급 실패:', error);
-      throw new Error(error.message || '쿠폰 발급에 실패했습니다.');
+      throw new Error(getUnknownErrorMessage(error, '쿠폰 발급에 실패했습니다.'));
     }
   }
 
@@ -415,12 +432,13 @@ export class CouponService {
     orderId: string,
     uid: string
   ): Promise<CouponResponse> {
+    void uid;
     try {
       const result = await callCouponAPI('use', { userCouponId, orderId });
-      return { success: true, message: result.message, data: result };
-    } catch (error: any) {
+      return { success: true, message: result.message || '쿠폰이 사용되었습니다.', data: result };
+    } catch (error) {
  console.error('쿠폰 사용 실패:', error);
-      throw new Error(error.message || '쿠폰 사용에 실패했습니다.');
+      throw new Error(getUnknownErrorMessage(error, '쿠폰 사용에 실패했습니다.'));
     }
   }
 
@@ -432,10 +450,10 @@ export class CouponService {
  console.log('쿠폰 등록 시도:', { uid, couponCode });
       const result = await callCouponAPI('register', { couponCode });
  console.log('쿠폰 등록 결과:', result);
-      return { success: true, message: result.message, data: result };
-    } catch (error: any) {
+      return { success: true, message: result.message || '쿠폰이 등록되었습니다.', data: result };
+    } catch (error) {
  console.error('쿠폰 등록 실패 상세:', error);
-      throw new Error(error.message || '쿠폰 등록에 실패했습니다.');
+      throw new Error(getUnknownErrorMessage(error, '쿠폰 등록에 실패했습니다.'));
     }
   }
 

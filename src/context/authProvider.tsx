@@ -1,6 +1,7 @@
 "use client";
 import { usePathname, useRouter } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
+import type { User, UserCredential } from "firebase/auth";
 import { useAuthUser } from "../shared/hooks/useAuthUser";
 import { 
   logout as firebaseLogout, 
@@ -13,23 +14,37 @@ import { getErrorMessage } from "../shared/utils/authErrorMessages";
 import { db } from "../shared/libs/firebase/firebase";
 
 interface AuthContextType {
-  user: any;
-  login: (email: string, password: string, keepAlive: boolean) => Promise<any>;
+  user: User | null;
+  login: (email: string, password: string, keepAlive: boolean) => Promise<UserCredential>;
   logout: () => Promise<void>;
-  signUp: (email: string, password: string) => Promise<any>;
+  signUp: (email: string, password: string) => Promise<UserCredential>;
   loading: boolean;
-  userData: any;
+  userData: Record<string, unknown> | null | undefined;
   isAdmin: boolean;
   error: string | null;
   clearError: () => void;
   isUserDataLoading: boolean;
 }
 
+function getAuthErrorCode(error: unknown): string {
+  return typeof error === "object" && error !== null && "code" in error
+    ? String((error as { code?: unknown }).code)
+    : "";
+}
+
+function getErrorMessageValue(error: unknown): string | undefined {
+  return error instanceof Error ? error.message : undefined;
+}
+
 const AuthContext = createContext<AuthContextType>({
   user: null,
-  login: () => Promise.resolve(),
+  login: async () => {
+    throw new Error("AuthProvider is not mounted.");
+  },
   logout: () => Promise.resolve(),
-  signUp: () => Promise.resolve(),
+  signUp: async () => {
+    throw new Error("AuthProvider is not mounted.");
+  },
   loading: true,
   userData: null,
   isAdmin: false,
@@ -81,15 +96,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       
       return userCredential;
-    } catch (err: any) {
+    } catch (err) {
       let errorMessage;
       
-      if (err.message === 'ACCOUNT_INACTIVE') {
+      if (getErrorMessageValue(err) === 'ACCOUNT_INACTIVE') {
         errorMessage = '이용이 중지된 사용자입니다. 관리자에게 문의하세요.';
-      } else if (err.message === 'ACCOUNT_BANNED') {
+      } else if (getErrorMessageValue(err) === 'ACCOUNT_BANNED') {
         errorMessage = '정지된 계정입니다. 관리자에게 문의하세요.';
       } else {
-        errorMessage = getErrorMessage(err.code);
+        errorMessage = getErrorMessage(getAuthErrorCode(err));
       }
       
       setError(errorMessage);
@@ -117,8 +132,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setError(null);
       return await firebaseSignUp(email, password);
-    } catch (err: any) {
-      const errorMessage = getErrorMessage(err.code);
+    } catch (err) {
+      const errorMessage = getErrorMessage(getAuthErrorCode(err));
       setError(errorMessage);
       throw err;
     }

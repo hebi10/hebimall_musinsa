@@ -2,13 +2,13 @@
 
 import { createContext, useContext, ReactNode } from "react";
 import { usePointBalance, useAddPoint, useUsePoint } from "@/shared/hooks/usePoint";
-import { AddPointRequest, UsePointRequest } from "@/shared/types/point";
+import { AddPointRequest, PointResponse, UsePointRequest } from "@/shared/types/point";
 
 interface PointContextType {
   pointBalance: number;
   isLoadingBalance: boolean;
-  addPoint: (data: AddPointRequest) => Promise<any>;
-  usePoint: (data: UsePointRequest) => Promise<any>;
+  addPoint: (data: AddPointRequest) => Promise<PointResponse>;
+  usePoint: (data: UsePointRequest) => Promise<PointResponse>;
   isAddingPoint: boolean;
   isUsingPoint: boolean;
   refreshBalance: () => void;
@@ -17,8 +17,12 @@ interface PointContextType {
 const PointContext = createContext<PointContextType>({
   pointBalance: 0,
   isLoadingBalance: false,
-  addPoint: async () => {},
-  usePoint: async () => {},
+  addPoint: async () => {
+    throw new Error("PointProvider is not mounted.");
+  },
+  usePoint: async () => {
+    throw new Error("PointProvider is not mounted.");
+  },
   isAddingPoint: false,
   isUsingPoint: false,
   refreshBalance: () => {},

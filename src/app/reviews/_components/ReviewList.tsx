@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { useReview } from '@/context/reviewProvider';
 import { useProduct } from '@/context/productProvider';
 import Link from 'next/link';
@@ -92,7 +93,7 @@ export default function ReviewList() {
       // 현재 페이지 주변으로 표시
       const halfVisible = Math.floor(maxVisible / 2);
       let start = Math.max(1, currentPage - halfVisible);
-      let end = Math.min(totalPages, start + maxVisible - 1);
+      const end = Math.min(totalPages, start + maxVisible - 1);
       
       // 끝이 조정되면 시작도 조정
       if (end - start + 1 < maxVisible) {
@@ -201,15 +202,20 @@ export default function ReviewList() {
         ) : allReviews.length === 0 ? (
           <div className={styles.empty}>등록된 리뷰가 없습니다.</div>
         ) : (
-          allReviews.map((review) => (
+          allReviews.map((review) => {
+            const product = productInfo[review.productId];
+
+            return (
             <div key={review.id} className={styles.reviewItem}>
               {/* 상품 정보 */}
               <div className={styles.productInfo}>
-                {productInfo[review.productId]?.mainImage && (
-                  <img 
-                    src={productInfo[review.productId].mainImage} 
-                    alt={productInfo[review.productId]?.name || '상품'}
+                {product?.mainImage && (
+                  <Image
+                    src={product.mainImage}
+                    alt={product.name || '상품'}
                     className={styles.productImage}
+                    width={96}
+                    height={96}
                   />
                 )}
                 <div className={styles.productDetails}>
@@ -217,7 +223,7 @@ export default function ReviewList() {
                     href={`/products/${review.productId}`}
                     className={styles.productName}
                   >
-                    {productInfo[review.productId]?.name || '상품 정보 로딩 중...'}
+                    {product?.name || '상품 정보 로딩 중...'}
                   </Link>
                   {(review.size || review.color) && (
                     <div className={styles.productOptions}>
@@ -258,7 +264,8 @@ export default function ReviewList() {
                 </div>
               </div>
             </div>
-          ))
+          );
+          })
         )}
       </div>
 

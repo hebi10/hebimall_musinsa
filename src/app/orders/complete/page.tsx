@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import PageHeader from "../../_components/PageHeader";
@@ -203,7 +204,12 @@ function OrderCompleteContent() {
               {(order.products || []).map((item) => (
                 <div key={`${item.productId}-${item.size}-${item.color}`} className={styles.productItem}>
                   <div className={styles.productImage}>
-                    <img src={item.productImage} alt={item.productName} />
+                    <Image
+                      src={item.productImage}
+                      alt={item.productName}
+                      fill
+                      sizes="96px"
+                    />
                   </div>
                   <div className={styles.productInfo}>
                     <div className={styles.productBrand}>{item.brand}</div>

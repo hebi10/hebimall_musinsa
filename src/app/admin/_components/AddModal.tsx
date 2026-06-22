@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import styles from './AddModal.module.css';
 import useInputs from '@/shared/hooks/useInput';
 import { Product } from '@/shared/types/product';
@@ -11,10 +12,21 @@ import { useCategories } from '@/context/categoryProvider';
 import { useAuth } from '@/context/authProvider';
 import { 
   uploadProductImages, 
-  validateImageFiles,
-  createPreviewUrl,
-  revokePreviewUrl 
+  validateImageFiles
 } from '@/shared/libs/firebase/storage';
+
+type ProductStatus = 'active' | 'inactive' | 'draft';
+
+interface ComplexFields {
+  images: string[];
+  mainImage: string;
+  sizes: string[];
+  colors: string[];
+  tags: string[];
+  isNew: boolean;
+  isSale: boolean;
+  status: ProductStatus;
+}
 
 export default function AddProductModal() {
   const router = useRouter();
@@ -66,15 +78,15 @@ export default function AddProductModal() {
   });
 
   // 복잡한 필드들은 별도 state로 관리
-  const [complexFields, setComplexFields] = useState({
-    images: [] as string[],
+  const [complexFields, setComplexFields] = useState<ComplexFields>({
+    images: [],
     mainImage: '', // 대표 이미지
     sizes: [] as string[],
     colors: [] as string[],
     tags: [] as string[],
     isNew: false,
     isSale: false,
-    status: 'draft' as 'active' | 'inactive' | 'draft'
+    status: 'draft'
   });
 
   // 로딩 중이거나 권한이 없으면 표시하지 않음
@@ -86,7 +98,7 @@ export default function AddProductModal() {
     );
   }
 
-  const handleComplexFieldChange = (field: keyof typeof complexFields, value: any) => {
+  const handleComplexFieldChange = <K extends keyof ComplexFields>(field: K, value: ComplexFields[K]) => {
     setComplexFields(prev => ({
       ...prev,
       [field]: value
@@ -673,7 +685,13 @@ export default function AddProductModal() {
                       }`}
                       onClick={() => handleSetMainImage(image)}
                     >
-                      <img src={image} alt={`Preview ${index + 1}`} />
+                      <Image
+                        src={image}
+                        alt={`Preview ${index + 1}`}
+                        width={160}
+                        height={160}
+                        unoptimized
+                      />
                       <div className={styles.imageActions}>
                         <span className={`${styles.imageOrder} ${
                           complexFields.mainImage === image ? styles.mainImageBadge : ''

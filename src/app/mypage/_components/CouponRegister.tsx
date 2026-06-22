@@ -30,7 +30,7 @@ export default function CouponRegister({ onRegister }: CouponRegisterProps) {
       } else {
         setMessage({type: 'error', text: '유효하지 않은 쿠폰 코드이거나 이미 사용된 쿠폰입니다.'});
       }
-    } catch (error) {
+    } catch {
       setMessage({type: 'error', text: '쿠폰 등록 중 오류가 발생했습니다.'});
     } finally {
       setIsLoading(false);
@@ -77,7 +77,7 @@ export default function CouponRegister({ onRegister }: CouponRegisterProps) {
           <li>쿠폰 코드는 대소문자를 구분하지 않습니다</li>
           <li>한 번 사용된 쿠폰은 재사용할 수 없습니다</li>
           <li>쿠폰마다 최소 주문 금액과 유효기간이 다를 수 있습니다</li>
-          <li>등록된 쿠폰은 '내 쿠폰함'에서 확인할 수 있습니다</li>
+          <li>등록된 쿠폰은 &apos;내 쿠폰함&apos;에서 확인할 수 있습니다</li>
         </ul>
       </div>
     </div>

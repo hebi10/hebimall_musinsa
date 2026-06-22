@@ -17,12 +17,12 @@ interface Product {
   id: string;
   name: string;
   category: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 interface KoreanDoc {
   id: string;
-  data: any;
+  data: Record<string, unknown>;
   productCount: number;
   products: Product[];
 }
@@ -161,17 +161,17 @@ export default function CleanupKoreanCategories() {
           {koreanDocs.map((doc, index) => (
             <div key={doc.id} className="border p-4 rounded">
               <h3 className="font-semibold text-lg">
-                {index + 1}. "{doc.id}" → "{koreanToEnglish[doc.id]}"
+                {index + 1}. &quot;{doc.id}&quot; → &quot;{koreanToEnglish[doc.id]}&quot;
               </h3>
               <p className="text-gray-600 mb-2">
-                이름: {doc.data.name} | 상품 수: {doc.productCount}개
+                이름: {String(doc.data.name || '')} | 상품 수: {doc.productCount}개
               </p>
               
               {doc.productCount > 0 && (
                 <div className="ml-4">
                   <h4 className="font-medium">상품 목록:</h4>
                   <ul className="list-disc list-inside text-sm text-gray-600">
-                    {doc.products.map((product: Product, idx: number) => (
+                    {doc.products.map((product: Product) => (
                       <li key={product.id}>
                         {product.name} (카테고리: {product.category})
                       </li>

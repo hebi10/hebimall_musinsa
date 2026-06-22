@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { ProductService } from '@/shared/services/productService';
 import { Product } from '@/shared/types/product';
 import styles from './page.module.css';
@@ -24,7 +25,6 @@ interface RecommendSettings {
 export default function RecommendationsAdminPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [currentSettings, setCurrentSettings] = useState<RecommendSettings[]>([
     {
       id: 'rating',
@@ -505,7 +505,13 @@ export default function RecommendationsAdminPage() {
                 <div key={product.id} className={styles.previewCard}>
                   <div className={styles.previewImage}>
                     {product.mainImage ? (
-                      <img src={product.mainImage} alt={product.name} />
+                      <Image
+                        src={product.mainImage}
+                        alt={product.name}
+                        width={160}
+                        height={160}
+                        unoptimized
+                      />
                     ) : (
                       <div className={styles.placeholderImage}>
                         

@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
 // 이미지 URL을 미리 로드하고 캐싱하는 함수
-const preloadImage = (url: string): Promise<string> => {
+export const preloadImage = (url: string): Promise<string> => {
   return new Promise((resolve, reject) => {
     if (!url) {
       reject(new Error('이미지 URL이 없습니다'));
@@ -58,11 +58,16 @@ export const useMultipleImageCache = (imageUrls: string[], enabled: boolean = tr
 };
 
 // 상품 이미지 캐싱 훅 (상품 전용)
-export const useProductImageCache = (product: any, enabled: boolean = true) => {
+interface ProductImageSource {
+  mainImage?: string;
+  images?: string[];
+}
+
+export const useProductImageCache = (product: ProductImageSource | null | undefined, enabled: boolean = true) => {
   const imageUrls = [
     product?.mainImage,
     ...(product?.images || [])
-  ].filter(Boolean);
+  ].filter((url): url is string => Boolean(url));
 
   return useMultipleImageCache(imageUrls, enabled);
 };
@@ -95,10 +100,12 @@ export const imageKeys = {
   category: (categoryId: string) => ['category-images', categoryId] as const,
 } as const;
 
-export default {
+const imageCacheHooks = {
   useImageCache,
   useMultipleImageCache,
   useProductImageCache,
   useImagePreloader,
   imageKeys,
 };
+
+export default imageCacheHooks;

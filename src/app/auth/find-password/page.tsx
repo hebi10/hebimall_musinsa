@@ -2,17 +2,17 @@
 
 import { useState, FormEvent } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { FirebaseError } from "firebase/app";
 import styles from "./page.module.css";
 import useInput from "@/shared/hooks/useInput";
 import { sendPasswordReset } from "@/shared/libs/firebase/auth";
 import { getErrorMessage } from "@/shared/utils/authErrorMessages";
 
 export default function FindPasswordPage() {
-  const router = useRouter();
-  const [values, onChange] = useInput({
+  const [rawValues, onChange] = useInput({
     email: '',
   });
+  const values = rawValues as { email: string };
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -38,9 +38,9 @@ export default function FindPasswordPage() {
     try {
       await sendPasswordReset(values.email);
       setSuccess(true);
-    } catch (err: any) {
+    } catch (err) {
       console.error("Password reset failed:", err);
-      const errorMessage = getErrorMessage(err.code);
+      const errorMessage = getErrorMessage(err instanceof FirebaseError ? err.code : 'unknown');
       setError(errorMessage);
     } finally {
       setIsSubmitting(false);

@@ -517,7 +517,7 @@ export default function EventDetailClient({ event }: EventDetailClientProps) {
               : '이미 참여가 완료된 이벤트입니다. 지급 방식은 아래 안내를 확인해주세요.',
           });
         }
-      } catch (error) {
+      } catch {
         if (!isActive) {
           return;
         }

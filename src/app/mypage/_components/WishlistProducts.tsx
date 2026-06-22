@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { useUserActivity } from '@/context/userActivityProvider';
 import { useProduct } from '@/context/productProvider';
 import { useAuth } from '@/context/authProvider';
@@ -164,9 +165,11 @@ export default function WishlistProducts({
                 
                 <Link href={`/products/${product.id}`} className={styles.productLink}>
                   <div className={styles.productImage}>
-                    <img 
-                      src={product.mainImage || product.images[0]} 
+                    <Image
+                      src={product.mainImage || product.images[0]}
                       alt={product.name}
+                      fill
+                      sizes="(max-width: 768px) 50vw, 25vw"
                     />
                     <div className={styles.addedTime}>
                       {wishlistItem.addedAt.toLocaleDateString()}

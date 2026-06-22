@@ -50,8 +50,12 @@ export function UserActivityProvider({ children }: { children: ReactNode }) {
   // 사용자 변경시 데이터 로드
   useEffect(() => {
     if (user?.uid) {
-      loadRecentProducts(user.uid);
-      loadWishlistItems(user.uid);
+      void HybridUserActivityService.getRecentProducts(user.uid)
+        .then(setRecentProducts)
+        .catch((err) => console.error('理쒓렐 蹂??곹뭹 濡쒕뱶 ?ㅽ뙣:', err));
+      void HybridUserActivityService.getWishlist(user.uid)
+        .then(setWishlistItems)
+        .catch((err) => console.error('李쒗븳 ?곹뭹 濡쒕뱶 ?ㅽ뙣:', err));
     } else {
       setRecentProducts([]);
       setWishlistItems([]);
@@ -66,7 +70,7 @@ export function UserActivityProvider({ children }: { children: ReactNode }) {
       await HybridUserActivityService.addRecentProduct(user.uid, productId);
       
       // 로컬 상태 업데이트
-      loadRecentProducts(user.uid);
+      void HybridUserActivityService.getRecentProducts(user.uid).then(setRecentProducts);
       
     } catch (err) {
       console.error('최근 본 상품 추가 실패:', err);
@@ -96,7 +100,7 @@ export function UserActivityProvider({ children }: { children: ReactNode }) {
       await HybridUserActivityService.addToWishlist(user.uid, productId);
       
       // 로컬 상태 업데이트
-      loadWishlistItems(user.uid);
+      void HybridUserActivityService.getWishlist(user.uid).then(setWishlistItems);
 
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '찜하기에 실패했습니다.';
@@ -188,7 +192,7 @@ export function UserActivityProvider({ children }: { children: ReactNode }) {
   const isInWishlist = useCallback(async (productId: string): Promise<boolean> => {
     if (!user?.uid) return false;
     return await HybridUserActivityService.isInWishlist(user.uid, productId);
-  }, [user?.uid, wishlistItems]);
+  }, [user?.uid]);
 
   // 사용자 활동 데이터 초기화
   const clearUserActivity = useCallback(async () => {

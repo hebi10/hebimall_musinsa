@@ -68,7 +68,7 @@ async function getIdToken(): Promise<string> {
 
 async function callOrdersAPI(payload: CreateOrderRequest): Promise<CreateOrderResponse> {
   const token = await getIdToken();
-  const res = await fetch('/api/order/', {
+  const res = await fetch('/api/order', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -87,7 +87,7 @@ async function callOrdersAPI(payload: CreateOrderRequest): Promise<CreateOrderRe
 
 async function callOrderAdminAPI(payload: Record<string, unknown>): Promise<void> {
   const token = await getIdToken();
-  const res = await fetch('/api/order/', {
+  const res = await fetch('/api/order', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -104,7 +104,7 @@ async function callOrderAdminAPI(payload: Record<string, unknown>): Promise<void
 
 async function callOrderMutationAPI(payload: CancelOrderRequest): Promise<void> {
   const token = await getIdToken();
-  const res = await fetch('/api/order/', {
+  const res = await fetch('/api/order', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -134,7 +134,7 @@ export class OrderService {
     return new Date();
   }
 
-  private static normalizeOrder(orderId: string, data: Record<string, any>): Order {
+  private static normalizeOrder(orderId: string, data: Record<string, unknown>): Order {
     const shippingAddress = data.shippingAddress || data.deliveryAddress;
 
     return {
@@ -188,13 +188,14 @@ export class OrderService {
       return querySnapshot.docs
         .map((orderDoc) => this.normalizeOrder(orderDoc.id, orderDoc.data()))
         .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
-    } catch (error: any) {
+    } catch (error) {
       console.error('Failed to load user orders:', error);
 
       let userMessage = '주문 목록을 불러오지 못했습니다.';
-      if (error.message?.includes('index')) {
+      const errorMessage = error instanceof Error ? error.message : '';
+      if (errorMessage.includes('index')) {
         userMessage = '인덱스를 준비 중입니다. 잠시 후 다시 시도해 주세요.';
-      } else if (error.message?.includes('permission')) {
+      } else if (errorMessage.includes('permission')) {
         userMessage = '접근 권한이 없습니다. 로그인 상태를 확인해 주세요.';
       }
 

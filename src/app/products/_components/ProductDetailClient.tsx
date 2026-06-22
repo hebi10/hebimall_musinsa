@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Product } from '@/shared/types/product';
 import { useProduct } from '@/context/productProvider';
@@ -279,11 +280,13 @@ export default function ProductDetailClient({ product }: Props) {
         <div className={styles.imageSection}>
           <div className={styles.mainImage}>
             {product.images && product.images.length > 0 ? (
-              <img
+              <Image
                 src={currentImageSrc}
                 alt={product.name}
                 className={styles.productImage}
                 onError={() => handleImageError(selectedImageIndex)}
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
               />
             ) : (
               <div className={styles.noImage}>
@@ -299,11 +302,13 @@ export default function ProductDetailClient({ product }: Props) {
                   className={`${styles.thumbnail} ${index === selectedImageIndex ? styles.active : ''}`}
                   onClick={() => setSelectedImageIndex(index)}
                 >
-                  <img 
-                    src={image} 
+                  <Image
+                    src={image}
                     alt={`${product.name} ${index + 1}`} 
                     className={styles.thumbnailImage}
                     onError={() => handleImageError(index)}
+                    fill
+                    sizes="80px"
                   />
                 </button>
               )
@@ -564,11 +569,14 @@ export default function ProductDetailClient({ product }: Props) {
               {detailImages.length > 0 && (
                 <div className={styles.detailImages}>
                   {detailImages.map((image, index) => (
-                    <img
+                    <Image
                       key={image}
                       src={image}
                       alt={`${product.name} 상세 이미지 ${index + 1}`}
                       className={styles.detailImage}
+                      width={1080}
+                      height={1440}
+                      sizes="100vw"
                     />
                   ))}
                 </div>

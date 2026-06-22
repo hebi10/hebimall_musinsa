@@ -1,17 +1,15 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import Link from 'next/link';
 import styles from './page.module.css';
 import { useProduct } from '@/context/productProvider';
 import { useAuth } from '@/context/authProvider';
 import { Product } from '@/shared/types/product';
-import { ProductService } from '@/shared/services/productService';
 import { getCategoryNames } from '@/shared/utils/categoryUtils';
 
 export default function AdminProductsPage() {
-  const router = useRouter();
   const { user, isAdmin, loading: authLoading, isUserDataLoading } = useAuth();
   const { 
     products, 
@@ -93,31 +91,6 @@ export default function AdminProductsPage() {
   }, [loadProducts]);
 
   // 상품 삭제 처리 (중복 방지)
-  const handleDeleteProduct = useCallback(async (productId: string) => {
-    if (isLoadingRef.current) {
-      console.log('로딩 중에는 삭제할 수 없습니다.');
-      return;
-    }
-
-    if (!confirm('정말로 이 상품을 삭제하시겠습니까?')) return;
-
-    try {
-      isLoadingRef.current = true;
-      await deleteProduct(productId);
-      
-      // 성공 후 잠시 기다렸다가 새로고침
-      setTimeout(() => {
-        loadProducts(true).finally(() => {
-          isLoadingRef.current = false;
-        });
-      }, 500);
-    } catch (error) {
-      isLoadingRef.current = false;
-      console.error('상품 삭제 실패:', error);
-      alert('상품 삭제에 실패했습니다.');
-    }
-  }, [deleteProduct, loadProducts]);
-
   // 로딩 중이거나 권한이 없으면 표시하지 않음 (layout에서 처리됨)
   if (authLoading || isUserDataLoading || !user || !isAdmin) {
     return (
@@ -151,22 +124,6 @@ export default function AdminProductsPage() {
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedProducts = filteredProducts.slice(startIndex, startIndex + itemsPerPage);
-
-  const handleSaveEdit = async (updatedProduct: Product) => {
-    try {
-      console.log('관리자 페이지 상품 수정 시작:', updatedProduct);
-      
-      await updateProduct(updatedProduct.id, updatedProduct);
-      
-      console.log('관리자 페이지 상품 수정 완료, 목록 새로고침 중...');
-      
-      // 상품 목록 새로고침
-      loadProducts(true);
-    } catch (error) {
-      console.error('관리자 페이지 상품 수정 실패:', error);
-      alert('상품 수정에 실패했습니다.');
-    }
-  };
 
   const handleDelete = async (productId: string) => {
     if (confirm('정말로 이 상품을 삭제하시겠습니까?')) {
@@ -208,15 +165,6 @@ export default function AdminProductsPage() {
       case 'inactive': return '#EF4444'; // 빨간색
       case 'draft': return '#F59E0B'; // 노란색
       default: return '#6B7280'; // 회색
-    }
-  };
-
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'active': return '판매중';
-      case 'inactive': return '판매중지';
-      case 'draft': return '임시저장';
-      default: return status;
     }
   };
 
@@ -310,7 +258,13 @@ export default function AdminProductsPage() {
                 <td>
                   <div className={styles.productImage}>
                     {(product.mainImage || (product.images && product.images.length > 0)) ? (
-                      <img src={product.mainImage || product.images[0]} alt={product.name} />
+                      <Image
+                        src={product.mainImage || product.images[0]}
+                        alt={product.name}
+                        width={72}
+                        height={72}
+                        unoptimized
+                      />
                     ) : (
                       <div className={styles.noImage}>이미지 없음</div>
                     )}

@@ -1,5 +1,6 @@
 import { onRequest } from "firebase-functions/v2/https";
 import * as admin from "firebase-admin";
+import type { Response } from "express";
 import { calculateDeliveryFee, calculateDiscountedUnitPrice } from "../domain/orderDomain";
 import { AuthContext, AuthError, verifyAuthContext } from "../utils/auth";
 
@@ -137,7 +138,7 @@ const ALLOWED_ORDER_STATUS_TRANSITIONS: Record<string, string[]> = {
 
 const CUSTOMER_CANCELLABLE_STATUSES = new Set(["pending", "confirmed"]);
 
-function applyNoStoreHeaders(response: any): void {
+function applyNoStoreHeaders(response: Response): void {
   Object.entries(NO_STORE_HEADERS).forEach(([key, value]) => {
     response.set(key, value);
   });
@@ -802,7 +803,7 @@ export const order = onRequest(
         success: true,
         data: result,
       });
-    } catch (error: any) {
+    } catch (error) {
       if (error instanceof AuthError) {
         res.status(error.statusCode).json({ success: false, error: error.message });
         return;
@@ -817,7 +818,7 @@ export const order = onRequest(
 async function handleOrderCancellation(
   payload: RawCancelOrderRequest,
   authorization: string | undefined,
-  res: any
+  res: Response
 ): Promise<void> {
   const authContext = await verifyAuthContext(authorization);
   const orderId = toStringValue(payload.orderId);
@@ -838,7 +839,7 @@ async function handleOrderCancellation(
 async function handleAdminOrderStatusUpdate(
   payload: RawUpdateOrderStatusRequest,
   authorization: string | undefined,
-  res: any
+  res: Response
 ): Promise<void> {
   const authContext = await verifyAuthContext(authorization);
   if (!authContext.isAdmin) {

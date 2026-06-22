@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useCallback, useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/context/authProvider';
@@ -29,16 +30,7 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
     });
   }, [params]);
 
-  useEffect(() => {
-    if (loading || !orderId) return;
-    if (!user) {
-      router.push('/auth/login');
-      return;
-    }
-    loadOrderDetails();
-  }, [user, loading, orderId]);
-
-  const loadOrderDetails = async () => {
+  const loadOrderDetails = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
@@ -56,12 +48,39 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
       }
       
       setOrder(orderData);
-    } catch (err: any) {
+    } catch (err) {
       console.error('주문 상세 로드 실패:', err);
       setError('주문 상세 정보를 불러오는데 실패했습니다.');
     } finally {
       setIsLoading(false);
     }
+  }, [orderId, user?.uid]);
+
+  useEffect(() => {
+    if (loading || !orderId) return;
+    if (!user) {
+      router.push('/auth/login');
+      return;
+    }
+    void loadOrderDetails();
+  }, [user, loading, orderId, router, loadOrderDetails]);
+
+  const getProductImageSrc = (imageUrl?: string) => {
+    if (imageUrl && imageUrl.includes('firebasestorage.googleapis.com')) {
+      try {
+        const url = new URL(imageUrl);
+        url.search = 'alt=media';
+        return url.toString();
+      } catch {
+        return '/product-placeholder.jpg';
+      }
+    }
+
+    if (imageUrl && imageUrl.startsWith('/')) {
+      return imageUrl;
+    }
+
+    return '/product-placeholder.jpg';
   };
 
   const getStatusText = (status: string) => {
@@ -177,37 +196,11 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
           {order.products.map((product, index) => (
             <div key={`${product.id}-${index}`} className={styles.productCard}>
               <div className={styles.productImage}>
-                <img 
-                  src={(() => {
-                    let imageUrl = product.productImage;
-                    
-                    // Firebase Storage URL 처리
-                    if (imageUrl && imageUrl.includes('firebasestorage.googleapis.com')) {
-                      try {
-                        const url = new URL(imageUrl);
-                        url.search = 'alt=media';
-                        return url.toString();
-                      } catch (e) {
-                        return '/product-placeholder.jpg';
-                      }
-                    }
-                    
-                    // 로컬 이미지 경로 처리
-                    if (imageUrl && imageUrl.startsWith('/')) {
-                      return imageUrl;
-                    }
-                    
-                    // 기본 이미지
-                    return '/product-placeholder.jpg';
-                  })()} 
+                <Image
+                  src={getProductImageSrc(product.productImage)}
                   alt={product.productName}
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    if (!target.src.includes('product-placeholder.jpg')) {
-                      target.src = '/product-placeholder.jpg';
-                    }
-                  }}
-                  loading="lazy"
+                  fill
+                  sizes="96px"
                 />
               </div>
               <div className={styles.productInfo}>

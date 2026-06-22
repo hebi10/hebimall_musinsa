@@ -2,7 +2,7 @@ import * as admin from "firebase-admin";
 
 export interface ApiResponse {
   success: boolean;
-  data?: any;
+  data?: unknown;
   error?: string;
 }
 

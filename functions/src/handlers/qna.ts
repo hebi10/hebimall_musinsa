@@ -1,5 +1,6 @@
 import { onRequest } from "firebase-functions/v2/https";
 import * as admin from "firebase-admin";
+import type { Response } from "express";
 import { randomBytes } from "crypto";
 import {
   ensureString,
@@ -21,7 +22,7 @@ const NO_STORE_HEADERS = {
   Expires: "0",
 };
 
-function applyNoStoreHeaders(res: any): void {
+function applyNoStoreHeaders(res: Response): void {
   Object.entries(NO_STORE_HEADERS).forEach(([key, value]) => {
     res.set(key, value);
   });

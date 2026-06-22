@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import PageHeader from '@/app/_components/PageHeader';
 import { BrandSummary, ProductService } from '@/shared/services/productService';
@@ -57,7 +58,13 @@ export default function BrandPage() {
               >
                 <div className={styles.imageFrame}>
                   {brand.image ? (
-                    <img src={brand.image} alt={`${brand.name} 대표 상품`} className={styles.brandImage} />
+                    <Image
+                      src={brand.image}
+                      alt={`${brand.name} 대표 상품`}
+                      className={styles.brandImage}
+                      fill
+                      sizes="(max-width: 480px) 100vw, (max-width: 900px) 50vw, 25vw"
+                    />
                   ) : (
                     <span className={styles.imageFallback}>STYNA</span>
                   )}

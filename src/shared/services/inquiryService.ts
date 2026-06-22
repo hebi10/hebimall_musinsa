@@ -10,7 +10,6 @@ import {
   orderBy,
   limit,
   serverTimestamp,
-  Timestamp,
 } from 'firebase/firestore';
 import { db } from '@/shared/libs/firebase/firebase';
 import { Inquiry, CreateInquiryData, InquiryAnswer } from '@/shared/types/inquiry';

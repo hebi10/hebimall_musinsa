@@ -7,6 +7,8 @@ import { usePointBalance, usePointHistory } from '@/shared/hooks/usePoint';
 import { PointHistory } from '@/shared/types/point';
 import styles from './page.module.css';
 
+type DateLike = Date | string | number | { toDate: () => Date };
+
 export default function PointPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
@@ -30,11 +32,11 @@ export default function PointPage() {
 
   const pointBalance = balanceData?.pointBalance || 0;
 
-  const formatDate = (date: any) => {
+  const formatDate = (date: DateLike | null | undefined) => {
     if (!date) return '';
     
     // Firestore Timestamp를 Date로 변환
-    const dateObj = date.toDate ? date.toDate() : new Date(date);
+    const dateObj = typeof date === 'object' && 'toDate' in date ? date.toDate() : new Date(date);
     return dateObj.toLocaleDateString('ko-KR', {
       year: 'numeric',
       month: '2-digit',

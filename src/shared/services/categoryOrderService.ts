@@ -10,7 +10,6 @@ import {
   Timestamp 
 } from 'firebase/firestore';
 import { db } from '@/shared/libs/firebase/firebase';
-import { Category } from '@/shared/types/category';
 
 export interface CategoryOrderConfig {
   id: string;

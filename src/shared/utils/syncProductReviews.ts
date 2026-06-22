@@ -13,6 +13,10 @@ const LEGACY_CATEGORIES = [
   'bottoms',
 ];
 
+function toNumber(value: unknown): number {
+  return typeof value === 'number' && Number.isFinite(value) ? value : 0;
+}
+
 async function updateTopLevelProduct(productId: string, reviewCount: number, rating: number) {
   const productRef = doc(db, 'products', productId);
   const productSnapshot = await getDoc(productRef);
@@ -67,7 +71,7 @@ export async function syncProductReviewData(productId: string): Promise<{ review
 
     const reviews = snapshot.docs.map((reviewDoc) => reviewDoc.data());
     const reviewCount = reviews.length;
-    const totalRating = reviews.reduce((sum, review) => sum + (review.rating || 0), 0);
+    const totalRating = reviews.reduce((sum, review) => sum + toNumber(review.rating), 0);
     const averageRating = Math.round((totalRating / reviewCount) * 10) / 10;
 
     await Promise.allSettled([
@@ -86,7 +90,7 @@ export async function syncAllProductsReviewData(): Promise<void> {
   try {
     const reviewsCollection = collection(db, 'reviews');
     const snapshot = await getDocs(reviewsCollection);
-    const productReviews: Record<string, any[]> = {};
+    const productReviews: Record<string, Array<Record<string, unknown>>> = {};
 
     snapshot.docs.forEach((reviewDoc) => {
       const review = reviewDoc.data();
@@ -104,7 +108,7 @@ export async function syncAllProductsReviewData(): Promise<void> {
     await Promise.all(
       Object.entries(productReviews).map(async ([productId, reviews]) => {
         const reviewCount = reviews.length;
-        const totalRating = reviews.reduce((sum, review) => sum + (review.rating || 0), 0);
+        const totalRating = reviews.reduce((sum, review) => sum + toNumber(review.rating), 0);
         const averageRating = Math.round((totalRating / reviewCount) * 10) / 10;
 
         await Promise.allSettled([
@@ -130,7 +134,7 @@ export async function getProductReviewStats(productId: string): Promise<{ review
 
     const reviews = snapshot.docs.map((reviewDoc) => reviewDoc.data());
     const reviewCount = reviews.length;
-    const totalRating = reviews.reduce((sum, review) => sum + (review.rating || 0), 0);
+    const totalRating = reviews.reduce((sum, review) => sum + toNumber(review.rating), 0);
     const averageRating = Math.round((totalRating / reviewCount) * 10) / 10;
 
     return { reviewCount, rating: averageRating };

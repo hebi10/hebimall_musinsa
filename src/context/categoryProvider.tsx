@@ -1,6 +1,6 @@
 ﻿'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '@/shared/libs/firebase/firebase';
 
@@ -29,75 +29,75 @@ interface CategoryProviderProps {
   children: ReactNode;
 }
 
+const fallbackCategories: Category[] = [
+  {
+    id: 'clothing',
+    name: 'clothing',
+    description: 'clothing category',
+    icon: '',
+    color: '#007bff',
+    order: 1,
+    isActive: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: 'shoes',
+    name: 'shoes',
+    description: 'shoes category',
+    icon: '',
+    color: '#6610f2',
+    order: 2,
+    isActive: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: 'bags',
+    name: 'bags',
+    description: 'bags category',
+    icon: '',
+    color: '#ffc107',
+    order: 3,
+    isActive: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: 'accessories',
+    name: 'accessories',
+    description: 'accessories category',
+    icon: '',
+    color: '#28a745',
+    order: 4,
+    isActive: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+];
+
+const koreanNameMap: Record<string, string> = {
+  clothing: '아우터',
+  tops: '상의',
+  bottoms: '하의',
+  shoes: '신발',
+  bags: '가방',
+  accessories: '악세서리',
+  jewelry: '주얼리',
+  outdoor: '아웃도어',
+  sports: '스포츠',
+  pants: '바지',
+  top: '상의',
+  bag: '가방',
+  accessory: '악세서리',
+};
+
 export function CategoryProvider({ children }: CategoryProviderProps) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fallbackCategories: Category[] = [
-    {
-      id: 'clothing',
-      name: 'clothing',
-      description: 'clothing category',
-      icon: '',
-      color: '#007bff',
-      order: 1,
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      id: 'shoes',
-      name: 'shoes',
-      description: 'shoes category',
-      icon: '',
-      color: '#6610f2',
-      order: 2,
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      id: 'bags',
-      name: 'bags',
-      description: 'bags category',
-      icon: '',
-      color: '#ffc107',
-      order: 3,
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      id: 'accessories',
-      name: 'accessories',
-      description: 'accessories category',
-      icon: '',
-      color: '#28a745',
-      order: 4,
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-  ];
-
-  const koreanNameMap: { [key: string]: string } = {
-    clothing: '아우터',
-    tops: '상의',
-    bottoms: '하의',
-    shoes: '신발',
-    bags: '가방',
-    accessories: '악세서리',
-    jewelry: '주얼리',
-    outdoor: '아웃도어',
-    sports: '스포츠',
-    pants: '바지',
-    top: '상의',
-    bag: '가방',
-    accessory: '악세서리',
-  };
-
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -136,7 +136,7 @@ export function CategoryProvider({ children }: CategoryProviderProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   const refreshCategories = async () => {
     await fetchCategories();
@@ -144,7 +144,7 @@ export function CategoryProvider({ children }: CategoryProviderProps) {
 
   useEffect(() => {
     void fetchCategories();
-  }, []);
+  }, [fetchCategories]);
 
   const value: CategoryContextType = {
     categories,

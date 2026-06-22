@@ -112,6 +112,7 @@
 }
 
 .thumbnail {
+  position: relative;
   width: 80px;
   height: 80px;
   border-radius: 2px;
@@ -424,6 +425,7 @@
 }
 
 .relatedImage {
+  position: relative;
   width: 100%;
   height: 200px;
   overflow: hidden;

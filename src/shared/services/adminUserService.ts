@@ -10,10 +10,14 @@ import {
   addDoc,
   serverTimestamp,
   getDoc,
+  QueryDocumentSnapshot,
+  DocumentSnapshot,
+  DocumentData,
 } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { db } from '@/shared/libs/firebase/firebase';
 import { UserProfile } from '@/shared/types/user';
+import { PointHistory } from '@/shared/types/point';
 
 const COLLECTION_NAME = 'users';
 
@@ -355,17 +359,28 @@ export class AdminUserService {
   }
 
   // 사용자 포인트 히스토리 조회
-  static async getUserPointHistory(userId: string, limitCount: number = 50): Promise<any[]> {
+  static async getUserPointHistory(
+    userId: string,
+    limitCount: number = 50
+  ): Promise<PointHistory[]> {
     try {
       const pointHistoryRef = collection(db, COLLECTION_NAME, userId, 'pointHistory');
       const q = query(pointHistoryRef, orderBy('date', 'desc'), limit(limitCount));
       const snapshot = await getDocs(q);
       
-      return snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-        date: doc.data().date?.toDate() || new Date(),
-      }));
+      return snapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          type: data.type || 'earn',
+          amount: Number(data.amount) || 0,
+          description: data.description || '',
+          date: data.date?.toDate() || new Date(),
+          orderId: data.orderId,
+          balanceAfter: Number(data.balanceAfter) || 0,
+          expired: Boolean(data.expired),
+        };
+      });
     } catch (error) {
  console.error('Error fetching user point history:', error);
       throw error;
@@ -419,8 +434,8 @@ export class AdminUserService {
   }
 
   // Firestore 문서를 사용자 객체로 변환
-  private static convertDocToUser(doc: any): AdminUserData {
-    const data = doc.data();
+  private static convertDocToUser(doc: QueryDocumentSnapshot<DocumentData> | DocumentSnapshot<DocumentData>): AdminUserData {
+    const data = doc.data() || {};
     
     // 기본값과 null 체크 강화
     const user: AdminUserData = {

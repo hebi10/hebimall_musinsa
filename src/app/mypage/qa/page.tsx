@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/authProvider';
 import { SimpleQnAService } from '@/shared/services/simpleQnAService';
@@ -46,7 +46,7 @@ export default function QAPage() {
     }
   };
 
-  const loadUserQnAs = async () => {
+  const loadUserQnAs = useCallback(async () => {
     if (!user?.uid) {
       console.log('User not logged in');
       return;
@@ -62,11 +62,11 @@ export default function QAPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user?.uid]);
 
   useEffect(() => {
     loadUserQnAs();
-  }, [user]);
+  }, [loadUserQnAs]);
 
   const filteredQAs = qnas.filter(qa => {
     const typeMatch = selectedType === '전체' || qa.category === selectedType;

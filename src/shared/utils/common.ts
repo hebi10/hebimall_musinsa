@@ -14,23 +14,23 @@ export function slugify(text: string): string {
     .replace(/^-+|-+$/g, '');
 }
 
-export function debounce<T extends (...args: any[]) => any>(
+export function debounce<T extends (this: unknown, ...args: unknown[]) => unknown>(
   func: T,
   wait: number
 ): (...args: Parameters<T>) => void {
   let timeout: NodeJS.Timeout;
-  return function(this: any, ...args: Parameters<T>) {
+  return function(this: ThisParameterType<T>, ...args: Parameters<T>) {
     clearTimeout(timeout);
     timeout = setTimeout(() => func.apply(this, args), wait);
   };
 }
 
-export function throttle<T extends (...args: any[]) => any>(
+export function throttle<T extends (this: unknown, ...args: unknown[]) => unknown>(
   func: T,
   limit: number
 ): (...args: Parameters<T>) => void {
   let inThrottle: boolean;
-  return function(this: any, ...args: Parameters<T>) {
+  return function(this: ThisParameterType<T>, ...args: Parameters<T>) {
     if (!inThrottle) {
       func.apply(this, args);
       inThrottle = true;

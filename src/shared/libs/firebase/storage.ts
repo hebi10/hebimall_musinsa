@@ -269,7 +269,7 @@ export const validateImageFiles = (files: File[]): { valid: File[]; errors: stri
   const valid: File[] = [];
   const errors: string[] = [];
   
-  files.forEach((file, index) => {
+  files.forEach((file) => {
     if (!isImageFile(file)) {
       errors.push(`${file.name}은(는) 이미지 파일이 아닙니다.`);
       return;

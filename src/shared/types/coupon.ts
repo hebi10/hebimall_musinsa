@@ -69,7 +69,7 @@ export interface RegisterCouponRequest {
 export interface CouponResponse {
   success: boolean;
   message: string;
-  data?: any;
+  data?: unknown;
 }
 
 /**

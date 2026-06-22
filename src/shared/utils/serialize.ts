@@ -1,41 +1,47 @@
 import { Timestamp } from 'firebase/firestore';
 
+type SerializableRecord = Record<string, unknown>;
+
+function hasToJson(value: object): value is { toJSON: () => unknown } {
+  return 'toJSON' in value && typeof (value as { toJSON?: unknown }).toJSON === 'function';
+}
+
 /**
  * Firestore 객체를 직렬화 가능한 객체로 변환
  * Timestamp 등의 Firestore 특수 객체를 일반 JavaScript 객체로 변환
  */
-export function serializeFirestoreData<T = any>(data: any): T {
+export function serializeFirestoreData<T = unknown>(data: unknown): T {
   if (data === null || data === undefined) {
-    return data;
+    return data as T;
   }
 
   // Timestamp 객체 처리
   if (data instanceof Timestamp) {
-    return data.toDate().toISOString() as any;
+    return data.toDate().toISOString() as T;
   }
 
   // Date 객체 처리
   if (data instanceof Date) {
-    return data.toISOString() as any;
+    return data.toISOString() as T;
   }
 
   // 배열 처리
   if (Array.isArray(data)) {
-    return data.map(item => serializeFirestoreData(item)) as any;
+    return data.map(item => serializeFirestoreData(item)) as T;
   }
 
   // 객체 처리
   if (typeof data === 'object' && data !== null) {
-    const serialized: any = {};
+    const serialized: SerializableRecord = {};
     
     for (const [key, value] of Object.entries(data)) {
       // toJSON 메서드가 있는 객체 처리 (Firestore Timestamp 등)
-      if (value && typeof value === 'object' && 'toJSON' in value) {
+      if (value && typeof value === 'object' && hasToJson(value)) {
         if (value instanceof Timestamp) {
           serialized[key] = value.toDate().toISOString();
         } else {
           try {
-            serialized[key] = (value as any).toJSON();
+            serialized[key] = value.toJSON();
           } catch {
             serialized[key] = serializeFirestoreData(value);
           }
@@ -45,29 +51,31 @@ export function serializeFirestoreData<T = any>(data: any): T {
       }
     }
     
-    return serialized;
+    return serialized as T;
   }
 
   // 원시 타입은 그대로 반환
-  return data;
+  return data as T;
 }
 
 /**
  * 상품 데이터 직렬화 (Product 타입 전용)
  */
-export function serializeProduct(product: any) {
-  return serializeFirestoreData({
-    ...product,
-    createdAt: product.createdAt instanceof Timestamp ? product.createdAt.toDate().toISOString() : product.createdAt,
-    updatedAt: product.updatedAt instanceof Timestamp ? product.updatedAt.toDate().toISOString() : product.updatedAt,
-    migratedAt: product.migratedAt instanceof Timestamp ? product.migratedAt.toDate().toISOString() : product.migratedAt,
+export function serializeProduct<T extends object>(product: T): T {
+  const productRecord = product as Record<string, unknown>;
+
+  return serializeFirestoreData<T>({
+    ...productRecord,
+    createdAt: productRecord.createdAt instanceof Timestamp ? productRecord.createdAt.toDate().toISOString() : productRecord.createdAt,
+    updatedAt: productRecord.updatedAt instanceof Timestamp ? productRecord.updatedAt.toDate().toISOString() : productRecord.updatedAt,
+    migratedAt: productRecord.migratedAt instanceof Timestamp ? productRecord.migratedAt.toDate().toISOString() : productRecord.migratedAt,
   });
 }
 
 /**
  * ISO 문자열을 Date 객체로 변환 (클라이언트에서 사용)
  */
-export function deserializeDates(data: any): any {
+export function deserializeDates(data: unknown): unknown {
   if (data === null || data === undefined) {
     return data;
   }
@@ -84,7 +92,7 @@ export function deserializeDates(data: any): any {
 
   // 객체 처리
   if (typeof data === 'object' && data !== null) {
-    const deserialized: any = {};
+    const deserialized: SerializableRecord = {};
     
     for (const [key, value] of Object.entries(data)) {
       if (key.includes('At') || key.includes('Date')) {
@@ -100,8 +108,10 @@ export function deserializeDates(data: any): any {
   return data;
 }
 
-export default {
+const serializeUtils = {
   serializeFirestoreData,
   serializeProduct,
   deserializeDates,
 };
+
+export default serializeUtils;

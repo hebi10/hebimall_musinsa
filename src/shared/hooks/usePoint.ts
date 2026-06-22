@@ -1,6 +1,7 @@
 // 포인트 관련 React Hook
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import type { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
 import PointService from '@/shared/services/pointService';
 import { PointHistory, AddPointRequest, UsePointRequest, RefundPointRequest } from '@/shared/types/point';
 import { useAuth } from '@/context/authProvider';
@@ -20,7 +21,7 @@ export const usePointBalance = () => {
 // 포인트 내역 조회 Hook
 export const usePointHistory = (limit: number = 50) => {
   const { user } = useAuth();
-  const [lastDoc, setLastDoc] = useState<any>(null);
+  const [lastDoc, setLastDoc] = useState<QueryDocumentSnapshot<DocumentData> | null>(null);
   const [allHistory, setAllHistory] = useState<PointHistory[]>([]);
   const [hasMore, setHasMore] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -165,7 +166,7 @@ export const useBirthdayPoint = () => {
   });
 };
 
-export default {
+const pointHooks = {
   usePointBalance,
   usePointHistory,
   useAddPoint,
@@ -176,3 +177,5 @@ export default {
   useReviewPoint,
   useBirthdayPoint,
 };
+
+export default pointHooks;

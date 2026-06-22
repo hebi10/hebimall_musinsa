@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode, useRef } from "react";
 import { ProductService } from "@/shared/services/productService";
 import { Product, ProductFilter, ProductSort } from "@/shared/types/product";
 
@@ -88,10 +88,8 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [lastFetchTime, setLastFetchTime] = useState<number>(0);
-  const [isLoadingRef, setIsLoadingRef] = useState<React.MutableRefObject<boolean>>(
-    { current: false } as React.MutableRefObject<boolean>
-  );
+  const lastFetchTimeRef = useRef(0);
+  const isLoadingRef = useRef(false);
 
   // 상품 데이터 정규화 (mainImage가 없으면 첫 번째 이미지로 설정)
   const normalizeProduct = useCallback((product: Product): Product => {
@@ -123,8 +121,8 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     }
     
     // 강제 새로고침이 아니고 캐시 기간 내라면 로딩하지 않음
-    if (!forceReload && now - lastFetchTime < CACHE_DURATION) {
- console.log('⏰ 캐시된 데이터 사용 중... 남은 시간:', Math.ceil((CACHE_DURATION - (now - lastFetchTime)) / 1000), '초');
+    if (!forceReload && now - lastFetchTimeRef.current < CACHE_DURATION) {
+ console.log('⏰ 캐시된 데이터 사용 중... 남은 시간:', Math.ceil((CACHE_DURATION - (now - lastFetchTimeRef.current)) / 1000), '초');
       return;
     }
 
@@ -152,7 +150,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       setPriceRange(range);
       
       // 마지막 fetch 시간 업데이트
-      setLastFetchTime(now);
+      lastFetchTimeRef.current = now;
 
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '상품을 불러오는데 실패했습니다.';
@@ -162,7 +160,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       isLoadingRef.current = false;
       setLoading(false);
     }
-  }, [normalizeProduct, lastFetchTime]);
+  }, [normalizeProduct]);
 
   // 단일 상품 로드
   const loadProductById = useCallback(async (productId: string) => {
@@ -183,7 +181,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [normalizeProduct]);
 
   // 단일 상품 조회 (Product 반환)
   const getProductById = useCallback(async (productId: string): Promise<Product | null> => {
@@ -449,7 +447,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     loadProducts(true); // 초기 로드는 강제로 실행
     loadHomePageData(); // 홈페이지 데이터도 함께 로드
-  }, []); // 빈 의존성 배열로 한번만 실행
+  }, [loadProducts, loadHomePageData]);
 
   const value: ProductContextType = {
     // 상태

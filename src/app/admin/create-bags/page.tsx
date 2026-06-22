@@ -138,7 +138,7 @@ export default function CreateBagsCategory() {
         <ul className="text-sm space-y-1">
           <li>• Firebase 콘솔에서 /categories/bags 문서 생성 확인</li>
           <li>• /categories/bags/products 서브컬렉션에 10개 상품 확인</li>
-          <li>• 웹사이트 헤더의 카테고리 드롭다운에 "Bags" 표시 확인</li>
+          <li>• 웹사이트 헤더의 카테고리 드롭다운에 &quot;Bags&quot; 표시 확인</li>
           <li>• /categories/bags 페이지에서 상품 목록 표시 확인</li>
         </ul>
       </div>

@@ -6,6 +6,8 @@ import { useCoupon } from '@/context/couponProvider';
 import { CouponFilter } from '@/shared/types/coupon';
 import CouponRegister from '../_components/CouponRegister';
 
+type CouponStatusFilter = NonNullable<CouponFilter['status']>;
+
 export default function CouponsPage() {
   const {
     userCoupons,
@@ -24,7 +26,7 @@ export default function CouponsPage() {
   // 필터 변경시 쿠폰 목록 다시 조회
   useEffect(() => {
     const filter: CouponFilter = {
-      status: selectedStatus === '전체' ? undefined : selectedStatus as any,
+      status: selectedStatus === '전체' ? undefined : selectedStatus as CouponStatusFilter,
       sortBy: 'issuedDate',
       sortOrder: 'desc'
     };
@@ -42,7 +44,7 @@ export default function CouponsPage() {
       if (response.success) {
         // 성공시 쿠폰 목록 새로고침
         const filter: CouponFilter = {
-          status: selectedStatus === '전체' ? undefined : selectedStatus as any,
+          status: selectedStatus === '전체' ? undefined : selectedStatus as CouponStatusFilter,
           sortBy: 'issuedDate',
           sortOrder: 'desc'
         };

@@ -56,7 +56,7 @@ export interface Order {
   paymentMethod?: PaymentMethod;
   shippingAddress?: Address;
   deliveryAddress?: Address;
-  paymentInfo?: any;
+  paymentInfo?: unknown;
   createdAt: Date;
   updatedAt: Date;
   trackingNumber?: string;

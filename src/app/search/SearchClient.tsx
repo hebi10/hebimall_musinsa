@@ -77,7 +77,7 @@ export default function SearchClient() {
     setHasMoreByPage({});
   }, []);
 
-  const loadPage = async (page: number, forceReload = false) => {
+  const loadPage = useCallback(async (page: number, forceReload = false) => {
     if (!state.committedQuery) {
       return;
     }
@@ -114,7 +114,7 @@ export default function SearchClient() {
     } finally {
       setState((prev) => ({ ...prev, loading: false }));
     }
-  };
+  }, [cacheByPage, cursorByPage, queryInput, state.committedQuery]);
 
   const submitSearch = useCallback((nextQuery: string) => {
     const trimmed = nextQuery.trim();
@@ -176,8 +176,42 @@ export default function SearchClient() {
       return;
     }
 
-    void loadPage(1, true);
-  }, [state.committedQuery, state.filters, state.sortBy]);
+    let isActive = true;
+
+    const loadFirstPage = async () => {
+      setState((prev) => ({ ...prev, loading: true, error: null }));
+
+      try {
+        const result = await ProductService.queryProducts({
+          ...queryInput,
+          startAfterDoc: null,
+        });
+
+        if (!isActive) return;
+
+        setState((prev) => ({ ...prev, results: result.items, currentPage: 1 }));
+        setCacheByPage({ 1: result.items });
+        setHasMoreByPage({ 1: result.hasMore });
+        setCursorByPage({ 1: null, 2: result.nextCursor as SearchCursor });
+      } catch (error) {
+        if (!isActive) return;
+        setState((prev) => ({
+          ...prev,
+          error: error instanceof Error ? error.message : '검색 결과를 불러오지 못했습니다.',
+        }));
+      } finally {
+        if (isActive) {
+          setState((prev) => ({ ...prev, loading: false }));
+        }
+      }
+    };
+
+    void loadFirstPage();
+
+    return () => {
+      isActive = false;
+    };
+  }, [state.committedQuery, state.filters, state.sortBy, queryInput]);
 
   const handleSortChange = useCallback((value: string) => {
     const [field, order] = value.split('-') as [ProductSort['field'], ProductSort['order']];

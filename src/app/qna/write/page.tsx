@@ -32,7 +32,10 @@ export default function QnAWritePage() {
     { value: 'other', label: '기타' },
   ];
 
-  const handleInputChange = (field: keyof CreateQnAData, value: any) => {
+  const handleInputChange = (
+    field: keyof CreateQnAData,
+    value: CreateQnAData[keyof CreateQnAData]
+  ) => {
     setFormData(prev => ({
       ...prev,
       [field]: value

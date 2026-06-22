@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/authProvider';
@@ -247,10 +248,12 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
         <div className={styles.imageSection}>
           <div className={styles.mainImage}>
             {product.mainImage ? (
-              <img 
-                src={product.mainImage} 
+              <Image
+                src={product.mainImage}
                 alt={product.name}
                 className={styles.productImage}
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
               />
             ) : (
               <div className={styles.imagePlaceholder}></div>
@@ -261,7 +264,12 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
             <div className={styles.thumbnails}>
               {product.images.map((image, index) => (
                 <div key={index} className={styles.thumbnail}>
-                  <img src={image} alt={`${product.name} ${index + 1}`} />
+                  <Image
+                    src={image}
+                    alt={`${product.name} ${index + 1}`}
+                    fill
+                    sizes="80px"
+                  />
                 </div>
               ))}
             </div>
@@ -407,7 +415,12 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
               >
                 <div className={styles.relatedImage}>
                   {relatedProduct.mainImage ? (
-                    <img src={relatedProduct.mainImage} alt={relatedProduct.name} />
+                    <Image
+                      src={relatedProduct.mainImage}
+                      alt={relatedProduct.name}
+                      fill
+                      sizes="(max-width: 768px) 50vw, 25vw"
+                    />
                   ) : (
                     <div className={styles.relatedPlaceholder}></div>
                   )}

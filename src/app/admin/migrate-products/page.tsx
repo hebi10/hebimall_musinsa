@@ -4,6 +4,15 @@ import { useState } from 'react';
 import { collection, doc, deleteDoc, getDocs, setDoc } from 'firebase/firestore';
 import { db } from '@/shared/libs/firebase/firebase';
 
+interface MigrationResult {
+  from: string;
+  to: string;
+  count?: number;
+  fromCount?: number;
+  toCount?: number;
+  status: string;
+}
+
 const migrations = [
   { from: '가방', to: 'bags' },
   { from: '상의', to: 'tops' },
@@ -14,7 +23,7 @@ const migrations = [
 export default function MigrateProducts() {
   const [status, setStatus] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [results, setResults] = useState<any[]>([]);
+  const [results, setResults] = useState<MigrationResult[]>([]);
 
   const migrateAllProducts = async () => {
     setIsLoading(true);
@@ -164,7 +173,7 @@ export default function MigrateProducts() {
               <div key={index} className="border p-4 rounded">
                 <div className="flex justify-between items-center">
                   <h3 className="font-semibold text-lg">
-                    "{result.from}" → "{result.to}"
+                    &quot;{result.from}&quot; → &quot;{result.to}&quot;
                   </h3>
                   <span className={`px-3 py-1 rounded text-sm ${
                     result.status === '완료' ? 'bg-green-100 text-green-800' :

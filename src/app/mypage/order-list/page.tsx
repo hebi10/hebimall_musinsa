@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useCallback, useState, useEffect } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import styles from './page.module.css';
 import { useAuth } from '@/context/authProvider';
@@ -8,7 +9,7 @@ import { OrderService } from '@/shared/services/orderService';
 import { Order, OrderStatus } from '@/shared/types/order';
 
 export default function OrderListPage() {
-  const { user, userData, loading, isAdmin } = useAuth();
+  const { user, loading } = useAuth();
   const [selectedStatus, setSelectedStatus] = useState<string>('전체');
   const [selectedPeriod, setSelectedPeriod] = useState<string>('3개월');
   const [orders, setOrders] = useState<Order[]>([]);
@@ -17,7 +18,7 @@ export default function OrderListPage() {
   const [cancellingOrderId, setCancellingOrderId] = useState<string | null>(null);
 
   // 주문 데이터 로드
-  const loadOrders = async () => {
+  const loadOrders = useCallback(async () => {
     if (!user?.uid) {
       console.log('No user UID available');
       return;
@@ -31,20 +32,20 @@ export default function OrderListPage() {
       console.log('Orders loaded:', userOrders.length, 'orders');
       console.log('First order sample:', userOrders[0]);
       setOrders(userOrders);
-    } catch (err: any) {
+    } catch (err) {
       console.error('주문 목록 로드 실패:', err);
+      const errorDetail = err instanceof Error ? err : null;
       console.error('Error details:', {
-        message: err.message,
-        code: err.code,
-        stack: err.stack
+        message: errorDetail?.message,
+        stack: errorDetail?.stack
       });
       
       // 사용자 친화적인 에러 메시지 처리
-      let errorMessage = err.message || '주문 목록을 불러오는데 실패했습니다.';
+      let errorMessage = errorDetail?.message || '주문 목록을 불러오는데 실패했습니다.';
       
-      if (err.message?.includes('시스템 준비')) {
+      if (errorDetail?.message?.includes('시스템 준비')) {
         errorMessage = '시스템 업데이트 중입니다. 잠시 후 다시 시도해주세요.';
-      } else if (err.message?.includes('index')) {
+      } else if (errorDetail?.message?.includes('index')) {
         errorMessage = '데이터베이스 최적화 중입니다. 잠시만 기다려주세요.';
       }
       
@@ -52,7 +53,7 @@ export default function OrderListPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [user?.uid]);
 
   // 주문 취소 함수
   const handleCancelOrder = async (orderId: string, orderNumber: string, order: Order) => {
@@ -76,13 +77,14 @@ export default function OrderListPage() {
       await loadOrders();
       
       alert(`주문이 성공적으로 취소되었습니다.\n\n포인트/쿠폰이 복원되었습니다.\n결제금액은 2-3일 내 환불 예정입니다.`);
-    } catch (error: any) {
+    } catch (error) {
       console.error('주문 취소 실패:', error);
+      const message = error instanceof Error ? error.message : '';
       
       let errorMessage = '주문 취소에 실패했습니다.';
-      if (error.message?.includes('이미 취소')) {
+      if (message.includes('이미 취소')) {
         errorMessage = '이미 취소된 주문입니다.';
-      } else if (error.message?.includes('배송')) {
+      } else if (message.includes('배송')) {
         errorMessage = '배송이 시작된 주문은 취소할 수 없습니다.\n고객센터로 문의해주세요.';
       }
       
@@ -96,7 +98,25 @@ export default function OrderListPage() {
     if (user?.uid) {
       loadOrders();
     }
-  }, [user?.uid]);
+  }, [user?.uid, loadOrders]);
+
+  const getProductImageSrc = (imageUrl?: string) => {
+    if (imageUrl && imageUrl.includes('firebasestorage.googleapis.com')) {
+      try {
+        const url = new URL(imageUrl);
+        url.search = 'alt=media';
+        return url.toString();
+      } catch {
+        return '/tshirt-1.jpg';
+      }
+    }
+
+    if (imageUrl && imageUrl.startsWith('/')) {
+      return imageUrl;
+    }
+
+    return '/tshirt-1.jpg';
+  };
 
   if (loading) return <div>로딩 중...</div>;
   if (!user) return <div>로그인이 필요합니다.</div>;
@@ -288,54 +308,12 @@ export default function OrderListPage() {
                   {order.products.map((product) => (
                     <div key={product.id} className={styles.productItem}>
                       <div className={styles.productImage}>
-                        <img 
-                          src={(() => {
-                            let imageUrl = product.productImage;
-                            
-                            // Firebase Storage URL 처리
-                            if (imageUrl && imageUrl.includes('firebasestorage.googleapis.com')) {
-                              // Firebase Storage URL에서 토큰 제거하고 alt=media 추가
-                              try {
-                                const url = new URL(imageUrl);
-                                // 기존 쿼리 파라미터 제거하고 alt=media만 추가
-                                url.search = 'alt=media';
-                                const cleanUrl = url.toString();
-                                console.log('Cleaned Firebase URL:', cleanUrl);
-                                return cleanUrl;
-                              } catch (e) {
-                                console.log('Firebase URL parsing failed, using fallback');
-                                return '/tshirt-1.jpg';
-                              }
-                            }
-                            
-                            // 로컬 이미지 경로 처리
-                            if (imageUrl && imageUrl.startsWith('/')) {
-                              return imageUrl;
-                            }
-                            
-                            // 빈 값이거나 유효하지 않은 경우 기본 이미지
-                            return '/tshirt-1.jpg';
-                          })()} 
+                        <Image
+                          src={getProductImageSrc(product.productImage)}
                           alt={product.productName || '상품 이미지'}
                           className={styles.productImg}
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            console.log('Image load failed:', target.src);
-                            
-                            // 이미 폴백 이미지인 경우 추가 시도 안함
-                            if (target.src.includes('tshirt-1.jpg') || 
-                                target.src.includes('shirt-2.jpg') || 
-                                target.src.includes('product-placeholder.jpg')) {
-                              return;
-                            }
-                            
-                            // 폴백 순서: tshirt-1.jpg → shirt-2.jpg → product-placeholder.jpg
-                            target.src = '/tshirt-1.jpg';
-                          }}
-                          onLoad={() => {
-                            console.log('Image loaded:', product.productName);
-                          }}
-                          loading="lazy"
+                          fill
+                          sizes="96px"
                         />
                       </div>
                       <div className={styles.productInfo}>

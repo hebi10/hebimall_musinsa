@@ -1,8 +1,6 @@
-import { notFound } from 'next/navigation';
 import { EventProvider } from '@/context/eventProvider';
 import EventNavigation from '@/app/admin/events/_components/EventNavigation';
 import styles from './page.module.css';
-import { EventService } from '@/shared/services/eventService';
 
 // 동적 배포에서는 generateStaticParams 불필요
 
