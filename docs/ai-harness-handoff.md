@@ -12,10 +12,10 @@
    - 배송조회 mock/test 안내, 영문 editorial 문구, 준비중 이미지 문구, 가짜 공지 표현을 쇼핑몰 운영 문맥으로 교체했다.
    - 관리자 사용자 쿠폰의 가짜 지급 성공/최근 지급 이력을 제거하고, 관리자 리뷰는 Firestore 조회 기반 상태로 전환했다.
 
-3. ESLint warning 0개 정리
-   - `functions/src/**`, `src/shared/**`, `src/context/**`, `src/app/**` 전반의 warning을 제거했다.
-   - 주요 처리: `any` 구체화, unused 제거, Hook 의존성 보정, `next/image`/`Link` 전환, unescaped entity 정리.
-   - warning 제거 후 생긴 `unknown` 타입 오류는 실제 폼/API 타입과 값 좁히기 헬퍼로 보정했다.
+3. 저장소 산출물 정리
+   - `.gstack/qa-reports`, `tmp`, `tmp-edge-profile-single`, 루트 dev 로그, 검색 백업 페이지, 관리자 임시 라우트, 일회성 check/fix/seed/test 스크립트를 제거했다.
+   - `package.json`의 `seed`는 삭제된 `seed-data.js` 대신 `seed:all`로 연결했다.
+   - `.gitignore`에 `artifacts/`, `tmp/`, `tmp-edge-profile-single/`, `.gstack/qa-reports/`, `*.log`를 추가했다.
 
 ### 보존한 의도
 - 포트폴리오/개인 연락처 안내 문구는 면접관이 포트폴리오임을 구분해야 하므로 제거하지 않고 유지했다.
@@ -28,4 +28,4 @@
 
 ### 제한/남은 작업
 1. 로컬 Next dev/build는 이 환경에서 `spawn EPERM`으로 실행되지 않아 실제 화면 재캡처는 완료하지 못했다.
-2. Chrome 캡처는 `artifacts/screenshots/chrome-localhost-3000-error.png`에 dev 서버 실패 상태만 남아 있다.
+2. `artifacts/dev-server.err` 계열 일부 ignored 파일은 프로세스 잠금으로 실제 파일 삭제가 제한될 수 있다. Git 추적 대상에서는 제외했다.

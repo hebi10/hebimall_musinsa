@@ -12,8 +12,6 @@
 - `src/shared/types/event.ts`
 - `src/mocks/eventCatalog2026.json`
 - `src/mocks/event.ts`
-- `scripts/seed-events.js`
-- `scripts/generate-event-assets.js`
 - `src/app/events/[eventId]/page.tsx`
 - `src/app/events/[eventId]/EventDetailClient.tsx`
 - `src/app/events/[eventId]/EventDetailClient.module.css`
@@ -44,8 +42,8 @@
 - 2026-06-05: 목록 대표 배너와 카드 이미지를 `getEventDisplayImages()` 기준으로 렌더링하고, 상세 배너는 단일 대형 이미지 대신 이미지 + 혜택 요약 패널의 에디토리얼 기획전형 블록으로 재구성했다.
 - 2026-06-05: mock 이벤트 기간과 이미지 경로를 현재 사용 가능한 `/main/hero_editorial_*` 자산으로 맞춰 Firestore fallback 상황에서도 종료된 2024 이벤트나 깨진 이미지가 보이지 않게 했다.
 - 2026-06-05: 모바일에서 쇼핑 안내 버튼은 768px 이하에서 숨기고, 채팅 버튼은 640px 이하에서 짧은 `상담` 버튼으로 줄여 이벤트/상세 하단 CTA를 덜 압박하도록 조정했다. `/auth/*`에서는 기존처럼 플로팅 UI가 렌더링되지 않는다.
-- 2026-06-05: 2026년 1월~8월 월별 2~3개씩 총 20개 이벤트 카탈로그를 `src/mocks/eventCatalog2026.json`으로 추가했다. `src/mocks/event.ts`와 `scripts/seed-events.js`는 같은 카탈로그를 사용한다.
-- 2026-06-05: 이벤트별 전신 모델컷 source 20개를 이미지 생성 기능으로 만들고, `scripts/generate-event-assets.js`로 한글 이벤트 문구가 들어간 `banner.webp`/`thumb.webp` 40개를 `public/events/2026/`에 생성했다.
+- 2026-06-05: 2026년 1월~8월 월별 2~3개씩 총 20개 이벤트 카탈로그를 `src/mocks/eventCatalog2026.json`으로 추가했다. `src/mocks/event.ts`는 같은 카탈로그를 사용한다.
+- 2026-06-05: 이벤트별 전신 모델컷 source 20개와 한글 이벤트 문구가 들어간 `banner.webp`/`thumb.webp` 40개를 `public/events/2026/`에 생성했다. 생성용 일회성 스크립트는 저장소 정리 과정에서 제거했다.
 - 2026-06-05: 모델컷이 잘리는 문제를 줄이기 위해 목록/상세 배너 이미지는 `object-position: right center` 기준으로 보정했고, 최종 이벤트 배너는 UI 컨테이너와 맞는 `1600x820` 비율로 생성한다.
 - 2026-06-05: 카드 미리보기 썸네일은 축소 시 흰 텍스트 박스가 어수선하게 보이지 않도록 텍스트 합성을 제거하고, 전신 모델컷 중심의 클린 이미지로 재생성했다. 이벤트명/혜택/기간은 카드 UI에서 별도로 표시한다.
 - 2026-06-05: Chrome 확인 중 Firestore에는 기존 2개 이벤트만 있어 신규 20개 이벤트 상세가 404로 뜨는 문제가 확인됐다. 사용자 이벤트 목록은 Firestore 이벤트와 로컬 2026 카탈로그를 병합하고, 상세 라우트는 Firestore에 문서가 없으면 로컬 카탈로그로 조회하도록 보정했다.
@@ -62,7 +60,7 @@
 - 장점: Firestore seed 전에도 사용자 이벤트 목록/상세에서는 로컬 2026 카탈로그 이벤트가 보조 데이터로 노출되어 신규 이벤트 QA가 가능하다.
 - 장점: 문구가 합성된 `banner`, 카드용 `thumb`, 텍스트 없는 `detail` 역할을 분리했고, 목록 대표 히어로와 상세 페이지는 오버레이 UI와 겹치지 않도록 `detail` 이미지를 사용한다.
 - 보완점: `getTotalParticipants()`가 제한 없는 이벤트 포함 시 `제한 없음`을 표시해 통계 카드의 의미가 어색할 수 있다.
-- 보완점: Firestore upsert는 로컬 Google Application Default Credentials가 없어 실행하지 못했다. 인증 후 `node scripts/seed-events.js`를 실행해야 실제 DB에 반영된다.
+- 보완점: Firestore upsert는 로컬 Google Application Default Credentials가 없어 실행하지 못했다. 현재 사용자 화면은 로컬 2026 카탈로그 fallback을 병합해 표시한다.
 
 ## 우선 개선 포인트
 - 1순위: 이벤트 통계 카드의 총 참여자 표기를 숫자 합산 기준으로 바꿀지 정책을 정한다.

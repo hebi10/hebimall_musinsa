@@ -59,7 +59,6 @@ npm run migrate:firestore:validate
 
 ## Notes for this repository
 
-- Existing scripts such as `scripts/migrate-products.js` are historical and move data in the
-  opposite direction. They should not be reused for this migration.
+- Historical one-off migration scripts were removed during cleanup. Use only the `npm run migrate:firestore:*` commands above for this migration path.
 - Current source code in `src/` is coupled to the nested category product structure, so
   the migration script alone is not enough for cutover.

@@ -18,5 +18,5 @@
 - API 캐시 정책 및 debug 경로 정리 : api-cache-debug-route.md
 - QnA 비밀글 검증 구조 정리 : qna-secret-password.md
 - 주문 생성 서버화 : order-serverization.md
-- 구매 흐름 보정 작업 계획 : superpowers/plans/2026-05-12-purchase-flow-fix.md
+- Firestore 상품 마이그레이션 계획 : firestore-migration-plan.md
 - 품질 게이트/CI 스크립트 정리 : quality-gates.md
