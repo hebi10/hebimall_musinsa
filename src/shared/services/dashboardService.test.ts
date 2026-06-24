@@ -1,7 +1,7 @@
 import { DashboardService } from './dashboardService';
 import { CouponService } from './couponService';
 import { EventService } from './eventService';
-import { UserService } from './adminUserService';
+import { AdminUserService } from './adminUserService';
 import { SimpleQnAService } from './simpleQnAService';
 import { InquiryService } from './inquiryService';
 import { ProductService } from './productService';
@@ -20,8 +20,8 @@ jest.mock('./eventService', () => ({
 }));
 
 jest.mock('./adminUserService', () => ({
-  UserService: {
-    getAllUsers: jest.fn(),
+  AdminUserService: {
+    getAllUsersSimple: jest.fn(),
   },
 }));
 
@@ -53,7 +53,7 @@ describe('DashboardService', () => {
   beforeEach(() => {
     jest.mocked(CouponService.getActiveCoupons).mockResolvedValue([]);
     jest.mocked(EventService.getActiveEvents).mockResolvedValue([]);
-    jest.mocked(UserService.getAllUsers).mockResolvedValue([]);
+    jest.mocked(AdminUserService.getAllUsersSimple).mockResolvedValue([]);
     jest.mocked(SimpleQnAService.getAllQnAs).mockResolvedValue([]);
     jest.mocked(InquiryService.getAllInquiries).mockResolvedValue([]);
     jest.mocked(ProductService.getAllProducts).mockResolvedValue([]);

@@ -69,3 +69,8 @@ src/shared/
 - 원인은 React Query에 `DashboardService.getDashboardStats` 정적 메서드 참조를 그대로 넘겨 호출 컨텍스트의 `this`가 사라진 것이다.
 - `DashboardService` 내부 정적 호출을 클래스명 기준으로 바꾸고, `useDashboardQuery`의 `queryFn`은 래퍼 함수로 호출하도록 정리했다.
 - 분리 호출 회귀 테스트 `src/shared/services/dashboardService.test.ts`를 추가했다.
+
+## 2026-06-24 Ponytail 정리
+
+- `DashboardService`가 호환용 `UserService` 래퍼 대신 `AdminUserService.getAllUsersSimple()`을 직접 호출하도록 정리했다.
+- 참조되지 않던 옛 `useDashboard` 훅은 제거하고 React Query 기반 `useDashboardQuery`만 유지한다.

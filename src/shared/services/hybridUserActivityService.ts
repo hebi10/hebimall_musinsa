@@ -495,7 +495,3 @@ export class HybridUserActivityService {
     localStorage.removeItem(`${WISHLIST_KEY}_${userId}`);
   }
 }
-
-// 기존 서비스들과의 호환성을 위한 별칭
-export class UserActivityService extends HybridUserActivityService {}
-export class LocalUserActivityService extends HybridUserActivityService {}

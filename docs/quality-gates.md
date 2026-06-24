@@ -63,3 +63,7 @@
 - `functions/src/**`, `src/shared/**`, `src/context/**`, `src/app/**` 전반의 기존 ESLint warning을 정리했다.
 - 주요 정리 항목은 `any` 타입 구체화, unused 제거, Hook 의존성 보정, anonymous default export 이름 지정, unescaped entity 처리, `next/image`/`Link` 전환이다.
 - 최종 검증에서 `npm run lint -- --max-warnings=0`, `npm run typecheck`, `npm test`, `npm run functions:build`가 모두 통과했다.
+
+## 2026-06-24 Ponytail 정리 검증
+- 참조되지 않는 유틸/상수/API 래퍼/컴포넌트와 미사용 직접 의존성 5개를 제거했다.
+- 검증은 `npm run typecheck`, `npm run lint -- --max-warnings=0`, `npm test`, `npm run functions:build` 기준으로 확인한다.

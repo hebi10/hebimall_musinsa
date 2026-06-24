@@ -1,11 +1,10 @@
 import { CouponService } from './couponService';
 import { EventService } from './eventService';
-import { UserService } from './adminUserService';
+import { AdminUserData, AdminUserService } from './adminUserService';
 import { SimpleQnAService } from './simpleQnAService';
 import { InquiryService } from './inquiryService';
 import { OrderService } from './orderService';
 import { ProductService } from './productService';
-import { UserProfile } from '@/shared/types/user';
 import { Coupon } from '@/shared/types/coupon';
 import { Event } from '@/shared/types/event';
 import { QnA } from '@/shared/types/qna';
@@ -82,7 +81,7 @@ export class DashboardService {
     ] = await Promise.allSettled([
       CouponService.getActiveCoupons(),
       EventService.getActiveEvents(),
-      UserService.getAllUsers(),
+      AdminUserService.getAllUsersSimple(),
       SimpleQnAService.getAllQnAs(100),
       InquiryService.getAllInquiries(100),
       ProductService.getAllProducts(),
@@ -160,13 +159,9 @@ export class DashboardService {
     };
   }
 
-  static async getAllUsers(): Promise<UserProfile[]> {
-    return UserService.getAllUsers();
-  }
-
   static async getRealtimeStats(): Promise<Partial<DashboardStats>> {
     try {
-      const users = await DashboardService.getAllUsers();
+      const users = await AdminUserService.getAllUsersSimple();
 
       return {
         totalUsers: users.length,
@@ -364,7 +359,7 @@ export class DashboardService {
   }
 
   private static generateRecentActivities(
-    users: UserProfile[],
+    users: AdminUserData[],
     coupons: Coupon[],
     events: Event[],
     qnas: QnA[],

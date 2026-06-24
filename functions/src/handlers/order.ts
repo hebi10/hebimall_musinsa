@@ -1,18 +1,23 @@
 import { onRequest } from "firebase-functions/v2/https";
 import * as admin from "firebase-admin";
 import type { Response } from "express";
-import { calculateDeliveryFee, calculateDiscountedUnitPrice } from "../domain/orderDomain";
+import {
+  calculateCouponDiscount,
+  calculateDeliveryFee,
+  calculateDiscountedUnitPrice,
+  mapCartTotal,
+  normalizeDeliveryOption,
+  normalizeItems,
+  normalizePaymentMethod,
+  parseDate,
+  parseDeliveryAddress,
+  parseItems,
+  toNonNegativeInteger,
+  toNumber,
+  toStringValue,
+  toTodayString,
+} from "../domain/orderDomain";
 import { AuthContext, AuthError, verifyAuthContext } from "../utils/auth";
-
-type DeliveryOption = "standard" | "express";
-
-interface RawOrderItem {
-  productId?: unknown;
-  size?: unknown;
-  color?: unknown;
-  quantity?: unknown;
-  id?: unknown;
-}
 
 interface RawCreateOrderRequest {
   action?: unknown;
@@ -37,14 +42,6 @@ interface RawCancelOrderRequest {
   reason?: unknown;
 }
 
-interface NormalizedOrderItem {
-  productId: string;
-  size: string;
-  color: string;
-  quantity: number;
-  cartItemIds: string[];
-}
-
 interface ResolvedOrderItem {
   productId: string;
   productName: string;
@@ -55,17 +52,6 @@ interface ResolvedOrderItem {
   price: number;
   discountAmount: number;
   brand: string;
-}
-
-interface DeliveryAddress {
-  id: string;
-  name: string;
-  recipient: string;
-  phone: string;
-  address: string;
-  detailAddress: string;
-  zipCode: string;
-  isDefault: boolean;
 }
 
 interface ProductRef {
@@ -84,36 +70,16 @@ interface CancellationRestorationRefs {
   userCouponData: admin.firestore.DocumentData | null;
 }
 
-interface CartItemSummary {
-  quantity?: unknown;
-  price?: unknown;
-}
-
 const NO_STORE_HEADERS = {
   "Cache-Control": "no-store, max-age=0",
   Pragma: "no-cache",
   Expires: "0",
 };
 
-const VALID_PAYMENT_METHODS = new Set([
-  "card",
-  "bank",
-  "virtual",
-  "phone",
-  "cash",
-  "card_transfer",
-  "bank_transfer",
-  "virtual_account",
-  "point",
-]);
-
 const USER_COUPON_AVAILABLE_STATUSES = ["사용가능", "available", "ACTIVE"];
 const USER_COUPON_USED_STATUSES = ["사용완료", "used"];
 const USER_COUPON_EXPIRED_STATUSES = ["기간만료", "expired", "만료됨"];
 
-const COUPON_PERCENT_TYPES = ["퍼센트", "percent", "할인율"];
-const COUPON_AMOUNT_TYPES = ["금액", "amount", "할인금액"];
-const COUPON_FREE_SHIPPING_TYPES = ["무료배송", "free_shipping"];
 const VALID_ORDER_STATUSES = new Set([
   "pending",
   "confirmed",
@@ -144,184 +110,12 @@ function applyNoStoreHeaders(response: Response): void {
   });
 }
 
-function toStringValue(value: unknown): string {
-  if (typeof value === "string") {
-    return value.trim();
-  }
-  return "";
-}
-
-function toNonNegativeInteger(value: unknown): number {
-  const num = typeof value === "number" ? value : Number(value);
-  if (!Number.isFinite(num)) {
-    return 0;
-  }
-  return Math.max(0, Math.floor(num));
-}
-
-function toNumber(value: unknown, fallback = 0): number {
-  const num = typeof value === "number" ? value : Number(value);
-  if (!Number.isFinite(num)) {
-    return fallback;
-  }
-  return num;
-}
-
-function normalizePaymentMethod(value: unknown): string {
-  const method = toStringValue(value);
-  return method && VALID_PAYMENT_METHODS.has(method) ? method : "card";
-}
-
-function normalizeDeliveryOption(value: unknown): DeliveryOption {
-  const option = toStringValue(value);
-  return option === "express" ? "express" : "standard";
-}
-
 function normalizeOrderStatus(value: unknown): string {
   const status = toStringValue(value);
   if (!VALID_ORDER_STATUSES.has(status)) {
     throw new Error("Invalid order status.");
   }
   return status;
-}
-
-function normalizeBoolean(value: unknown): boolean {
-  return value === true;
-}
-
-function parseDeliveryAddress(value: unknown): DeliveryAddress {
-  if (!value || typeof value !== "object") {
-    throw new Error("deliveryAddress is required.");
-  }
-
-  const payload = value as Record<string, unknown>;
-  const address: DeliveryAddress = {
-    id: toStringValue(payload.id),
-    name: toStringValue(payload.name),
-    recipient: toStringValue(payload.recipient),
-    phone: toStringValue(payload.phone),
-    address: toStringValue(payload.address),
-    detailAddress: toStringValue(payload.detailAddress),
-    zipCode: toStringValue(payload.zipCode),
-    isDefault: normalizeBoolean(payload.isDefault),
-  };
-
-  if (!address.id || !address.name || !address.recipient || !address.phone || !address.address || !address.zipCode) {
-    throw new Error("deliveryAddress is required.");
-  }
-
-  return address;
-}
-
-function parseItems(rawItems: unknown): RawOrderItem[] {
-  if (!Array.isArray(rawItems) || rawItems.length === 0) {
-    return [];
-  }
-
-  return rawItems.filter((item): item is RawOrderItem => !!item && typeof item === "object");
-}
-
-function normalizeItems(rawItems: RawOrderItem[]): NormalizedOrderItem[] {
-  const groupedItems = new Map<string, NormalizedOrderItem>();
-
-  for (const rawItem of rawItems) {
-    const productId = toStringValue(rawItem.productId);
-    if (!productId) {
-      throw new Error("item.productId is required.");
-    }
-
-    const size = toStringValue(rawItem.size) || "default";
-    const color = toStringValue(rawItem.color) || "default";
-    const quantity = toNonNegativeInteger(rawItem.quantity);
-    if (quantity <= 0) {
-      throw new Error(`item.quantity must be greater than 0: ${productId}`);
-    }
-
-    const itemId = toStringValue(rawItem.id) || `${productId}-${size}-${color}`;
-    const key = `${productId}|${size}|${color}`;
-
-    const current = groupedItems.get(key);
-    if (current) {
-      current.quantity += quantity;
-      if (!current.cartItemIds.includes(itemId)) {
-        current.cartItemIds.push(itemId);
-      }
-      continue;
-    }
-
-    groupedItems.set(key, {
-      productId,
-      size,
-      color,
-      quantity,
-      cartItemIds: [itemId],
-    });
-  }
-
-  return Array.from(groupedItems.values());
-}
-
-function parseDate(value: unknown): Date | null {
-  if (value instanceof Date) {
-    return value;
-  }
-
-  if (value && typeof value === "object" && "toDate" in value) {
-    const maybeDate = (value as { toDate: () => Date }).toDate();
-    return maybeDate instanceof Date && Number.isFinite(maybeDate.getTime()) ? maybeDate : null;
-  }
-
-  const date = new Date(toStringValue(value));
-  return Number.isFinite(date.getTime()) ? date : null;
-}
-
-function toTodayString(value: Date): string {
-  return value.toISOString().split("T")[0];
-}
-
-function calculateCouponDiscount(totalAmount: number, couponData: admin.firestore.DocumentData): {
-  discount: number;
-  freeShipping: boolean;
-} {
-  const couponType = toStringValue(couponData.type);
-  const couponValue = toNumber(couponData.value, 0);
-
-  if (COUPON_PERCENT_TYPES.includes(couponType)) {
-    return {
-      discount: Math.floor(totalAmount * Math.min(100, Math.max(0, couponValue)) / 100),
-      freeShipping: false,
-    };
-  }
-
-  if (COUPON_AMOUNT_TYPES.includes(couponType)) {
-    return {
-      discount: Math.min(totalAmount, Math.max(0, couponValue)),
-      freeShipping: false,
-    };
-  }
-
-  return {
-    discount: 0,
-    freeShipping: COUPON_FREE_SHIPPING_TYPES.includes(couponType),
-  };
-}
-
-function mapCartTotal(items: Array<Record<string, unknown> | CartItemSummary>): {
-  totalAmount: number;
-  totalItems: number;
-} {
-  let totalAmount = 0;
-  let totalItems = 0;
-
-  for (const item of items) {
-    const data = item as Record<string, unknown>;
-    const quantity = toNonNegativeInteger(data.quantity);
-    const price = toNumber(data.price, 0);
-    totalAmount += quantity * price;
-    totalItems += quantity;
-  }
-
-  return { totalAmount, totalItems };
 }
 
 async function findProductSnapshot(
