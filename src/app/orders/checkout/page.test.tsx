@@ -19,6 +19,13 @@ jest.mock('next/link', () => ({
   ),
 }));
 
+jest.mock('@tanstack/react-query', () => ({
+  useQueryClient: () => ({
+    invalidateQueries: jest.fn(),
+    refetchQueries: jest.fn(),
+  }),
+}));
+
 jest.mock('../../_components/PageHeader', () => ({
   __esModule: true,
   default: ({ title, description }: { title: string; description?: string }) => (
@@ -44,6 +51,13 @@ jest.mock('@/context/pointProvider', () => ({
 jest.mock('@/shared/services/orderService', () => ({
   OrderService: {
     createOrder: jest.fn(),
+  },
+}));
+
+jest.mock('@/shared/hooks/useCart', () => ({
+  cartKeys: {
+    list: (userId: string) => ['cart', 'list', userId],
+    count: (userId: string) => ['cart', 'count', userId],
   },
 }));
 

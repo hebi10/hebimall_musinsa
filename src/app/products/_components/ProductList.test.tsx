@@ -21,6 +21,12 @@ jest.mock('@/shared/services/productService', () => ({
   },
 }));
 
+jest.mock('@/shared/utils/categoryUtils', () => ({
+  getDefaultCategoryNames: () => ({
+    bags: '가방',
+  }),
+}));
+
 describe('ProductList loading state', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -36,5 +42,17 @@ describe('ProductList loading state', () => {
       expect(screen.getByRole('status')).toHaveTextContent('상품 목록을 불러오는 중입니다');
     });
     expect(screen.getAllByLabelText('상품 목록 로딩 카드')).toHaveLength(6);
+  });
+
+  test('renders known category ids with Korean labels', async () => {
+    (ProductService.getCategories as jest.Mock).mockResolvedValue(['bags']);
+    (ProductService.queryProducts as jest.Mock).mockResolvedValue({
+      items: [],
+      hasMore: false,
+    });
+
+    render(<ProductList />);
+
+    expect(await screen.findByRole('option', { name: '가방' })).toHaveValue('bags');
   });
 });

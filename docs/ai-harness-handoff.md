@@ -2,31 +2,29 @@
 - 없음: 사용자가 커밋을 요청하지 않음.
 
 ### 인수인계
-1. 전체 리뷰 결론
-   - STYNA는 실운영 쇼핑몰보다 "운영 신뢰까지 설계한 패션 이커머스 포트폴리오"로 포지셔닝하는 것이 강하다.
-   - 차별점은 AI 상담보다 서버 주문 생성, 쿠폰/포인트 검증, QnA 비밀글, 관리자 운영 흐름이다.
-   - 실결제 미연동, 샘플/실데이터 경계, 배포 Functions 최신성은 평가자가 오해하지 않도록 명시가 필요하다.
+1. 민감 Function 캐시/포인트/쿠폰 경계 정리 완료
+   - `points`, `coupon`, `adminUsers` Function에 `no-store`를 적용했고, 회원가입 보너스는 `signupBonus` transaction으로 분리했다.
+   - 관리자 포인트 변경은 `/api/points`, 쿠폰 `register`/`issue`는 transaction 경유로 정리했다.
+   - `verify` 스크립트를 추가했고 `deploy:firebase`가 `verify` 성공 후 배포하도록 바꿨다.
 
-2. 개발 리스크
-   - `points`, `coupon`, `adminUsers` Function은 Firebase Hosting rewrite로 Next middleware를 우회하므로 Function 자체 no-store 헤더가 필요하다.
-   - 회원가입은 `/api/points`에 `action: add`를 호출하지만 서버는 관리자만 허용해 보너스 포인트 지급이 실패할 수 있다.
-   - 관리자 포인트 직접 Firestore 쓰기, 쿠폰 발급/등록 트랜잭션 부재, Rules 테스트 부재, 배포 전 CI 강제 부재가 남은 상위 리스크다.
+2. Chrome 주문 흐름 QA
+   - 일반 회원으로 상품 선택, 장바구니, 포인트 5,000P 적용, 서버 주문 생성, 주문 완료, 마이페이지 노출을 확인했다.
+   - 관리자 주문 관리에서 `결제 대기 -> 주문 확인 -> 주문 취소`를 실행했고, 취소 후 포인트 5,000P와 상품 재고 38개 복원을 확인했다.
+   - 사용 가능한 쿠폰 데이터가 없어 실주문 쿠폰 적용/복원은 미검증이다.
 
-3. 디자인/UX 리스크
-   - 오래된 CSS를 하단 override로 덮는 구조, 헤더 active/aria-current 부재, 전역 focus-visible/link 구분 부족이 남아 있다.
-   - 모바일 상품 목록에서 상담 플로팅 버튼이 필터 영역을 가리고, 초기 로딩 상태가 첫인상을 과하게 차지한다.
+3. QA에서 확인한 개선점
+   - 상품 목록 카테고리 표시명, 색상 스와치 접근성 이름, 상품 대표 이미지 priority, 주문 목록 key, checkout 장바구니 캐시 무효화를 보정했다.
+   - 상품 목록 Firestore 인덱스 파일은 갱신했지만 실제 콘솔 fallback 제거에는 인덱스 배포가 필요하다.
 
 ### 보존한 의도
-- 상품 수 100개 이하 포트폴리오에서는 전체 스캔 fallback을 무리하게 제거하기보다 안정적인 데모와 명확한 로딩/실패 상태가 우선이다.
-- 1000개 이상 운영을 목표로 하면 홈/추천/검색/관리자 목록을 쿼리+커서/검색 인덱스/요약 문서로 분리해야 한다.
+- `points.add`는 관리자 전용으로 유지했다. 일반 회원가입은 별도 `signupBonus`만 허용한다.
+- 실결제 연동, Rules 테스트 추가, 상품 조회 구조 개편은 이번 범위에서 제외했다.
 
 ### 검증
-- `npm run ci`: 통과.
-- `npm run build`: 통과, 66개 App Router 페이지 생성.
-- Chrome 채널 Playwright CLI로 `artifacts/review-*.png` 화면 캡처 확인. 기본 Playwright 브라우저는 미설치라 `--channel=chrome`을 사용했다.
-- gstack browse는 `server.ts` 탐색 실패로 사용하지 못했다.
+- `npm test -- --runTestsByPath functions/__tests__/httpHandlers.test.ts src/shared/services/adminUserService.test.ts --runInBand`: 통과.
+- `npm run typecheck`, `npm run lint -- --max-warnings=0`, `npm test`, `npm run functions:build`: 통과.
+- `npm run verify`: 통과.
 
 ### 제한/남은 작업
-1. 1순위: Function no-store, 회원가입 포인트, 관리자 포인트 서버화, 쿠폰 transaction, Rules 테스트, `verify`/배포 스크립트 순서로 닫는다.
-2. 2순위: checkout/complete/푸터/README에 실결제 미연동과 포트폴리오 범위를 작고 명확하게 표시한다.
-3. 3순위: 헤더 active, 전역 focus-visible, 모바일 플로팅 버튼 위치, 오래된 CSS override 제거를 페이지 단위로 정리한다.
+1. 최신 테스트 쿠폰 데이터를 준비해 쿠폰 적용/취소 복원까지 Chrome에서 재검증한다.
+2. Firestore 인덱스 배포, Firestore/Storage Rules 테스트, 실결제 미연동 고지는 별도 작업으로 남아 있다.

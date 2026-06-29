@@ -4,11 +4,13 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { QueryDocumentSnapshot, DocumentData } from 'firebase/firestore';
 import { Product, ProductSort } from '@/shared/types/product';
 import { ProductQueryInput, ProductService } from '@/shared/services/productService';
+import { getDefaultCategoryNames } from '@/shared/utils/categoryUtils';
 import ProductCard from './ProductCard';
 import styles from './ProductList.module.css';
 
 const ITEMS_PER_PAGE = 12;
 const DEFAULT_PRICE_MAX = 1_000_000;
+const categoryNames = getDefaultCategoryNames();
 
 type PageCursor = QueryDocumentSnapshot<DocumentData> | null;
 
@@ -258,7 +260,7 @@ export default function ProductList() {
             <option value="">전체 카테고리</option>
             {categories.map((categoryId) => (
               <option key={categoryId} value={categoryId}>
-                {categoryId}
+                {categoryNames[categoryId] || categoryId}
               </option>
             ))}
           </select>

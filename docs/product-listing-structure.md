@@ -38,3 +38,4 @@
 - 2026-06-05: `queryProducts()`의 Firestore 복합 쿼리가 인덱스/range+orderBy 제약으로 실패하면 최상위 `products`를 1회 읽고 동일 필터·정렬을 클라이언트에서 적용하는 fallback을 추가했다. `/products` 오류 화면과 `/categories/clothing -> tops`의 빈 카테고리 오인 표시를 막기 위한 복구 경로다.
 - 2026-06-22: `/categories` 카드의 아이콘 없는 상태에서 `이미지 준비중` 문구를 노출하지 않고 카테고리명을 fallback으로 보여 주도록 정리했다.
 - 2026-06-24: 참조되지 않는 옛 `src/components/products/ProductCard` 구현을 삭제하고 실제 상품 카드는 `src/app/products/_components/ProductCard`만 남겼다.
+- 2026-06-29: `/products` 카테고리 필터는 `categoryUtils`의 기본 한국어 매핑을 사용해 `accessories`, `bags` 같은 id 대신 표시명을 보여 준다. 상품 목록의 `categoryId + status + createdAt + __name__` 쿼리용 Firestore 인덱스도 추가했다.

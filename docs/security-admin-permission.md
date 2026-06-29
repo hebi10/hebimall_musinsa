@@ -41,6 +41,9 @@
 - 2026-05-12: 브랜드 목록용 `brandSummaries/{brandId}`는 공개 읽기, 관리자 쓰기 규칙을 추가했다. 상품 상세 데이터가 아닌 공개 목록 요약 데이터로 취급한다.
 - 2026-05-12: Storage Rules의 관리자 판정도 Firestore/Functions/클라이언트와 같이 `admin == true` 또는 `role == "admin"` custom claim 기준으로 통일했다.
 - 2026-06-12: 로컬 Next dev에서도 `/api/admin/users`가 Cloud Function `adminUsers`로 프록시되도록 App Router route를 추가했다. 관리자 권한 변경은 로컬 확인 시에도 custom claim 검증 Function 경계를 거친다.
+- 2026-06-29: Firebase Hosting rewrite가 Next middleware를 우회해도 민감 응답이 캐시되지 않도록 `adminUsers`, `points`, `coupon` Function 자체에 `no-store` 헤더를 적용했다.
+- 2026-06-29: 관리자 포인트 지급/차감은 클라이언트 Firestore 직접 쓰기 대신 `/api/points` 서버 경계를 거치도록 변경했다.
+- 2026-06-29: 회원가입 보너스 포인트는 일반 사용자가 `add` 액션을 호출하지 않고 `signupBonus` 액션에서 사용자당 1회 transaction으로 지급한다.
 
 ## 남은 확인
 - 일반 계정으로 `/admin` 접속 시 Unauthorized UI 분기와 비로그인 이동 UX는 통합 점검 필요.

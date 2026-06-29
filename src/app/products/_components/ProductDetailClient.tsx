@@ -287,6 +287,7 @@ export default function ProductDetailClient({ product }: Props) {
                 onError={() => handleImageError(selectedImageIndex)}
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
+                priority
               />
             ) : (
               <div className={styles.noImage}>
@@ -394,6 +395,7 @@ export default function ProductDetailClient({ product }: Props) {
                       className={`${styles.colorButton} ${selectedColor === color ? styles.selected : ''}`}
                       onClick={() => setSelectedColor(color)}
                       title={color}
+                      aria-label={`${color} 색상 선택`}
                       disabled={!inStock}
                       style={{ backgroundColor: getProductColorValue(color) }}
                     />

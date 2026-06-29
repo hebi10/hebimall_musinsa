@@ -1,6 +1,7 @@
  "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import PageHeader from "../../_components/PageHeader";
@@ -8,6 +9,7 @@ import { useAuth } from "@/context/authProvider";
 import { useCoupon } from "@/context/couponProvider";
 import { usePoint } from "@/context/pointProvider";
 import { OrderService } from "@/shared/services/orderService";
+import { cartKeys } from "@/shared/hooks/useCart";
 import { calculateOrderPreview } from "@/shared/utils/orderPricing";
 import { CheckoutDraft, parseCheckoutDraft } from "./checkoutDraft";
 import { buildCheckoutDeliveryAddresses, DeliveryAddress } from "./deliveryAddress";
@@ -27,6 +29,7 @@ const addressLabels: Record<string, string> = {
 
 export default function CheckoutPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { user, userData, loading: authLoading } = useAuth();
   const { userCoupons } = useCoupon();
   const { pointBalance } = usePoint();
@@ -112,7 +115,7 @@ export default function CheckoutPage() {
   };
 
   const handleCompleteOrder = async () => {
-    if (!orderData || !selectedAddress || !agreeTerms) {
+    if (!user || !orderData || !selectedAddress || !agreeTerms) {
       alert("필수 정보를 입력해주세요.");
       return;
     }
@@ -149,6 +152,8 @@ export default function CheckoutPage() {
       });
 
       sessionStorage.setItem("orderResult", JSON.stringify({ orderId: response.orderId }));
+      await queryClient.invalidateQueries({ queryKey: cartKeys.list(user.uid) });
+      await queryClient.refetchQueries({ queryKey: cartKeys.count(user.uid), type: "active" });
       router.push(`/orders/complete?orderId=${encodeURIComponent(response.orderId)}`);
     } catch (error) {
       console.error("order create failed:", error);

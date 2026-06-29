@@ -11,6 +11,8 @@
 - `npm test`: Jest 전체 테스트를 `--runInBand`로 실행해 Windows spawn 오류 가능성을 낮춘다.
 - `npm run test:functions`: `functions/__tests__`만 실행.
 - `npm run ci`: `typecheck -> lint -> test -> functions:build` 순서로 실행.
+- `npm run verify`: `typecheck -> lint -- --max-warnings=0 -> test -> functions:build -> build` 순서로 배포 전 전체 검증을 실행한다.
+- `npm run deploy:firebase`: `verify`를 먼저 통과한 뒤 Next 산출물 복사와 Firebase 배포를 실행한다.
 
 ## ESLint 구성
 - `eslint.config.mjs`는 Next 15 문서의 flat config 예시를 따라 `FlatCompat`와 `next/core-web-vitals`, `next/typescript`를 사용한다.
@@ -67,3 +69,8 @@
 ## 2026-06-24 Ponytail 정리 검증
 - 참조되지 않는 유틸/상수/API 래퍼/컴포넌트와 미사용 직접 의존성 5개를 제거했다.
 - 검증은 `npm run typecheck`, `npm run lint -- --max-warnings=0`, `npm test`, `npm run functions:build` 기준으로 확인한다.
+
+## 2026-06-29 배포 전 검증 강화
+- `verify` 스크립트를 추가해 lint warning 0개, Jest, Functions 빌드, Next 빌드를 한 번에 확인한다.
+- `deploy:firebase`는 `verify` 성공 후에만 `copy-next-to-functions`와 `firebase deploy`를 실행한다.
+- `functions/__tests__/httpHandlers.test.ts`, `src/shared/services/adminUserService.test.ts`로 민감 Function no-store, 회원가입 포인트 transaction, 쿠폰 발급 transaction, 관리자 포인트 API 경유를 검증한다.

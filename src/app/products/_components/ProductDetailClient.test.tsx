@@ -174,4 +174,10 @@ describe('ProductDetailClient detail images', () => {
     const detailImage = screen.getByRole('img', { name: '블루 사파이어 칵테일 반지 상세 이미지 1' });
     expect(decodeURIComponent(detailImage.getAttribute('src') || '')).toContain('/detail-ring.webp');
   });
+
+  test('names color swatches for assistive technology', () => {
+    render(<ProductDetailClient product={product} />);
+
+    expect(screen.getByRole('button', { name: 'white gold 색상 선택' })).toBeInTheDocument();
+  });
 });

@@ -68,7 +68,13 @@ scripts/seed-coupons.ts              # 시드 데이터
 - 2026-05-12: 주문 생성 시 주문 문서에 `userCouponId`, `couponId`를 저장하고, 주문 취소 트랜잭션에서 해당 `user_coupons` 문서의 상태를 `사용가능`으로 복원한다.
 - 2026-06-12: 로컬 Next dev에서도 `/api/coupon`이 Cloud Function `coupon`으로 프록시되도록 App Router route를 추가했다. 쿠폰 등록/관리 액션은 로컬과 배포 환경 모두 같은 서버 검증 경계를 사용한다.
 - 2026-06-22: `action: "issue"`는 코드 없는 직접 발급 쿠폰만 허용하도록 제한했다. 코드 쿠폰은 `register` 액션을 통해서만 등록되며, 비활성/만료/발급 한도 초과 쿠폰은 서버에서 차단한다.
+- 2026-06-29: Firebase Hosting rewrite가 Next middleware를 우회해도 민감 응답이 캐시되지 않도록 `coupon` Function 자체에 `no-store` 헤더를 적용했다.
+- 2026-06-29: `register`/`issue`의 중복 확인, 발급 한도 확인, `user_coupons` 생성, `usedCount` 증가를 Firestore transaction 안에서 처리하도록 정리했다.
 
 ## 미구현
 
 - 만료 임박 알림
+
+## 2026-06-29 Chrome 주문 QA 메모
+- 일반 회원 계정의 장바구니 쿠폰 드롭다운은 렌더링됐지만 현재 계정에 사용 가능한 쿠폰이 없어 실제 쿠폰 할인/복원은 Chrome 실주문에서 검증하지 못했다.
+- 시드 쿠폰 만료일이 2024~2025년 중심이라 2026-06-29 기준 실사용 쿠폰 QA에는 최신 테스트 쿠폰 데이터가 필요하다.
