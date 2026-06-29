@@ -1,17 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-import type { Swiper as SwiperInstance } from 'swiper';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination, Autoplay, EffectFade } from 'swiper/modules';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import styles from './MainBanner.module.css';
-
-import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/pagination';
-import 'swiper/css/effect-fade';
 
 interface BannerSlide {
   id: number;
@@ -28,6 +20,8 @@ interface BannerSlide {
   imagePosition?: string;
   meta: string[];
 }
+
+const SLIDE_DELAY_MS = 5000;
 
 const bannerSlides: BannerSlide[] = [
   {
@@ -83,99 +77,90 @@ const bannerSlides: BannerSlide[] = [
 export default function MainBanner() {
   const [activeIndex, setActiveIndex] = useState(0);
 
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setActiveIndex((index) => (index + 1) % bannerSlides.length);
+    }, SLIDE_DELAY_MS);
+
+    return () => window.clearInterval(timer);
+  }, []);
+
+  const showPrevious = () => {
+    setActiveIndex((index) => (index - 1 + bannerSlides.length) % bannerSlides.length);
+  };
+
+  const showNext = () => {
+    setActiveIndex((index) => (index + 1) % bannerSlides.length);
+  };
+
   return (
     <section className={styles.bannerSection}>
       <div className={styles.bannerFrame}>
-        <Swiper
-          modules={[Navigation, Pagination, Autoplay, EffectFade]}
-          spaceBetween={0}
-          slidesPerView={1}
-          navigation={{
-            nextEl: `.${styles.swiperButtonNext}`,
-            prevEl: `.${styles.swiperButtonPrev}`,
-          }}
-          pagination={{
-            el: `.${styles.swiperPagination}`,
-            clickable: true,
-            renderBullet: (index, className) =>
-              `<span class="${className} ${styles.paginationBullet}"></span>`,
-          }}
-          autoplay={{
-            delay: 5000,
-            disableOnInteraction: false,
-          }}
-          effect="fade"
-          fadeEffect={{
-            crossFade: true,
-          }}
-          speed={900}
-          loop={true}
-          onSlideChange={(swiper: SwiperInstance) =>
-            setActiveIndex(swiper.realIndex)
-          }
-          className={styles.bannerSwiper}
-        >
+        <div className={styles.bannerCarousel}>
           {bannerSlides.map((slide, index) => (
-            <SwiperSlide key={slide.id}>
-              <div className={styles.bannerSlide} data-tone={slide.tone}>
+            <div
+              key={slide.id}
+              className={`${styles.bannerSlide} ${index === activeIndex ? styles.activeSlide : ''}`}
+              data-tone={slide.tone}
+              aria-hidden={index !== activeIndex}
+            >
+              <Image
+                src={slide.image}
+                alt={`${slide.title} 배너 이미지`}
+                fill
+                priority={index === 0}
+                sizes="100vw"
+                className={`${styles.bannerBackground} ${styles.desktopBackground}`}
+                style={{ objectPosition: slide.imagePosition ?? 'center center' }}
+              />
+              {slide.mobileImage && (
                 <Image
-                  src={slide.image}
-                  alt={`${slide.title} 배너 이미지`}
+                  src={slide.mobileImage}
+                  alt=""
                   fill
                   priority={index === 0}
                   sizes="100vw"
-                  className={`${styles.bannerBackground} ${styles.desktopBackground}`}
-                  style={{ objectPosition: slide.imagePosition ?? 'center center' }}
+                  className={`${styles.bannerBackground} ${styles.mobileBackground}`}
+                  aria-hidden="true"
                 />
-                {slide.mobileImage && (
-                  <Image
-                    src={slide.mobileImage}
-                    alt=""
-                    fill
-                    priority={index === 0}
-                    sizes="100vw"
-                    className={`${styles.bannerBackground} ${styles.mobileBackground}`}
-                    aria-hidden="true"
-                  />
-                )}
-                <div className={styles.bannerBackdrop}></div>
+              )}
+              <div className={styles.bannerBackdrop}></div>
 
-                <div className={styles.bannerContent}>
-                  <div className={styles.copyPanel}>
-                    <div className={styles.copyHeader}>
-                      <span className={styles.bannerEyebrow}>{slide.eyebrow}</span>
-                      <span className={styles.bannerCounterMobile}>
-                        {String(slide.id).padStart(2, '0')}
+              <div className={styles.bannerContent}>
+                <div className={styles.copyPanel}>
+                  <div className={styles.copyHeader}>
+                    <span className={styles.bannerEyebrow}>{slide.eyebrow}</span>
+                    <span className={styles.bannerCounterMobile}>
+                      {String(slide.id).padStart(2, '0')}
+                    </span>
+                  </div>
+
+                  <h1 className={styles.bannerTitle}>{slide.title}</h1>
+                  <p className={styles.bannerDescription}>{slide.description}</p>
+
+                  <div className={styles.bannerMetaList}>
+                    {slide.meta.map((item) => (
+                      <span key={item} className={styles.bannerMetaItem}>
+                        {item}
                       </span>
-                    </div>
+                    ))}
+                  </div>
 
-                    <h1 className={styles.bannerTitle}>{slide.title}</h1>
-                    <p className={styles.bannerDescription}>{slide.description}</p>
-
-                    <div className={styles.bannerMetaList}>
-                      {slide.meta.map((item) => (
-                        <span key={item} className={styles.bannerMetaItem}>
-                          {item}
-                        </span>
-                      ))}
-                    </div>
-
-                    <div className={styles.bannerActions}>
-                      <Link href={slide.primaryLink} className={styles.primaryAction}>
-                        {slide.primaryLabel}
-                        <span className={styles.buttonArrow}>→</span>
-                      </Link>
-                      <Link
-                        href={slide.secondaryLink}
-                        className={styles.secondaryAction}
-                      >
-                        {slide.secondaryLabel}
-                      </Link>
-                    </div>
+                  <div className={styles.bannerActions}>
+                    <Link href={slide.primaryLink} className={styles.primaryAction}>
+                      {slide.primaryLabel}
+                      <span className={styles.buttonArrow}>→</span>
+                    </Link>
+                    <Link
+                      href={slide.secondaryLink}
+                      className={styles.secondaryAction}
+                    >
+                      {slide.secondaryLabel}
+                    </Link>
                   </div>
                 </div>
               </div>
-            </SwiperSlide>
+            </div>
           ))}
 
           <div className={styles.controlBar}>
@@ -185,51 +170,40 @@ export default function MainBanner() {
             </div>
 
             <div className={styles.controlCenter}>
-              <div className={styles.swiperPagination}></div>
+              <div className={styles.pagination}>
+                {bannerSlides.map((slide, index) => (
+                  <button
+                    key={slide.id}
+                    type="button"
+                    className={`${styles.paginationBullet} ${index === activeIndex ? styles.activeBullet : ''}`}
+                    onClick={() => setActiveIndex(index)}
+                    aria-label={`${slide.id}번 배너 보기`}
+                    aria-current={index === activeIndex}
+                  />
+                ))}
+              </div>
             </div>
 
             <div className={styles.controlButtons}>
               <button
                 type="button"
-                className={styles.swiperButtonPrev}
-                aria-label="이전 슬라이드"
+                className={styles.navButton}
+                aria-label="이전 배너"
+                onClick={showPrevious}
               >
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M15 18L9 12L15 6"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                ‹
               </button>
               <button
                 type="button"
-                className={styles.swiperButtonNext}
-                aria-label="다음 슬라이드"
+                className={styles.navButton}
+                aria-label="다음 배너"
+                onClick={showNext}
               >
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M9 18L15 12L9 6"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                ›
               </button>
             </div>
           </div>
-        </Swiper>
+        </div>
       </div>
     </section>
   );

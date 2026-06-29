@@ -106,3 +106,8 @@ npm run migrate:content-images:delete-originals
 - 샘플 상품 `products/ZEMIfgpl9ZLAG8lgkMub`는 상세 본문에서 `detailImages[]`를 읽어 세로형 WebP를 렌더링하도록 클라이언트가 준비됐다.
 - 상세 이미지도 기존 상품 이미지와 같은 카테고리 경로를 사용하되 파일명에 `detail` 용도를 포함한다. 예: `images/accessories/{productId}/{timestamp}_detail_0_q75.webp`.
 - 2026-05-12 현재 작업 환경은 Google OAuth/Firestore/Storage 요청이 프록시 `127.0.0.1:9 ECONNREFUSED`로 차단되어 실제 업로드와 Firestore 문서 갱신은 네트워크 가능한 환경에서 재실행해야 한다.
+
+## 2026-06-29 WebP 스크립트 정리
+
+- 상품/콘텐츠 WebP 마이그레이션의 Storage URL 파싱, WebP 경로 생성, 변환, 로그 쓰기 공통 로직을 `scripts/webp-migration-utils.js`로 분리했다.
+- 각 스크립트는 대상 컬렉션/필드 처리만 유지한다.

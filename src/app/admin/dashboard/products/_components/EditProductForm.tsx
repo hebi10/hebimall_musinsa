@@ -251,7 +251,7 @@ export default function EditProductForm({ product, onSave, onCancel }: EditProdu
       // Firebase Storage에 업로드
       const uploadResults = await uploadProductImages(
         Array.from(files),
-        product.category,
+        basicFields.category || product.category || 'others',
         product.id,
         (progress: number, fileName: string) => {
           setUploadProgress(prev => ({

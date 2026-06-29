@@ -74,3 +74,9 @@ src/shared/
 
 - `DashboardService`가 호환용 `UserService` 래퍼 대신 `AdminUserService.getAllUsersSimple()`을 직접 호출하도록 정리했다.
 - 참조되지 않던 옛 `useDashboard` 훅은 제거하고 React Query 기반 `useDashboardQuery`만 유지한다.
+
+## 2026-06-29 Ponytail 삭제 정리
+
+- mock 통계/주문/활동을 보여 주던 `/admin/dashboard/dashboard` 구형 대시보드를 삭제했다.
+- `/admin/dashboard`는 실제 데이터 대시보드인 `/admin`으로 바로 redirect한다.
+- 관리자 사용자/주문 페이지 내부의 중복 헤더/Nav/logout 렌더는 상위 `admin/layout`에 맡기도록 제거했다.

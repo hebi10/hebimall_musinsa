@@ -7,19 +7,32 @@
   overflow: hidden;
 }
 
-.bannerSwiper {
+.bannerCarousel {
+  position: relative;
   width: 100%;
-  height: 100%;
+  min-height: 380px;
+  overflow: hidden;
+  background: #161310;
 }
 
 .bannerSlide {
-  position: relative;
+  position: absolute;
+  inset: 0;
   min-height: 380px;
   overflow: hidden;
   background: #161310;
   --banner-accent: #e3d0bc;
   --banner-glow: rgba(227, 208, 188, 0.12);
   isolation: isolate;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.9s ease;
+}
+
+.activeSlide {
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 1;
 }
 
 .bannerSlide[data-tone="new"] {
@@ -70,11 +83,6 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 3rem 1rem 4.5rem;
-}
-
-:global(.swiper-slide:not(.swiper-slide-active)) .bannerContent {
-  opacity: 0;
-  pointer-events: none;
 }
 
 .copyPanel {
@@ -259,7 +267,7 @@
   justify-content: center;
 }
 
-.swiperPagination {
+.pagination {
   display: flex;
   gap: 0.5rem;
   align-items: center;
@@ -268,6 +276,8 @@
 .paginationBullet {
   width: 28px;
   height: 3px;
+  padding: 0;
+  border: 0;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.28);
   cursor: pointer;
@@ -278,7 +288,7 @@
   background: rgba(255, 255, 255, 0.5);
 }
 
-:global(.swiper-pagination-bullet-active).paginationBullet {
+.activeBullet {
   background: var(--color-white);
 }
 
@@ -287,8 +297,7 @@
   gap: 0.5rem;
 }
 
-.swiperButtonPrev,
-.swiperButtonNext {
+.navButton {
   position: static;
   width: 34px;
   height: 34px;
@@ -301,22 +310,21 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  font-size: 1.35rem;
+  line-height: 1;
   transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
-.swiperButtonPrev:hover,
-.swiperButtonNext:hover {
+.navButton:hover {
   background: rgba(255, 255, 255, 0.18);
   border-color: rgba(255, 255, 255, 0.3);
 }
 
-.swiperButtonPrev svg,
-.swiperButtonNext svg {
-  width: 18px;
-  height: 18px;
-}
-
 @media (max-width: 1024px) {
+  .bannerCarousel {
+    min-height: 360px;
+  }
+
   .bannerContent {
     min-height: 360px;
     padding: 2.5rem 1rem 4.5rem;
@@ -336,6 +344,7 @@
 }
 
 @media (max-width: 768px) {
+  .bannerCarousel,
   .bannerSlide {
     min-height: 460px;
   }
@@ -415,6 +424,7 @@
 }
 
 @media (max-width: 480px) {
+  .bannerCarousel,
   .bannerSlide {
     min-height: 430px;
   }
@@ -459,7 +469,7 @@
     border-radius: 999px;
   }
 
-  :global(.swiper-pagination-bullet-active).paginationBullet {
+  .activeBullet {
     width: 8px;
   }
 
@@ -467,8 +477,7 @@
     gap: 0.35rem;
   }
 
-  .swiperButtonPrev,
-  .swiperButtonNext {
+  .navButton {
     width: 32px;
     height: 32px;
   }

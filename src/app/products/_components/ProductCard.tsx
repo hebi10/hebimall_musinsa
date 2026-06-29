@@ -1,9 +1,9 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useUserActivity } from '@/context/userActivityProvider';
-import CachedImage from '@/shared/components/CachedImage';
 import { getProductPricing } from '@/shared/utils/productPricing';
 import { getProductReviewStats } from '@/shared/utils/syncProductReviews';
 import styles from './ProductCard.module.css';
@@ -105,16 +105,19 @@ export default function ProductCard({
         .join(' ')}
     >
       <div className={styles.imageContainer}>
-        <CachedImage
-          src={image}
-          alt={name}
-          className={styles.image}
-          fallback={
-            <div className={styles.placeholder}>
-              <span>이미지 준비중</span>
-            </div>
-          }
-        />
+        {image ? (
+          <Image
+            src={image}
+            alt={name}
+            fill
+            sizes="(max-width: 768px) 50vw, 25vw"
+            className={styles.image}
+          />
+        ) : (
+          <div className={styles.placeholder}>
+            <span>이미지 준비중</span>
+          </div>
+        )}
         
         {/* 배지들 */}
         <div className={styles.badges}>

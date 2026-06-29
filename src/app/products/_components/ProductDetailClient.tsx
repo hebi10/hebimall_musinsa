@@ -8,7 +8,6 @@ import { useProduct } from '@/context/productProvider';
 import { useAuth } from '@/context/authProvider';
 import { useUserActivity } from '@/context/userActivityProvider';
 import { useAddToCart } from '@/shared/hooks/useCart';
-import { useProductImageCache } from '@/shared/hooks/useImageCache';
 import { getProductReviewStats } from '@/shared/utils/syncProductReviews';
 import { getProductColorValue } from '@/shared/utils/productColor';
 import { getProductPricing } from '@/shared/utils/productPricing';
@@ -32,9 +31,6 @@ export default function ProductDetailClient({ product }: Props) {
   } = useProduct();
 
   const addToCartMutation = useAddToCart();
-
-  // 상품 이미지 캐싱
-  useProductImageCache(product, !!product);
 
   const [selectedSize, setSelectedSize] = useState<string>('');
   const [selectedColor, setSelectedColor] = useState<string>('');

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useAuth } from "@/context/authProvider";
 import { useCartItemCount } from "@/shared/hooks/useCart";
 import { CategoryOrderService } from "@/shared/services/categoryOrderService";
+import { DEFAULT_CATEGORY_IDS, getDefaultCategoryNames } from "@/shared/utils/categoryUtils";
 import styles from "./Header.module.css";
 
 interface HeaderCategory {
@@ -18,12 +19,12 @@ interface HeaderNavItem {
   href: string;
 }
 
-const DEFAULT_CATEGORIES: HeaderCategory[] = [
-  { id: "clothing", name: "의류", href: "/categories/clothing" },
-  { id: "bags", name: "가방", href: "/categories/bags" },
-  { id: "accessories", name: "액세서리", href: "/categories/accessories" },
-  { id: "outdoor", name: "아웃도어", href: "/categories/outdoor" },
-];
+const DEFAULT_CATEGORY_NAMES = getDefaultCategoryNames();
+const DEFAULT_CATEGORIES: HeaderCategory[] = DEFAULT_CATEGORY_IDS.slice(0, 4).map((id) => ({
+  id,
+  name: DEFAULT_CATEGORY_NAMES[id] || id,
+  href: `/categories/${id}`,
+}));
 
 const SUPPORT_LINKS: HeaderNavItem[] = [
   { label: "이벤트", href: "/events" },

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from "next/link";
 import Image from "next/image";
 import { CategoryOrderService } from '@/shared/services/categoryOrderService';
+import { DEFAULT_CATEGORY_IDS, getDefaultCategoryNames } from '@/shared/utils/categoryUtils';
 import styles from '../page.module.css';
 
 interface CategoryCardProps {
@@ -19,6 +20,27 @@ interface CategoryCardProps {
 interface DynamicCategorySectionProps {
   maxCategories?: number;
   className?: string;
+}
+
+const CATEGORY_IMAGES = [
+  '/category/main_category01.png',
+  '/category/main_category02.png',
+  '/category/main_category03.png',
+  '/category/main_category04.png',
+];
+
+function getFallbackCategories(maxCategories: number): CategoryCardProps[] {
+  const categoryNames = getDefaultCategoryNames();
+
+  return DEFAULT_CATEGORY_IDS.slice(0, maxCategories).map((id, index) => ({
+    id,
+    name: categoryNames[id] || id,
+    slug: id,
+    href: `/categories/${id}`,
+    icon: '',
+    image: CATEGORY_IMAGES[index] || CATEGORY_IMAGES[0],
+    count: '',
+  }));
 }
 
 export default function DynamicCategorySection({ 
@@ -40,13 +62,7 @@ export default function DynamicCategorySection({
         console.error('카테고리 로딩 실패:', err);
         setError('카테고리를 불러오는데 실패했습니다.');
         
-        // 에러 시 기본 카테고리 설정
-        setCategories([
-          { id: 'clothing', name: '의류', slug: 'clothing', href: '/categories/clothing', icon: '', image: '/category/main_category01.png', count: '' },
-          { id: 'bags', name: '가방', slug: 'bags', href: '/categories/bags', icon: '', image: '/category/main_category02.png', count: '' },
-          { id: 'accessories', name: '액세서리', slug: 'accessories', href: '/categories/accessories', icon: '', image: '/category/main_category03.png', count: '' },
-          { id: 'outdoor', name: '아웃도어', slug: 'outdoor', href: '/categories/outdoor', icon: '', image: '/category/main_category04.png', count: '' }
-        ]);
+        setCategories(getFallbackCategories(maxCategories));
       } finally {
         setLoading(false);
       }

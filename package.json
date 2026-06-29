@@ -50,8 +50,7 @@
     "next": "^15.5.7",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "sharp": "^0.34.5",
-    "swiper": "^12.0.1"
+    "sharp": "^0.34.5"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",

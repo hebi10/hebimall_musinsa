@@ -4,13 +4,12 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/authProvider";
 import styles from "./page.module.css";
-import AdminNav from "../../_components/adminNav";
 import { AdminUserService, AdminUserData, UserStats, UserFilter, PointOperation } from "@/shared/services/adminUserService";
 import { PointHistory } from "@/shared/types/point";
 
 export default function AdminUsersPage() {
   const router = useRouter();
-  const { user, isUserDataLoading, loading, isAdmin, logout } = useAuth();
+  const { user, isUserDataLoading, loading, isAdmin } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -192,17 +191,6 @@ export default function AdminUsersPage() {
     }).format(amount);
   };
 
-  // 로그아웃 핸들러
-  const handleLogout = async () => {
-    try {
-      await logout();
-    } catch (error) {
-      console.error('Logout error:', error);
-      // 에러가 발생해도 로그인 페이지로 강제 이동
-      router.push('/auth/login');
-    }
-  };
-
   const handleExport = async () => {
     try {
       const csvContent = await AdminUserService.exportUsersToCSV();
@@ -313,29 +301,6 @@ export default function AdminUsersPage() {
 
   return (
     <div className={styles.container}>
-      {/* 관리자 헤더 */}
-      <div className={styles.adminHeader}>
-        <div className={styles.headerContainer}>
-          <div className={styles.headerContent}>
-            <div className={styles.headerLeft}>
-              <h1 className={styles.adminTitle}>STYNA Admin</h1>
-              <AdminNav />
-            </div>
-            <div className={styles.headerRight}>
-              <div className={styles.userInfo}>
-                관리자
-              </div>
-              <button 
-                onClick={handleLogout} 
-                className={styles.logoutButton}
-              >
-                로그아웃
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <div className={styles.content}>
         {/* 페이지 헤더 */}
         <div className={styles.pageHeader}>

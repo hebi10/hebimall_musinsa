@@ -36,10 +36,6 @@ jest.mock('@/shared/hooks/useCart', () => ({
   useAddToCart: () => ({ mutateAsync: jest.fn() }),
 }));
 
-jest.mock('@/shared/hooks/useImageCache', () => ({
-  useProductImageCache: jest.fn(),
-}));
-
 jest.mock('@/shared/utils/syncProductReviews', () => ({
   getProductReviewStats: jest.fn(() => new Promise(() => undefined)),
 }));

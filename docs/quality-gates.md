@@ -74,3 +74,8 @@
 - `verify` 스크립트를 추가해 lint warning 0개, Jest, Functions 빌드, Next 빌드를 한 번에 확인한다.
 - `deploy:firebase`는 `verify` 성공 후에만 `copy-next-to-functions`와 `firebase deploy`를 실행한다.
 - `functions/__tests__/httpHandlers.test.ts`, `src/shared/services/adminUserService.test.ts`로 민감 Function no-store, 회원가입 포인트 transaction, 쿠폰 발급 transaction, 관리자 포인트 API 경유를 검증한다.
+
+## 2026-06-29 Ponytail 정리 검증
+
+- 과설계 레이어 삭제 후 `npm run typecheck`, `npm run lint -- --max-warnings=0`, `npm test`, `npm run functions:build`, `npm run build`를 통과했다.
+- 삭제된 route 타입 캐시 때문에 첫 typecheck가 `.next/types`에서 실패해 `.next/types`만 삭제 후 재실행했다.

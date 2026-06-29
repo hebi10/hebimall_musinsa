@@ -142,9 +142,7 @@ export default function CategoryOrderPage() {
   const resetToDefault = async () => {
     try {
       setLoading(true);
-      const defaultOrder = [
-        '상의', '하의', '신발', '스포츠', '아웃도어', '가방', '주얼리', '액세서리'
-      ];
+      const defaultOrder = CategoryOrderService.getDefaultOrderNames();
       
       // Firebase에 기본 순서 저장
       await CategoryOrderService.updateCategoryOrder(
