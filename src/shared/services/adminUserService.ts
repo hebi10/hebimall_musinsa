@@ -53,6 +53,29 @@ async function callAdminUsersAPI(action: string, data: Record<string, unknown>):
   }
 }
 
+async function callPointsAPI(action: string, data: Record<string, unknown>): Promise<void> {
+  const token = await getIdToken();
+  const response = await fetch('/api/points', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ action, ...data }),
+  });
+
+  let result: { success?: boolean; error?: string } = {};
+  try {
+    result = await response.json();
+  } catch {
+    result = { success: false, error: `HTTP ${response.status}` };
+  }
+
+  if (!response.ok || !result.success) {
+    throw new Error(result.error || '포인트 요청에 실패했습니다.');
+  }
+}
+
 export interface AdminUserData extends UserProfile {
   lastLogin: Date;
   orders: number;
@@ -317,40 +340,11 @@ export class AdminUserService {
   // 사용자 포인트 업데이트
   static async updateUserPoints(operation: PointOperation): Promise<void> {
     try {
-      const userRef = doc(db, COLLECTION_NAME, operation.userId);
-      const userDoc = await getDoc(userRef);
-      
-      if (!userDoc.exists()) {
-        throw new Error('사용자를 찾을 수 없습니다.');
-      }
-
-      const currentData = userDoc.data();
-      const currentBalance = currentData?.pointBalance || 0;
-      
-      let newBalance: number;
-      if (operation.type === 'add') {
-        newBalance = currentBalance + operation.amount;
-      } else {
-        newBalance = Math.max(0, currentBalance - operation.amount);
-      }
-
-      // 사용자 포인트 잔액 업데이트
-      await updateDoc(userRef, {
-        pointBalance: newBalance,
-        updatedAt: serverTimestamp(),
-      });
-
-      // 포인트 히스토리 추가
-      const pointHistoryRef = collection(db, COLLECTION_NAME, operation.userId, 'pointHistory');
-      await addDoc(pointHistoryRef, {
-        type: operation.type === 'add' ? 'earn' : 'use',
+      await callPointsAPI(operation.type === 'add' ? 'add' : 'subtract', {
+        userId: operation.userId,
         amount: operation.amount,
         description: operation.description,
-        date: serverTimestamp(),
-        balanceAfter: newBalance,
-        adminAction: true,
       });
-
  console.log(` 포인트 ${operation.type === 'add' ? '적립' : '차감'} 완료: ${operation.amount}원`);
     } catch (error) {
  console.error('Error updating user points:', error);

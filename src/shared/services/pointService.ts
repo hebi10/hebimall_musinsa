@@ -164,10 +164,8 @@ export class PointService {
    * 회원가입 포인트 적립 (5,000포인트)
    */
   static async addSignupPoint(): Promise<PointResponse> {
-    return this.addPoint({
-      amount: 5000,
-      description: '신규 회원가입 적립'
-    });
+    const result = await callPointsAPI('signupBonus');
+    return { success: true, newBalance: result.newBalance };
   }
 
   /**

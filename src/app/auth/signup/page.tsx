@@ -136,9 +136,7 @@ export default function SignupPage() {
               Authorization: `Bearer ${idToken}`,
             },
             body: JSON.stringify({
-              action: 'add',
-              amount: 5000,
-              description: '신규 회원가입 적립',
+              action: 'signupBonus',
             }),
           });
         }

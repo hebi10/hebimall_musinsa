@@ -1,6 +1,7 @@
 import { onRequest } from "firebase-functions/v2/https";
 import * as admin from "firebase-admin";
 import { requireAdmin, AuthError } from "../utils/auth";
+import { applyNoStoreHeaders } from "../utils/http";
 
 type UserRole = "user" | "admin";
 
@@ -22,6 +23,8 @@ export const adminUsers = onRequest(
     timeoutSeconds: 60,
   },
   async (req, res) => {
+    applyNoStoreHeaders(res);
+
     if (req.method === "OPTIONS") {
       res.status(204).send("");
       return;
