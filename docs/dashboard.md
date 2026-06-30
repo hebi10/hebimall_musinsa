@@ -70,12 +70,12 @@ src/shared/
 - `DashboardService` 내부 정적 호출을 클래스명 기준으로 바꾸고, `useDashboardQuery`의 `queryFn`은 래퍼 함수로 호출하도록 정리했다.
 - 분리 호출 회귀 테스트 `src/shared/services/dashboardService.test.ts`를 추가했다.
 
-## 2026-06-24 Ponytail 정리
+## 2026-06-24 대시보드 중복 정리
 
 - `DashboardService`가 호환용 `UserService` 래퍼 대신 `AdminUserService.getAllUsersSimple()`을 직접 호출하도록 정리했다.
 - 참조되지 않던 옛 `useDashboard` 훅은 제거하고 React Query 기반 `useDashboardQuery`만 유지한다.
 
-## 2026-06-29 Ponytail 삭제 정리
+## 2026-06-29 구형 대시보드 삭제 정리
 
 - mock 통계/주문/활동을 보여 주던 `/admin/dashboard/dashboard` 구형 대시보드를 삭제했다.
 - `/admin/dashboard`는 실제 데이터 대시보드인 `/admin`으로 바로 redirect한다.

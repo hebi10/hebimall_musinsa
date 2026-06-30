@@ -40,7 +40,7 @@
 - 2026-06-24: 참조되지 않는 옛 `src/components/products/ProductCard` 구현을 삭제하고 실제 상품 카드는 `src/app/products/_components/ProductCard`만 남겼다.
 - 2026-06-29: `/products` 카테고리 필터는 `categoryUtils`의 기본 한국어 매핑을 사용해 `accessories`, `bags` 같은 id 대신 표시명을 보여 준다. 상품 목록의 `categoryId + status + createdAt + __name__` 쿼리용 Firestore 인덱스도 추가했다.
 
-## 2026-06-29 Ponytail 상품/카테고리 정리
+## 2026-06-29 상품/카테고리 중복 정리
 
 - URL만 React Query에 넣어 돌려주던 이미지 캐시 레이어를 제거하고 `ProductCard`는 `next/image`를 직접 사용한다.
 - 카테고리 기본 id/name은 `categoryUtils`로 단일화했고 Header, CategoryProvider, fallback UI가 같은 기본값을 재사용한다.

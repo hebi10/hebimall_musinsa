@@ -7,6 +7,7 @@
 - 헤더 UI 정리 : header-ui.md
 - 이벤트 페이지 점검 : event-page-review.md
 - 메인 랭킹 UI 점검 : main-ranking-ui.md
+- 메인 상단 배너 작업 영역 : main-banner.md
 - 마이페이지 UI 점검 : mypage-ui.md
 - 인증 화면 UI 정리 : auth-ui.md
 - 상품 조회 구조 개선 : product-listing-structure.md
@@ -16,6 +17,7 @@
 - 쿠폰/포인트 정책 정리 : coupon-system.md
 - 스토리지 구조 정리 : storage-structure.md
 - API 캐시 정책 및 debug 경로 정리 : api-cache-debug-route.md
+- 환경 변수/배포 설정 : env-setup.md
 - QnA 비밀글 검증 구조 정리 : qna-secret-password.md
 - 주문 생성 서버화 : order-serverization.md
 - Firestore 상품 마이그레이션 계획 : firestore-migration-plan.md
