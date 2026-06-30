@@ -63,11 +63,12 @@
 
 .posterHeroTitle {
   margin: 0;
-  max-width: 10ch;
+  max-width: 16ch;
   color: #ffffff;
-  font-size: clamp(3rem, 7vw, 6.5rem);
-  font-weight: 800;
-  line-height: 0.96;
+  font-family: var(--font-heading);
+  font-size: clamp(1.5rem, 3.5vw, 3.25rem);
+  font-weight: 700;
+  line-height: 1.04;
   letter-spacing: 0;
   overflow-wrap: anywhere;
 }
@@ -287,9 +288,10 @@
 .eventTitle {
   margin: 0;
   color: #ffffff;
+  font-family: var(--font-heading);
   font-size: clamp(1.65rem, 3vw, 2.35rem);
-  font-weight: 800;
-  line-height: 1.08;
+  font-weight: 700;
+  line-height: 1.18;
   letter-spacing: 0;
   overflow-wrap: anywhere;
 }
@@ -519,8 +521,8 @@
   }
 
   .posterHeroTitle {
-    max-width: 12ch;
-    font-size: 2.35rem;
+    max-width: 16ch;
+    font-size: 1.18rem;
   }
 
   .posterHeroDescription {

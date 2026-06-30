@@ -2,7 +2,6 @@
 
 import { AuthProvider } from "@/context/authProvider";
 import { ProductProvider } from "@/context/productProvider";
-import { PointProvider } from "@/context/pointProvider";
 import { CategoryProvider } from "@/context/categoryProvider";
 import { ReviewProvider } from "@/context/reviewProvider";
 import { UserActivityProvider } from "@/context/userActivityProvider";
@@ -16,20 +15,18 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     <ReactQueryProvider>
       <AuthProvider>
         <CategoryProvider>
-          <PointProvider>
-            <ProductProvider>
-              <UserActivityProvider>
-                <ReviewProvider>
-                  <EventProvider>
-                    <CouponProvider>
-                      <ScrollToTop />
-                      {children}
-                    </CouponProvider>
-                  </EventProvider>
-                </ReviewProvider>
-              </UserActivityProvider>
-            </ProductProvider>
-          </PointProvider>
+          <ProductProvider>
+            <UserActivityProvider>
+              <ReviewProvider>
+                <EventProvider>
+                  <CouponProvider>
+                    <ScrollToTop />
+                    {children}
+                  </CouponProvider>
+                </EventProvider>
+              </ReviewProvider>
+            </UserActivityProvider>
+          </ProductProvider>
         </CategoryProvider>
       </AuthProvider>
     </ReactQueryProvider>

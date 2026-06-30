@@ -8,11 +8,29 @@ import { EventService } from '@/shared/services/eventService';
 import Button from '@/app/_components/Button';
 import styles from './AdminEventList.module.css';
 
+type AdminEventStatus = 'active' | 'upcoming' | 'ended' | 'inactive';
+type StatusFilter = 'all' | AdminEventStatus;
+type TypeFilter = 'all' | Event['eventType'];
+
+const EVENT_TYPE_LABELS: Record<Event['eventType'], string> = {
+  sale: '세일',
+  coupon: '쿠폰',
+  special: '특별',
+  new: '신상',
+};
+
+const STATUS_LABELS: Record<AdminEventStatus, string> = {
+  active: '진행중',
+  upcoming: '예정',
+  ended: '종료',
+  inactive: '비활성',
+};
+
 export default function AdminEventList() {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'ended'>('all');
-  const [filterType, setFilterType] = useState<'all' | 'sale' | 'coupon' | 'special' | 'new'>('all');
+  const [filterStatus, setFilterStatus] = useState<StatusFilter>('all');
+  const [filterType, setFilterType] = useState<TypeFilter>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedEvents, setSelectedEvents] = useState<string[]>([]);
 
@@ -33,8 +51,9 @@ export default function AdminEventList() {
     }
   };
 
-  const getEventStatus = (event: Event) => {
+  const getEventStatus = (event: Event): AdminEventStatus => {
     const now = new Date();
+    if (!event.isActive) return 'inactive';
     if (now < event.startDate) return 'upcoming';
     if (now > event.endDate) return 'ended';
     return 'active';
@@ -42,9 +61,7 @@ export default function AdminEventList() {
 
   const filteredEvents = events.filter(event => {
     const status = getEventStatus(event);
-    const matchesStatus = filterStatus === 'all' || 
-      (filterStatus === 'active' && status === 'active') ||
-      (filterStatus === 'ended' && status === 'ended');
+    const matchesStatus = filterStatus === 'all' || filterStatus === status;
     
     const matchesType = filterType === 'all' || event.eventType === filterType;
     
@@ -105,15 +122,7 @@ export default function AdminEventList() {
     }
   };
 
-  const getEventTypeLabel = (type: string) => {
-    switch (type) {
-      case 'sale': return '세일';
-      case 'coupon': return '쿠폰';
-      case 'special': return '특별';
-      case 'new': return '신상';
-      default: return type;
-    }
-  };
+  const getEventTypeLabel = (type: Event['eventType']) => EVENT_TYPE_LABELS[type];
 
   if (loading) {
     return (
@@ -136,6 +145,12 @@ export default function AdminEventList() {
             {events.filter(e => getEventStatus(e) === 'active').length}
           </div>
           <div className={styles.statLabel}>진행중</div>
+        </div>
+        <div className={styles.statItem}>
+          <div className={styles.statNumber}>
+            {events.filter(e => getEventStatus(e) === 'upcoming').length}
+          </div>
+          <div className={styles.statLabel}>예정</div>
         </div>
         <div className={styles.statItem}>
           <div className={styles.statNumber}>
@@ -166,18 +181,22 @@ export default function AdminEventList() {
         <div className={styles.filters}>
           <select
             value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value as 'all' | 'active' | 'ended')}
+            onChange={(e) => setFilterStatus(e.target.value as StatusFilter)}
             className={styles.statusFilter}
+            aria-label="이벤트 상태 필터"
           >
             <option value="all">전체 상태</option>
             <option value="active">진행중</option>
+            <option value="upcoming">예정</option>
             <option value="ended">종료</option>
+            <option value="inactive">비활성</option>
           </select>
 
           <select
             value={filterType}
-            onChange={(e) => setFilterType(e.target.value as 'all' | 'sale' | 'coupon' | 'special' | 'new')}
+            onChange={(e) => setFilterType(e.target.value as TypeFilter)}
             className={styles.typeFilter}
+            aria-label="이벤트 유형 필터"
           >
             <option value="all">전체 유형</option>
             <option value="sale">세일</option>
@@ -219,7 +238,6 @@ export default function AdminEventList() {
       {/* 이벤트 목록 */}
       <div className={styles.eventList}>
         {filteredEvents.map(event => {
-          console.log('Rendering event:', event); // 디버깅용
           const status = getEventStatus(event);
           return (
             <div key={event.id} className={styles.eventItem}>
@@ -249,21 +267,9 @@ export default function AdminEventList() {
                       <span className={`${styles.typeBadge} ${styles[event.eventType]}`}>
                         {getEventTypeLabel(event.eventType)}
                       </span>
-                      {status === 'active' && (
-                        <span className={`${styles.statusBadge} ${styles.active}`}>
-                          진행중
-                        </span>
-                      )}
-                      {status === 'ended' && (
-                        <span className={`${styles.statusBadge} ${styles.ended}`}>
-                          종료
-                        </span>
-                      )}
-                      {status === 'upcoming' && (
-                        <span className={`${styles.statusBadge} ${styles.upcoming}`}>
-                          예정
-                        </span>
-                      )}
+                      <span className={`${styles.statusBadge} ${styles[status]}`}>
+                        {STATUS_LABELS[status]}
+                      </span>
                     </div>
                   </div>
                   <div className={styles.eventDescription}>{event.description}</div>

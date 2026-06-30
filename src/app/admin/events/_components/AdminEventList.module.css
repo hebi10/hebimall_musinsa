@@ -205,6 +205,10 @@
   background: var(--color-primary);
 }
 
+.statusBadge.inactive {
+  background: var(--color-text-muted);
+}
+
 .eventDescription {
   color: var(--color-text-secondary);
   line-height: 1.5;

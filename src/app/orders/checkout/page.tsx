@@ -7,9 +7,9 @@ import Link from "next/link";
 import PageHeader from "../../_components/PageHeader";
 import { useAuth } from "@/context/authProvider";
 import { useCoupon } from "@/context/couponProvider";
-import { usePoint } from "@/context/pointProvider";
 import { OrderService } from "@/shared/services/orderService";
 import { cartKeys } from "@/shared/hooks/useCart";
+import { usePointBalance } from "@/shared/hooks/usePoint";
 import { calculateOrderPreview } from "@/shared/utils/orderPricing";
 import { CheckoutDraft, parseCheckoutDraft } from "./checkoutDraft";
 import { buildCheckoutDeliveryAddresses, DeliveryAddress } from "./deliveryAddress";
@@ -32,7 +32,8 @@ export default function CheckoutPage() {
   const queryClient = useQueryClient();
   const { user, userData, loading: authLoading } = useAuth();
   const { userCoupons } = useCoupon();
-  const { pointBalance } = usePoint();
+  const { data: pointBalanceData } = usePointBalance();
+  const pointBalance = pointBalanceData?.pointBalance ?? 0;
 
   const [orderData, setOrderData] = useState<CheckoutDraft | null>(null);
   const [selectedAddress, setSelectedAddress] = useState<DeliveryAddress | null>(null);

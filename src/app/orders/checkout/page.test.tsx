@@ -44,8 +44,8 @@ jest.mock('@/context/couponProvider', () => ({
   useCoupon: () => ({ userCoupons: [] }),
 }));
 
-jest.mock('@/context/pointProvider', () => ({
-  usePoint: () => ({ pointBalance: 0 }),
+jest.mock('@/shared/hooks/usePoint', () => ({
+  usePointBalance: () => ({ data: { pointBalance: 0 } }),
 }));
 
 jest.mock('@/shared/services/orderService', () => ({

@@ -15,7 +15,16 @@ interface MainBannerSlide {
   href: string;
   image: string;
   backgroundColor: string;
+  imagePosition?: string;
+  tabletImagePosition?: string;
+  mobileImagePosition?: string;
 }
+
+type BannerSlideStyle = CSSProperties & {
+  '--banner-image-position': string;
+  '--banner-image-position-tablet': string;
+  '--banner-image-position-mobile': string;
+};
 
 const SLIDE_DELAY_MS = 4500;
 
@@ -49,6 +58,9 @@ const bannerSlides: MainBannerSlide[] = [
     href: '/events/event-2026-07-cool-touch',
     image: '/main/main_event_cool_touch.webp',
     backgroundColor: '#b9c8cf',
+    imagePosition: '25% top',
+    tabletImagePosition: '45% top',
+    mobileImagePosition: '62% top',
   },
 ];
 
@@ -71,6 +83,14 @@ export default function MainBanner() {
     setActiveIndex((index) => (index + 1) % bannerSlides.length);
   };
 
+  const getSlideStyle = (slide: MainBannerSlide): BannerSlideStyle => ({
+    '--banner-image-position': slide.imagePosition ?? 'center top',
+    '--banner-image-position-tablet':
+      slide.tabletImagePosition ?? slide.imagePosition ?? '58% top',
+    '--banner-image-position-mobile':
+      slide.mobileImagePosition ?? slide.tabletImagePosition ?? '70% top',
+  });
+
   return (
     <section
       className={styles.bannerSection}
@@ -83,6 +103,7 @@ export default function MainBanner() {
             key={slide.id}
             className={`${styles.bannerSlide} ${index === activeIndex ? styles.activeSlide : ''}`}
             aria-hidden={index !== activeIndex}
+            style={getSlideStyle(slide)}
           >
             <Image
               src={slide.image}

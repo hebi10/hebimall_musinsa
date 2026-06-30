@@ -44,3 +44,8 @@
 
 - URL만 React Query에 넣어 돌려주던 이미지 캐시 레이어를 제거하고 `ProductCard`는 `next/image`를 직접 사용한다.
 - 카테고리 기본 id/name은 `categoryUtils`로 단일화했고 Header, CategoryProvider, fallback UI가 같은 기본값을 재사용한다.
+
+## 2026-06-30 상품 상세 경로 정리
+
+- `/categories/[category]/products/[productId]` 중복 상세 화면을 제거하고 `/products/[productId]`로 redirect하도록 정리했다.
+- 미사용 `CategoryClient`와 루트 `components/*` 빈 파일을 제거했다.

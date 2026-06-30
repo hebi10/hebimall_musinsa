@@ -83,3 +83,7 @@
 - 상품 상세 색상 스와치가 시각적으로는 보이지만 버튼 접근성 이름이 비어 있어 자동화/스크린리더 기준으로는 `title`에만 의존한다.
 - 콘솔에는 상품 상세 LCP 이미지 `priority` 권고, `Image fill` 부모 position 경고, 상품 쿼리 복합 인덱스 fallback 경고, 주문 목록 key prop 경고가 남아 있다.
 - 2026-06-29: 상품 목록 카테고리 표시명, 상품 상세 색상 스와치 `aria-label`, 대표 이미지 `priority`, 주문 목록 상품 key, 장바구니 배지 stale cache를 보정했다. Firestore 인덱스 경고는 인덱스 파일 반영 후 배포가 필요하다.
+
+## 2026-06-30 React Query Devtools 제거
+
+- 사용하지 않는 React Query Devtools 의존성과 `NEXT_PUBLIC_ENABLE_QUERY_DEVTOOLS` 분기를 제거했다.

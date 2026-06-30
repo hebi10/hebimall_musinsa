@@ -72,7 +72,7 @@ npm run migrate:product-images:delete-originals
 대상은 상품 외 운영 이미지입니다.
 
 - `categories.image`, `categories.imageUrl`
-- `events.bannerImage`, `events.thumbnailImage`
+- `events.bannerImage`, `events.thumbnailImage`, `events.detailImage`
 - `reviews.images`
 - `qna.images`
 

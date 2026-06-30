@@ -154,11 +154,12 @@
 }
 
 .eventTitle {
+  font-family: var(--font-heading);
   font-size: clamp(2.2rem, 5vw, 4.15rem);
-  font-weight: 800;
+  font-weight: 700;
   margin: 0 0 1rem 0;
-  line-height: 1.04;
-  letter-spacing: -0.055em;
+  line-height: 1.12;
+  letter-spacing: 0;
   max-width: 760px;
   overflow-wrap: anywhere;
 }
@@ -350,13 +351,14 @@
 }
 
 .sectionTitle {
+  font-family: var(--font-heading);
   font-size: clamp(1.55rem, 3vw, 2.4rem);
-  font-weight: 800;
+  font-weight: 700;
   color: #2a190f;
   margin-bottom: 2.4rem;
   text-align: center;
   position: relative;
-  letter-spacing: -0.04em;
+  letter-spacing: 0;
 }
 
 .sectionTitle::after {
@@ -1160,10 +1162,11 @@
 .bannerFeaturePanel h2 {
   margin: 0;
   color: var(--black);
+  font-family: var(--font-heading);
   font-size: clamp(1.35rem, 2.5vw, 2.1rem);
   font-weight: 700;
-  line-height: 1.18;
-  letter-spacing: -0.03em;
+  line-height: 1.26;
+  letter-spacing: 0;
 }
 
 .bannerFeaturePanel p {

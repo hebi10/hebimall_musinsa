@@ -20,6 +20,7 @@ export default function EventForm({ event, isEdit = false }: Props) {
   const router = useRouter();
   const bannerInputRef = useRef<HTMLInputElement>(null);
   const thumbnailInputRef = useRef<HTMLInputElement>(null);
+  const detailInputRef = useRef<HTMLInputElement>(null);
   
   // 카테고리 관련 상태
   const [categories, setCategories] = useState<Category[]>([]);
@@ -45,6 +46,7 @@ export default function EventForm({ event, isEdit = false }: Props) {
   const [images, setImages] = useState({
     bannerImage: event?.bannerImage || '',
     thumbnailImage: event?.thumbnailImage || '',
+    detailImage: event?.detailImage || '',
   });
 
   const [uploading, setUploading] = useState(false);
@@ -65,7 +67,6 @@ export default function EventForm({ event, isEdit = false }: Props) {
         index === self.findIndex(c => c.name === category.name)
       );
       
-      console.log('Loaded categories:', uniqueCategories);
       setCategories(uniqueCategories);
     } catch (error) {
       console.error('Error loading categories:', error);
@@ -121,7 +122,7 @@ export default function EventForm({ event, isEdit = false }: Props) {
     });
   };
 
-  const handleImageUpload = async (file: File, type: 'banner' | 'thumbnail') => {
+  const handleImageUpload = async (file: File, type: 'banner' | 'thumbnail' | 'detail') => {
     try {
       setUploading(true);
       const imageUrl = await EventService.uploadImage(file, `events/${type}`);
@@ -163,6 +164,7 @@ export default function EventForm({ event, isEdit = false }: Props) {
         endDate: new Date(formData.endDate),
         bannerImage: images.bannerImage,
         thumbnailImage: images.thumbnailImage,
+        ...(images.detailImage ? { detailImage: images.detailImage } : {}),
         participantCount: event?.participantCount || 0,
         targetCategories: formData.selectedCategories.length > 0 
           ? formData.selectedCategories 
@@ -176,8 +178,6 @@ export default function EventForm({ event, isEdit = false }: Props) {
           ? { maxParticipants: formData.maxParticipants } 
           : {}),
       };
-
-      console.log('Saving event data:', eventData);
 
       if (isEdit && event) {
         await EventService.updateEvent(event.id, eventData);
@@ -276,6 +276,41 @@ export default function EventForm({ event, isEdit = false }: Props) {
                 className={styles.dateInput}
                 required
               />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.label}>상세 이미지</label>
+              <div className={styles.imageUpload}>
+                {images.detailImage && (
+                  <div className={styles.imagePreview}>
+                    <Image
+                      src={images.detailImage}
+                      alt="상세 이미지"
+                      width={300}
+                      height={150}
+                      className={styles.previewImage}
+                    />
+                  </div>
+                )}
+                <input
+                  ref={detailInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) handleImageUpload(file, 'detail');
+                  }}
+                  className={styles.fileInput}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => detailInputRef.current?.click()}
+                  disabled={uploading}
+                >
+                  {uploading ? '업로드 중...' : '상세 이미지 선택'}
+                </Button>
+              </div>
             </div>
           </div>
         </div>

@@ -13,25 +13,20 @@ interface Props {
   }>;
 }
 
-const getEventWithCatalogFallback = async (eventId: string): Promise<Event | null> => {
+const getEventFromFirebase = async (eventId: string): Promise<Event | null> => {
   try {
-    const event = await EventService.getEventById(eventId);
-    if (event) {
-      return event;
-    }
+    return await EventService.getEventById(eventId);
   } catch (error) {
     console.error('Error loading event from Firestore:', error);
+    return null;
   }
-
-  const { mockEvents } = await import('@/mocks/event');
-  return mockEvents.find(mockEvent => mockEvent.id === eventId) ?? null;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { eventId } = await params;
   
   try {
-    const event = await getEventWithCatalogFallback(eventId);
+    const event = await getEventFromFirebase(eventId);
     
     if (!event) {
       return {
@@ -62,7 +57,7 @@ export default async function EventDetailPage({ params }: Props) {
   const { eventId } = await params;
   
   try {
-    const event = await getEventWithCatalogFallback(eventId);
+    const event = await getEventFromFirebase(eventId);
     
     if (!event) {
       notFound();

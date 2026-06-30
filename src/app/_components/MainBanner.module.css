@@ -28,7 +28,7 @@
 
 .bannerImage {
   object-fit: cover;
-  object-position: center top;
+  object-position: var(--banner-image-position, center top);
 }
 
 .bannerCopy {
@@ -155,7 +155,7 @@
   }
 
   .bannerImage {
-    object-position: 58% top;
+    object-position: var(--banner-image-position-tablet, 58% top);
   }
 
   .bannerCopy {
@@ -210,7 +210,7 @@
   }
 
   .bannerImage {
-    object-position: 68% top;
+    object-position: var(--banner-image-position-mobile, 68% top);
   }
 
   .bannerCopy {
@@ -281,7 +281,7 @@
   }
 
   .bannerImage {
-    object-position: 70% top;
+    object-position: var(--banner-image-position-mobile, 70% top);
   }
 
   .bannerCopy {

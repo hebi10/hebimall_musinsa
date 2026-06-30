@@ -22,7 +22,8 @@
     "deploy:functions": "firebase deploy --only functions",
     "deploy:hosting": "firebase deploy --only hosting",
     "setup:env": "node scripts/setup-firebase-secrets.js",
-    "functions:build": "cd functions && npm run build",
+    "functions:build": "npm run sync:chat-responses && cd functions && npm run build",
+    "sync:chat-responses": "node scripts/sync-chat-responses.js",
     "functions:deploy": "npm run functions:build && firebase deploy --only functions",
     "migrate:firestore:analyze": "node scripts/firestore-products-v2-migration.js analyze",
     "migrate:firestore:products:dry-run": "node scripts/firestore-products-v2-migration.js migrate",
@@ -44,7 +45,6 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.84.1",
-    "@tanstack/react-query-devtools": "^5.84.1",
     "dotenv": "^17.2.1",
     "firebase": "^12.0.0",
     "next": "^15.5.7",

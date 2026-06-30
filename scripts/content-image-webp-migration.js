@@ -16,7 +16,7 @@ const DEFAULT_OPTIONS = {
 
 const DEFAULT_TARGETS = [
   { collection: "categories", fields: ["image", "imageUrl"] },
-  { collection: "events", fields: ["bannerImage", "thumbnailImage"] },
+  { collection: "events", fields: ["bannerImage", "thumbnailImage", "detailImage"] },
   { collection: "reviews", fields: ["images"] },
   { collection: "qna", fields: ["images"] },
 ];

@@ -1,7 +1,8 @@
-// ─── 채팅 공통 응답 로직 (Firebase Functions 환경) ──────
-// src/lib/chatResponses.ts 와 내용이 동일합니다.
+// Generated from src/shared/utils/chatResponses.ts. Run npm run sync:chat-responses after editing.
+// ─── 채팅 공통 응답 로직 (Next.js 환경) ────────────────
+// functions/src/chatResponses.ts 와 내용이 동일합니다.
 
-type MenuKey =
+export type MenuKey =
   | 'agent'
   | 'order'
   | 'return'

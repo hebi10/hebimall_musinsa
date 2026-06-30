@@ -7,11 +7,18 @@ const {
 
 describe("content image WebP migration helpers", () => {
   test("uses configured non-product image targets", () => {
-    expect(getConfiguredTargets().map((target) => target.collection)).toEqual([
+    const targets = getConfiguredTargets();
+
+    expect(targets.map((target) => target.collection)).toEqual([
       "categories",
       "events",
       "reviews",
       "qna",
+    ]);
+    expect(targets.find((target) => target.collection === "events").fields).toEqual([
+      "bannerImage",
+      "thumbnailImage",
+      "detailImage",
     ]);
   });
 
