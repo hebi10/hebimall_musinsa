@@ -689,22 +689,56 @@ export class ProductService {
 
   static async getHomePageProducts(limits: HomePageProductLimits = {}): Promise<HomePageProductGroups> {
     try {
-      const products = this.getActiveProducts(await this.getTopLevelProducts());
+      const recommendedLimit = limits.recommended ?? 8;
+      const bestSellerLimit = limits.bestSeller ?? 8;
+      const bestSellerQueryLimit = Math.max(recommendedLimit, bestSellerLimit);
+
+      const [newProducts, saleProducts, bestSellerProducts] = await Promise.all([
+        this.queryProducts({
+          status: 'active',
+          isNew: true,
+          sort: { field: 'createdAt', order: 'desc' },
+          limitCount: limits.new ?? 8,
+        }),
+        this.queryProducts({
+          status: 'active',
+          isSale: true,
+          sort: { field: 'createdAt', order: 'desc' },
+          limitCount: limits.sale ?? 8,
+        }),
+        this.queryProducts({
+          status: 'active',
+          sort: { field: 'reviewCount', order: 'desc' },
+          limitCount: bestSellerQueryLimit,
+        }),
+      ]);
 
       return {
-        recommendedProducts: this.selectRecommendedProducts(products, limits.recommended ?? 8),
-        newProducts: this.selectNewProducts(products, limits.new ?? 8),
-        saleProducts: this.selectSaleProducts(products, limits.sale ?? 8),
-        bestSellerProducts: this.selectBestSellerProducts(products, limits.bestSeller ?? 8),
+        recommendedProducts: bestSellerProducts.items.slice(0, recommendedLimit),
+        newProducts: newProducts.items,
+        saleProducts: saleProducts.items,
+        bestSellerProducts: bestSellerProducts.items.slice(0, bestSellerLimit),
       };
     } catch (error) {
       console.error('Failed to load home page products:', error);
-      return {
-        recommendedProducts: [],
-        newProducts: [],
-        saleProducts: [],
-        bestSellerProducts: [],
-      };
+      try {
+        const products = this.getActiveProducts(await this.getTopLevelProducts());
+
+        return {
+          recommendedProducts: this.selectRecommendedProducts(products, limits.recommended ?? 8),
+          newProducts: this.selectNewProducts(products, limits.new ?? 8),
+          saleProducts: this.selectSaleProducts(products, limits.sale ?? 8),
+          bestSellerProducts: this.selectBestSellerProducts(products, limits.bestSeller ?? 8),
+        };
+      } catch (fallbackError) {
+        console.error('Failed to load home page products with fallback:', fallbackError);
+        return {
+          recommendedProducts: [],
+          newProducts: [],
+          saleProducts: [],
+          bestSellerProducts: [],
+        };
+      }
     }
   }
 

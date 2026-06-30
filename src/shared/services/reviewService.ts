@@ -11,6 +11,7 @@ import {
   orderBy, 
   limit, 
   startAfter,
+  getCountFromServer,
   QueryDocumentSnapshot,
   DocumentData,
   Timestamp 
@@ -156,8 +157,8 @@ export class ReviewService {
         reviewQuery = query(reviewQuery, where('rating', '==', rating));
       }
 
-      const snapshot = await getDocs(reviewQuery);
-      return snapshot.size;
+      const countSnapshot = await getCountFromServer(reviewQuery);
+      return countSnapshot.data().count;
 
     } catch (error) {
  console.error('전체 리뷰 개수 조회 실패:', error);
@@ -185,28 +186,33 @@ export class ReviewService {
         reviewQuery = query(reviewQuery, where('rating', '==', rating));
       }
       
-      // 단순한 정렬만 사용 (복합 인덱스 문제 방지)
       switch (sortBy) {
         case 'rating':
           reviewQuery = query(reviewQuery, orderBy('rating', 'desc'));
           break;
         case 'helpful':
+          reviewQuery = query(reviewQuery, orderBy('rating', 'desc'));
+          break;
         case 'latest':
         default:
-          // 임시로 정렬 없이 가져오기 (인덱스 생성 완료 전까지)
+          reviewQuery = query(reviewQuery, orderBy('createdAt', 'desc'));
           break;
       }
       
-      // 페이징 적용
       const offset = (page - 1) * pageSize;
-      reviewQuery = query(reviewQuery, limit(pageSize + offset));
+      if (offset > 0) {
+        const cursorSnapshot = await getDocs(query(reviewQuery, limit(offset)));
+        const cursorDoc = cursorSnapshot.docs[cursorSnapshot.docs.length - 1];
+        reviewQuery = cursorDoc
+          ? query(reviewQuery, startAfter(cursorDoc), limit(pageSize))
+          : query(reviewQuery, limit(pageSize));
+      } else {
+        reviewQuery = query(reviewQuery, limit(pageSize));
+      }
 
       const snapshot = await getDocs(reviewQuery);
       
-      // 페이지에 맞는 데이터만 추출
-      const allDocs = snapshot.docs.slice(offset);
-      
-      const reviews: Review[] = allDocs.map(doc => {
+      const reviews: Review[] = snapshot.docs.map(doc => {
         const data = doc.data();
         return {
           id: doc.id,
@@ -226,14 +232,6 @@ export class ReviewService {
           updatedAt: data.updatedAt?.toDate() || new Date()
         };
       });
-
-      // 클라이언트에서 sortBy 적용
-      if (sortBy === 'latest') {
-        reviews.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
-      } else if (sortBy === 'helpful') {
-        // 현재 Review 타입에 helpfulCount가 없으므로 rating으로 대체
-        reviews.sort((a, b) => b.rating - a.rating);
-      }
 
       return {
         reviews,

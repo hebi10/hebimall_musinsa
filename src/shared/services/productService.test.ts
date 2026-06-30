@@ -112,3 +112,32 @@ describe('ProductService.queryProducts', () => {
     expect(result.hasMore).toBe(false);
   });
 });
+
+describe('ProductService.getHomePageProducts', () => {
+  beforeEach(() => {
+    jest.mocked(getDocs).mockReset();
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+    jest.spyOn(console, 'warn').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('loads home sections with limited section queries instead of one full product scan', async () => {
+    jest.mocked(getDocs).mockResolvedValue({
+      docs: [
+        makeDoc('home-product', {
+          isNew: true,
+          isSale: true,
+          reviewCount: 12,
+          createdAt: new Date('2026-01-03T00:00:00.000Z'),
+        }),
+      ],
+    } as unknown as Awaited<ReturnType<typeof getDocs>>);
+
+    await ProductService.getHomePageProducts();
+
+    expect(getDocs).toHaveBeenCalledTimes(3);
+  });
+});

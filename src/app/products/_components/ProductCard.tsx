@@ -2,10 +2,8 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
 import { useUserActivity } from '@/context/userActivityProvider';
 import { getProductPricing } from '@/shared/utils/productPricing';
-import { getProductReviewStats } from '@/shared/utils/syncProductReviews';
 import styles from './ProductCard.module.css';
 import { useAuthUser } from '@/shared/hooks/useAuthUser';
 
@@ -41,25 +39,10 @@ export default function ProductCard({
   badgePlacement = 'default',
 }: ProductCardProps) {
   const { wishlistItems, addToWishlist, removeFromWishlist } = useUserActivity();
-  const [actualReviewStats, setActualReviewStats] = useState<{ reviewCount: number; rating: number } | null>(null);
   const { user } = useAuthUser();
 
   // 찜하기 상태는 실제 데이터에서 가져오기
   const isWishlisted = wishlistItems.some(item => item.productId === id);
-
-  // 실제 리뷰 개수와 평점 가져오기
-  useEffect(() => {
-    const fetchReviewStats = async () => {
-      try {
-        const stats = await getProductReviewStats(id);
-        setActualReviewStats(stats);
-      } catch (error) {
-        console.error('리뷰 통계 조회 실패:', error);
-      }
-    };
-
-    fetchReviewStats();
-  }, [id]);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('ko-KR').format(price) + '원';
@@ -70,9 +53,8 @@ export default function ProductCard({
   const displayPrice = pricing.salePrice;
   const inStock = stock > 0;
 
-  // 실제 리뷰 데이터가 있으면 우선 사용, 없으면 기본값 사용
-  const displayRating = actualReviewStats?.rating || rating || 0;
-  const displayReviewCount = actualReviewStats?.reviewCount ?? reviewCount ?? 0;
+  const displayRating = rating || 0;
+  const displayReviewCount = reviewCount ?? 0;
 
   const handleWishlistClick = async (e: React.MouseEvent) => {
     e.preventDefault();

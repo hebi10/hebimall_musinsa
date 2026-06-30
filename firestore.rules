@@ -106,6 +106,41 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    match /faqs/{faqId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /notices/{noticeId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /mainBanners/{bannerId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /offlineStores/{storeId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /offlineServices/{serviceId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /offlineInfo/{infoId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /recommendationSettings/{settingId} {
+      allow read: if isAdmin();
+      allow write: if isAdmin();
+    }
+
     match /users/{userId} {
       allow create: if isValidSelfUserCreate(userId) || isAdmin();
       allow read: if isOwner(userId) || isAdmin();

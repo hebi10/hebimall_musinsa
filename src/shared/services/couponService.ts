@@ -7,6 +7,7 @@ import {
   getDocs, 
   query, 
   where, 
+  documentId,
   orderBy, 
   updateDoc,
   serverTimestamp
@@ -58,6 +59,23 @@ async function callCouponAPI(action: string, data?: object): Promise<CouponApiRe
   }
 
   return (json.data ?? {}) as CouponApiResult;
+}
+
+function chunk<T>(items: T[], size: number): T[][] {
+  const chunks: T[][] = [];
+  for (let index = 0; index < items.length; index += size) {
+    chunks.push(items.slice(index, index + size));
+  }
+  return chunks;
+}
+
+function normalizeCoupon(id: string, data: Record<string, unknown>): Coupon {
+  return {
+    id,
+    ...data,
+    createdAt: (data.createdAt as { toDate?: () => Date } | undefined)?.toDate?.() || new Date(),
+    updatedAt: (data.updatedAt as { toDate?: () => Date } | undefined)?.toDate?.() || new Date()
+  } as Coupon;
 }
 
 export class CouponService {
@@ -212,6 +230,24 @@ export class CouponService {
     }
   }
 
+  private static async getCouponsByIds(couponIds: string[]): Promise<Map<string, Coupon>> {
+    const uniqueIds = Array.from(new Set(couponIds)).filter(Boolean);
+    const coupons = new Map<string, Coupon>();
+
+    for (const ids of chunk(uniqueIds, 10)) {
+      const snapshot = await getDocs(query(
+        collection(db, 'coupons'),
+        where(documentId(), 'in', ids)
+      ));
+
+      snapshot.docs.forEach(doc => {
+        coupons.set(doc.id, normalizeCoupon(doc.id, doc.data()));
+      });
+    }
+
+    return coupons;
+  }
+
   // ============ 유저 쿠폰 관련 ============
   
   /**
@@ -280,11 +316,11 @@ export class CouponService {
       // 제한 적용
       userCoupons = userCoupons.slice(0, limitCount);
 
-      // 2. 각 유저쿠폰에 대한 쿠폰 마스터 정보 조회
+      const couponMap = await this.getCouponsByIds(userCoupons.map(userCoupon => userCoupon.couponId));
       const userCouponViews: UserCouponView[] = [];
       
       for (const userCoupon of userCoupons) {
-        const coupon = await this.getCouponById(userCoupon.couponId);
+        const coupon = couponMap.get(userCoupon.couponId);
         if (coupon) {
           // 타입별 필터링
           if (filter.type && filter.type !== '전체' && coupon.type !== filter.type) {

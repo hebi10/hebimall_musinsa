@@ -65,6 +65,28 @@ interface QnAAccessResult {
 }
 
 export class QnAService {
+  private static buildQnAQuery(filters: QnAFilter = {}) {
+    let q = query(collection(db, COLLECTION_NAME));
+
+    if (filters.category) {
+      q = query(q, where('category', '==', filters.category));
+    }
+    if (filters.status) {
+      q = query(q, where('status', '==', filters.status));
+    }
+    if (filters.isSecret !== undefined) {
+      q = query(q, where('isSecret', '==', filters.isSecret));
+    }
+    if (filters.userId) {
+      q = query(q, where('userId', '==', filters.userId));
+    }
+    if (filters.productId) {
+      q = query(q, where('productId', '==', filters.productId));
+    }
+
+    return query(q, orderBy('createdAt', 'desc'));
+  }
+
   static async createQnA(
     userId: string,
     userEmail: string,
@@ -112,45 +134,23 @@ export class QnAService {
     page: number = 1,
     limitCount: number = 10
   ): Promise<{ qnas: QnA[]; pagination: QnAPagination }> {
-    let q = query(collection(db, COLLECTION_NAME));
-
-    if (filters.category) {
-      q = query(q, where('category', '==', filters.category));
-    }
-    if (filters.status) {
-      q = query(q, where('status', '==', filters.status));
-    }
-    if (filters.isSecret !== undefined) {
-      q = query(q, where('isSecret', '==', filters.isSecret));
-    }
-    if (filters.userId) {
-      q = query(q, where('userId', '==', filters.userId));
-    }
-    if (filters.productId) {
-      q = query(q, where('productId', '==', filters.productId));
-    }
-
-    q = query(q, orderBy('createdAt', 'desc'));
-
-    const countSnapshot = await getCountFromServer(q);
+    const baseQuery = this.buildQnAQuery(filters);
+    const countSnapshot = await getCountFromServer(baseQuery);
     const totalCount = countSnapshot.data().count;
     const totalPages = Math.ceil(totalCount / limitCount);
+    let q = baseQuery;
 
     if (page > 1) {
-      const prevPageQuery = query(
-        collection(db, COLLECTION_NAME),
-        orderBy('createdAt', 'desc'),
-        limit((page - 1) * limitCount)
-      );
+      const prevPageQuery = query(baseQuery, limit((page - 1) * limitCount));
       const prevPageSnapshot = await getDocs(prevPageQuery);
       if (prevPageSnapshot.docs.length > 0) {
         const lastDoc = prevPageSnapshot.docs[prevPageSnapshot.docs.length - 1];
-        q = query(q, startAfter(lastDoc), limit(limitCount));
+        q = query(baseQuery, startAfter(lastDoc), limit(limitCount));
       } else {
-        q = query(q, limit(limitCount));
+        q = query(baseQuery, limit(limitCount));
       }
     } else {
-      q = query(q, limit(limitCount));
+      q = query(baseQuery, limit(limitCount));
     }
 
     const querySnapshot = await getDocs(q);

@@ -71,25 +71,25 @@
       ]
     },
     {
-      "collectionGroup": "userCoupons",
+      "collectionGroup": "user_coupons",
       "queryScope": "COLLECTION",
       "fields": [
         {
-          "fieldPath": "userUID",
+          "fieldPath": "uid",
           "order": "ASCENDING"
         },
         {
-          "fieldPath": "issuedAt",
+          "fieldPath": "issuedDate",
           "order": "DESCENDING"
         }
       ]
     },
     {
-      "collectionGroup": "userCoupons",
+      "collectionGroup": "user_coupons",
       "queryScope": "COLLECTION",
       "fields": [
         {
-          "fieldPath": "userUID",
+          "fieldPath": "uid",
           "order": "ASCENDING"
         },
         {
@@ -97,7 +97,81 @@
           "order": "ASCENDING"
         },
         {
-          "fieldPath": "issuedAt",
+          "fieldPath": "issuedDate",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "eventParticipants",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "eventId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "participatedAt",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "eventParticipants",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "userId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "participatedAt",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "events",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "isActive",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "events",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "eventType",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "events",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "eventType",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "isActive",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
           "order": "DESCENDING"
         }
       ]

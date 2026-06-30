@@ -2,6 +2,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import ProductDetailClient from './ProductDetailClient';
 import { Product } from '@/shared/types/product';
 import { useUserActivity } from '@/context/userActivityProvider';
+import { getProductReviewStats } from '@/shared/utils/syncProductReviews';
 
 const push = jest.fn();
 const addRecentProduct = jest.fn();
@@ -175,5 +176,12 @@ describe('ProductDetailClient detail images', () => {
     render(<ProductDetailClient product={product} />);
 
     expect(screen.getByRole('button', { name: 'white gold 색상 선택' })).toBeInTheDocument();
+  });
+
+  test('uses denormalized product review stats without fetching review documents', () => {
+    render(<ProductDetailClient product={product} />);
+
+    expect(screen.getByText('4.5 (13개 리뷰)')).toBeInTheDocument();
+    expect(getProductReviewStats).not.toHaveBeenCalled();
   });
 });

@@ -8,7 +8,6 @@ import { useProduct } from '@/context/productProvider';
 import { useAuth } from '@/context/authProvider';
 import { useUserActivity } from '@/context/userActivityProvider';
 import { useAddToCart } from '@/shared/hooks/useCart';
-import { getProductReviewStats } from '@/shared/utils/syncProductReviews';
 import { getProductColorValue } from '@/shared/utils/productColor';
 import { getProductPricing } from '@/shared/utils/productPricing';
 import Button from '@/app/_components/Button';
@@ -75,7 +74,6 @@ export default function ProductDetailClient({ product }: Props) {
   const [activeTab, setActiveTab] = useState<'detail' | 'size' | 'review' | 'qna'>('detail');
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [isWishlistLoading, setIsWishlistLoading] = useState(false);
-  const [actualReviewStats, setActualReviewStats] = useState<{ reviewCount: number; rating: number } | null>(null);
   const [optimisticWishlisted, setOptimisticWishlisted] = useState<boolean | null>(null);
 
   // 찜 상태 확인
@@ -99,17 +97,6 @@ export default function ProductDetailClient({ product }: Props) {
         addRecentProduct(product.id);
       }
 
-      // 실제 리뷰 통계 가져오기
-      const fetchReviewStats = async () => {
-        try {
-          const stats = await getProductReviewStats(product.id);
-          setActualReviewStats(stats);
-        } catch (error) {
-          console.error('리뷰 통계 조회 실패:', error);
-        }
-      };
-
-      fetchReviewStats();
     }
   }, [product.id, loadRelatedProducts, addRecentProduct, user?.uid]);
 
@@ -265,9 +252,8 @@ export default function ProductDetailClient({ product }: Props) {
 
   const inStock = isInStock(product);
 
-  // 실제 리뷰 데이터가 있으면 우선 사용, 없으면 기본값 사용
-  const displayRating = actualReviewStats?.rating || product.rating || 0;
-  const displayReviewCount = actualReviewStats?.reviewCount ?? product.reviewCount ?? 0;
+  const displayRating = product.rating || 0;
+  const displayReviewCount = product.reviewCount ?? 0;
 
   return (
     <div className={styles.container}>

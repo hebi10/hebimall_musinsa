@@ -4,21 +4,8 @@ import { useEffect, useState } from 'react';
 import type { CSSProperties } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { MainBannerContent, SiteContentService } from '@/shared/services/siteContentService';
 import styles from './MainBanner.module.css';
-
-interface MainBannerSlide {
-  id: string;
-  eyebrow: string;
-  title: string;
-  description: string;
-  ctaLabel: string;
-  href: string;
-  image: string;
-  backgroundColor: string;
-  imagePosition?: string;
-  tabletImagePosition?: string;
-  mobileImagePosition?: string;
-}
 
 type BannerSlideStyle = CSSProperties & {
   '--banner-image-position': string;
@@ -28,7 +15,7 @@ type BannerSlideStyle = CSSProperties & {
 
 const SLIDE_DELAY_MS = 4500;
 
-const bannerSlides: MainBannerSlide[] = [
+const fallbackSlides: MainBannerContent[] = [
   {
     id: 'event-2026-06-midyear-sale',
     eyebrow: '오늘 마감',
@@ -38,6 +25,7 @@ const bannerSlides: MainBannerSlide[] = [
     href: '/events/event-2026-06-midyear-sale',
     image: '/main/main_event_midyear_sale.webp',
     backgroundColor: '#c9c0b3',
+    order: 1,
   },
   {
     id: 'event-2026-07-vacation-coupon',
@@ -47,7 +35,8 @@ const bannerSlides: MainBannerSlide[] = [
     ctaLabel: '쿠폰팩 보기',
     href: '/events/event-2026-07-vacation-coupon',
     image: '/main/main_event_vacation_coupon.webp',
-    backgroundColor: '#d4c6b4',
+    backgroundColor: '#d4c4ad',
+    order: 2,
   },
   {
     id: 'event-2026-07-cool-touch',
@@ -58,47 +47,81 @@ const bannerSlides: MainBannerSlide[] = [
     href: '/events/event-2026-07-cool-touch',
     image: '/main/main_event_cool_touch.webp',
     backgroundColor: '#b9c8cf',
-    imagePosition: '25% top',
-    tabletImagePosition: '45% top',
-    mobileImagePosition: '62% top',
+    order: 3,
   },
 ];
 
 export default function MainBanner() {
+  const [slides, setSlides] = useState<MainBannerContent[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [rotationKey, setRotationKey] = useState(0);
 
   useEffect(() => {
+    SiteContentService.getMainBanners()
+      .then((nextSlides) => {
+        setSlides(nextSlides.length > 0 ? nextSlides : fallbackSlides);
+        setActiveIndex(0);
+      })
+      .catch((error) => {
+        console.error('메인 배너 조회 실패:', error);
+        setSlides(fallbackSlides);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (slides.length < 2) {
+      return undefined;
+    }
+
     const timer = window.setInterval(() => {
-      setActiveIndex((index) => (index + 1) % bannerSlides.length);
+      setActiveIndex((index) => (index + 1) % slides.length);
     }, SLIDE_DELAY_MS);
 
     return () => window.clearInterval(timer);
-  }, []);
+  }, [slides.length, rotationKey]);
+
+  if (slides.length === 0) {
+    return null;
+  }
 
   const showPrevious = () => {
-    setActiveIndex((index) => (index - 1 + bannerSlides.length) % bannerSlides.length);
+    setActiveIndex((index) => (index - 1 + slides.length) % slides.length);
+    setRotationKey((key) => key + 1);
   };
 
   const showNext = () => {
-    setActiveIndex((index) => (index + 1) % bannerSlides.length);
+    setActiveIndex((index) => (index + 1) % slides.length);
+    setRotationKey((key) => key + 1);
   };
 
-  const getSlideStyle = (slide: MainBannerSlide): BannerSlideStyle => ({
-    '--banner-image-position': slide.imagePosition ?? 'center top',
-    '--banner-image-position-tablet':
-      slide.tabletImagePosition ?? slide.imagePosition ?? '58% top',
-    '--banner-image-position-mobile':
-      slide.mobileImagePosition ?? slide.tabletImagePosition ?? '70% top',
-  });
+  const showSlide = (index: number) => {
+    setActiveIndex(index);
+    setRotationKey((key) => key + 1);
+  };
+
+  const getSlideStyle = (slide: MainBannerContent): BannerSlideStyle => {
+    const isCoolTouchSlide = slide.id === 'event-2026-07-cool-touch'
+      || slide.image.includes('main_event_cool_touch');
+    const imagePosition = slide.imagePosition ?? (isCoolTouchSlide ? '25% top' : 'center top');
+    const tabletImagePosition = slide.tabletImagePosition
+      ?? (isCoolTouchSlide ? '45% top' : imagePosition);
+
+    return {
+      '--banner-image-position': imagePosition,
+      '--banner-image-position-tablet': tabletImagePosition,
+      '--banner-image-position-mobile':
+        slide.mobileImagePosition ?? (isCoolTouchSlide ? '62% top' : tabletImagePosition),
+    };
+  };
 
   return (
     <section
       className={styles.bannerSection}
       aria-label="메인 이벤트 배너"
-      style={{ '--banner-bg': bannerSlides[activeIndex].backgroundColor } as CSSProperties}
+      style={{ '--banner-bg': slides[activeIndex].backgroundColor } as CSSProperties}
     >
       <div className={styles.bannerStage}>
-        {bannerSlides.map((slide, index) => (
+        {slides.map((slide, index) => (
           <article
             key={slide.id}
             className={`${styles.bannerSlide} ${index === activeIndex ? styles.activeSlide : ''}`}
@@ -125,35 +148,39 @@ export default function MainBanner() {
           </article>
         ))}
 
-        <button
-          type="button"
-          className={`${styles.navButton} ${styles.prevButton}`}
-          aria-label="이전 배너"
-          onClick={showPrevious}
-        >
-          ‹
-        </button>
-        <button
-          type="button"
-          className={`${styles.navButton} ${styles.nextButton}`}
-          aria-label="다음 배너"
-          onClick={showNext}
-        >
-          ›
-        </button>
-
-        <div className={styles.pagination} aria-label="배너 순서">
-          {bannerSlides.map((slide, index) => (
+        {slides.length > 1 && (
+          <>
             <button
-              key={slide.id}
               type="button"
-              className={`${styles.paginationDot} ${index === activeIndex ? styles.activeDot : ''}`}
-              aria-label={`${slide.eyebrow} 배너 보기`}
-              aria-current={index === activeIndex}
-              onClick={() => setActiveIndex(index)}
-            />
-          ))}
-        </div>
+              className={`${styles.navButton} ${styles.prevButton}`}
+              aria-label="이전 배너"
+              onClick={showPrevious}
+            >
+              ‹
+            </button>
+            <button
+              type="button"
+              className={`${styles.navButton} ${styles.nextButton}`}
+              aria-label="다음 배너"
+              onClick={showNext}
+            >
+              ›
+            </button>
+
+            <div className={styles.pagination} aria-label="배너 순서">
+              {slides.map((slide, index) => (
+                <button
+                  key={slide.id}
+                  type="button"
+                  className={`${styles.paginationDot} ${index === activeIndex ? styles.activeDot : ''}`}
+                  aria-label={`${slide.eyebrow} 배너 보기`}
+                  aria-current={index === activeIndex}
+                  onClick={() => showSlide(index)}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </section>
   );
