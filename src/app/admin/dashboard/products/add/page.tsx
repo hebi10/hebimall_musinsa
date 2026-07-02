@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import EditProductForm from '../_components/EditProductForm';
-import { useProduct } from '@/context/productProvider';
+import { useCreateProduct } from '@/shared/hooks/useProducts';
 import { Product } from '@/shared/types/product';
 import { generateId } from '@/shared/utils/common';
 
@@ -41,7 +41,7 @@ function createDraftProduct(): Product {
 
 export default function AddProductModal() {
   const router = useRouter();
-  const { createProduct } = useProduct();
+  const createProductMutation = useCreateProduct();
   const [draftProduct] = useState(createDraftProduct);
 
   const handleSave = async (product: Product) => {
@@ -51,7 +51,7 @@ export default function AddProductModal() {
     void createdAt;
     void updatedAt;
 
-    await createProduct(createPayload);
+    await createProductMutation.mutateAsync(createPayload);
     alert('상품이 성공적으로 추가되었습니다.');
     router.push('/admin/dashboard/products');
   };

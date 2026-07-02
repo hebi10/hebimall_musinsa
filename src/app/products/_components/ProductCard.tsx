@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useUserActivity } from '@/context/userActivityProvider';
+import { useToggleWishlist, useWishlistItems } from '@/shared/hooks/useUserActivityQuery';
 import { getProductPricing } from '@/shared/utils/productPricing';
 import styles from './ProductCard.module.css';
 import { useAuthUser } from '@/shared/hooks/useAuthUser';
@@ -38,8 +38,9 @@ export default function ProductCard({
   stock = 0,
   badgePlacement = 'default',
 }: ProductCardProps) {
-  const { wishlistItems, addToWishlist, removeFromWishlist } = useUserActivity();
   const { user } = useAuthUser();
+  const { data: wishlistItems = [] } = useWishlistItems(user?.uid || null);
+  const toggleWishlistMutation = useToggleWishlist(user?.uid || null);
 
   // 찜하기 상태는 실제 데이터에서 가져오기
   const isWishlisted = wishlistItems.some(item => item.productId === id);
@@ -66,11 +67,7 @@ export default function ProductCard({
     }
     
     try {
-      if (isWishlisted) {
-        await removeFromWishlist(id);
-      } else {
-        await addToWishlist(id);
-      }
+      await toggleWishlistMutation.mutateAsync({ productId: id, wished: isWishlisted });
     } catch (error) {
       console.error('찜하기 처리 실패:', error);
     }

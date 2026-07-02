@@ -1,11 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { useCategories } from '@/context/categoryProvider';
+import { useCategoriesQuery } from '@/shared/hooks/useCategoriesQuery';
 import styles from './page.module.css';
 
 export default function CategoriesPage() {
-  const { categories, loading, error } = useCategories();
+  const { data: categories = [], isLoading: loading, error } = useCategoriesQuery();
 
   if (loading) {
     return (
@@ -23,7 +23,7 @@ export default function CategoriesPage() {
       <div className={styles.container}>
         <div className={styles.errorSection}>
           <div className={styles.errorTitle}>오류가 발생했습니다</div>
-          <div className={styles.errorMessage}>{error}</div>
+          <div className={styles.errorMessage}>{error instanceof Error ? error.message : String(error)}</div>
         </div>
       </div>
     );

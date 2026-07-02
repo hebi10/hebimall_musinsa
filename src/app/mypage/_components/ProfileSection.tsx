@@ -1,8 +1,9 @@
 "use client";
 
+import { useAuth } from "@/context/authProvider";
 import { usePointBalance } from "@/shared/hooks/usePoint";
+import { useUserCoupons } from "@/shared/hooks/useCoupons";
 import styles from "../layout.module.css";
-import { useCoupon } from "@/context/couponProvider";
 
 interface ProfileSectionProps {
   userInfo: {
@@ -16,10 +17,10 @@ interface ProfileSectionProps {
 }
 
 export default function ProfileSection({ userInfo }: ProfileSectionProps) {
+  const { user } = useAuth();
   const { data: balanceData, isLoading: isBalanceLoading } = usePointBalance();
+  const { data: userCoupons = [] } = useUserCoupons(user?.uid || null);
   const pointBalance = balanceData?.pointBalance || 0;
-  const { userCoupons } = useCoupon();
-  const availableCouponCount = userCoupons.filter(coupon => coupon.status === "사용가능").length;
 
   return (
     <div className={styles.profileSection}>
@@ -33,7 +34,7 @@ export default function ProfileSection({ userInfo }: ProfileSectionProps) {
           <span className={styles.membershipLevel}>{userInfo.membershipLevel} 회원</span>
         </div>
       </div>
-      
+
       <div className={styles.profileStats}>
         <div className={styles.statItem}>
           <div className={styles.statNumber}>{userInfo.orders}</div>
@@ -49,10 +50,10 @@ export default function ProfileSection({ userInfo }: ProfileSectionProps) {
           ) : (
             <div className={styles.statNumber}>{pointBalance.toLocaleString()}</div>
           )}
-          <div className={styles.statLabel}>적립금</div>
+          <div className={styles.statLabel}>포인트</div>
         </div>
         <div className={styles.statItem}>
-          <div className={styles.statNumber}>{availableCouponCount}</div>
+          <div className={styles.statNumber}>{userCoupons.length}</div>
           <div className={styles.statLabel}>쿠폰</div>
         </div>
       </div>

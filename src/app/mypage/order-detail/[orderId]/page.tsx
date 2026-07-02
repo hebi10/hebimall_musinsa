@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/context/authProvider';
-import { OrderService } from '@/shared/services/orderService';
+import { useOrder } from '@/shared/hooks/useOrders';
 import { Order } from '@/shared/types/order';
 import styles from './page.module.css';
 
@@ -22,6 +22,7 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [orderId, setOrderId] = useState<string>('');
+  const { refetch: refetchOrder } = useOrder(orderId || null);
 
   // params Promise를 resolve
   useEffect(() => {
@@ -34,7 +35,7 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
     try {
       setIsLoading(true);
       setError(null);
-      const orderData = await OrderService.getOrder(orderId);
+      const { data: orderData } = await refetchOrder();
       
       if (!orderData) {
         setError('주문을 찾을 수 없습니다.');
@@ -54,7 +55,7 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
     } finally {
       setIsLoading(false);
     }
-  }, [orderId, user?.uid]);
+  }, [refetchOrder, user?.uid]);
 
   useEffect(() => {
     if (loading || !orderId) return;

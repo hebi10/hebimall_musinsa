@@ -1,9 +1,10 @@
-﻿'use client';
+'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { QueryDocumentSnapshot, DocumentData } from 'firebase/firestore';
-import { Product, ProductSort } from '@/shared/types/product';
-import { ProductQueryInput, ProductService } from '@/shared/services/productService';
+import { useEffect, useMemo, useState } from 'react';
+import { ProductSort } from '@/shared/types/product';
+import type { ProductQueryInput } from '@/shared/services/productService';
+import { useCategoriesQuery } from '@/shared/hooks/useCategoriesQuery';
+import { useProductSearch } from '@/shared/hooks/useProducts';
 import { getDefaultCategoryNames } from '@/shared/utils/categoryUtils';
 import ProductCard from './ProductCard';
 import styles from './ProductList.module.css';
@@ -11,8 +12,6 @@ import styles from './ProductList.module.css';
 const ITEMS_PER_PAGE = 12;
 const DEFAULT_PRICE_MAX = 1_000_000;
 const categoryNames = getDefaultCategoryNames();
-
-type PageCursor = QueryDocumentSnapshot<DocumentData> | null;
 
 const sortOptions: Array<{ value: string; label: string }> = [
   { value: 'createdAt-desc', label: '최신순' },
@@ -23,11 +22,6 @@ const sortOptions: Array<{ value: string; label: string }> = [
 ];
 
 export default function ProductList() {
-  const [items, setItems] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<string[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
   const [searchInput, setSearchInput] = useState('');
   const [searchKeyword, setSearchKeyword] = useState('');
   const [category, setCategory] = useState('');
@@ -36,9 +30,6 @@ export default function ProductList() {
   const [maxPrice, setMaxPrice] = useState(DEFAULT_PRICE_MAX);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [cursorStack, setCursorStack] = useState<Record<number, PageCursor>>({ 1: null });
-  const [hasMoreByPage, setHasMoreByPage] = useState<Record<number, boolean>>({});
-  const [cacheByPage, setCacheByPage] = useState<Record<number, Product[]>>({});
 
   const queryInput = useMemo(
     (): ProductQueryInput => ({
@@ -52,106 +43,26 @@ export default function ProductList() {
     }),
     [category, searchKeyword, minPrice, maxPrice, sort]
   );
+  const {
+    data,
+    isLoading: loading,
+    error,
+    fetchNextPage,
+    refetch,
+  } = useProductSearch(queryInput);
+  const { data: categoryData = [] } = useCategoriesQuery();
+  const pages = data?.pages || [];
+  const currentResult = pages[currentPage - 1] || pages[0];
+  const items = currentResult?.items || [];
+  const hasNextPage = Boolean(currentResult?.hasMore);
+  const categories = categoryData.map((category) => ({
+    id: category.id,
+    name: categoryNames[category.id] || category.name || category.id,
+  }));
 
-  const resetPagination = useCallback(() => {
+  useEffect(() => {
     setCurrentPage(1);
-    setCursorStack({ 1: null });
-    setHasMoreByPage({});
-    setCacheByPage({});
-  }, []);
-
-  const loadPage = useCallback(async (page: number, forceLoad = false) => {
-    if (page < 1) {
-      return;
-    }
-
-    const cached = cacheByPage[page];
-    if (!forceLoad && cached) {
-      setItems(cached);
-      setCurrentPage(page);
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      const startAfterDoc = page === 1 ? null : cursorStack[page - 1] || null;
-      const result = await ProductService.queryProducts({
-        ...queryInput,
-        startAfterDoc,
-      });
-
-      setItems(result.items);
-      setCurrentPage(page);
-      setHasMoreByPage((prev) => ({ ...prev, [page]: result.hasMore }));
-      setCacheByPage((prev) => ({ ...prev, [page]: result.items }));
-
-      if (result.nextCursor) {
-        setCursorStack((prev) => ({ ...prev, [page + 1]: result.nextCursor || null }));
-      } else {
-        setCursorStack((prev) => ({ ...prev, [page + 1]: null }));
-      }
-    } catch (err) {
-      console.error('상품 목록 조회 실패:', err);
-      setError(err instanceof Error ? err.message : '상품 목록을 불러오지 못했습니다.');
-    } finally {
-      setLoading(false);
-    }
-  }, [cacheByPage, cursorStack, queryInput]);
-
-  const loadCategories = useCallback(async () => {
-    try {
-      const categoryList = await ProductService.getCategories();
-      setCategories(categoryList);
-    } catch {
-      setCategories([]);
-    }
-  }, []);
-
-  useEffect(() => {
-    loadCategories();
-  }, [loadCategories]);
-
-  useEffect(() => {
-    let isActive = true;
-
-    resetPagination();
-
-    const loadFirstPage = async () => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        const result = await ProductService.queryProducts({
-          ...queryInput,
-          startAfterDoc: null,
-        });
-
-        if (!isActive) return;
-
-        setItems(result.items);
-        setCurrentPage(1);
-        setHasMoreByPage({ 1: result.hasMore });
-        setCacheByPage({ 1: result.items });
-        setCursorStack({ 1: null, 2: result.nextCursor || null });
-      } catch (err) {
-        if (!isActive) return;
-        console.error('상품 목록 조회 실패:', err);
-        setError(err instanceof Error ? err.message : '상품 목록을 불러오지 못했습니다.');
-      } finally {
-        if (isActive) {
-          setLoading(false);
-        }
-      }
-    };
-
-    void loadFirstPage();
-
-    return () => {
-      isActive = false;
-    };
-  }, [queryInput, resetPagination]);
+  }, [queryInput]);
 
   const handleSearch = () => {
     setSearchKeyword(searchInput.trim());
@@ -180,14 +91,21 @@ export default function ProductList() {
 
   const moveToPreviousPage = () => {
     if (currentPage > 1) {
-      void loadPage(currentPage - 1);
+      setCurrentPage((page) => page - 1);
     }
   };
 
-  const moveToNextPage = () => {
-    if (hasMoreByPage[currentPage]) {
-      void loadPage(currentPage + 1);
+  const moveToNextPage = async () => {
+    if (!hasNextPage) {
+      return;
     }
+
+    if (!pages[currentPage]) {
+      const result = await fetchNextPage();
+      if (result.error) return;
+    }
+
+    setCurrentPage((page) => page + 1);
   };
 
   const resultCountText = items.length === 0
@@ -215,8 +133,8 @@ export default function ProductList() {
   if (error) {
     return (
       <div className={styles.error}>
-        <p>상품 목록 로딩 실패: {error}</p>
-        <button onClick={() => void loadPage(1, true)} className={styles.retryButton} type="button">
+        <p>상품 목록 로딩 실패: {error instanceof Error ? error.message : String(error)}</p>
+        <button onClick={() => void refetch()} className={styles.retryButton} type="button">
           다시 시도
         </button>
       </div>
@@ -258,9 +176,9 @@ export default function ProductList() {
         <div className={styles.filters}>
           <select value={category} onChange={(event) => setCategory(event.target.value)} className={styles.filterSelect}>
             <option value="">전체 카테고리</option>
-            {categories.map((categoryId) => (
-              <option key={categoryId} value={categoryId}>
-                {categoryNames[categoryId] || categoryId}
+            {categories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
               </option>
             ))}
           </select>
@@ -333,7 +251,7 @@ export default function ProductList() {
           이전
         </button>
         <span>{`페이지 ${currentPage}`}</span>
-        <button className={styles.pageButton} onClick={moveToNextPage} disabled={!hasMoreByPage[currentPage]} type="button">
+        <button className={styles.pageButton} onClick={() => void moveToNextPage()} disabled={!hasNextPage} type="button">
           다음
         </button>
       </div>

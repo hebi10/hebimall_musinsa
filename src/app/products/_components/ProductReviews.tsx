@@ -1,8 +1,13 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { useReview } from '@/context/reviewProvider';
+import React, { useState } from 'react';
 import { useAuth } from '@/context/authProvider';
+import {
+  useCreateReview,
+  useDeleteReview,
+  useProductReviews,
+  useReviewSummary,
+} from '@/shared/hooks/useReviews';
 import { formatDate } from '@/shared/utils/dateFormat';
 import styles from './ProductReviews.module.css';
 
@@ -11,20 +16,15 @@ interface ProductReviewsProps {
 }
 
 export default function ProductReviews({ productId }: ProductReviewsProps) {
-  const { 
-    productReviews, 
-    reviewSummary, 
-    hasMoreReviews,
-    loading, 
-    error,
-    loadProductReviews,
-    loadMoreProductReviews,
-    loadReviewSummary,
-    createReview,
-    deleteReview
-  } = useReview();
-  
   const { user } = useAuth();
+  const reviewsQuery = useProductReviews(productId);
+  const summaryQuery = useReviewSummary(productId);
+  const createReviewMutation = useCreateReview(productId);
+  const deleteReviewMutation = useDeleteReview(productId);
+  const productReviews = reviewsQuery.data?.pages.flatMap((page) => page.reviews) || [];
+  const reviewSummary = summaryQuery.data;
+  const loading = reviewsQuery.isLoading || createReviewMutation.isPending || deleteReviewMutation.isPending;
+  const error = reviewsQuery.error || summaryQuery.error;
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [reviewForm, setReviewForm] = useState({
     rating: 5,
@@ -32,31 +32,26 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
     content: '',
     size: '',
     color: '',
-    isRecommended: true
+    isRecommended: true,
   });
-
-  useEffect(() => {
-    loadProductReviews(productId);
-    loadReviewSummary(productId);
-  }, [productId, loadProductReviews, loadReviewSummary]);
 
   const handleSubmitReview = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!user) {
       alert('로그인이 필요합니다.');
       return;
     }
 
     try {
-      await createReview(productId, {
+      await createReviewMutation.mutateAsync({
         ...reviewForm,
         productId,
         userId: user.uid,
         userName: user.displayName || '익명',
-        images: [] // 이미지 업로드 기능은 추후 구현
+        images: [],
       });
-      
+
       setShowReviewForm(false);
       setReviewForm({
         rating: 5,
@@ -64,9 +59,9 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
         content: '',
         size: '',
         color: '',
-        isRecommended: true
+        isRecommended: true,
       });
-      
+
       alert('리뷰가 등록되었습니다.');
     } catch (error) {
       console.error('리뷰 등록 실패:', error);
@@ -75,9 +70,9 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
 
   const handleDeleteReview = async (reviewId: string) => {
     if (!confirm('정말 삭제하시겠습니까?')) return;
-    
+
     try {
-      await deleteReview(productId, reviewId);
+      await deleteReviewMutation.mutateAsync(reviewId);
       alert('리뷰가 삭제되었습니다.');
     } catch (error) {
       console.error('리뷰 삭제 실패:', error);
@@ -89,7 +84,7 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
   };
 
   if (error) {
-    return <div className={styles.error}>{error}</div>;
+    return <div className={styles.error}>{error instanceof Error ? error.message : String(error)}</div>;
   }
 
   return (
@@ -97,7 +92,7 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
       <div className={styles.header}>
         <h3>상품 리뷰</h3>
         {user && (
-          <button 
+          <button
             className={styles.writeButton}
             onClick={() => setShowReviewForm(!showReviewForm)}
           >
@@ -106,7 +101,6 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
         )}
       </div>
 
-      {/* 리뷰 요약 */}
       {reviewSummary && (
         <div className={styles.summary}>
           <div className={styles.averageRating}>
@@ -114,7 +108,7 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
             <span className={styles.stars}>{renderStars(Math.round(reviewSummary.averageRating))}</span>
             <span className={styles.count}>({reviewSummary.totalReviews}개 리뷰)</span>
           </div>
-          
+
           <div className={styles.distribution}>
             {Object.entries(reviewSummary.ratingDistribution)
               .reverse()
@@ -122,10 +116,10 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
                 <div key={rating} className={styles.ratingBar}>
                   <span>{rating}점</span>
                   <div className={styles.bar}>
-                    <div 
+                    <div
                       className={styles.fill}
-                      style={{ 
-                        width: `${reviewSummary.totalReviews > 0 ? (count / reviewSummary.totalReviews) * 100 : 0}%` 
+                      style={{
+                        width: `${reviewSummary.totalReviews > 0 ? (count / reviewSummary.totalReviews) * 100 : 0}%`,
                       }}
                     />
                   </div>
@@ -133,23 +127,22 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
                 </div>
               ))}
           </div>
-          
+
           <div className={styles.recommendation}>
-            추천율: {reviewSummary.recommendationRate}%
+            추천율 {reviewSummary.recommendationRate}%
           </div>
         </div>
       )}
 
-      {/* 리뷰 작성 폼 */}
       {showReviewForm && (
         <form className={styles.reviewForm} onSubmit={handleSubmitReview}>
           <div className={styles.formGroup}>
             <label>평점</label>
-            <select 
+            <select
               value={reviewForm.rating}
-              onChange={(e) => setReviewForm(prev => ({ ...prev, rating: Number(e.target.value) }))}
+              onChange={(e) => setReviewForm((prev) => ({ ...prev, rating: Number(e.target.value) }))}
             >
-              {[5, 4, 3, 2, 1].map(rating => (
+              {[5, 4, 3, 2, 1].map((rating) => (
                 <option key={rating} value={rating}>
                   {renderStars(rating)} ({rating}점)
                 </option>
@@ -162,7 +155,7 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
             <input
               type="text"
               value={reviewForm.title}
-              onChange={(e) => setReviewForm(prev => ({ ...prev, title: e.target.value }))}
+              onChange={(e) => setReviewForm((prev) => ({ ...prev, title: e.target.value }))}
               placeholder="리뷰 제목을 입력하세요"
               required
             />
@@ -172,7 +165,7 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
             <label>내용</label>
             <textarea
               value={reviewForm.content}
-              onChange={(e) => setReviewForm(prev => ({ ...prev, content: e.target.value }))}
+              onChange={(e) => setReviewForm((prev) => ({ ...prev, content: e.target.value }))}
               placeholder="리뷰 내용을 입력하세요"
               rows={5}
               required
@@ -185,7 +178,7 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
               <input
                 type="text"
                 value={reviewForm.size}
-                onChange={(e) => setReviewForm(prev => ({ ...prev, size: e.target.value }))}
+                onChange={(e) => setReviewForm((prev) => ({ ...prev, size: e.target.value }))}
                 placeholder="예: M, L, 250"
               />
             </div>
@@ -195,7 +188,7 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
               <input
                 type="text"
                 value={reviewForm.color}
-                onChange={(e) => setReviewForm(prev => ({ ...prev, color: e.target.value }))}
+                onChange={(e) => setReviewForm((prev) => ({ ...prev, color: e.target.value }))}
                 placeholder="예: 블랙, 화이트"
               />
             </div>
@@ -206,7 +199,7 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
               <input
                 type="checkbox"
                 checked={reviewForm.isRecommended}
-                onChange={(e) => setReviewForm(prev => ({ ...prev, isRecommended: e.target.checked }))}
+                onChange={(e) => setReviewForm((prev) => ({ ...prev, isRecommended: e.target.checked }))}
               />
               이 상품을 추천합니다
             </label>
@@ -223,12 +216,11 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
         </form>
       )}
 
-      {/* 리뷰 목록 */}
       <div className={styles.reviewList}>
         {loading && productReviews.length === 0 ? (
           <div className={styles.loading}>리뷰를 불러오는 중...</div>
         ) : productReviews.length === 0 ? (
-          <div className={styles.empty}>아직 리뷰가 없습니다. 첫 리뷰를 작성해보세요!</div>
+          <div className={styles.empty}>아직 리뷰가 없습니다. 첫 리뷰를 작성해보세요.</div>
         ) : (
           <>
             {productReviews.map((review) => (
@@ -237,16 +229,14 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
                   <div className={styles.userInfo}>
                     <span className={styles.userName}>{review.userName}</span>
                     <span className={styles.rating}>{renderStars(review.rating)}</span>
-                    {review.isRecommended && (
-                      <span className={styles.recommended}>추천</span>
-                    )}
+                    {review.isRecommended && <span className={styles.recommended}>추천</span>}
                   </div>
                   <div className={styles.reviewMeta}>
                     <span className={styles.date}>
                       {formatDate(review.createdAt)}
                     </span>
                     {user?.uid === review.userId && (
-                      <button 
+                      <button
                         className={styles.deleteButton}
                         onClick={() => handleDeleteReview(review.id)}
                       >
@@ -259,7 +249,7 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
                 <div className={styles.reviewContent}>
                   <h4 className={styles.reviewTitle}>{review.title}</h4>
                   <p className={styles.reviewText}>{review.content}</p>
-                  
+
                   {(review.size || review.color) && (
                     <div className={styles.productInfo}>
                       {review.size && <span>사이즈: {review.size}</span>}
@@ -270,13 +260,13 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
               </div>
             ))}
 
-            {hasMoreReviews && (
-              <button 
+            {reviewsQuery.hasNextPage && (
+              <button
                 className={styles.loadMoreButton}
-                onClick={() => loadMoreProductReviews(productId)}
-                disabled={loading}
+                onClick={() => reviewsQuery.fetchNextPage()}
+                disabled={reviewsQuery.isFetchingNextPage}
               >
-                {loading ? '로딩 중...' : '더 보기'}
+                {reviewsQuery.isFetchingNextPage ? '로딩 중...' : '더 보기'}
               </button>
             )}
           </>

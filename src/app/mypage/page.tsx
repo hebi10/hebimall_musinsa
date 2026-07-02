@@ -2,7 +2,7 @@
 
 import React, { useEffect, useLayoutEffect } from 'react';
 import { useAuth } from '@/context/authProvider';
-import { useUserActivity } from '@/context/userActivityProvider';
+import { useRecentProducts, useWishlistItems } from '@/shared/hooks/useUserActivityQuery';
 import RecentProducts from './_components/RecentProducts';
 import WishlistProducts from './_components/WishlistProducts';
 import Link from 'next/link';
@@ -10,7 +10,8 @@ import styles from './page.module.css';
 
 export default function MyPage() {
   const { user } = useAuth();
-  const { recentProducts, wishlistItems } = useUserActivity();
+  const { data: recentProducts = [] } = useRecentProducts(user?.uid || null);
+  const { data: wishlistItems = [] } = useWishlistItems(user?.uid || null);
 
   // 마이페이지 접속 시 스크롤을 맨 위로 이동 (useLayoutEffect로 더 빠르게)
   useLayoutEffect(() => {

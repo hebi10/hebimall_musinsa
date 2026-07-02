@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import type { CSSProperties } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { MainBannerContent, SiteContentService } from '@/shared/services/siteContentService';
+import type { MainBannerContent } from '@/shared/services/siteContentService';
+import { useMainBanners } from '@/shared/hooks/useSiteContent';
 import styles from './MainBanner.module.css';
 
 type BannerSlideStyle = CSSProperties & {
@@ -24,6 +25,7 @@ const fallbackSlides: MainBannerContent[] = [
     ctaLabel: '미드이어 세일 보기',
     href: '/events/event-2026-06-midyear-sale',
     image: '/main/main_event_midyear_sale.webp',
+    mobileImage: '/main/main_event_midyear_sale_mobile.webp',
     backgroundColor: '#c9c0b3',
     order: 1,
   },
@@ -35,6 +37,7 @@ const fallbackSlides: MainBannerContent[] = [
     ctaLabel: '쿠폰팩 보기',
     href: '/events/event-2026-07-vacation-coupon',
     image: '/main/main_event_vacation_coupon.webp',
+    mobileImage: '/main/main_event_vacation_coupon_mobile.webp',
     backgroundColor: '#d4c4ad',
     order: 2,
   },
@@ -46,27 +49,21 @@ const fallbackSlides: MainBannerContent[] = [
     ctaLabel: '쿨터치 세일 보기',
     href: '/events/event-2026-07-cool-touch',
     image: '/main/main_event_cool_touch.webp',
+    mobileImage: '/main/main_event_cool_touch_mobile.webp',
     backgroundColor: '#b9c8cf',
     order: 3,
   },
 ];
 
 export default function MainBanner() {
-  const [slides, setSlides] = useState<MainBannerContent[]>([]);
+  const { data: bannerSlides = [] } = useMainBanners();
+  const slides = bannerSlides.length > 0 ? bannerSlides : fallbackSlides;
   const [activeIndex, setActiveIndex] = useState(0);
   const [rotationKey, setRotationKey] = useState(0);
 
   useEffect(() => {
-    SiteContentService.getMainBanners()
-      .then((nextSlides) => {
-        setSlides(nextSlides.length > 0 ? nextSlides : fallbackSlides);
-        setActiveIndex(0);
-      })
-      .catch((error) => {
-        console.error('메인 배너 조회 실패:', error);
-        setSlides(fallbackSlides);
-      });
-  }, []);
+    setActiveIndex(0);
+  }, [bannerSlides]);
 
   useEffect(() => {
     if (slides.length < 2) {
@@ -124,7 +121,7 @@ export default function MainBanner() {
         {slides.map((slide, index) => (
           <article
             key={slide.id}
-            className={`${styles.bannerSlide} ${index === activeIndex ? styles.activeSlide : ''}`}
+            className={`${styles.bannerSlide} ${slide.mobileImage ? styles.hasMobileImage : ''} ${index === activeIndex ? styles.activeSlide : ''}`}
             aria-hidden={index !== activeIndex}
             style={getSlideStyle(slide)}
           >
@@ -134,8 +131,18 @@ export default function MainBanner() {
               fill
               priority={index === 0}
               sizes="(min-width: 1920px) 1920px, 100vw"
-              className={styles.bannerImage}
+              className={`${styles.bannerImage} ${styles.desktopBannerImage}`}
             />
+            {slide.mobileImage && (
+              <Image
+                src={slide.mobileImage}
+                alt=""
+                fill
+                priority={index === 0}
+                sizes="100vw"
+                className={`${styles.bannerImage} ${styles.mobileBannerImage}`}
+              />
+            )}
 
             <div className={styles.bannerCopy}>
               <p className={styles.bannerEyebrow}>{slide.eyebrow}</p>

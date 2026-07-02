@@ -1,8 +1,13 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import styles from './page.module.css';
-import { CouponService } from '@/shared/services/couponService';
+import {
+  useAdminCoupons,
+  useCreateCoupon,
+  useDeleteCoupon,
+  useUpdateCoupon,
+} from '@/shared/hooks/useCoupons';
 import { Coupon, CouponStats } from '@/shared/types/coupon';
 
 export default function AdminCouponsPage() {
@@ -18,6 +23,10 @@ export default function AdminCouponsPage() {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
+  const { refetch: refetchAdminCoupons } = useAdminCoupons();
+  const createCoupon = useCreateCoupon();
+  const updateCoupon = useUpdateCoupon();
+  const deleteCoupon = useDeleteCoupon();
   const [formData, setFormData] = useState({
     name: '',
     type: '할인금액',
@@ -32,19 +41,14 @@ export default function AdminCouponsPage() {
     usedCount: 0
   });
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setLoading(true);
       
       // 실제 Firebase에서 쿠폰 데이터 로드
-      const [couponsData, statsData] = await Promise.all([
-        CouponService.getAllCoupons(),
-        CouponService.getCouponStats()
-      ]);
+      const { data } = await refetchAdminCoupons();
+      const couponsData = data?.coupons ?? [];
+      const statsData = data?.stats ?? { total: 0, available: 0, used: 0, expired: 0 };
       
       setCoupons(couponsData);
       setStats(statsData);
@@ -54,7 +58,11 @@ export default function AdminCouponsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [refetchAdminCoupons]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const handleCreateCoupon = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,7 +81,7 @@ export default function AdminCouponsPage() {
         usedCount: 0
       };
       
-      await CouponService.createCoupon(couponData);
+      await createCoupon.mutateAsync(couponData);
       await loadData(); // 데이터 새로고침
       resetForm();
       alert('쿠폰이 생성되었습니다.');
@@ -103,7 +111,7 @@ export default function AdminCouponsPage() {
       if (formData.usageLimit !== undefined) updateData.usageLimit = Number(formData.usageLimit);
       if (formData.usedCount !== undefined) updateData.usedCount = Number(formData.usedCount);
       
-      await CouponService.updateCoupon(selectedCoupon.id, updateData);
+      await updateCoupon.mutateAsync({ couponId: selectedCoupon.id, updateData });
       await loadData(); // 데이터 새로고침
       resetForm();
       alert('쿠폰이 수정되었습니다.');
@@ -117,7 +125,7 @@ export default function AdminCouponsPage() {
     if (!confirm('이 쿠폰을 비활성화하시겠습니까? 이미 발급된 쿠폰 이력은 유지됩니다.')) return;
 
     try {
-      await CouponService.deleteCoupon(couponId);
+      await deleteCoupon.mutateAsync(couponId);
       await loadData(); // 데이터 새로고침
       alert('쿠폰이 비활성화되었습니다.');
     } catch (error) {
@@ -128,7 +136,7 @@ export default function AdminCouponsPage() {
 
   const handleToggleStatus = async (coupon: Coupon) => {
     try {
-      await CouponService.updateCoupon(coupon.id, { isActive: !coupon.isActive });
+      await updateCoupon.mutateAsync({ couponId: coupon.id, updateData: { isActive: !coupon.isActive } });
       await loadData(); // 데이터 새로고침
     } catch (error) {
       console.error('Error toggling status:', error);

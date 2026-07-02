@@ -1,5 +1,6 @@
 import React from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import AdminEventList from './AdminEventList';
 import { Event } from '@/shared/types/event';
 import { EventService } from '@/shared/services/eventService';
@@ -55,6 +56,17 @@ const event = (overrides: Partial<Event>): Event => ({
   ...overrides,
 });
 
+const renderWithQueryClient = (ui: React.ReactElement) => {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: { retry: false },
+      mutations: { retry: false },
+    },
+  });
+
+  return render(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>);
+};
+
 describe('AdminEventList', () => {
   afterEach(() => {
     jest.clearAllMocks();
@@ -78,7 +90,7 @@ describe('AdminEventList', () => {
       }),
     ]);
 
-    render(<AdminEventList />);
+    renderWithQueryClient(<AdminEventList />);
 
     await waitFor(() => {
       expect(screen.getByText('예정 세일')).toBeInTheDocument();

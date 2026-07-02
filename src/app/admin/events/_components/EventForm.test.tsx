@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import EventForm from './EventForm';
 import { Event } from '@/shared/types/event';
 import { CategoryService } from '@/shared/services/categoryService';
@@ -67,6 +68,17 @@ const baseEvent: Event = {
   updatedAt: new Date('2026-06-01T00:00:00+09:00'),
 };
 
+const renderWithQueryClient = (ui: React.ReactElement) => {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: { retry: false },
+      mutations: { retry: false },
+    },
+  });
+
+  return render(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>);
+};
+
 describe('EventForm', () => {
   afterEach(() => {
     jest.clearAllMocks();
@@ -75,7 +87,7 @@ describe('EventForm', () => {
   test('renders an existing detail image for editing', async () => {
     jest.mocked(CategoryService.getCategories).mockResolvedValue([]);
 
-    render(<EventForm event={baseEvent} isEdit />);
+    renderWithQueryClient(<EventForm event={baseEvent} isEdit />);
 
     await waitFor(() => {
       expect(screen.getByAltText('상세 이미지')).toHaveAttribute('src', '/detail.webp');

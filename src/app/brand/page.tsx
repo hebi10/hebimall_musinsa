@@ -1,34 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import PageHeader from '@/app/_components/PageHeader';
-import { BrandSummary, ProductService } from '@/shared/services/productService';
+import { useBrandSummaries } from '@/shared/hooks/useProducts';
 import styles from './page.module.css';
 
 export default function BrandPage() {
-  const [brands, setBrands] = useState<BrandSummary[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const loadBrands = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const nextBrands = await ProductService.getBrandSummaries();
-        setBrands(nextBrands);
-      } catch (err) {
-        console.error('브랜드 목록 조회 실패:', err);
-        setError('브랜드 목록을 불러오지 못했습니다.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    void loadBrands();
-  }, []);
+  const { data: brands = [], isLoading: loading, error } = useBrandSummaries();
 
   return (
     <div className={styles.container}>
@@ -45,7 +24,7 @@ export default function BrandPage() {
         {loading ? (
           <div className={styles.stateBox}>브랜드를 불러오는 중입니다.</div>
         ) : error ? (
-          <div className={styles.stateBox}>{error}</div>
+          <div className={styles.stateBox}>브랜드 목록을 불러오지 못했습니다.</div>
         ) : brands.length === 0 ? (
           <div className={styles.stateBox}>등록된 브랜드가 없습니다.</div>
         ) : (

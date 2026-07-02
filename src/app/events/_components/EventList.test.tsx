@@ -48,12 +48,12 @@ jest.mock('@/shared/services/eventService', () => ({
   getFeaturedEvent: (events: Event[]) => events[0],
 }));
 
-jest.mock('@/context/eventProvider', () => ({
-  useEvent: jest.fn(),
+jest.mock('@/shared/hooks/useEvents', () => ({
+  useEvents: jest.fn(),
 }));
 
-const { useEvent } = jest.requireMock('@/context/eventProvider') as {
-  useEvent: jest.Mock;
+const { useEvents } = jest.requireMock('@/shared/hooks/useEvents') as {
+  useEvents: jest.Mock;
 };
 
 const baseEvent = (overrides: Partial<Event>): Event => ({
@@ -89,7 +89,10 @@ const renderEventList = () => {
     }),
   ];
 
-  useEvent.mockReturnValue({
+  useEvents.mockReturnValue({
+    data: events,
+    isLoading: false,
+    refetch: jest.fn(),
     events,
     filteredEvents: events,
     filter: {},
@@ -128,7 +131,10 @@ describe('EventList', () => {
   });
 
   test('renders event-shaped skeleton cards while loading', () => {
-    useEvent.mockReturnValue({
+    useEvents.mockReturnValue({
+      data: [],
+      isLoading: true,
+      refetch: jest.fn(),
       events: [],
       filteredEvents: [],
       filter: {},

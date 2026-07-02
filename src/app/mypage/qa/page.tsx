@@ -3,7 +3,7 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/authProvider';
-import { SimpleQnAService } from '@/shared/services/simpleQnAService';
+import { useUserSimpleQnAs } from '@/shared/hooks/useQnaQuery';
 import { QnA } from '@/shared/types/qna';
 import styles from './page.module.css';
 
@@ -14,6 +14,7 @@ export default function QAPage() {
   const [qnas, setQnas] = useState<QnA[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { refetch: refetchQnAs } = useUserSimpleQnAs(user?.uid ?? null);
 
   const typeOptions = ['전체', 'product', 'delivery', 'payment', 'general'];
   const statusOptions = ['전체', 'answered', 'waiting'];
@@ -47,14 +48,11 @@ export default function QAPage() {
   };
 
   const loadUserQnAs = useCallback(async () => {
-    if (!user?.uid) {
-      console.log('User not logged in');
-      return;
-    }
+    if (!user?.uid) return;
 
     try {
       setLoading(true);
-      const userQnAs = await SimpleQnAService.getUserQnAs(user.uid);
+      const { data: userQnAs = [] } = await refetchQnAs();
       setQnas(userQnAs);
     } catch (err) {
       setError('문의 목록을 불러오지 못했습니다.');
@@ -62,7 +60,7 @@ export default function QAPage() {
     } finally {
       setLoading(false);
     }
-  }, [user?.uid]);
+  }, [refetchQnAs, user?.uid]);
 
   useEffect(() => {
     loadUserQnAs();

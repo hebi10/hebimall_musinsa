@@ -3,8 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import ProductCard from '@/app/products/_components/ProductCard';
-import { ProductService } from '@/shared/services/productService';
-import { Product } from '@/shared/types/product';
+import { useRecommendedProducts } from '@/shared/hooks/useProducts';
 import styles from "./page.module.css";
 
 type RecommendFilterType = 'all' | 'rating' | 'review' | 'sale' | 'new';
@@ -20,10 +19,21 @@ function normalizeFilterType(value: string | null): RecommendFilterType {
 export default function RecommendClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [recommendedProducts, setRecommendedProducts] = useState<Product[]>([]);
   const [filterType, setFilterType] = useState<RecommendFilterType>('all');
+  const productKind = filterType === 'all'
+    ? 'recommended'
+    : filterType === 'rating'
+    ? 'topRated'
+    : filterType === 'review'
+    ? 'reviewPopular'
+    : filterType;
+  const {
+    data: recommendedProducts = [],
+    isLoading: loading,
+    error,
+    refetch,
+  } = useRecommendedProducts(productKind, filterType === 'sale' ? 120 : filterType === 'new' ? 80 : 24);
+  const visibleProducts = recommendedProducts.slice(0, 24);
 
   const filterOptions = [
     { value: 'all' as const, label: '전체' },
@@ -45,53 +55,6 @@ export default function RecommendClient() {
     );
   }, [router]);
 
-  const loadProducts = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      let nextProducts: Product[] = [];
-
-      switch (filterType) {
-        case 'all': {
-          nextProducts = await ProductService.getRecommendedProducts(24);
-          break;
-        }
-        case 'rating': {
-          nextProducts = await ProductService.getTopRatedProducts(24);
-          break;
-        }
-        case 'review': {
-          nextProducts = await ProductService.getReviewPopularProducts(24);
-          break;
-        }
-        case 'sale': {
-          const result = await ProductService.getSaleProducts(120);
-          nextProducts = result.slice(0, 24);
-          break;
-        }
-        case 'new': {
-          const result = await ProductService.getNewProducts(80);
-          nextProducts = result.slice(0, 24);
-          break;
-        }
-        default:
-          nextProducts = await ProductService.getRecommendedProducts(24);
-      }
-
-      setRecommendedProducts(nextProducts);
-    } catch (err) {
-      console.error('상품 추천 로드 실패:', err);
-      setError('상품을 불러오지 못했습니다.');
-    } finally {
-      setLoading(false);
-    }
-  }, [filterType]);
-
-  useEffect(() => {
-    void loadProducts();
-  }, [loadProducts]);
-
   if (loading) {
     return (
       <div className={styles.container}>
@@ -107,8 +70,8 @@ export default function RecommendClient() {
     return (
       <div className={styles.container}>
         <div className={styles.errorWrapper}>
-          <p>{error}</p>
-          <button onClick={() => void loadProducts()} className={styles.retryButton}>
+          <p>{error instanceof Error ? error.message : '상품을 불러오지 못했습니다.'}</p>
+          <button onClick={() => void refetch()} className={styles.retryButton}>
             다시 시도
           </button>
         </div>
@@ -142,11 +105,11 @@ export default function RecommendClient() {
 
         <div className={styles.resultsHeader}>
           <div className={styles.resultsCount}>
-            결과: <span className={styles.count}>{recommendedProducts.length}</span>개
+            결과: <span className={styles.count}>{visibleProducts.length}</span>개
           </div>
         </div>
 
-        {recommendedProducts.length === 0 ? (
+        {visibleProducts.length === 0 ? (
           <div className={styles.emptyState}>
             <h3 className={styles.emptyTitle}>추천 상품이 없습니다.</h3>
             <p className={styles.emptyDescription}>잠시 후 다시 확인해 주세요.</p>
@@ -156,7 +119,7 @@ export default function RecommendClient() {
           </div>
         ) : (
           <div className={styles.productGrid}>
-            {recommendedProducts.map((product) => (
+            {visibleProducts.map((product) => (
               <ProductCard
                 key={product.id}
                 id={product.id}

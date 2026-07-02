@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/context/authProvider";
+import { useCategoriesQuery } from "@/shared/hooks/useCategoriesQuery";
 import { useCartItemCount } from "@/shared/hooks/useCart";
-import { CategoryOrderService } from "@/shared/services/categoryOrderService";
 import { DEFAULT_CATEGORY_IDS, getDefaultCategoryNames } from "@/shared/utils/categoryUtils";
 import styles from "./Header.module.css";
 
@@ -41,7 +41,7 @@ function toNavLabel(category: HeaderCategory) {
 export default function Header() {
   const { user, isAdmin, logout } = useAuth();
   const { data: cartItemCount = 0 } = useCartItemCount(user?.uid || null);
-  const [categories, setCategories] = useState<HeaderCategory[]>(DEFAULT_CATEGORIES);
+  const { data: categoryData = [] } = useCategoriesQuery();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -49,37 +49,14 @@ export default function Header() {
     setIsMounted(true);
   }, []);
 
-  useEffect(() => {
-    let isActive = true;
-
-    const loadCategories = async () => {
-      try {
-        const sortedCategories = await CategoryOrderService.getSortedCategories();
-        const headerCategories: HeaderCategory[] = sortedCategories.map((category) => ({
-          id: category.id,
-          name: category.name,
-          href: `/categories/${category.id}`,
-        }));
-
-        if (isActive && headerCategories.length > 0) {
-          setCategories(headerCategories);
-        }
-      } catch (error) {
-        console.error("헤더 카테고리 로딩 실패:", error);
-        if (isActive) {
-          setCategories(DEFAULT_CATEGORIES);
-        }
-      }
-    };
-
-    loadCategories();
-
-    return () => {
-      isActive = false;
-    };
-  }, []);
-
   const safeCartItemCount = isMounted ? cartItemCount : 0;
+  const categories: HeaderCategory[] = categoryData.length > 0
+    ? categoryData.map((category) => ({
+      id: category.id,
+      name: category.name,
+      href: `/categories/${category.id}`,
+    }))
+    : DEFAULT_CATEGORIES;
   const featuredCategories = categories.slice(0, 1);
   const primaryNavItems: HeaderNavItem[] = [
     { label: "신상", href: "/recommend?filter=new" },

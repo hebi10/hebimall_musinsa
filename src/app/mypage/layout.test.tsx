@@ -21,12 +21,6 @@ jest.mock('./_components', () => ({
   SidebarMenu: () => <aside data-testid="sidebar-menu" />,
 }));
 
-jest.mock('@/context/couponProvider', () => ({
-  CouponProvider: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="nested-coupon-provider">{children}</div>
-  ),
-}));
-
 jest.mock('./layout.module.css', () => ({
   __esModule: true,
   default: new Proxy({}, {

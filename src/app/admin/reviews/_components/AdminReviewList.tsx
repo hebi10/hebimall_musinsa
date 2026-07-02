@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Review } from '@/shared/types/review';
 import Button from '@/app/_components/Button';
-import { ReviewService } from '@/shared/services/reviewService';
+import { useAllReviews } from '@/shared/hooks/useReviews';
 import styles from './AdminReviewList.module.css';
 
 export default function AdminReviewList() {
@@ -14,6 +14,7 @@ export default function AdminReviewList() {
   const [selectedReviews, setSelectedReviews] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const { refetch: refetchReviews } = useAllReviews(1, undefined, 'latest', 100);
 
   useEffect(() => {
     let isMounted = true;
@@ -23,12 +24,12 @@ export default function AdminReviewList() {
       setLoadError(null);
 
       try {
-        const result = await ReviewService.getAllReviews(1, 100, undefined, 'latest');
+        const { data: result } = await refetchReviews();
         if (!isMounted) {
           return;
         }
 
-        setReviews(result.reviews);
+        setReviews(result?.reviews ?? []);
       } catch {
         if (!isMounted) {
           return;
@@ -48,7 +49,7 @@ export default function AdminReviewList() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [refetchReviews]);
 
   const filteredReviews = reviews.filter(review => {
     const matchesRating = filterRating === null || review.rating === filterRating;

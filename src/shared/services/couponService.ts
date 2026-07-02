@@ -483,9 +483,7 @@ export class CouponService {
    */
   static async registerCouponByCode(uid: string, couponCode: string): Promise<CouponResponse> {
     try {
- console.log('쿠폰 등록 시도:', { uid, couponCode });
       const result = await callCouponAPI('register', { couponCode });
- console.log('쿠폰 등록 결과:', result);
       return { success: true, message: result.message || '쿠폰이 등록되었습니다.', data: result };
     } catch (error) {
  console.error('쿠폰 등록 실패 상세:', error);

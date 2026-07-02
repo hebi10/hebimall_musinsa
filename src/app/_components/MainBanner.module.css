@@ -31,6 +31,10 @@
   object-position: var(--banner-image-position, center top);
 }
 
+.mobileBannerImage {
+  display: none;
+}
+
 .bannerCopy {
   position: relative;
   z-index: 2;
@@ -211,6 +215,15 @@
 
   .bannerImage {
     object-position: var(--banner-image-position-mobile, 68% top);
+  }
+
+  .hasMobileImage .desktopBannerImage {
+    display: none;
+  }
+
+  .hasMobileImage .mobileBannerImage {
+    display: block;
+    object-position: center top;
   }
 
   .bannerCopy {

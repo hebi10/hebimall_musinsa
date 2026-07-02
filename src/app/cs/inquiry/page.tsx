@@ -2,8 +2,8 @@
 
 import { useCallback, useState, useEffect } from 'react';
 import { useAuth } from '@/context/authProvider';
-import { InquiryService } from '@/shared/services/inquiryService';
 import { Inquiry, CreateInquiryData } from '@/shared/types/inquiry';
+import { useCreateInquiry, useUserInquiries } from '@/shared/hooks/useInquiries';
 import styles from './page.module.css';
 
 const CATEGORY_LABELS = {
@@ -28,6 +28,8 @@ export default function InquiryPage() {
     title: '',
     content: ''
   });
+  const { refetch: refetchInquiries } = useUserInquiries(user?.uid ?? null);
+  const createInquiry = useCreateInquiry(user);
 
   // 사용자 문의 내역 로드
   const loadUserInquiries = useCallback(async () => {
@@ -35,15 +37,15 @@ export default function InquiryPage() {
     
     setLoading(true);
     try {
-      const userInquiries = await InquiryService.getUserInquiries(user.uid);
-      setInquiries(userInquiries);
+      const result = await refetchInquiries();
+      setInquiries(result.data ?? []);
     } catch (error) {
       console.error('문의 내역 로드 실패:', error);
       alert('문의 내역을 불러오는데 실패했습니다.');
     } finally {
       setLoading(false);
     }
-  }, [user]);
+  }, [refetchInquiries, user]);
 
   useEffect(() => {
     if (user && activeTab === 'list') {
@@ -73,12 +75,7 @@ export default function InquiryPage() {
     
     setLoading(true);
     try {
-      await InquiryService.createInquiry(
-        user.uid,
-        user.email || '',
-        user.displayName || '사용자',
-        formData
-      );
+      await createInquiry.mutateAsync(formData);
       
       alert('문의가 등록되었습니다. 빠른 시일 내에 답변드리겠습니다.');
       setFormData({ category: 'order', title: '', content: '' });

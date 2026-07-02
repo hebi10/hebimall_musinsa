@@ -1,9 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Link from "next/link";
 import Image from "next/image";
-import { CategoryOrderService } from '@/shared/services/categoryOrderService';
+import { useMainPageCategories } from '@/shared/hooks/useCategoryOrder';
 import { DEFAULT_CATEGORY_IDS, getDefaultCategoryNames } from '@/shared/utils/categoryUtils';
 import styles from '../page.module.css';
 
@@ -47,29 +46,8 @@ export default function DynamicCategorySection({
   maxCategories = 4, 
   className = '' 
 }: DynamicCategorySectionProps) {
-  const [categories, setCategories] = useState<CategoryCardProps[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const loadCategories = async () => {
-      try {
-        setLoading(true);
-        const categoryData = await CategoryOrderService.getMainPageCategories(maxCategories);
-        setCategories(categoryData);
-        setError(null);
-      } catch (err) {
-        console.error('카테고리 로딩 실패:', err);
-        setError('카테고리를 불러오는데 실패했습니다.');
-        
-        setCategories(getFallbackCategories(maxCategories));
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadCategories();
-  }, [maxCategories]);
+  const { data, isLoading: loading, error, refetch } = useMainPageCategories(maxCategories);
+  const categories = (data && data.length > 0 ? data : getFallbackCategories(maxCategories)) as CategoryCardProps[];
 
   if (loading) {
     return (
@@ -92,9 +70,9 @@ export default function DynamicCategorySection({
   if (error) {
     return (
       <div className={`${styles.errorContainer} ${className}`}>
-        <p className={styles.errorMessage}>{error}</p>
+        <p className={styles.errorMessage}>카테고리를 불러오는데 실패했습니다.</p>
         <button 
-          onClick={() => window.location.reload()} 
+          onClick={() => refetch()} 
           className={styles.retryButton}
         >
           다시 시도

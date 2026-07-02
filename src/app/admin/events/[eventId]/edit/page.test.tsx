@@ -23,10 +23,6 @@ jest.mock('@/app/admin/events/_components/EventForm', () => ({
   ),
 }));
 
-jest.mock('@/context/eventProvider', () => ({
-  EventProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-}));
-
 jest.mock('@/shared/services/eventService', () => ({
   EventService: {
     getEventById: jest.fn(),

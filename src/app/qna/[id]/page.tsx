@@ -4,7 +4,7 @@ import { useCallback, useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter, useParams } from 'next/navigation';
 import { useAuth } from '@/context/authProvider';
-import { QnAService } from '@/shared/services/qnaService';
+import { useQnAAccessCheck } from '@/shared/hooks/useQnaQuery';
 import { QnA } from '@/shared/types/qna';
 import styles from './page.module.css';
 
@@ -18,6 +18,7 @@ export default function QnADetailPage() {
   const [secretPassword, setSecretPassword] = useState('');
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [passwordError, setPasswordError] = useState<string | null>(null);
+  const { mutateAsync: checkQnAAccess } = useQnAAccessCheck();
 
   const qnaId = params.id as string;
 
@@ -27,7 +28,7 @@ export default function QnADetailPage() {
       setError(null);
       setPasswordError(null);
 
-      const result = await QnAService.getQnAWithAccessCheck(qnaId, password);
+      const result = await checkQnAAccess({ qnaId, password });
 
       if (!result.success || !result.qna) {
         if (result.needsPassword) {
@@ -47,10 +48,10 @@ export default function QnADetailPage() {
     } finally {
       setLoading(false);
     }
-  }, [qnaId]);
+  }, [checkQnAAccess, qnaId]);
 
   const handlePasswordSubmit = async () => {
-    const result = await QnAService.getQnAWithAccessCheck(qnaId, secretPassword);
+    const result = await checkQnAAccess({ qnaId, password: secretPassword });
     if (!result.success || !result.qna) {
       setPasswordError('비밀번호가 일치하지 않습니다.');
       return;

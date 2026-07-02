@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { Product } from '@/shared/types/product';
-import { useCategories } from '@/context/categoryProvider';
+import { useCategoriesQuery } from '@/shared/hooks/useCategoriesQuery';
 import useInputs from '@/shared/hooks/useInput';
 import { 
   uploadProductImages, 
@@ -177,7 +177,7 @@ interface EditProductFormProps {
 }
 
 export default function EditProductForm({ product, onSave, onCancel }: EditProductFormProps) {
-  const { categories, loading: categoriesLoading } = useCategories();
+  const { data: categories = [], isLoading: categoriesLoading } = useCategoriesQuery();
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({});
   const [isSaving, setIsSaving] = useState(false);
@@ -404,7 +404,6 @@ export default function EditProductForm({ product, onSave, onCancel }: EditProdu
 
     // 이미 저장 중이거나 업로드 중이면 무시
     if (isSaving || uploading) {
-      console.log('이미 처리 중입니다. 중복 요청을 무시합니다.');
       return;
     }
 

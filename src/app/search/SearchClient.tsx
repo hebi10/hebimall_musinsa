@@ -1,12 +1,13 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { QueryDocumentSnapshot, DocumentData } from 'firebase/firestore';
 import { useSearchParams, useRouter } from 'next/navigation';
 import PageHeader from '../_components/PageHeader';
 import ProductCard from '@/app/products/_components/ProductCard';
-import { Product, ProductFilter, ProductSort } from '@/shared/types/product';
-import { ProductQueryInput, ProductService } from '@/shared/services/productService';
+import { ProductFilter, ProductSort } from '@/shared/types/product';
+import type { ProductQueryInput } from '@/shared/services/productService';
+import { useCategoriesQuery } from '@/shared/hooks/useCategoriesQuery';
+import { useProductSearch } from '@/shared/hooks/useProducts';
 import styles from './page.module.css';
 
 interface SearchState {
@@ -15,13 +16,8 @@ interface SearchState {
   filters: ProductFilter;
   sortBy: ProductSort;
   currentPage: number;
-  results: Product[];
-  loading: boolean;
   hasSearched: boolean;
-  error: string | null;
 }
-
-type SearchCursor = QueryDocumentSnapshot<DocumentData> | null;
 
 const ITEMS_PER_PAGE = 20;
 
@@ -45,16 +41,8 @@ export default function SearchClient() {
     filters: {},
     sortBy: { field: 'createdAt', order: 'desc' },
     currentPage: 1,
-    results: [],
-    loading: false,
     hasSearched: false,
-    error: null,
   });
-
-  const [cursorByPage, setCursorByPage] = useState<Record<number, SearchCursor>>({ 1: null });
-  const [cacheByPage, setCacheByPage] = useState<Record<number, Product[]>>({});
-  const [hasMoreByPage, setHasMoreByPage] = useState<Record<number, boolean>>({});
-  const [availableCategories, setAvailableCategories] = useState<string[]>([]);
 
   const queryInput = useMemo((): ProductQueryInput => ({
     keyword: state.committedQuery,
@@ -69,52 +57,24 @@ export default function SearchClient() {
     sort: state.sortBy,
     limitCount: ITEMS_PER_PAGE,
   }), [state.committedQuery, state.filters, state.sortBy]);
+  const {
+    data,
+    isLoading,
+    isFetching,
+    error,
+    fetchNextPage,
+    refetch,
+  } = useProductSearch(queryInput, Boolean(state.committedQuery));
+  const { data: categories = [] } = useCategoriesQuery();
+  const pages = data?.pages || [];
+  const currentResult = pages[state.currentPage - 1] || pages[0];
+  const results = currentResult?.items || [];
+  const hasNextPage = Boolean(currentResult?.hasMore);
+  const loading = isLoading || isFetching;
 
   const resetPaging = useCallback(() => {
-    setState((prev) => ({ ...prev, currentPage: 1, results: [] }));
-    setCursorByPage({ 1: null });
-    setCacheByPage({});
-    setHasMoreByPage({});
+    setState((prev) => ({ ...prev, currentPage: 1 }));
   }, []);
-
-  const loadPage = useCallback(async (page: number, forceReload = false) => {
-    if (!state.committedQuery) {
-      return;
-    }
-
-    const cached = !forceReload ? cacheByPage[page] : undefined;
-    if (cached) {
-      setState((prev) => ({ ...prev, results: cached, currentPage: page }));
-      return;
-    }
-
-    setState((prev) => ({ ...prev, loading: true, error: null }));
-
-    try {
-      const startAfterDoc = cursorByPage[page] || null;
-      const result = await ProductService.queryProducts({
-        ...queryInput,
-        startAfterDoc,
-      });
-
-      setState((prev) => ({ ...prev, results: result.items, currentPage: page }));
-      setCacheByPage((prev) => ({ ...prev, [page]: result.items }));
-      setHasMoreByPage((prev) => ({ ...prev, [page]: result.hasMore }));
-
-      if (result.nextCursor) {
-        setCursorByPage((prev) => ({ ...prev, [page + 1]: result.nextCursor as SearchCursor }));
-      } else {
-        setCursorByPage((prev) => ({ ...prev, [page + 1]: null }));
-      }
-    } catch (error) {
-      setState((prev) => ({
-        ...prev,
-        error: error instanceof Error ? error.message : '검색 결과를 불러오지 못했습니다.',
-      }));
-    } finally {
-      setState((prev) => ({ ...prev, loading: false }));
-    }
-  }, [cacheByPage, cursorByPage, queryInput, state.committedQuery]);
 
   const submitSearch = useCallback((nextQuery: string) => {
     const trimmed = nextQuery.trim();
@@ -144,19 +104,6 @@ export default function SearchClient() {
   }, [resetPaging]);
 
   useEffect(() => {
-    const loadCategories = async () => {
-      try {
-        const categories = await ProductService.getCategories();
-        setAvailableCategories(categories);
-      } catch {
-        setAvailableCategories([]);
-      }
-    };
-
-    void loadCategories();
-  }, []);
-
-  useEffect(() => {
     const nextQuery = searchParams?.get('q')?.trim() || '';
 
     if (nextQuery !== state.committedQuery) {
@@ -172,46 +119,9 @@ export default function SearchClient() {
 
   useEffect(() => {
     if (!state.committedQuery) {
-      setState((prev) => ({ ...prev, hasSearched: false, results: [], loading: false }));
-      return;
+      setState((prev) => ({ ...prev, hasSearched: false, currentPage: 1 }));
     }
-
-    let isActive = true;
-
-    const loadFirstPage = async () => {
-      setState((prev) => ({ ...prev, loading: true, error: null }));
-
-      try {
-        const result = await ProductService.queryProducts({
-          ...queryInput,
-          startAfterDoc: null,
-        });
-
-        if (!isActive) return;
-
-        setState((prev) => ({ ...prev, results: result.items, currentPage: 1 }));
-        setCacheByPage({ 1: result.items });
-        setHasMoreByPage({ 1: result.hasMore });
-        setCursorByPage({ 1: null, 2: result.nextCursor as SearchCursor });
-      } catch (error) {
-        if (!isActive) return;
-        setState((prev) => ({
-          ...prev,
-          error: error instanceof Error ? error.message : '검색 결과를 불러오지 못했습니다.',
-        }));
-      } finally {
-        if (isActive) {
-          setState((prev) => ({ ...prev, loading: false }));
-        }
-      }
-    };
-
-    void loadFirstPage();
-
-    return () => {
-      isActive = false;
-    };
-  }, [state.committedQuery, state.filters, state.sortBy, queryInput]);
+  }, [state.committedQuery]);
 
   const handleSortChange = useCallback((value: string) => {
     const [field, order] = value.split('-') as [ProductSort['field'], ProductSort['order']];
@@ -229,18 +139,25 @@ export default function SearchClient() {
 
   const handlePreviousPage = () => {
     if (state.currentPage > 1 && state.committedQuery) {
-      void loadPage(state.currentPage - 1);
+      setState((prev) => ({ ...prev, currentPage: prev.currentPage - 1 }));
     }
   };
 
-  const handleNextPage = () => {
-    if (state.committedQuery && hasMoreByPage[state.currentPage]) {
-      void loadPage(state.currentPage + 1);
+  const handleNextPage = async () => {
+    if (!state.committedQuery || !hasNextPage) {
+      return;
     }
+
+    if (!pages[state.currentPage]) {
+      const result = await fetchNextPage();
+      if (result.error) return;
+    }
+
+    setState((prev) => ({ ...prev, currentPage: prev.currentPage + 1 }));
   };
 
   const start = (state.currentPage - 1) * ITEMS_PER_PAGE + 1;
-  const end = start + state.results.length - 1;
+  const end = start + results.length - 1;
 
   return (
     <div className={styles.container}>
@@ -256,8 +173,8 @@ export default function SearchClient() {
               placeholder="상품명을 입력해 검색하세요"
               className={styles.searchInput}
             />
-            <button type="submit" disabled={state.loading} className={styles.searchButton}>
-              {state.loading ? '검색중...' : '검색'}
+            <button type="submit" disabled={loading} className={styles.searchButton}>
+              {loading ? '검색중...' : '검색'}
             </button>
           </form>
         </div>
@@ -282,7 +199,7 @@ export default function SearchClient() {
             <div className={styles.resultsHeader}>
               <div className={styles.resultsInfo}>
                 <h2 className={styles.resultsTitle}>{`'${state.committedQuery}' 검색 결과`}</h2>
-                <p className={styles.resultsCount}>{`총 ${state.results.length}개`}</p>
+                <p className={styles.resultsCount}>{`총 ${results.length}개`}</p>
               </div>
 
               <div className={styles.controlsWrapper}>
@@ -309,9 +226,9 @@ export default function SearchClient() {
                   className={styles.filterSelect}
                 >
                   <option value="">전체</option>
-                  {availableCategories.map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat}
+                  {categories.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
                     </option>
                   ))}
                 </select>
@@ -362,28 +279,28 @@ export default function SearchClient() {
               </div>
             </div>
 
-            {state.loading && <p>검색 중...</p>}
+            {loading && <p>검색 중...</p>}
 
-            {!state.loading && state.error && (
+            {!loading && error && (
               <div className={styles.error}>
-                <p>{state.error}</p>
-                <button type="button" className={styles.retryButton} onClick={() => void loadPage(1, true)}>
+                <p>{error instanceof Error ? error.message : '검색 결과를 불러오지 못했습니다.'}</p>
+                <button type="button" className={styles.retryButton} onClick={() => void refetch()}>
                   다시 시도
                 </button>
               </div>
             )}
 
-            {!state.loading && !state.error && state.results.length === 0 && (
+            {!loading && !error && results.length === 0 && (
               <div className={styles.noResults}>
                 <h3>검색 결과가 없습니다.</h3>
                 <p>{`'${state.committedQuery}'에 대한 결과가 없습니다.`}</p>
               </div>
             )}
 
-            {!state.loading && state.results.length > 0 && (
+            {!loading && results.length > 0 && (
               <>
                 <div className={styles.productGrid}>
-                  {state.results.map((product) => (
+                  {results.map((product) => (
                     <ProductCard
                       key={product.id}
                       id={product.id}
@@ -414,8 +331,8 @@ export default function SearchClient() {
                   <span>{`페이지 ${state.currentPage}`}</span>
                   <button
                     type="button"
-                    onClick={handleNextPage}
-                    disabled={!hasMoreByPage[state.currentPage]}
+                    onClick={() => void handleNextPage()}
+                    disabled={!hasNextPage}
                     className={styles.pageButton}
                   >
                     다음
@@ -423,7 +340,7 @@ export default function SearchClient() {
                 </div>
 
                 <div className={styles.resultInfo}>
-                  {state.results.length > 0 ? `${start}~${end}번째` : '조회된 결과가 없습니다.'}
+                  {results.length > 0 ? `${start}~${end}번째` : '조회된 결과가 없습니다.'}
                 </div>
               </>
             )}

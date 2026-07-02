@@ -1,28 +1,16 @@
 "use client";
 
-import { useEffect, useState } from 'react';
-import { NoticeContent, SiteContentService } from '@/shared/services/siteContentService';
+import { useState } from 'react';
+import { useNotices } from '@/shared/hooks/useSiteContent';
 import styles from './page.module.css';
 
 const ITEMS_PER_PAGE = 5;
 
 export default function NoticeListPage() {
-  const [notices, setNotices] = useState<NoticeContent[]>([]);
+  const { data: notices = [], isLoading: loading, error } = useNotices();
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [openItems, setOpenItems] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    SiteContentService.getNotices()
-      .then(setNotices)
-      .catch((err) => {
-        console.error('공지사항 조회 실패:', err);
-        setError('공지사항을 불러오지 못했습니다.');
-      })
-      .finally(() => setLoading(false));
-  }, []);
 
   const filteredNotices = notices.filter((notice) => {
     const keyword = searchTerm.toLowerCase();
@@ -59,7 +47,7 @@ export default function NoticeListPage() {
 
       <div className={styles.noticeList}>
         {loading && <div className={styles.noResults}>공지사항을 불러오는 중입니다.</div>}
-        {error && <div className={styles.noResults}>{error}</div>}
+        {error && <div className={styles.noResults}>공지사항을 불러오지 못했습니다.</div>}
         {!loading && !error && paginatedNotices.length > 0 && paginatedNotices.map((notice) => (
           <div key={notice.id} className={styles.noticeItem} onClick={() => toggleItem(notice.id)}>
             <div className={styles.noticeHeader}>

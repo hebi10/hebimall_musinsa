@@ -1,11 +1,9 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { useUserActivity } from '@/context/userActivityProvider';
-import { useProduct } from '@/context/productProvider';
 import { useAuth } from '@/context/authProvider';
-import { Product } from '@/shared/types/product';
+import { useProductMap } from '@/shared/hooks/useProducts';
+import { useClearUserActivity, useRecentProducts } from '@/shared/hooks/useUserActivityQuery';
 import Link from 'next/link';
 import styles from './RecentProducts.module.css';
 
@@ -18,62 +16,25 @@ export default function RecentProducts({
   embedded = false,
   limit,
 }: RecentProductsProps) {
-  const { 
-    recentProducts, 
-    loading, 
-    error,
-    loadRecentProducts,
-    clearAllRecentProducts
-  } = useUserActivity();
-  
-  const { getProductById } = useProduct();
   const { user } = useAuth();
-  
-  const [productsData, setProductsData] = useState<{ [key: string]: Product }>({});
+  const { data: recentProducts = [], isLoading: loading, error } = useRecentProducts(user?.uid || null);
+  const clearUserActivityMutation = useClearUserActivity(user?.uid || null);
   const visibleRecentProducts =
     typeof limit === 'number' ? recentProducts.slice(0, limit) : recentProducts;
+  const { data: productsData = {} } = useProductMap(
+    visibleRecentProducts.map((recentProduct) => recentProduct.productId)
+  );
 
-  // 모든 최근 본 상품 삭제 확인
   const handleClearAll = async () => {
     if (window.confirm('모든 최근 본 상품을 삭제하시겠습니까?')) {
       try {
-        await clearAllRecentProducts();
+        await clearUserActivityMutation.mutateAsync();
       } catch (error) {
         console.error('최근 본 상품 삭제 실패:', error);
         alert('최근 본 상품 삭제에 실패했습니다.');
       }
     }
   };
-
-  useEffect(() => {
-    if (user?.uid) {
-      loadRecentProducts(user.uid);
-    }
-  }, [user, loadRecentProducts]);
-
-  // 상품 정보 로드
-  useEffect(() => {
-    const loadProductsData = async () => {
-      const productDataMap: { [key: string]: Product } = {};
-      
-      for (const recentProduct of recentProducts) {
-        try {
-          const product = await getProductById(recentProduct.productId);
-          if (product) {
-            productDataMap[recentProduct.productId] = product;
-          }
-        } catch (error) {
-          console.error(`상품 ${recentProduct.productId} 정보 로드 실패:`, error);
-        }
-      }
-      
-      setProductsData(productDataMap);
-    };
-
-    if (recentProducts.length > 0) {
-      loadProductsData();
-    }
-  }, [recentProducts, getProductById]);
 
   if (!user) {
     return (
@@ -87,7 +48,7 @@ export default function RecentProducts({
   }
 
   if (error) {
-    return <div className={styles.error}>{error}</div>;
+    return <div className={styles.error}>{error instanceof Error ? error.message : String(error)}</div>;
   }
 
   return (
@@ -98,7 +59,7 @@ export default function RecentProducts({
           <div className={styles.headerActions}>
             <span className={styles.count}>{recentProducts.length}개</span>
             {recentProducts.length > 0 && (
-              <button 
+              <button
                 className={styles.clearButton}
                 onClick={handleClearAll}
                 type="button"
@@ -123,7 +84,7 @@ export default function RecentProducts({
         <div className={styles.productGrid}>
           {visibleRecentProducts.map((recentProduct) => {
             const product = productsData[recentProduct.productId];
-            
+
             if (!product) {
               return (
                 <div key={recentProduct.id} className={styles.productCard}>
@@ -135,7 +96,7 @@ export default function RecentProducts({
                 </div>
               );
             }
-            
+
             return (
               <div key={recentProduct.id} className={styles.productCard}>
                 <Link href={`/products/${product.id}`} className={styles.productLink}>
@@ -150,11 +111,11 @@ export default function RecentProducts({
                       {recentProduct.viewedAt.toLocaleDateString()}
                     </div>
                   </div>
-                  
+
                   <div className={styles.productInfo}>
                     <h3 className={styles.productName}>{product.name}</h3>
                     <p className={styles.productBrand}>{product.brand}</p>
-                    
+
                     <div className={styles.priceInfo}>
                       {product.saleRate && product.saleRate > 0 ? (
                         <>

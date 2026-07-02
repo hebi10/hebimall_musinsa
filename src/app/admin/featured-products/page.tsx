@@ -1,9 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { FeaturedProductService } from '@/shared/services/featuredProductService';
-import { ProductService } from '@/shared/services/productService';
+import {
+  useFeaturedProductConfig,
+  useUpdateFeaturedProductConfig,
+} from '@/shared/hooks/useFeaturedProducts';
+import { useProducts } from '@/shared/hooks/useProducts';
 import { Product } from '@/shared/types/product';
 import Image from 'next/image';
 import styles from './page.module.css';
@@ -17,6 +20,9 @@ export default function FeaturedProductManagePage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const { refetch: refetchFeaturedProductConfig } = useFeaturedProductConfig();
+  const { refetch: refetchProducts } = useProducts();
+  const updateFeaturedProductConfig = useUpdateFeaturedProductConfig('mainPageFeatured');
 
   // 폼 상태
   const [title, setTitle] = useState('');
@@ -25,24 +31,14 @@ export default function FeaturedProductManagePage() {
   const [maxCount, setMaxCount] = useState(4);
   const [isActive, setIsActive] = useState(true);
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-      console.log('관리자 페이지 데이터 로딩 시작...');
-
       const [configData, productsData] = await Promise.all([
-        FeaturedProductService.getFeaturedProductConfig(),
-        ProductService.getAllProducts()
+        refetchFeaturedProductConfig().then((result) => result.data ?? null),
+        refetchProducts().then((result) => result.data ?? [])
       ]);
-
-      console.log('로드된 설정:', configData);
-      console.log('로드된 상품 개수:', productsData.length);
-      console.log('상품 샘플:', productsData.slice(0, 3));
 
       setAllProducts(productsData);
 
@@ -55,17 +51,11 @@ export default function FeaturedProductManagePage() {
 
         // 선택된 상품들 로드
         if (configData.productIds && configData.productIds.length > 0) {
-          console.log('선택된 상품 ID들:', configData.productIds);
           const selectedProductsData = productsData.filter(product => 
             configData.productIds.includes(product.id)
           );
-          console.log('매칭된 선택된 상품들:', selectedProductsData);
           setSelectedProducts(selectedProductsData);
-        } else {
-          console.log('선택된 상품 ID가 없습니다.');
         }
-      } else {
-        console.log('설정 데이터가 없습니다.');
       }
     } catch (err) {
       console.error('데이터 로딩 실패:', err);
@@ -73,7 +63,11 @@ export default function FeaturedProductManagePage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [refetchFeaturedProductConfig, refetchProducts]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const handleProductSelect = (product: Product) => {
     if (selectedProducts.find(p => p.id === product.id)) {
@@ -100,21 +94,18 @@ export default function FeaturedProductManagePage() {
     try {
       setSaving(true);
       setError(null);
-      console.log('저장 시작...', { selectedProducts: selectedProducts.length });
-
       const productIds = selectedProducts.map(p => p.id);
       
-      await FeaturedProductService.updateFeaturedProductConfig(
+      await updateFeaturedProductConfig.mutateAsync({
         productIds,
-        'mainPageFeatured',
-        {
+        options: {
           title,
           subtitle,
           description,
           maxCount,
           isActive
-        }
-      );
+        },
+      });
 
       setSuccess('추천 상품 설정이 성공적으로 저장되었습니다!');
       setTimeout(() => setSuccess(null), 3000);
@@ -155,7 +146,6 @@ export default function FeaturedProductManagePage() {
     setSuccess(`자동으로 ${topProducts.length}개 상품을 선택했습니다!`);
     setTimeout(() => setSuccess(null), 3000);
 
-    console.log('자동 선택된 상품들:', topProducts.map(p => `${p.name} (평점: ${p.rating})`));
   };
 
   const filteredProducts = allProducts.filter(product =>

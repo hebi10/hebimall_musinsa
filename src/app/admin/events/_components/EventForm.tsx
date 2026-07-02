@@ -1,12 +1,15 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useCallback, useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Event } from '@/shared/types/event';
-import { Category } from '@/shared/types/category';
-import { EventService } from '@/shared/services/eventService';
-import { CategoryService } from '@/shared/services/categoryService';
+import {
+  useCreateEvent,
+  useUpdateEvent,
+  useUploadEventImage,
+} from '@/shared/hooks/useEvents';
+import { CategoryView, useCategoriesQuery } from '@/shared/hooks/useCategoriesQuery';
 import Button from '@/app/_components/Button';
 import Input from '@/app/_components/Input';
 import styles from './EventForm.module.css';
@@ -23,7 +26,7 @@ export default function EventForm({ event, isEdit = false }: Props) {
   const detailInputRef = useRef<HTMLInputElement>(null);
   
   // 카테고리 관련 상태
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<CategoryView[]>([]);
   const [loadingCategories, setLoadingCategories] = useState(true);
   
   const [formData, setFormData] = useState({
@@ -51,16 +54,16 @@ export default function EventForm({ event, isEdit = false }: Props) {
 
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { refetch: refetchCategories } = useCategoriesQuery();
+  const createEvent = useCreateEvent();
+  const updateEvent = useUpdateEvent();
+  const uploadEventImage = useUploadEventImage();
 
   // 카테고리 로드
-  useEffect(() => {
-    loadCategories();
-  }, []);
-
-  const loadCategories = async () => {
+  const loadCategories = useCallback(async () => {
     try {
       setLoadingCategories(true);
-      const categoryData = await CategoryService.getCategories();
+      const { data: categoryData = [] } = await refetchCategories();
       
       // 중복 제거 (name 기준)
       const uniqueCategories = categoryData.filter((category, index, self) => 
@@ -75,7 +78,11 @@ export default function EventForm({ event, isEdit = false }: Props) {
     } finally {
       setLoadingCategories(false);
     }
-  };
+  }, [refetchCategories]);
+
+  useEffect(() => {
+    loadCategories();
+  }, [loadCategories]);
 
   const handleInputChange = (field: string, value: string | number | boolean | string[]) => {
     setFormData(prev => ({
@@ -125,7 +132,7 @@ export default function EventForm({ event, isEdit = false }: Props) {
   const handleImageUpload = async (file: File, type: 'banner' | 'thumbnail' | 'detail') => {
     try {
       setUploading(true);
-      const imageUrl = await EventService.uploadImage(file, `events/${type}`);
+      const imageUrl = await uploadEventImage.mutateAsync({ file, path: `events/${type}` });
       setImages(prev => ({
         ...prev,
         [`${type}Image`]: imageUrl
@@ -180,10 +187,10 @@ export default function EventForm({ event, isEdit = false }: Props) {
       };
 
       if (isEdit && event) {
-        await EventService.updateEvent(event.id, eventData);
+        await updateEvent.mutateAsync({ eventId: event.id, eventData });
         alert('이벤트가 수정되었습니다.');
       } else {
-        await EventService.createEvent(eventData);
+        await createEvent.mutateAsync(eventData);
         alert('이벤트가 생성되었습니다.');
       }
       

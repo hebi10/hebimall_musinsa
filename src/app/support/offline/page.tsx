@@ -1,39 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
-import {
-  OfflineInfoContent,
-  OfflineServiceContent,
-  OfflineStoreContent,
-  SiteContentService,
-} from "@/shared/services/siteContentService";
+import { useOfflineContent } from "@/shared/hooks/useSiteContent";
 import styles from "./page.module.css";
 
 export default function OfflinePage() {
-  const [stores, setStores] = useState<OfflineStoreContent[]>([]);
-  const [services, setServices] = useState<OfflineServiceContent[]>([]);
-  const [info, setInfo] = useState<OfflineInfoContent | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    Promise.all([
-      SiteContentService.getOfflineStores(),
-      SiteContentService.getOfflineServices(),
-      SiteContentService.getOfflineInfo(),
-    ])
-      .then(([nextStores, nextServices, nextInfo]) => {
-        setStores(nextStores);
-        setServices(nextServices);
-        setInfo(nextInfo);
-      })
-      .catch((err) => {
-        console.error("오프라인 매장 정보 조회 실패:", err);
-        setError("매장 정보를 불러오지 못했습니다.");
-      })
-      .finally(() => setLoading(false));
-  }, []);
+  const { data, isLoading: loading, error } = useOfflineContent();
+  const stores = data?.stores || [];
+  const services = data?.services || [];
+  const info = data?.info || null;
 
   return (
     <div className={styles.container}>
@@ -46,7 +21,7 @@ export default function OfflinePage() {
         </div>
 
         {loading && <div className={styles.specialNotice}>매장 정보를 불러오는 중입니다.</div>}
-        {error && <div className={styles.specialNotice}>{error}</div>}
+        {error && <div className={styles.specialNotice}>매장 정보를 불러오지 못했습니다.</div>}
 
         {!loading && !error && (
           <>

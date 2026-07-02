@@ -118,7 +118,6 @@ export class FeaturedProductService {
         });
       }
 
- console.log(' 추천 상품 설정 업데이트 완료:', productIds);
     } catch (error) {
  console.error('추천 상품 설정 업데이트 실패:', error);
       throw new Error('추천 상품 설정 업데이트에 실패했습니다.');
@@ -132,11 +131,8 @@ export class FeaturedProductService {
     try {
       const config = await this.getFeaturedProductConfig();
       if (!config || !config.isActive || config.productIds.length === 0) {
- console.log(' 추천 상품 설정이 없거나 비활성화됨');
         return [];
       }
-
- console.log(' 추천 상품 ID 목록:', config.productIds);
 
       // ProductService를 사용하여 효율적으로 상품 조회
       const products: Product[] = [];
@@ -146,7 +142,6 @@ export class FeaturedProductService {
           const product = await ProductService.getProductById(productId);
           if (product) {
             products.push(product);
- console.log(` 추천 상품 로드: ${product.name} (${product.id})`);
           } else {
  console.warn(` 추천 상품을 찾을 수 없음: ${productId}`);
           }
@@ -155,7 +150,6 @@ export class FeaturedProductService {
         }
       }
 
- console.log(` 총 ${products.length}개 추천 상품 로드 완료`);
       return products;
     } catch (error) {
  console.error('추천 상품 조회 실패:', error);
@@ -203,7 +197,6 @@ export class FeaturedProductService {
         updatedAt: Timestamp.now(),
       });
 
- console.log(' 추천 상품 설정 비활성화 완료:', configId);
     } catch (error) {
  console.error('추천 상품 설정 삭제 실패:', error);
       throw new Error('추천 상품 설정 삭제에 실패했습니다.');

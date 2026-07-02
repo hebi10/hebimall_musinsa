@@ -1,11 +1,14 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
-import { useUserActivity } from '@/context/userActivityProvider';
-import { useProduct } from '@/context/productProvider';
 import { useAuth } from '@/context/authProvider';
-import { Product } from '@/shared/types/product';
+import { useProductMap } from '@/shared/hooks/useProducts';
+import {
+  useClearUserActivity,
+  useRemoveWishlistItem,
+  useWishlistItems,
+} from '@/shared/hooks/useUserActivityQuery';
 import { WishlistItem } from '@/shared/types/userActivity';
 import Link from 'next/link';
 import styles from './WishlistProducts.module.css';
@@ -19,70 +22,33 @@ export default function WishlistProducts({
   embedded = false,
   limit,
 }: WishlistProductsProps) {
-  const { 
-    wishlistItems, 
-    loading, 
-    error,
-    loadWishlistItems,
-    removeFromWishlist,
-    clearAllWishlistItems
-  } = useUserActivity();
-  
-  const { getProductById } = useProduct();
   const { user } = useAuth();
-  
-  const [productsData, setProductsData] = useState<{ [key: string]: Product }>({});
+  const { data: wishlistItems = [], isLoading: loading, error } = useWishlistItems(user?.uid || null);
+  const removeWishlistItemMutation = useRemoveWishlistItem(user?.uid || null);
+  const clearUserActivityMutation = useClearUserActivity(user?.uid || null);
   const [removing, setRemoving] = useState<string | null>(null);
   const visibleWishlistItems =
     typeof limit === 'number' ? wishlistItems.slice(0, limit) : wishlistItems;
-
-  useEffect(() => {
-    if (user?.uid) {
-      loadWishlistItems(user.uid);
-    }
-  }, [user, loadWishlistItems]);
-
-  // 상품 정보 로드
-  useEffect(() => {
-    const loadProductsData = async () => {
-      const productDataMap: { [key: string]: Product } = {};
-      
-      for (const wishlistItem of wishlistItems) {
-        try {
-          const product = await getProductById(wishlistItem.productId);
-          if (product) {
-            productDataMap[wishlistItem.productId] = product;
-          }
-        } catch (error) {
-          console.error(`상품 ${wishlistItem.productId} 정보 로드 실패:`, error);
-        }
-      }
-      
-      setProductsData(productDataMap);
-    };
-
-    if (wishlistItems.length > 0) {
-      loadProductsData();
-    }
-  }, [wishlistItems, getProductById]);
+  const { data: productsData = {} } = useProductMap(
+    visibleWishlistItems.map((wishlistItem) => wishlistItem.productId)
+  );
 
   const handleRemoveFromWishlist = async (wishlistId: string, productId: string) => {
     if (!user?.uid) return;
-    
+
     setRemoving(wishlistId);
     try {
-      await removeFromWishlist(productId);
+      await removeWishlistItemMutation.mutateAsync(productId);
     } catch (error) {
       console.error('찜 목록에서 제거 실패:', error);
     }
     setRemoving(null);
   };
 
-  // 모든 찜한 상품 삭제 확인
   const handleClearAll = async () => {
     if (window.confirm('모든 찜한 상품을 삭제하시겠습니까?')) {
       try {
-        await clearAllWishlistItems();
+        await clearUserActivityMutation.mutateAsync();
       } catch (error) {
         console.error('찜한 상품 삭제 실패:', error);
         alert('찜한 상품 삭제에 실패했습니다.');
@@ -102,7 +68,7 @@ export default function WishlistProducts({
   }
 
   if (error) {
-    return <div className={styles.error}>{error}</div>;
+    return <div className={styles.error}>{error instanceof Error ? error.message : String(error)}</div>;
   }
 
   return (
@@ -113,7 +79,7 @@ export default function WishlistProducts({
           <div className={styles.headerActions}>
             <span className={styles.count}>{wishlistItems.length}개</span>
             {wishlistItems.length > 0 && (
-              <button 
+              <button
                 className={styles.clearButton}
                 onClick={handleClearAll}
                 type="button"
@@ -138,7 +104,7 @@ export default function WishlistProducts({
         <div className={styles.productGrid}>
           {visibleWishlistItems.map((wishlistItem: WishlistItem) => {
             const product = productsData[wishlistItem.productId];
-            
+
             if (!product) {
               return (
                 <div key={wishlistItem.id} className={styles.productCard}>
@@ -150,7 +116,7 @@ export default function WishlistProducts({
                 </div>
               );
             }
-            
+
             return (
               <div key={wishlistItem.id} className={styles.productCard}>
                 <div className={styles.removeButton}>
@@ -162,7 +128,7 @@ export default function WishlistProducts({
                     {removing === wishlistItem.id ? '삭제중...' : 'X'}
                   </button>
                 </div>
-                
+
                 <Link href={`/products/${product.id}`} className={styles.productLink}>
                   <div className={styles.productImage}>
                     <Image
@@ -175,11 +141,11 @@ export default function WishlistProducts({
                       {wishlistItem.addedAt.toLocaleDateString()}
                     </div>
                   </div>
-                  
+
                   <div className={styles.productInfo}>
                     <h3 className={styles.productName}>{product.name}</h3>
                     <p className={styles.productBrand}>{product.brand}</p>
-                    
+
                     <div className={styles.priceInfo}>
                       {product.saleRate && product.saleRate > 0 ? (
                         <>
@@ -199,9 +165,9 @@ export default function WishlistProducts({
                         </span>
                       )}
                     </div>
-                    
+
                     <div className={styles.productStats}>
-                      <span className={styles.rating}>⭐ {product.rating.toFixed(1)}</span>
+                      <span className={styles.rating}>★{product.rating.toFixed(1)}</span>
                       <span className={styles.reviews}>리뷰 {product.reviewCount}개</span>
                     </div>
                   </div>

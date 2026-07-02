@@ -22,9 +22,8 @@ const functions = getFunctions(app, 'us-central1');
 if (process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === 'true') {
   try {
     connectFunctionsEmulator(functions, 'localhost', 5002);
-    console.log('Connected to Functions emulator');
   } catch {
-    console.log('Functions emulator connection failed or already connected');
+    // Emulator can already be connected during hot reload.
   }
 }
 

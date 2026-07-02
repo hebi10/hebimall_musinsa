@@ -58,9 +58,7 @@ export class PointService {
    */
   static async addPoint(data: AddPointRequest): Promise<PointResponse> {
     try {
-      console.log('포인트 적립 요청:', data);
       const result = await callPointsAPI('add', data);
-      console.log('포인트 적립 결과:', result);
       return { success: true, newBalance: result.newBalance };
     } catch (error) {
       console.error('포인트 적립 실패:', error);
@@ -73,9 +71,7 @@ export class PointService {
    */
   static async spendPoint(data: UsePointRequest): Promise<PointResponse> {
     try {
-      console.log('포인트 사용 요청:', data);
       const result = await callPointsAPI('use', data);
-      console.log('포인트 사용 결과:', result);
       return { success: true, newBalance: result.newBalance, usedAmount: result.usedAmount };
     } catch (error) {
       console.error('포인트 사용 실패:', error);
@@ -88,9 +84,7 @@ export class PointService {
    */
   static async refundPoint(data: RefundPointRequest): Promise<PointResponse> {
     try {
-      console.log('포인트 환불 요청:', data);
       const result = await callPointsAPI('refund', data);
-      console.log('포인트 환불 결과:', result);
       return { success: true, newBalance: result.newBalance, refundedAmount: result.refundedAmount };
     } catch (error) {
       console.error('포인트 환불 실패:', error);

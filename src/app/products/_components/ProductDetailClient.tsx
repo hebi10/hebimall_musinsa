@@ -4,10 +4,14 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Product } from '@/shared/types/product';
-import { useProduct } from '@/context/productProvider';
 import { useAuth } from '@/context/authProvider';
-import { useUserActivity } from '@/context/userActivityProvider';
 import { useAddToCart } from '@/shared/hooks/useCart';
+import { useRelatedProducts } from '@/shared/hooks/useProducts';
+import {
+  useAddRecentProduct,
+  useToggleWishlist,
+  useWishlistItems,
+} from '@/shared/hooks/useUserActivityQuery';
 import { getProductColorValue } from '@/shared/utils/productColor';
 import { getProductPricing } from '@/shared/utils/productPricing';
 import Button from '@/app/_components/Button';
@@ -22,12 +26,10 @@ interface Props {
 export default function ProductDetailClient({ product }: Props) {
   const router = useRouter();
   const { user } = useAuth();
-  const { wishlistItems, addRecentProduct, addToWishlist, removeFromWishlist } = useUserActivity();
-  const { 
-    relatedProducts, 
-    loadRelatedProducts,
-    isInStock
-  } = useProduct();
+  const { data: wishlistItems = [] } = useWishlistItems(user?.uid || null);
+  const { data: relatedProducts = [] } = useRelatedProducts(product.id, 4);
+  const { mutate: addRecentProduct } = useAddRecentProduct(user?.uid || null);
+  const toggleWishlistMutation = useToggleWishlist(user?.uid || null);
 
   const addToCartMutation = useAddToCart();
 
@@ -86,19 +88,11 @@ export default function ProductDetailClient({ product }: Props) {
     setOptimisticWishlisted(null);
   }, [product.id, user?.uid, storedWishlisted]);
 
-  // 컴포넌트 마운트 시 상품 정보와 연관 상품 로드
   useEffect(() => {
-    if (product.id) {
-      // 관련 상품 로드
-      loadRelatedProducts(product.id, 4);
-      
-      // 최근 본 상품에 추가 (로그인한 사용자만)
-      if (user?.uid) {
-        addRecentProduct(product.id);
-      }
-
+    if (user?.uid) {
+      addRecentProduct(product.id);
     }
-  }, [product.id, loadRelatedProducts, addRecentProduct, user?.uid]);
+  }, [addRecentProduct, product.id, user?.uid]);
 
   const handleAddToCart = async () => {
     // 로그인 확인
@@ -229,11 +223,7 @@ export default function ProductDetailClient({ product }: Props) {
     setOptimisticWishlisted(nextWishlisted);
     
     try {
-      if (isWishlisted) {
-        await removeFromWishlist(product.id);
-      } else {
-        await addToWishlist(product.id);
-      }
+      await toggleWishlistMutation.mutateAsync({ productId: product.id, wished: isWishlisted });
     } catch (error) {
       setOptimisticWishlisted(isWishlisted);
       console.error('찜하기 토글 실패:', error);
@@ -250,7 +240,7 @@ export default function ProductDetailClient({ product }: Props) {
   const pricing = getProductPricing(product);
   const displayPrice = pricing.salePrice;
 
-  const inStock = isInStock(product);
+  const inStock = product.stock > 0;
 
   const displayRating = product.rating || 0;
   const displayReviewCount = product.reviewCount ?? 0;

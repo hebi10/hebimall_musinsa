@@ -1,7 +1,11 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { InquiryService } from '@/shared/services/inquiryService';
+import {
+  useAdminInquiries,
+  useAnswerInquiry,
+  useUpdateInquiryStatus,
+} from '@/shared/hooks/useInquiries';
 import { Inquiry } from '@/shared/types/inquiry';
 import styles from './page.module.css';
 
@@ -15,6 +19,9 @@ export default function AdminInquiriesPage() {
   const [showAnswerModal, setShowAnswerModal] = useState(false);
   const [selectedInquiry, setSelectedInquiry] = useState<Inquiry | null>(null);
   const [answerContent, setAnswerContent] = useState('');
+  const { refetch: refetchInquiries } = useAdminInquiries(100);
+  const answerInquiry = useAnswerInquiry();
+  const updateInquiryStatus = useUpdateInquiryStatus();
 
   const statusOptions = [
     { value: 'all', label: '전체' },
@@ -37,7 +44,7 @@ export default function AdminInquiriesPage() {
   const loadInquiries = useCallback(async () => {
     try {
       setLoading(true);
-      const allInquiries = await InquiryService.getAllInquiries(100);
+      const { data: allInquiries = [] } = await refetchInquiries();
       
       // 필터링
       let filteredInquiries = allInquiries;
@@ -66,7 +73,7 @@ export default function AdminInquiriesPage() {
     } finally {
       setLoading(false);
     }
-  }, [selectedFilter, selectedCategory, searchTerm]);
+  }, [refetchInquiries, selectedFilter, selectedCategory, searchTerm]);
 
   useEffect(() => {
     loadInquiries();
@@ -89,9 +96,12 @@ export default function AdminInquiriesPage() {
     if (!selectedInquiry || !answerContent.trim()) return;
 
     try {
-      await InquiryService.answerInquiry(selectedInquiry.id, {
-        content: answerContent,
-        answeredBy: 'Admin', // 실제 관리자 정보로 대체 가능
+      await answerInquiry.mutateAsync({
+        inquiryId: selectedInquiry.id,
+        answer: {
+          content: answerContent,
+          answeredBy: 'Admin', // 실제 관리자 정보로 대체 가능
+        },
       });
 
       alert('답변이 저장되었습니다.');
@@ -108,7 +118,7 @@ export default function AdminInquiriesPage() {
   // 상태 변경
   const handleStatusChange = async (inquiryId: string, newStatus: Inquiry['status']) => {
     try {
-      await InquiryService.updateInquiryStatus(inquiryId, newStatus);
+      await updateInquiryStatus.mutateAsync({ inquiryId, status: newStatus });
       loadInquiries();
     } catch (err) {
       alert('상태 변경에 실패했습니다.');

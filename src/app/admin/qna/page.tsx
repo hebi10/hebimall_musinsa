@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { SimpleQnAService } from '@/shared/services/simpleQnAService';
+import { useAdminQnAs, useAnswerQnA } from '@/shared/hooks/useQnaQuery';
 import { QnA } from '@/shared/types/qna';
 import styles from './page.module.css';
 
@@ -15,6 +15,8 @@ export default function AdminQnAPage() {
   const [showAnswerModal, setShowAnswerModal] = useState(false);
   const [selectedQnA, setSelectedQnA] = useState<QnA | null>(null);
   const [answerContent, setAnswerContent] = useState('');
+  const { refetch: refetchQnAs } = useAdminQnAs(100);
+  const answerQnA = useAnswerQnA();
 
   const statusOptions = [
     { value: 'all', label: '전체' },
@@ -35,7 +37,7 @@ export default function AdminQnAPage() {
   const loadQnAs = useCallback(async () => {
     try {
       setLoading(true);
-      const allQnAs = await SimpleQnAService.getAllQnAs(100);
+      const { data: allQnAs = [] } = await refetchQnAs();
       
       // 필터링
       let filteredQnAs = allQnAs;
@@ -64,7 +66,7 @@ export default function AdminQnAPage() {
     } finally {
       setLoading(false);
     }
-  }, [selectedFilter, selectedCategory, searchTerm]);
+  }, [refetchQnAs, selectedFilter, selectedCategory, searchTerm]);
 
   useEffect(() => {
     loadQnAs();
@@ -87,13 +89,13 @@ export default function AdminQnAPage() {
     if (!selectedQnA || !answerContent.trim()) return;
 
     try {
-      // QnAService를 import하여 실제 답변 저장
-      const { QnAService } = await import('@/shared/services/qnaService');
-      
-      await QnAService.answerQnA(selectedQnA.id, {
-        content: answerContent,
-        answeredBy: 'Admin', // 실제 관리자 정보로 대체 가능
-        isAdmin: true,
+      await answerQnA.mutateAsync({
+        qnaId: selectedQnA.id,
+        answer: {
+          content: answerContent,
+          answeredBy: 'Admin', // 실제 관리자 정보로 대체 가능
+          isAdmin: true,
+        },
       });
 
       alert('답변이 저장되었습니다.');

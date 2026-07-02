@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ProductService } from '@/shared/services/productService';
 import { Product } from '@/shared/types/product';
-import { getCategoryName } from '@/shared/utils/categoryUtils';
+import { useCategoriesQuery } from '@/shared/hooks/useCategoriesQuery';
+import { useProductsByCategory } from '@/shared/hooks/useProducts';
+import { getDefaultCategoryNames } from '@/shared/utils/categoryUtils';
 import styles from './page.module.css';
 
 interface CategoryPageProps {
@@ -15,11 +16,10 @@ interface CategoryPageProps {
 }
 
 export default function DynamicCategoryPage({ params }: CategoryPageProps) {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState('popular');
   const [category, setCategory] = useState<string>('');
+  const { data: categoryProducts = [], isLoading: loading, error, refetch } = useProductsByCategory(category || null);
+  const { data: categories = [] } = useCategoriesQuery();
 
   // params 비동기 처리
   useEffect(() => {
@@ -47,48 +47,12 @@ export default function DynamicCategoryPage({ params }: CategoryPageProps) {
     { value: 'review', label: '리뷰 많은순' }
   ];
 
-  // 카테고리명 매핑 - Firebase에서 가져오기
-  const [categoryDisplayName, setCategoryDisplayName] = useState<string>('');
+  const categoryDisplayName =
+    categories.find((item) => item.id === category)?.name ||
+    getDefaultCategoryNames()[category] ||
+    category;
 
-  useEffect(() => {
-    const loadCategoryName = async () => {
-      if (!category) return;
-      
-      const displayName = await getCategoryName(category);
-      setCategoryDisplayName(displayName);
-    };
-
-    loadCategoryName();
-  }, [category]);
-
-  useEffect(() => {
-    const loadProducts = async () => {
-      // category가 설정되지 않았으면 대기
-      if (!category) return;
-      
-      try {
-        setLoading(true);
-        setError(null);
-
-        // 카테고리별 상품 조회 (중첩 컬렉션에서)
-        const categoryProducts = await ProductService.getProductsByCategory(category);
-        
-        // 정렬 적용
-        const sortedProducts = await sortProducts(categoryProducts, sortBy);
-        setProducts(sortedProducts);
-
-      } catch (err) {
-        console.error('카테고리 상품 로드 실패:', err);
-        setError('상품을 불러오는데 실패했습니다.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadProducts();
-  }, [category, sortBy]);
-
-  const sortProducts = async (productList: Product[], sortOption: string): Promise<Product[]> => {
+  const sortProducts = (productList: Product[], sortOption: string): Product[] => {
     const sorted = [...productList];
     
     switch (sortOption) {
@@ -106,10 +70,10 @@ export default function DynamicCategoryPage({ params }: CategoryPageProps) {
     }
   };
 
-  const handleSortChange = async (newSortBy: string) => {
+  const products = useMemo(() => sortProducts(categoryProducts, sortBy), [categoryProducts, sortBy]);
+
+  const handleSortChange = (newSortBy: string) => {
     setSortBy(newSortBy);
-    const sortedProducts = await sortProducts(products, newSortBy);
-    setProducts(sortedProducts);
   };
 
   if (loading) {
@@ -127,9 +91,9 @@ export default function DynamicCategoryPage({ params }: CategoryPageProps) {
     return (
       <div className={styles.container}>
         <div className={styles.errorMessage}>
-          <p>{error}</p>
+          <p>{error instanceof Error ? error.message : '상품을 불러오는데 실패했습니다.'}</p>
           <button 
-            onClick={() => window.location.reload()} 
+            onClick={() => refetch()} 
             className={styles.retryButton}
           >
             다시 시도

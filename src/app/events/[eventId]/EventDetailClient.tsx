@@ -8,11 +8,11 @@ import {
   getEventUiVariant,
 } from '@/shared/constants/eventUiMeta';
 import {
-  EventService,
   getEventParticipationErrorCode,
   getEventParticipationErrorMessage,
   getEventStatus,
 } from '@/shared/services/eventService';
+import { useEventParticipation, useParticipateInEvent } from '@/shared/hooks/useEvents';
 import { Event, EventUiVariant } from '@/shared/types/event';
 import { sanitizeEventHtml } from '@/shared/utils/eventHtml';
 import { getEventDisplayImages } from '@/shared/utils/eventImages';
@@ -439,6 +439,11 @@ export default function EventDetailClient({ event }: EventDetailClientProps) {
   );
   const isDirectParticipationAvailable =
     status === 'ongoing' && !(event.eventType === 'coupon' && event.couponType === 'manual');
+  const { refetch: refetchParticipation } = useEventParticipation(
+    isDirectParticipationAvailable ? event.id : null,
+    user?.uid ?? null
+  );
+  const participateInEvent = useParticipateInEvent(event.id);
   const primaryCta = useMemo(
     () =>
       getPrimaryCtaConfig(
@@ -501,7 +506,7 @@ export default function EventDetailClient({ event }: EventDetailClientProps) {
       setIsParticipationChecking(true);
 
       try {
-        const participated = await EventService.checkEventParticipation(event.id, user.uid);
+        const { data: participated = false } = await refetchParticipation();
 
         if (!isActive) {
           return;
@@ -538,7 +543,7 @@ export default function EventDetailClient({ event }: EventDetailClientProps) {
     return () => {
       isActive = false;
     };
-  }, [authLoading, event.id, isDirectParticipationAvailable, primaryCta.followUpAction, user]);
+  }, [authLoading, event.id, isDirectParticipationAvailable, primaryCta.followUpAction, refetchParticipation, user]);
 
   const primaryCtaLabel = (() => {
     if (isParticipationChecking) {
@@ -617,11 +622,10 @@ export default function EventDetailClient({ event }: EventDetailClientProps) {
     setCtaFeedback(null);
 
     try {
-      await EventService.participateInEvent(
-        event.id,
-        user.uid,
-        user.displayName || user.email || '사용자'
-      );
+      await participateInEvent.mutateAsync({
+        userId: user.uid,
+        userName: user.displayName || user.email || 'User',
+      });
 
       setHasParticipated(true);
       setParticipantCount(prev => prev + 1);

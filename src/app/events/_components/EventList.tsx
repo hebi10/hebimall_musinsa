@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import Button from '@/app/_components/Button';
@@ -10,8 +11,8 @@ import {
 import { getEventStatus, getFeaturedEvent } from '@/shared/services/eventService';
 import { Event } from '@/shared/types/event';
 import { getEventDisplayImages } from '@/shared/utils/eventImages';
+import { useEvents } from '@/shared/hooks/useEvents';
 import styles from './EventList.module.css';
-import { useEvent } from '@/context/eventProvider';
 
 const FILTER_OPTIONS = [
   { type: 'all', label: '전체' },
@@ -59,29 +60,32 @@ const getStatusLabel = (status: ReturnType<typeof getEventStatus>) => {
 };
 
 export default function EventList() {
-  const {
-    events,
-    filteredEvents,
-    filter,
-    currentPage,
-    eventsPerPage,
-    loading,
-    error,
-    setFilter,
-    setCurrentPage,
-    getActiveEvents,
-    getTotalParticipants,
-    refreshEvents,
-  } = useEvent();
+  const { data: events = [], isLoading: loading, error, refetch } = useEvents();
+  const [activeFilterType, setActiveFilterType] = useState<EventFilterButton>('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const eventsPerPage = 6;
+  const filteredEvents = useMemo(() => (
+    activeFilterType === 'all'
+      ? events
+      : events.filter((event) => event.eventType === activeFilterType)
+  ), [activeFilterType, events]);
+  const activeEvents = useMemo(() => {
+    const now = new Date();
+    return events.filter((event) => event.isActive && now >= event.startDate && now <= event.endDate);
+  }, [events]);
+  const totalParticipants = useMemo(() => {
+    if (events.some((event) => !event.hasMaxParticipants)) return '제한 없음';
+    return events.reduce((total, event) => total + event.participantCount, 0);
+  }, [events]);
 
-  const activeFilterType: EventFilterButton = filter.eventType ?? 'all';
   const totalPages = Math.max(1, Math.ceil(filteredEvents.length / eventsPerPage));
   const startIndex = (currentPage - 1) * eventsPerPage;
   const endIndex = startIndex + eventsPerPage;
   const displayedEvents = filteredEvents.slice(startIndex, endIndex);
 
   const handleFilterChange = (type: EventFilterButton) => {
-    setFilter(type === 'all' ? {} : { eventType: type });
+    setActiveFilterType(type);
+    setCurrentPage(1);
   };
 
   const featuredEvent = getFeaturedEvent(filteredEvents);
@@ -117,8 +121,8 @@ export default function EventList() {
       <div className={styles.container}>
         <div className={`${styles.statePanel} ${styles.errorState}`}>
           <p className={styles.stateTitle}>이벤트 정보를 불러오지 못했습니다.</p>
-          <p className={styles.stateDescription}>{error}</p>
-          <Button variant="outline" onClick={refreshEvents}>
+          <p className={styles.stateDescription}>{error instanceof Error ? error.message : String(error)}</p>
+          <Button variant="outline" onClick={() => refetch()}>
             다시 시도
           </Button>
         </div>
@@ -171,13 +175,13 @@ export default function EventList() {
               <div className={styles.posterHeroMeta} aria-label="이벤트 현황">
                 <span className={styles.posterHeroMetric}>
                   <strong className={styles.posterHeroMetricValue}>
-                    {getActiveEvents().length}
+                    {activeEvents.length}
                   </strong>
                   <span className={styles.posterHeroMetricLabel}>진행중</span>
                 </span>
                 <span className={styles.posterHeroMetric}>
                   <strong className={styles.posterHeroMetricValue}>
-                    {getTotalParticipants()}
+                    {totalParticipants}
                   </strong>
                   <span className={styles.posterHeroMetricLabel}>참여 규모</span>
                 </span>

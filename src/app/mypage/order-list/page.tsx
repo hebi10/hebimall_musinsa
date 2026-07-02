@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import styles from './page.module.css';
 import { useAuth } from '@/context/authProvider';
-import { OrderService } from '@/shared/services/orderService';
+import { useCancelOrder, useUserOrders } from '@/shared/hooks/useOrders';
 import { Order, OrderStatus } from '@/shared/types/order';
 
 export default function OrderListPage() {
@@ -16,21 +16,19 @@ export default function OrderListPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [cancellingOrderId, setCancellingOrderId] = useState<string | null>(null);
+  const { refetch: refetchOrders } = useUserOrders(user?.uid ?? null, 50);
+  const cancelOrder = useCancelOrder(user?.uid);
 
   // 주문 데이터 로드
   const loadOrders = useCallback(async () => {
     if (!user?.uid) {
-      console.log('No user UID available');
       return;
     }
     
     try {
-      console.log('Loading orders for user:', user.uid);
       setIsLoading(true);
       setError(null);
-      const userOrders = await OrderService.getUserOrders(user.uid, 50);
-      console.log('Orders loaded:', userOrders.length, 'orders');
-      console.log('First order sample:', userOrders[0]);
+      const { data: userOrders = [] } = await refetchOrders();
       setOrders(userOrders);
     } catch (err) {
       console.error('주문 목록 로드 실패:', err);
@@ -53,7 +51,7 @@ export default function OrderListPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [user?.uid]);
+  }, [refetchOrders, user?.uid]);
 
   // 주문 취소 함수
   const handleCancelOrder = async (orderId: string, orderNumber: string, order: Order) => {
@@ -71,7 +69,7 @@ export default function OrderListPage() {
 
     try {
       setCancellingOrderId(orderId);
-      await OrderService.cancelOrder(orderId, '고객 직접 취소');
+      await cancelOrder.mutateAsync({ orderId, reason: '고객 직접 취소' });
       
       // 주문 목록 새로고침
       await loadOrders();

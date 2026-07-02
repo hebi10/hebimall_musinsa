@@ -1,8 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { CategoryOrderService } from '@/shared/services/categoryOrderService';
+import {
+  getDefaultCategoryOrderNames,
+  useSortedCategories,
+  useUpdateCategoryOrder,
+} from '@/shared/hooks/useCategoryOrder';
 import styles from './page.module.css';
 
 interface CategoryOrderItem {
@@ -18,16 +22,13 @@ export default function CategoryOrderPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const { refetch: refetchSortedCategories } = useSortedCategories();
+  const updateCategoryOrder = useUpdateCategoryOrder();
 
-  useEffect(() => {
-    loadCategoryOrder();
-  }, []);
-
-  const loadCategoryOrder = async () => {
+  const loadCategoryOrder = useCallback(async () => {
     try {
       setLoading(true);
-      const sortedCategories = await CategoryOrderService.getSortedCategories();
-      console.log('로드된 카테고리:', sortedCategories);
+      const { data: sortedCategories = [] } = await refetchSortedCategories();
       setCategories(sortedCategories);
       setError(null);
     } catch (err) {
@@ -36,7 +37,11 @@ export default function CategoryOrderPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [refetchSortedCategories]);
+
+  useEffect(() => {
+    loadCategoryOrder();
+  }, [loadCategoryOrder]);
 
   const moveUp = (index: number) => {
     if (index === 0) return;
@@ -108,23 +113,8 @@ export default function CategoryOrderPage() {
       setError(null);
       
       const newOrder = categories.map(cat => cat.name);
-      console.log('저장할 순서:', newOrder);
       
-      // 먼저 현재 설정 확인
-      const currentConfig = await CategoryOrderService.getCategoryOrderConfig();
-      console.log('현재 설정:', currentConfig);
-      
-      await CategoryOrderService.updateCategoryOrder(
-        newOrder, 
-        'mainPageOrder', 
-        '관리자 페이지에서 설정된 카테고리 순서'
-      );
-      
-      console.log('저장 완료');
-      
-      // 저장 후 실제로 저장되었는지 확인
-      const updatedConfig = await CategoryOrderService.getCategoryOrderConfig();
-      console.log('저장 후 설정:', updatedConfig);
+      await updateCategoryOrder.mutateAsync(newOrder);
       
       // 다시 로드하여 확인
       await loadCategoryOrder();
@@ -142,14 +132,10 @@ export default function CategoryOrderPage() {
   const resetToDefault = async () => {
     try {
       setLoading(true);
-      const defaultOrder = CategoryOrderService.getDefaultOrderNames();
+      const defaultOrder = getDefaultCategoryOrderNames();
       
       // Firebase에 기본 순서 저장
-      await CategoryOrderService.updateCategoryOrder(
-        defaultOrder,
-        'mainPageOrder',
-        '기본 카테고리 순서로 리셋'
-      );
+      await updateCategoryOrder.mutateAsync(defaultOrder);
       
       // 저장 후 다시 로드
       await loadCategoryOrder();

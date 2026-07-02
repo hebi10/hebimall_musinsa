@@ -13,6 +13,7 @@
 - 상품 조회 구조 개선 : product-listing-structure.md
 - 디자인 시스템 정리/리팩터 : design-system-refactor.md
 - 디자인 시스템 QA : design-system-qa.md
+- UI 품질 점검 : ui-quality-audit.md
 - 대시보드 정리 : dashboard.md
 - 쿠폰/포인트 정책 정리 : coupon-system.md
 - 스토리지 구조 정리 : storage-structure.md
@@ -23,5 +24,6 @@
 - Firestore 상품 마이그레이션 계획 : firestore-migration-plan.md
 - Firestore AI 요약 Export : firestore-ai-summary.md
 - Firestore 최적화 실행 계획 : superpowers/plans/2026-06-30-firestore-optimization.md
+- 상태관리 React Query 전환 계획 : superpowers/plans/2026-07-01-state-management-react-query-migration.md
 - 품질 게이트/CI 스크립트 정리 : quality-gates.md
 - 정적 콘텐츠 Firestore 관리 : static-content.md

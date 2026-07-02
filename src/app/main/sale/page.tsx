@@ -1,35 +1,12 @@
 ﻿'use client';
 
-import { useState, useEffect, useCallback } from 'react';
 import ProductCard from '@/app/products/_components/ProductCard';
 import PageHeader from '@/app/_components/PageHeader';
-import { ProductService } from '@/shared/services/productService';
-import { Product } from '@/shared/types/product';
+import { useRecommendedProducts } from '@/shared/hooks/useProducts';
 import styles from './page.module.css';
 
 export default function SalePage() {
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [products, setProducts] = useState<Product[]>([]);
-
-  const loadProducts = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const saleProducts = await ProductService.getSaleProducts(100);
-      setProducts(saleProducts);
-    } catch (err) {
-      console.error('상품 로드 실패:', err);
-      setError('상품을 불러오지 못했습니다.');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    void loadProducts();
-  }, [loadProducts]);
+  const { data: products = [], isLoading: loading, error } = useRecommendedProducts('sale', 100);
 
   if (loading) {
     return (
@@ -51,7 +28,7 @@ export default function SalePage() {
           description="할인 상품 목록을 한눈에 확인하세요."
         />
         <div className={styles.error}>
-          상품을 불러오지 못했습니다: {error}
+          상품을 불러오지 못했습니다: {error instanceof Error ? error.message : '상품을 불러오지 못했습니다.'}
         </div>
       </div>
     );

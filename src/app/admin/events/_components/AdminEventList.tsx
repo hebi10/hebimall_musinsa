@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Event } from '@/shared/types/event';
-import { EventService } from '@/shared/services/eventService';
+import { useDeleteEvent, useEvents, useToggleEventStatus } from '@/shared/hooks/useEvents';
 import Button from '@/app/_components/Button';
 import styles from './AdminEventList.module.css';
 
@@ -33,15 +33,14 @@ export default function AdminEventList() {
   const [filterType, setFilterType] = useState<TypeFilter>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedEvents, setSelectedEvents] = useState<string[]>([]);
+  const { refetch: refetchEvents } = useEvents();
+  const toggleEventStatus = useToggleEventStatus();
+  const deleteEvent = useDeleteEvent();
 
-  useEffect(() => {
-    loadEvents();
-  }, []);
-
-  const loadEvents = async () => {
+  const loadEvents = useCallback(async () => {
     try {
       setLoading(true);
-      const eventsData = await EventService.getEvents();
+      const { data: eventsData = [] } = await refetchEvents();
       setEvents(eventsData);
     } catch (error) {
       console.error('Error loading events:', error);
@@ -49,7 +48,11 @@ export default function AdminEventList() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [refetchEvents]);
+
+  useEffect(() => {
+    loadEvents();
+  }, [loadEvents]);
 
   const getEventStatus = (event: Event): AdminEventStatus => {
     const now = new Date();
@@ -90,7 +93,7 @@ export default function AdminEventList() {
 
   const handleToggleActive = async (eventId: string) => {
     try {
-      await EventService.toggleEventStatus(eventId);
+      await toggleEventStatus.mutateAsync(eventId);
       setEvents(events.map(event => 
         event.id === eventId 
           ? { ...event, isActive: !event.isActive }
@@ -111,7 +114,7 @@ export default function AdminEventList() {
     
     if (confirm(`선택한 ${selectedEvents.length}개의 이벤트를 삭제하시겠습니까?`)) {
       try {
-        await Promise.all(selectedEvents.map(id => EventService.deleteEvent(id)));
+        await Promise.all(selectedEvents.map(id => deleteEvent.mutateAsync(id)));
         setEvents(events.filter(event => !selectedEvents.includes(event.id)));
         setSelectedEvents([]);
         alert('선택한 이벤트가 삭제되었습니다.');

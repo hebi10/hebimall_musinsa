@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/authProvider';
 import { useDashboardData, useDashboardFormatters } from '@/shared/hooks/useDashboardQuery';
-import { SimpleQnAService } from '@/shared/services/simpleQnAService';
+import { useAdminQnAs } from '@/shared/hooks/useQnaQuery';
 import Chart from './_components/Chart';
 import ErrorBoundary from './_components/ErrorBoundary';
 import LoadingSpinner from './_components/LoadingSpinner';
@@ -23,6 +23,7 @@ function DashboardContent() {
   const { user } = useAuth();
   const { stats, loading, error, lastUpdated, refresh, isRefreshing } = useDashboardData();
   const { formatNumber, formatCurrency, formatTimeAgo } = useDashboardFormatters();
+  const { refetch: refetchQnAs } = useAdminQnAs(100);
   const [categoryNames, setCategoryNames] = useState<Record<string, string>>({});
   const [isCachedData, setIsCachedData] = useState(false);
   
@@ -61,7 +62,7 @@ function DashboardContent() {
   useEffect(() => {
     const loadQnaStats = async () => {
       try {
-        const qnas = await SimpleQnAService.getAllQnAs(100);
+        const { data: qnas = [] } = await refetchQnAs();
         const statsData = {
           total: qnas.length,
           waiting: qnas.filter(q => q.status === 'waiting').length,
@@ -77,7 +78,7 @@ function DashboardContent() {
     };
 
     loadQnaStats();
-  }, []);
+  }, [refetchQnAs]);
 
   if (loading && !stats) {
     return (

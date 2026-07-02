@@ -6,9 +6,9 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import PageHeader from "../../_components/PageHeader";
 import { useAuth } from "@/context/authProvider";
-import { useCoupon } from "@/context/couponProvider";
-import { OrderService } from "@/shared/services/orderService";
 import { cartKeys } from "@/shared/hooks/useCart";
+import { useUserCoupons } from "@/shared/hooks/useCoupons";
+import { useCreateOrder } from "@/shared/hooks/useOrders";
 import { usePointBalance } from "@/shared/hooks/usePoint";
 import { calculateOrderPreview } from "@/shared/utils/orderPricing";
 import { CheckoutDraft, parseCheckoutDraft } from "./checkoutDraft";
@@ -31,7 +31,8 @@ export default function CheckoutPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { user, userData, loading: authLoading } = useAuth();
-  const { userCoupons } = useCoupon();
+  const { data: userCoupons = [] } = useUserCoupons(user?.uid || null);
+  const createOrder = useCreateOrder();
   const { data: pointBalanceData } = usePointBalance();
   const pointBalance = pointBalanceData?.pointBalance ?? 0;
 
@@ -128,7 +129,7 @@ export default function CheckoutPage() {
 
     setIsProcessing(true);
     try {
-      const response = await OrderService.createOrder({
+      const response = await createOrder.mutateAsync({
         items: orderData.items.map((item) => ({
           productId: item.productId,
           id: item.id,

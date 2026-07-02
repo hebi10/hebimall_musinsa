@@ -7,7 +7,7 @@ import Link from "next/link";
 import PageHeader from "../../_components/PageHeader";
 import { Order, OrderItem } from "@/shared/types/order";
 import { useAuth } from "@/context/authProvider";
-import { OrderService } from "@/shared/services/orderService";
+import { useOrderLookup } from "@/shared/hooks/useOrders";
 import styles from "./page.module.css";
 
 interface OrderCompleteState {
@@ -44,6 +44,7 @@ function OrderCompleteContent() {
   const params = useSearchParams();
   const { user } = useAuth();
   const orderId = params.get("orderId");
+  const { mutateAsync: lookupOrder } = useOrderLookup();
   const [state, setState] = useState<OrderCompleteState>({
     loading: true,
     error: null,
@@ -78,7 +79,7 @@ function OrderCompleteContent() {
 
       try {
         const targetOrderId = await resolveOrderId();
-        const order = await OrderService.getOrder(targetOrderId);
+        const order = await lookupOrder(targetOrderId);
 
         if (!order) {
           throw new Error("주문을 찾지 못했습니다.");
@@ -96,7 +97,7 @@ function OrderCompleteContent() {
     };
 
     loadOrder();
-  }, [orderId, user, router]);
+  }, [lookupOrder, orderId, user, router]);
 
   const order = state.order;
 

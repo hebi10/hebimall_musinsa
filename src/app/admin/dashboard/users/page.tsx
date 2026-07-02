@@ -1,10 +1,22 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/authProvider";
 import styles from "./page.module.css";
-import { AdminUserService, AdminUserData, UserStats, UserFilter, PointOperation } from "@/shared/services/adminUserService";
+import type { AdminUserData, UserStats, UserFilter, PointOperation } from "@/shared/services/adminUserService";
+import {
+  useAdminUsers,
+  useAdminUserPointHistoryLookup,
+  useAdminUserStats,
+  useCreateAdminUser,
+  useDeleteAdminUser,
+  useExportAdminUsersCsv,
+  useGivePointsToAllUsers,
+  useUpdateAdminUserPoints,
+  useUpdateAdminUserRole,
+  useUpdateAdminUserStatus,
+} from "@/shared/hooks/useAdminUsers";
 import { PointHistory } from "@/shared/types/point";
 
 export default function AdminUsersPage() {
@@ -26,29 +38,35 @@ export default function AdminUsersPage() {
   const [pointOperation, setPointOperation] = useState<'add' | 'subtract'>('add');
   const [showUserDetail, setShowUserDetail] = useState(false);
   const [userPointHistory, setUserPointHistory] = useState<PointHistory[]>([]);
+  const filters: UserFilter = useMemo(() => ({
+    searchTerm: searchTerm || undefined,
+    role: roleFilter !== 'all' ? roleFilter : undefined,
+    status: statusFilter !== 'all' ? statusFilter : undefined,
+  }), [roleFilter, searchTerm, statusFilter]);
+  const { refetch: refetchUsers } = useAdminUsers(filters, currentPage, 10);
+  const { refetch: refetchUserStats } = useAdminUserStats();
+  const updateUserStatus = useUpdateAdminUserStatus();
+  const updateUserRole = useUpdateAdminUserRole();
+  const deleteUser = useDeleteAdminUser();
+  const exportUsersCsv = useExportAdminUsersCsv();
+  const createUser = useCreateAdminUser();
+  const updateUserPoints = useUpdateAdminUserPoints();
+  const lookupPointHistory = useAdminUserPointHistoryLookup();
+  const givePointsToAllUsers = useGivePointsToAllUsers();
 
   // 사용자 데이터 로드
   const loadUsers = useCallback(async () => {
     try {
-      console.log('loadUsers 시작...');
       setIsLoading(true);
       setError(null);
       
-      const filters: UserFilter = {
-        searchTerm: searchTerm || undefined,
-        role: roleFilter !== 'all' ? roleFilter : undefined,
-        status: statusFilter !== 'all' ? statusFilter : undefined,
-      };
-
-      console.log('필터 설정:', filters);
-      const { users: fetchedUsers } = await AdminUserService.getUsers(filters, currentPage, 10);
-      console.log('사용자 데이터 조회 완료:', fetchedUsers);
+      const { data: usersData } = await refetchUsers();
+      const fetchedUsers = usersData?.users ?? [];
       
-      const userStats = await AdminUserService.getUserStats();
-      console.log('사용자 통계:', userStats);
+      const { data: userStats } = await refetchUserStats();
       
       setUsers(fetchedUsers);
-      setStats(userStats);
+      setStats(userStats ?? { total: 0, active: 0, admin: 0, newUsers: 0, totalPoints: 0 });
     } catch (err) {
       console.error('Error loading users:', err);
       const errorMessage = err instanceof Error ? err.message : String(err);
@@ -56,7 +74,7 @@ export default function AdminUsersPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [searchTerm, roleFilter, statusFilter, currentPage]);
+  }, [refetchUserStats, refetchUsers]);
 
   useEffect(() => {
     if (isAdmin) {
@@ -125,7 +143,7 @@ export default function AdminUsersPage() {
 
   const handleStatusChange = async (userId: string, newStatus: 'active' | 'inactive' | 'banned') => {
     try {
-      await AdminUserService.updateUserStatus(userId, newStatus);
+      await updateUserStatus.mutateAsync({ userId, status: newStatus });
       await loadUsers(); // 데이터 새로고침
     } catch (error) {
       console.error('Error updating user status:', error);
@@ -135,7 +153,7 @@ export default function AdminUsersPage() {
 
   const handleRoleChange = async (userId: string, newRole: 'user' | 'admin') => {
     try {
-      await AdminUserService.updateUserRole(userId, newRole);
+      await updateUserRole.mutateAsync({ userId, role: newRole });
       await loadUsers(); // 데이터 새로고침
     } catch (error) {
       console.error('Error updating user role:', error);
@@ -146,7 +164,7 @@ export default function AdminUsersPage() {
   const handleDeleteUser = async (userId: string) => {
     if (confirm('정말 이 사용자를 삭제하시겠습니까?')) {
       try {
-        await AdminUserService.deleteUser(userId);
+        await deleteUser.mutateAsync(userId);
         await loadUsers(); // 데이터 새로고침
       } catch (error) {
         console.error('Error deleting user:', error);
@@ -193,7 +211,7 @@ export default function AdminUsersPage() {
 
   const handleExport = async () => {
     try {
-      const csvContent = await AdminUserService.exportUsersToCSV();
+      const csvContent = await exportUsersCsv.mutateAsync();
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
@@ -215,8 +233,7 @@ export default function AdminUsersPage() {
     const role = confirm('관리자 권한을 부여하시겠습니까?') ? 'admin' : 'user';
     
     try {
-      console.log('새 사용자 생성 중:', { name, email, role });
-      await AdminUserService.createUser({ name, email, role });
+      await createUser.mutateAsync({ name, email, role });
       alert('사용자가 성공적으로 추가되었습니다.');
       await loadUsers();
     } catch (error) {
@@ -253,7 +270,7 @@ export default function AdminUsersPage() {
         type: pointOperation
       };
 
-      await AdminUserService.updateUserPoints(operation);
+      await updateUserPoints.mutateAsync(operation);
       alert(`포인트가 성공적으로 ${pointOperation === 'add' ? '적립' : '차감'}되었습니다.`);
       setShowPointModal(false);
       await loadUsers(); // 데이터 새로고침
@@ -266,7 +283,7 @@ export default function AdminUsersPage() {
   const handleUserDetail = async (user: AdminUserData) => {
     try {
       setSelectedUser(user);
-      const pointHistory = await AdminUserService.getUserPointHistory(user.id);
+      const pointHistory = await lookupPointHistory.mutateAsync(user.id);
       setUserPointHistory(pointHistory);
       setShowUserDetail(true);
     } catch (error) {
@@ -282,7 +299,7 @@ export default function AdminUsersPage() {
     if (amount && description && !isNaN(Number(amount))) {
       if (confirm(`모든 활성 사용자에게 ${amount}포인트를 지급하시겠습니까?`)) {
         try {
-          const successCount = await AdminUserService.givePointsToAllUsers(Number(amount), description);
+          const successCount = await givePointsToAllUsers.mutateAsync({ amount: Number(amount), description });
           alert(`${successCount}명의 사용자에게 포인트가 지급되었습니다.`);
           await loadUsers();
         } catch (error) {

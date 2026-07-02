@@ -7,7 +7,7 @@
 - 1920px까지는 배너 이미지 stage가 꽉 차고, 그 이상 넓이에서는 슬라이드별 배경색이 좌우 여백에 노출된다.
 - 태블릿에서는 제목/버튼 크기를 줄이고 좌우 화살표를 하단으로 내려 카피와 겹치지 않게 한다.
 - 모바일에서는 좌우 화살표를 숨기고 도트만 노출하며, 하단 그라데이션 위에 카피를 배치한다.
-- 3번째 쿨터치 배너는 이미지 파일을 직접 밀지 않고 슬라이드별 `object-position` 값으로 모델 위치를 보정한다.
+- 3번째 쿨터치 배너는 기본 `object-position`은 유지하고, 이미지 자체의 모델 위치를 1,2번째 배너 구도에 맞춘다.
 - Firestore 배너 조회 실패나 빈 결과에서는 같은 3개 이벤트 배너를 fallback으로 렌더링한다.
 - 좌우 버튼이나 도트를 누르면 자동 전환 타이머가 다시 4.5초부터 시작된다.
 
@@ -16,8 +16,11 @@
 - `src/app/_components/MainBanner.module.css`
 - `src/app/_components/MainBanner.test.tsx`
 - `public/main/main_event_midyear_sale.webp`
+- `public/main/main_event_midyear_sale_mobile.webp`
 - `public/main/main_event_vacation_coupon.webp`
+- `public/main/main_event_vacation_coupon_mobile.webp`
 - `public/main/main_event_cool_touch.webp`
+- `public/main/main_event_cool_touch_mobile.webp`
 
 ## 연결 이벤트
 - `/events/event-2026-06-midyear-sale`

@@ -1,25 +1,13 @@
 "use client";
 
-import { useEffect, useState } from 'react';
-import { FaqContent, SiteContentService } from '@/shared/services/siteContentService';
+import { useState } from 'react';
+import { useFaqs } from '@/shared/hooks/useSiteContent';
 import styles from './page.module.css';
 
 export default function FAQPage() {
-  const [faqs, setFaqs] = useState<FaqContent[]>([]);
+  const { data: faqs = [], isLoading: loading, error } = useFaqs();
   const [searchTerm, setSearchTerm] = useState('');
   const [openItems, setOpenItems] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    SiteContentService.getFaqs()
-      .then(setFaqs)
-      .catch((err) => {
-        console.error('FAQ 조회 실패:', err);
-        setError('FAQ를 불러오지 못했습니다.');
-      })
-      .finally(() => setLoading(false));
-  }, []);
 
   const filteredFAQs = faqs.filter((faq) => {
     const keyword = searchTerm.toLowerCase();
@@ -76,7 +64,7 @@ export default function FAQPage() {
 
       <div className={styles.faqList}>
         {loading && <div className={styles.noResults}>FAQ를 불러오는 중입니다.</div>}
-        {error && <div className={styles.noResults}>{error}</div>}
+        {error && <div className={styles.noResults}>FAQ를 불러오지 못했습니다.</div>}
         {!loading && !error && filteredFAQs.length > 0 && filteredFAQs.map((faq) => (
           <div key={faq.id} className={styles.faqItem}>
             <button className={styles.question} onClick={() => toggleItem(faq.id)}>

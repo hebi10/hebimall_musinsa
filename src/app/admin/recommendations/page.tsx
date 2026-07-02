@@ -2,8 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { ProductService } from '@/shared/services/productService';
-import { RecommendationSettingContent, SiteContentService } from '@/shared/services/siteContentService';
+import { useProducts } from '@/shared/hooks/useProducts';
+import {
+  useRecommendationSettings,
+  useSaveRecommendationSetting,
+} from '@/shared/hooks/useSiteContent';
+import type { RecommendationSettingContent } from '@/shared/services/siteContentService';
 import { Product } from '@/shared/types/product';
 import styles from './page.module.css';
 
@@ -17,11 +21,14 @@ export default function RecommendationsAdminPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { refetch: refetchProducts } = useProducts();
+  const { refetch: refetchRecommendationSettings } = useRecommendationSettings();
+  const saveRecommendationSetting = useSaveRecommendationSetting();
 
   useEffect(() => {
     Promise.all([
-      ProductService.getAllProducts(),
-      SiteContentService.getRecommendationSettings(),
+      refetchProducts().then((result) => result.data ?? []),
+      refetchRecommendationSettings().then((result) => result.data ?? []),
     ])
       .then(([productsData, settingsData]) => {
         setProducts(productsData);
@@ -32,7 +39,7 @@ export default function RecommendationsAdminPage() {
         setError('추천 설정을 불러오지 못했습니다.');
       })
       .finally(() => setLoading(false));
-  }, []);
+  }, [refetchProducts, refetchRecommendationSettings]);
 
   const getProductsBySettings = (settings: RecommendSettings): Product[] => {
     if (settings.type === 'manual') {
@@ -78,7 +85,7 @@ export default function RecommendationsAdminPage() {
   const saveSetting = async (setting: RecommendSettings) => {
     setSaving(true);
     try {
-      await SiteContentService.saveRecommendationSetting(setting);
+      await saveRecommendationSetting.mutateAsync(setting);
       setCurrentSettings((prev) => prev.map((item) => item.id === setting.id ? setting : item));
       setEditingSettings(null);
     } finally {

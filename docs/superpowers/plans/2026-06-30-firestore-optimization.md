@@ -285,10 +285,22 @@ npm run firestore:ai-summary -- --output=tmp/firestore-ai-summary-before-cleanup
 
 - `npm run migrate:firestore:validate` 실행 완료.
 - source 상품 88건, destination 상품 88건, 누락 0건, orphan 0건.
-- 단, core field 불일치 1건이 있다.
-  - 상품 `ZEMIfgpl9ZLAG8lgkMub`의 `stock` 값이 legacy source `12`, top-level destination `11`로 다르다.
-- 이 불일치가 해결되기 전에는 `categories/{categoryId}/products/{productId}` 레거시 상품 삭제를 진행하지 않는다.
+- 최초 검증에서 상품 `ZEMIfgpl9ZLAG8lgkMub`의 `stock` 값이 legacy source `12`, top-level destination `11`로 달랐다.
+- 현재 앱은 top-level `products`를 기준으로 동작하므로 legacy `categories/jewelry/products/ZEMIfgpl9ZLAG8lgkMub`의 `stock`을 `11`로 맞췄다.
+- 재검증 결과 `Mismatched core fields: 0`으로 해결됐다.
 - `tmp/firestore-ai-summary-before-cleanup.json`도 생성 완료했다.
+
+### 2026-06-30 cleanup 실행 결과
+
+- Firestore Admin API 공식 export를 `gs://hebimall.firebasestorage.app/...` 대상으로 시도했지만 현재 서비스 계정 권한 부족으로 `PERMISSION_DENIED`가 발생했다.
+- 대신 삭제 대상 legacy 상품 문서 88건을 복원 가능한 로컬 JSON으로 백업했다.
+  - 백업 파일: `tmp/legacy-products-backup-before-cleanup.json`
+- dry-run 결과 삭제 대상은 `categories/{categoryId}/products/{productId}` legacy 상품 문서 88건이었다.
+- 백업 파일의 문서 경로와 현재 삭제 대상 경로가 일치할 때만 실행되도록 `scripts/firestore-legacy-products-cleanup.js`를 추가했다.
+- `npm run cleanup:legacy-products:execute -- --backup=tmp/legacy-products-backup-before-cleanup.json`로 legacy 상품 88건을 삭제했다.
+- 삭제 후 검증 결과:
+  - top-level `products`: 88건
+  - legacy `categories/{categoryId}/products`: 0건
 
 ---
 

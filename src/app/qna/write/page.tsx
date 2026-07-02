@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/authProvider';
-import { SimpleQnAService } from '@/shared/services/simpleQnAService';
+import { useCreateSimpleQnA } from '@/shared/hooks/useQnaQuery';
 import { CreateQnAData } from '@/shared/types/qna';
 import styles from './page.module.css';
 
@@ -12,6 +12,7 @@ export default function QnAWritePage() {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const createQnA = useCreateSimpleQnA(user);
 
   const [formData, setFormData] = useState<CreateQnAData>({
     category: 'general',
@@ -69,12 +70,7 @@ export default function QnAWritePage() {
       setLoading(true);
       setError(null);
 
-      const qnaId = await SimpleQnAService.createQnA(
-        user.uid,
-        user.email || '',
-        user.displayName || user.email || '',
-        formData
-      );
+      const qnaId = await createQnA.mutateAsync(formData);
       
       // 성공 시 mypage로 이동
       router.push(`/mypage/qa?created=${encodeURIComponent(qnaId)}`);

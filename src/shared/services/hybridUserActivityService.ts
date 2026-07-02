@@ -455,7 +455,6 @@ export class HybridUserActivityService {
       localStorage.removeItem(`${RECENT_PRODUCTS_KEY}_${oldUserId}`);
       localStorage.removeItem(`${WISHLIST_KEY}_${oldUserId}`);
       
-      console.log('LocalStorage 데이터 마이그레이션 완료');
     } catch (error) {
       console.error('데이터 마이그레이션 실패:', error);
     }

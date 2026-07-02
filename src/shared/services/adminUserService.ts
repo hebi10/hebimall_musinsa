@@ -158,7 +158,6 @@ export class AdminUserService {
       const startIndex = (page - 1) * limitCount;
       const paginatedUsers = users.slice(startIndex, startIndex + limitCount);
 
- console.log(` 최종 반환: ${paginatedUsers.length}명 (전체 ${totalCount}명)`);
       return { users: paginatedUsers, totalCount };
     } catch (error) {
  console.error(' Error fetching users:', error);
@@ -169,14 +168,10 @@ export class AdminUserService {
   // 모든 사용자 조회 (간단한 쿼리, 인덱스 불필요)
   static async getAllUsersSimple(): Promise<AdminUserData[]> {
     try {
- console.log(' 모든 사용자 조회 (간단한 쿼리)...');
       const q = query(collection(db, COLLECTION_NAME));
       const querySnapshot = await getDocs(q);
       
- console.log(` 조회된 사용자 수: ${querySnapshot.size}`);
-      
       const users = querySnapshot.docs.map(doc => {
- console.log(` 사용자: ${doc.id}`, doc.data());
         return this.convertDocToUser(doc);
       });
       
@@ -266,8 +261,6 @@ export class AdminUserService {
     status?: 'active' | 'inactive';
   }): Promise<string> {
     try {
- console.log(' 사용자 생성 시작:', userData);
-      
       const newUser = {
         name: userData.name.trim(),
         email: userData.email.trim().toLowerCase(),
@@ -294,9 +287,7 @@ export class AdminUserService {
         }
       };
 
- console.log(' Firestore에 저장할 데이터:', newUser);
       const docRef = await addDoc(collection(db, COLLECTION_NAME), newUser);
- console.log(' 사용자 생성 완료, ID:', docRef.id);
       return docRef.id;
     } catch (error) {
  console.error(' Error creating user:', error);
@@ -345,7 +336,6 @@ export class AdminUserService {
         amount: operation.amount,
         description: operation.description,
       });
- console.log(` 포인트 ${operation.type === 'add' ? '적립' : '차감'} 완료: ${operation.amount}원`);
     } catch (error) {
  console.error('Error updating user points:', error);
       throw error;
@@ -461,7 +451,6 @@ export class AdminUserService {
       grade: data.grade || data.tier || 'bronze',
     };
 
- console.log(` 변환된 사용자: ${user.id} - ${user.name} (${user.role})`);
     return user;
   }
 }

@@ -2,8 +2,8 @@
 
 import { useState, useEffect, use, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { useProduct } from '@/context/productProvider';
 import { useAuth } from '@/context/authProvider';
+import { useProductDetail, useUpdateProduct } from '@/shared/hooks/useProducts';
 import { Product } from '@/shared/types/product';
 import styles from './page.module.css';
 import EditProductForm from '@/app/admin/dashboard/products/_components/EditProductForm';
@@ -17,12 +17,13 @@ interface ProductEditPageProps {
 export default function ProductEditPage({ params }: ProductEditPageProps) {
   const router = useRouter();
   const { user, isAdmin, loading: authLoading } = useAuth();
-  const { getProductById, updateProduct } = useProduct();
+  const updateProductMutation = useUpdateProduct();
   
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { productId } = use(params);
+  const { refetch: refetchProduct } = useProductDetail(productId);
 
   // 팝업 닫기 함수
   const handleClose = useCallback(() => {
@@ -85,8 +86,7 @@ export default function ProductEditPage({ params }: ProductEditPageProps) {
         setLoading(true);
         setError(null);
         
-        console.log('Loading product with ID:', productId);
-        const productData = await getProductById(productId);
+        const { data: productData } = await refetchProduct();
         if (!productData) {
           setError('상품을 찾을 수 없습니다.');
           return;
@@ -102,12 +102,12 @@ export default function ProductEditPage({ params }: ProductEditPageProps) {
     };
 
     loadProduct();
-  }, [productId, getProductById, user, isAdmin]);
+  }, [productId, refetchProduct, user, isAdmin]);
 
   // 상품 수정 처리
   const handleSave = async (updatedProduct: Product) => {
     try {
-      await updateProduct(productId, updatedProduct);
+      await updateProductMutation.mutateAsync({ productId, updates: updatedProduct });
       alert('상품이 성공적으로 수정되었습니다.');
       router.push('/admin/dashboard/products');
     } catch (error) {

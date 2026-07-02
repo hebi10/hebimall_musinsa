@@ -20,6 +20,9 @@ jest.mock('next/link', () => ({
 }));
 
 jest.mock('@tanstack/react-query', () => ({
+  useMutation: () => ({
+    mutateAsync: jest.fn(),
+  }),
   useQueryClient: () => ({
     invalidateQueries: jest.fn(),
     refetchQueries: jest.fn(),
@@ -40,8 +43,8 @@ jest.mock('@/context/authProvider', () => ({
   useAuth: jest.fn(),
 }));
 
-jest.mock('@/context/couponProvider', () => ({
-  useCoupon: () => ({ userCoupons: [] }),
+jest.mock('@/shared/hooks/useCoupons', () => ({
+  useUserCoupons: () => ({ data: [] }),
 }));
 
 jest.mock('@/shared/hooks/usePoint', () => ({

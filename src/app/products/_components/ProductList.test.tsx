@@ -1,6 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import ProductList from './ProductList';
-import { ProductService } from '@/shared/services/productService';
 
 jest.mock('./ProductList.module.css', () => ({
   __esModule: true,
@@ -14,11 +13,12 @@ jest.mock('./ProductCard', () => ({
   default: ({ name }: { name: string }) => <article>{name}</article>,
 }));
 
-jest.mock('@/shared/services/productService', () => ({
-  ProductService: {
-    getCategories: jest.fn(),
-    queryProducts: jest.fn(),
-  },
+jest.mock('@/shared/hooks/useProducts', () => ({
+  useProductSearch: jest.fn(),
+}));
+
+jest.mock('@/shared/hooks/useCategoriesQuery', () => ({
+  useCategoriesQuery: jest.fn(),
 }));
 
 jest.mock('@/shared/utils/categoryUtils', () => ({
@@ -27,14 +27,27 @@ jest.mock('@/shared/utils/categoryUtils', () => ({
   }),
 }));
 
+const { useProductSearch } = jest.requireMock('@/shared/hooks/useProducts') as {
+  useProductSearch: jest.Mock;
+};
+const { useCategoriesQuery } = jest.requireMock('@/shared/hooks/useCategoriesQuery') as {
+  useCategoriesQuery: jest.Mock;
+};
+
 describe('ProductList loading state', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    (ProductService.getCategories as jest.Mock).mockResolvedValue([]);
+    useCategoriesQuery.mockReturnValue({ data: [] });
   });
 
   test('renders product-shaped skeleton cards during the first load', async () => {
-    (ProductService.queryProducts as jest.Mock).mockReturnValue(new Promise(() => undefined));
+    useProductSearch.mockReturnValue({
+      data: undefined,
+      isLoading: true,
+      error: null,
+      fetchNextPage: jest.fn(),
+      refetch: jest.fn(),
+    });
 
     render(<ProductList />);
 
@@ -45,10 +58,13 @@ describe('ProductList loading state', () => {
   });
 
   test('renders known category ids with Korean labels', async () => {
-    (ProductService.getCategories as jest.Mock).mockResolvedValue(['bags']);
-    (ProductService.queryProducts as jest.Mock).mockResolvedValue({
-      items: [],
-      hasMore: false,
+    useCategoriesQuery.mockReturnValue({ data: [{ id: 'bags', name: '가방' }] });
+    useProductSearch.mockReturnValue({
+      data: { pages: [{ items: [], hasMore: false }] },
+      isLoading: false,
+      error: null,
+      fetchNextPage: jest.fn(),
+      refetch: jest.fn(),
     });
 
     render(<ProductList />);

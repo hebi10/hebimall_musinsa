@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import ProductCard from '@/app/products/_components/ProductCard';
-import { useProduct } from '@/context/productProvider';
+import { useProducts } from '@/shared/hooks/useProducts';
 import { Product } from '@/shared/types/product';
 import styles from './CategoryProductTabs.module.css';
 
@@ -33,7 +33,7 @@ function getCategoryLabel(categoryId: string) {
 }
 
 export default function CategoryProductTabs() {
-  const { products, loading } = useProduct();
+  const { data: products = [], isLoading: loading } = useProducts();
   const categoryOptions = useMemo<CategoryOption[]>(() => {
     const activeProducts = products.filter((product) => product.status === 'active');
     const grouped = activeProducts.reduce<Map<string, Product[]>>((acc, product) => {

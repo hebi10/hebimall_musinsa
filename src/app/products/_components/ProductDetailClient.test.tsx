@@ -1,14 +1,12 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import ProductDetailClient from './ProductDetailClient';
 import { Product } from '@/shared/types/product';
-import { useUserActivity } from '@/context/userActivityProvider';
 import { getProductReviewStats } from '@/shared/utils/syncProductReviews';
 
 const push = jest.fn();
 const addRecentProduct = jest.fn();
 const addToWishlist = jest.fn();
 const removeFromWishlist = jest.fn();
-const loadRelatedProducts = jest.fn();
 
 let mockWishlistItems: Array<{ id: string; productId: string; userId: string; addedAt: Date }> = [];
 
@@ -20,17 +18,17 @@ jest.mock('@/context/authProvider', () => ({
   useAuth: () => ({ user: { uid: 'user-1' } }),
 }));
 
-jest.mock('@/context/userActivityProvider', () => ({
-  useUserActivity: jest.fn(),
+jest.mock('@/shared/hooks/useUserActivityQuery', () => ({
+  useWishlistItems: () => ({ data: mockWishlistItems }),
+  useAddRecentProduct: () => ({ mutate: addRecentProduct }),
+  useToggleWishlist: () => ({
+    mutateAsync: ({ productId, wished }: { productId: string; wished: boolean }) =>
+      wished ? removeFromWishlist(productId) : addToWishlist(productId),
+  }),
 }));
 
-jest.mock('@/context/productProvider', () => ({
-  useProduct: () => ({
-    relatedProducts: [],
-    loadRelatedProducts,
-    calculateDiscountPrice: (price: number, saleRate: number) => Math.floor(price * (1 - saleRate / 100)),
-    isInStock: (product: Product) => product.stock > 0,
-  }),
+jest.mock('@/shared/hooks/useProducts', () => ({
+  useRelatedProducts: () => ({ data: [] }),
 }));
 
 jest.mock('@/shared/hooks/useCart', () => ({
@@ -111,13 +109,6 @@ describe('ProductDetailClient wishlist button', () => {
       userId: 'user-1',
       addedAt: new Date('2026-05-01T00:00:00.000Z'),
     }];
-    (useUserActivity as jest.Mock).mockReturnValue({
-      wishlistItems: mockWishlistItems,
-      addRecentProduct,
-      addToWishlist,
-      removeFromWishlist,
-      isInWishlist: jest.fn().mockResolvedValue(true),
-    });
   });
 
   afterEach(() => {
@@ -151,13 +142,6 @@ describe('ProductDetailClient detail images', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockWishlistItems = [];
-    (useUserActivity as jest.Mock).mockReturnValue({
-      wishlistItems: mockWishlistItems,
-      addRecentProduct,
-      addToWishlist,
-      removeFromWishlist,
-      isInWishlist: jest.fn().mockResolvedValue(false),
-    });
   });
 
   test('renders product detail images in the detail tab', () => {

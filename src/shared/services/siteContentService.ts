@@ -35,6 +35,7 @@ export interface MainBannerContent {
   ctaLabel: string;
   href: string;
   image: string;
+  mobileImage?: string;
   backgroundColor: string;
   order: number;
   imagePosition?: string;
@@ -143,6 +144,7 @@ export class SiteContentService {
       ctaLabel: stringValue(data.ctaLabel),
       href: stringValue(data.href),
       image: stringValue(data.image),
+      mobileImage: stringValue(data.mobileImage) || undefined,
       backgroundColor: stringValue(data.backgroundColor) || '#f4f4f4',
       order: numberValue(data.order),
       imagePosition: stringValue(data.imagePosition) || undefined,

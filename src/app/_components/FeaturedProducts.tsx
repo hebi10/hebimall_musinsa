@@ -1,9 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { FeaturedProductService } from '@/shared/services/featuredProductService';
-import { Product } from '@/shared/types/product';
+import { useFeaturedProductsSection } from '@/shared/hooks/useFeaturedProducts';
 import ProductCard from '@/app/products/_components/ProductCard';
 import styles from './FeaturedProducts.module.css';
 
@@ -24,42 +22,13 @@ export default function FeaturedProducts({
   sectionClassName = '',
   viewAllLabel = '전체 보기',
 }: FeaturedProductsProps) {
-  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [config, setConfig] = useState({
+  const { data, isLoading: loading } = useFeaturedProductsSection();
+  const featuredProducts = data?.products || [];
+  const config = {
     title: '추천 셀렉션',
     subtitle: '메인에서 먼저 보여드리는 편집 상품입니다.',
     isActive: true,
-  });
-
-  useEffect(() => {
-    loadFeaturedProducts();
-  }, []);
-
-  const loadFeaturedProducts = async () => {
-    try {
-      setLoading(true);
-
-      const [products, configData] = await Promise.all([
-        FeaturedProductService.getFeaturedProducts(),
-        FeaturedProductService.getFeaturedProductConfig(),
-      ]);
-
-      setFeaturedProducts(products);
-
-      if (configData) {
-        setConfig({
-          title: configData.title || '추천 셀렉션',
-          subtitle:
-            configData.subtitle || '메인에서 먼저 보여드리는 편집 상품입니다.',
-          isActive: configData.isActive,
-        });
-      }
-    } catch (error) {
-      console.error('Failed to load featured products:', error);
-    } finally {
-      setLoading(false);
-    }
+    ...data?.config,
   };
 
   if (!config.isActive) {

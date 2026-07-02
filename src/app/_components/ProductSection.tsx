@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useProduct } from '@/context/productProvider';
 import ProductCard from '@/app/products/_components/ProductCard';
+import { useHomePageProducts } from '@/shared/hooks/useProducts';
 import styles from './ProductSection.module.css';
 
 type ProductSectionVariant = 'default' | 'ranking' | 'sale' | 'scroll';
@@ -37,24 +37,18 @@ export default function ProductSection({
   viewAllLabel = '전체 보기',
   className = '',
 }: ProductSectionProps) {
-  const {
-    recommendedProducts,
-    newProducts,
-    saleProducts,
-    bestSellerProducts,
-    loading,
-  } = useProduct();
+  const { data: homeProducts, isLoading: loading } = useHomePageProducts();
 
   const getProducts = () => {
     switch (type) {
       case 'recommended':
-        return recommendedProducts;
+        return homeProducts?.recommendedProducts || [];
       case 'new':
-        return newProducts;
+        return homeProducts?.newProducts || [];
       case 'sale':
-        return saleProducts;
+        return homeProducts?.saleProducts || [];
       case 'bestseller':
-        return bestSellerProducts;
+        return homeProducts?.bestSellerProducts || [];
       default:
         return [];
     }

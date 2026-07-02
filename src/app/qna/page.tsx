@@ -2,7 +2,7 @@
 
 import { useCallback, useState, useEffect } from 'react';
 import Link from 'next/link';
-import { QnAService } from '@/shared/services/qnaService';
+import { useQnAList } from '@/shared/hooks/useQnaQuery';
 import { QnA, QnAFilter } from '@/shared/types/qna';
 import styles from './page.module.css';
 
@@ -15,6 +15,7 @@ export default function QnAListPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [stats, setStats] = useState<Record<string, number>>({});
+  const { refetch: refetchQnAs } = useQnAList({ isSecret: false }, 1, 50);
 
   const categories = [
     { value: 'all', label: '전체' },
@@ -34,9 +35,13 @@ export default function QnAListPage() {
         filters.category = selectedCategory as QnA['category'];
       }
 
-      const result = await QnAService.getQnAList(filters, 1, 50);
+      const { data: result } = await refetchQnAs();
+      if (!result) return;
 
       let filteredQnas = result.qnas;
+      if (filters.category) {
+        filteredQnas = filteredQnas.filter(qna => qna.category === filters.category);
+      }
       if (searchTerm) {
         const searchLower = searchTerm.toLowerCase();
         filteredQnas = filteredQnas.filter(qna =>
@@ -54,7 +59,7 @@ export default function QnAListPage() {
     } finally {
       setLoading(false);
     }
-  }, [searchTerm, selectedCategory]);
+  }, [refetchQnAs, searchTerm, selectedCategory]);
 
   const loadStats = useCallback(async () => {
     try {

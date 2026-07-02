@@ -7,46 +7,30 @@ import Link from "next/link";
 import PageHeader from "../../_components/PageHeader";
 import Button from "../../_components/Button";
 import { useAuth } from "@/context/authProvider";
-import { useCoupon } from "@/context/couponProvider";
 import { useCart, useUpdateCartItem, useRemoveFromCart } from "@/shared/hooks/useCart";
-import { CartItem } from "@/shared/types/cart";
+import { useUserCoupons } from "@/shared/hooks/useCoupons";
 import {
   calculateOrderPreview,
   getCouponAvailability,
 } from "@/shared/utils/orderPricing";
 import styles from "./page.module.css";
 
-// 장바구니 아이템에 선택 상태 추가
-interface CartItemWithSelection extends CartItem {
-  selected: boolean;
-}
-
 export default function OrderCartPage() {
   const router = useRouter();
   const { user, userData, loading: authLoading } = useAuth();
-  const { userCoupons } = useCoupon();
+  const { data: userCoupons = [] } = useUserCoupons(user?.uid || null);
   
   // Firebase 장바구니 데이터 가져오기
   const { data: cart, isLoading: cartLoading, error: cartError } = useCart(user?.uid || null);
   const updateCartItemMutation = useUpdateCartItem();
   const removeFromCartMutation = useRemoveFromCart();
   
-  // 장바구니 아이템에 선택 상태 추가
-  const [cartItems, setCartItems] = useState<CartItemWithSelection[]>([]);
+  const cartItems = cart?.items || [];
+  const [selectedItemIds, setSelectedItemIds] = useState<string[] | null>(null);
   const [selectedCoupon, setSelectedCoupon] = useState<string>("");
-  const [selectAll, setSelectAll] = useState(true);
   const [deliveryOption, setDeliveryOption] = useState<"standard" | "express">("standard");
-
-  // Firebase 장바구니 데이터를 로컬 상태로 변환
-  useEffect(() => {
-    if (cart?.items) {
-      const itemsWithSelection: CartItemWithSelection[] = cart.items.map(item => ({
-        ...item,
-        selected: true // 기본적으로 모든 아이템 선택
-      }));
-      setCartItems(itemsWithSelection);
-    }
-  }, [cart]);
+  const selectedIds = selectedItemIds ?? cartItems.map((item) => item.id);
+  const selectAll = cartItems.length > 0 && cartItems.every((item) => selectedIds.includes(item.id));
 
   // 로그인 체크
   useEffect(() => {
@@ -60,14 +44,6 @@ export default function OrderCartPage() {
     if (newQuantity < 1) return;
     
     try {
-      // 로컬 상태 즉시 업데이트
-      setCartItems(items =>
-        items.map(item =>
-          item.id === id ? { ...item, quantity: newQuantity } : item
-        )
-      );
-
-      // Firebase 업데이트
       if (user) {
         await updateCartItemMutation.mutateAsync({
           userId: user.uid,
@@ -83,10 +59,6 @@ export default function OrderCartPage() {
   // 상품 제거
   const removeItem = async (id: string) => {
     try {
-      // 로컬 상태 즉시 업데이트
-      setCartItems(items => items.filter(item => item.id !== id));
-      
-      // Firebase에서 제거
       if (user) {
         await removeFromCartMutation.mutateAsync({
           userId: user.uid,
@@ -101,30 +73,21 @@ export default function OrderCartPage() {
 
   // 전체 선택/해제
   const toggleSelectAll = () => {
-    const newSelectAll = !selectAll;
-    setSelectAll(newSelectAll);
-    setCartItems(items =>
-      items.map(item => ({ ...item, selected: newSelectAll }))
-    );
+    setSelectedItemIds(selectAll ? [] : cartItems.map((item) => item.id));
   };
 
   // 개별 상품 선택/해제
   const toggleItemSelect = (id: string) => {
-    setCartItems(items =>
-      items.map(item =>
-        item.id === id ? { ...item, selected: !item.selected } : item
-      )
-    );
-    
-    // 전체 선택 상태 업데이트
-    const updatedItems = cartItems.map(item =>
-      item.id === id ? { ...item, selected: !item.selected } : item
-    );
-    setSelectAll(updatedItems.every(item => item.selected));
+    setSelectedItemIds((current) => {
+      const base = current ?? cartItems.map((item) => item.id);
+      return base.includes(id)
+        ? base.filter((itemId) => itemId !== id)
+        : [...base, id];
+    });
   };
 
   // 주문 계산
-  const selectedItems = cartItems.filter(item => item.selected && item.isAvailable);
+  const selectedItems = cartItems.filter(item => selectedIds.includes(item.id) && item.isAvailable);
   const selectedCouponView = userCoupons?.find(coupon => coupon.id === selectedCoupon) || null;
   const orderPreview = useMemo(
     () => calculateOrderPreview({
@@ -296,7 +259,7 @@ export default function OrderCartPage() {
                   <div className={styles.itemCheckbox}>
                     <input
                       type="checkbox"
-                      checked={item.selected}
+                      checked={selectedIds.includes(item.id)}
                       onChange={() => toggleItemSelect(item.id)}
                       disabled={!item.isAvailable}
                     />

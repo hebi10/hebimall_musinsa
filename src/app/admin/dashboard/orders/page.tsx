@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/authProvider";
 import styles from "./page.module.css";
-import { OrderService } from "@/shared/services/orderService";
+import { useAdminOrders, useUpdateOrderStatus } from "@/shared/hooks/useOrders";
 import { Order, OrderStatus } from "@/shared/types/order";
 
 interface OrderStats {
@@ -36,6 +36,8 @@ export default function AdminOrdersPage() {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { refetch: refetchAdminOrders } = useAdminOrders();
+  const updateOrderStatus = useUpdateOrderStatus();
 
   // 권한 체크
   useEffect(() => {
@@ -47,15 +49,22 @@ export default function AdminOrdersPage() {
   }, [user, isUserDataLoading, isAdmin, router, loading]);
 
   // 주문 데이터 로드
-  const loadOrders = async () => {
+  const loadOrders = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
       
-      const [orderList, orderStats] = await Promise.all([
-        OrderService.getAllOrders(100),
-        OrderService.getOrderStats()
-      ]);
+      const { data } = await refetchAdminOrders();
+      const orderList = data?.orders ?? [];
+      const orderStats = data?.stats ?? {
+        total: 0,
+        pending: 0,
+        confirmed: 0,
+        shipped: 0,
+        delivered: 0,
+        cancelled: 0,
+        totalAmount: 0,
+      };
       
       setOrders(orderList);
       setStats(orderStats);
@@ -65,13 +74,13 @@ export default function AdminOrdersPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [refetchAdminOrders]);
 
   useEffect(() => {
     if (isAdmin) {
       loadOrders();
     }
-  }, [isAdmin]);
+  }, [isAdmin, loadOrders]);
 
   // 필터링 로직
   useEffect(() => {
@@ -150,7 +159,7 @@ export default function AdminOrdersPage() {
 
   const handleStatusChange = async (orderId: string, newStatus: OrderStatus) => {
     try {
-      await OrderService.updateOrderStatus(orderId, newStatus);
+      await updateOrderStatus.mutateAsync({ orderId, status: newStatus });
       await loadOrders(); // 데이터 새로고침
       alert('주문 상태가 성공적으로 변경되었습니다.');
     } catch (error) {

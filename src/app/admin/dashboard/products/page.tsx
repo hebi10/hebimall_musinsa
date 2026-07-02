@@ -1,94 +1,32 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import styles from './page.module.css';
-import { useProduct } from '@/context/productProvider';
 import { useAuth } from '@/context/authProvider';
-import { Product } from '@/shared/types/product';
-import { getCategoryNames } from '@/shared/utils/categoryUtils';
+import { useCategoriesQuery } from '@/shared/hooks/useCategoriesQuery';
+import { useDeleteProduct, useProducts, useUpdateProduct } from '@/shared/hooks/useProducts';
+import type { Product } from '@/shared/types/product';
 
 export default function AdminProductsPage() {
   const { user, isAdmin, loading: authLoading, isUserDataLoading } = useAuth();
-  const { 
-    products, 
-    loading, 
-    loadProducts,
-    updateProduct,
-    deleteProduct
-  } = useProduct();
+  const { data: products = [], isLoading: loading, isFetching, refetch } = useProducts();
+  const { data: categories = [] } = useCategoriesQuery();
+  const updateProductMutation = useUpdateProduct();
+  const deleteProductMutation = useDeleteProduct();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
   const itemsPerPage = 10;
-  const hasLoadedRef = useRef(false);
-  const isLoadingRef = useRef(false);
 
-  // 카테고리 목록 로드
-  useEffect(() => {
-    const loadCategories = async () => {
-      try {
-        const categoriesData = await getCategoryNames();
-        setCategories(Object.entries(categoriesData).map(([id, name]) => ({ id, name })));
-      } catch (error) {
-        console.error('카테고리 목록 로드 실패:', error);
-        // 기본 카테고리 설정 (fallback)
-        setCategories([
-          { id: 'tops', name: '상의' },
-          { id: 'bottoms', name: '하의' },
-          { id: 'shoes', name: '신발' },
-          { id: 'bags', name: '가방' },
-          { id: 'accessories', name: '액세서리' },
-          { id: 'jewelry', name: '주얼리' },
-          { id: 'outdoor', name: '아웃도어' },
-          { id: 'sports', name: '스포츠' }
-        ]);
-      }
-    };
-
-    loadCategories();
-  }, []);
-
-  // 초기 데이터 로드 (권한은 이미 layout에서 체크됨)
-  useEffect(() => {
-    // 아직 인증이나 사용자 데이터가 로딩 중이면 대기
-    if (authLoading || isUserDataLoading || !user || !isAdmin) {
-      return;
-    }
-    
-    // 인증 완료 후 한 번만 데이터 로드 (중복 방지)
-    if (!hasLoadedRef.current && !isLoadingRef.current) {
-      console.log('관리자 권한 확인됨 - 상품 데이터 로드 중...');
-      isLoadingRef.current = true;
-      loadProducts(true).finally(() => {
-        isLoadingRef.current = false;
-      });
-      hasLoadedRef.current = true;
-    }
-  }, [user, isAdmin, authLoading, isUserDataLoading, loadProducts]);
-
-  // 강제 새로고침 함수
-  const handleForceRefresh = useCallback(() => {
-    // 이미 로딩 중이면 무시
-    if (isLoadingRef.current) {
-      console.log('이미 로딩 중입니다. 새로고침을 무시합니다.');
-      return;
-    }
-
-    console.log('관리자 페이지 - 강제 새로고침 시작...');
-    setCurrentPage(1); // 페이지를 첫 페이지로 리셋
-    hasLoadedRef.current = false; // 로드 플래그 리셋
-    isLoadingRef.current = true;
-    
-    loadProducts(true).finally(() => {
-      isLoadingRef.current = false;
-      hasLoadedRef.current = true;
-    });
-  }, [loadProducts]);
+  const handleForceRefresh = () => {
+    if (isFetching) return;
+    setCurrentPage(1);
+    refetch();
+  };
 
   // 상품 삭제 처리 (중복 방지)
   // 로딩 중이거나 권한이 없으면 표시하지 않음 (layout에서 처리됨)
@@ -128,8 +66,7 @@ export default function AdminProductsPage() {
   const handleDelete = async (productId: string) => {
     if (confirm('정말로 이 상품을 삭제하시겠습니까?')) {
       try {
-        await deleteProduct(productId);
-        loadProducts(true); // 강제 새로고침
+        await deleteProductMutation.mutateAsync(productId);
       } catch (error) {
         console.error('상품 삭제 실패:', error);
         alert('상품 삭제에 실패했습니다.');
@@ -139,14 +76,10 @@ export default function AdminProductsPage() {
 
   const handleStatusChange = async (product: Product, newStatus: 'active' | 'inactive' | 'draft') => {
     try {
-      console.log('상태 변경 시작:', { productId: product.id, newStatus });
-      
-      const updatedProduct = { ...product, status: newStatus };
-      await updateProduct(product.id, updatedProduct);
-      
-      console.log('상태 변경 완료, 목록 새로고침 중...');
-      
-      loadProducts(true); // 강제 새로고침
+      await updateProductMutation.mutateAsync({
+        productId: product.id,
+        updates: { status: newStatus },
+      });
     } catch (error) {
       console.error('상품 상태 변경 실패:', error);
       alert('상품 상태 변경에 실패했습니다.');

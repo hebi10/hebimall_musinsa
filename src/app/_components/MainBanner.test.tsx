@@ -1,5 +1,6 @@
 import React from 'react';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import MainBanner from './MainBanner';
 import { SiteContentService } from '@/shared/services/siteContentService';
 
@@ -71,10 +72,22 @@ const bannerSlides = [
     ctaLabel: '쿨터치 세일 보기',
     href: '/events/event-2026-07-cool-touch',
     image: '/main/main_event_cool_touch.webp',
+    mobileImage: '/main/main_event_cool_touch_mobile.webp',
     backgroundColor: '#b9c8cf',
     order: 3,
   },
 ];
+
+const renderWithQueryClient = (ui: React.ReactElement) => {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: { retry: false },
+      mutations: { retry: false },
+    },
+  });
+
+  return render(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>);
+};
 
 describe('MainBanner', () => {
   beforeEach(() => {
@@ -86,24 +99,23 @@ describe('MainBanner', () => {
   });
 
   test('renders Firebase banner slides with generated images and event links', async () => {
-    const { container } = render(<MainBanner />);
+    const { container } = renderWithQueryClient(<MainBanner />);
 
-    await waitFor(() => expect(screen.getByLabelText('메인 이벤트 배너')).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByRole('link', { name: '세일 보기' })).toHaveAttribute(
+      'href',
+      '/events/event-2026-06-midyear-sale',
+    ));
     expect(container.querySelector('.bannerPlaceholder')).toBeNull();
     expect(container.querySelectorAll('.bannerSlide')).toHaveLength(1);
     expect(container.querySelectorAll('img')).toHaveLength(1);
     expect(screen.getByRole('heading', { name: '상반기 베스트 최대 60%' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: '세일 보기' })).toHaveAttribute(
-      'href',
-      '/events/event-2026-06-midyear-sale',
-    );
   });
 
   test('renders fallback event banners when Firebase load fails', async () => {
     const consoleError = jest.spyOn(console, 'error').mockImplementation(() => undefined);
     jest.mocked(SiteContentService.getMainBanners).mockRejectedValue(new Error('permission'));
 
-    render(<MainBanner />);
+    renderWithQueryClient(<MainBanner />);
 
     await waitFor(() => expect(screen.getByText('쿨터치 최대 35%')).toBeInTheDocument());
     expect(screen.getByText('쿨터치 세일 보기').closest('a')).toHaveAttribute(
@@ -118,7 +130,7 @@ describe('MainBanner', () => {
     jest.useFakeTimers();
     jest.mocked(SiteContentService.getMainBanners).mockResolvedValue(bannerSlides);
 
-    const { container } = render(<MainBanner />);
+    const { container } = renderWithQueryClient(<MainBanner />);
 
     await act(async () => {
       await Promise.resolve();
@@ -127,6 +139,7 @@ describe('MainBanner', () => {
     const slides = Array.from(container.querySelectorAll<HTMLElement>('.bannerSlide'));
     expect(slides[0]).toHaveClass('activeSlide');
     expect(slides[2].style.getPropertyValue('--banner-image-position')).toBe('25% top');
+    expect(container.querySelector('img[src="/main/main_event_cool_touch_mobile.webp"]')).toBeInTheDocument();
 
     act(() => {
       jest.advanceTimersByTime(4400);
